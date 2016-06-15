@@ -1,0 +1,207 @@
+% -*- compile-command: "make" -*-
+
+metavar termvar, x ::=
+
+indexvar index, k ::=
+
+grammar
+  t :: 't_' ::=                                {{ com term }}
+    | x                   ::   :: var          {{ com variable }}
+    | ()                  ::   :: unit         {{ com unit }}
+    | \ x : T . t         ::   :: abs          {{ com $\lambda$-abstraction }}
+    {{tex \lambda [[x]] : [[T]] . [[t]] }}
+    | t1 t2               ::   :: app          {{ com function application }}
+    | ( t1 , t2 )         ::   :: pair         {{ com pair constructor }}
+    | p1 t                ::   :: proj1        {{ com first projection }}
+    {{tex \mathsf{proj}_1\,[[t]] }}
+    | p2 t                ::   :: proj2        {{ com second projection }}
+    {{tex \mathsf{proj}_2\,[[t]] }}
+    | succ t              ::   :: successor    {{ com successor function }}
+    | 0                   ::   :: zero         {{ com zero }}
+    | ( t )               :: S :: parens
+    | [ t1 / x ] t2       :: M :: subst
+    | h( t )              :: M :: hparens
+    {{tex [[t]] }}
+    
+  T :: 'T_' ::=                                {{ com type }}  
+    | Unit                ::   :: unit         {{ com unit type }}
+    | Nat                 ::   :: nat          {{ com natural number type }}
+    | ?                   ::   :: unitype      {{ com untyped universe }}
+    | T1 -> T2            ::   :: arrow        {{ com function type }}
+    | T1 x T2             ::   :: Pairs        {{ com cartesian product type }}
+    {{tex [[T1]] \times [[T2]] }} 
+    | ( T )               :: S :: paren
+
+  G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
+    | .                   ::   :: em           {{ com empty context }}
+    | G , x : T           ::   :: vn           {{ com cons }}
+    | G , G'              :: M :: append       {{ com append }}
+
+  terminals :: 'terminals_' ::=
+    |  ->                 ::   :: arrow
+      {{tex \rightarrow }}
+    | |-                  ::   :: turnstile
+      {{tex \vdash }}
+    | Unit                ::   :: unit
+      {{tex 1 }}
+    | Nat                 ::   :: nat
+    {{tex \mathbb{N} }}
+    | succ                ::   :: succ
+    {{tex \mathsf{succ} }}
+    | ?                   ::   :: unitype
+    | .                   ::   :: emptyCtx    
+    {{tex \cdot }}
+    | ~                   ::   :: cons
+    {{tex \sim }}
+    | ~U                  ::   :: conv
+    {{tex \sim_U }}    
+    | elem                ::   :: elem
+    {{tex \in }}
+    | ~>                  ::   :: red
+    {{tex \rightsquigarrow }}
+
+  formula :: 'formula_' ::=
+    | judgement           ::   :: judgement
+    | x : T elem G        ::   :: xTelemG
+    | formula1 && formula2 ::  :: Quad
+    {{tex [[formula1]] \quad [[formula2]] }}
+    | not formula         ::   :: not
+    | ( formula )         :: S :: parens
+    {{tex [[formula]] }}
+
+defns
+  ConvType :: '' ::=
+
+defn
+    T1 ~U T2 :: :: conv :: cv_ {{com [[T1]] can can be converted into [[T2]] }}
+  by
+    
+    ----- :: refl
+    T ~U T
+    
+    T1 ~U T2 && T2 ~U T3
+    ------------------ :: trans
+    T1 ~U T3
+
+    ------------ :: inj
+    (? -> ?) ~U ?
+
+    ------------ :: surj
+    ? ~U (? -> ?)
+
+    T1 ~U T1'
+    ---------------------- :: pair1
+    (T1 x T2) ~U (T1' x T2)
+
+    T2 ~U T2'
+    ---------------------- :: pair2
+    (T1 x T2) ~U (T1 x T2')
+
+    T1 ~U T1'
+    ------------------------ :: fun1
+    (T1 -> T2) ~U (T1' -> T2)
+
+    T2 ~U T2'
+    ------------------------ :: fun2
+    (T1 -> T2) ~U (T1 -> T2')
+
+defn
+    T1 ~ T2 :: :: cons :: cs_ {{com [[T1]] is consistent with [[T2]] }}
+  by
+
+  ----- :: refl
+  T ~ T
+
+  ----- :: ul
+  ? ~ T
+
+  ----- :: ur
+  T ~ ?
+
+  T1 ~U T2
+  -------- :: conv
+  T1 ~ T2
+
+  T1 ~ T1'
+  ---------------------- :: pair1
+  (T1 x T2) ~ (T1' x T2)
+
+  T2 ~ T2'
+  ---------------------- :: pair2
+  (T1 x T2) ~ (T1 x T2')
+
+  T1 ~ T1'
+  ------------------------ :: fun1
+  (T1 -> T2) ~ (T1' -> T2)
+
+  T2 ~ T2'
+  ------------------------ :: fun2
+  (T1 -> T2) ~ (T1 -> T2')
+
+defns
+  Typing :: '' ::=
+
+defn
+    G |- t : T :: :: type :: ''    {{ com [[t]] has type [[T]] in context [[G]] }} by
+
+    x : T elem G
+    ------------ :: var
+    G |- x : T
+
+    -------------- :: unit
+    G |- () : Unit
+
+    ------------- :: zero
+    G |- 0 : Nat
+
+    G |- t : Nat
+    ----------------- :: succ
+    G |- succ t : Nat
+
+    G |- t1 : T1 && G |- t2 : T2
+    ---------------------------- :: pair
+    G |- (t1,t2) : T1 x T2
+
+    G |- t : T1 x T2
+    ---------------- :: proj1
+    G |- p1 t : T1
+
+    G |- t : T1 x T2
+    ---------------- :: proj2
+    G |- p2 t : T2
+
+    G, x : T1 |- t : T2
+    ----------------------- :: abs
+    G |- \x:T1.t : T1 -> T2
+
+    G |- t1 : T3 && ((G |- t2 : T4 && T3 ~U (T1 -> T2)) && T4 ~U T1)
+    ---------------------------------------------------------------- :: appU
+    G |- t1 t2 : T2
+
+    G |- t1 : T1 -> T2 && (G |- t2 : T3 && T3 ~ T1)
+    ----------------------------------------------- :: app
+    G |- t1 t2 : T2
+
+    
+
+defns
+  Reduction :: '' ::=
+
+defn
+    t1 ~> t2 :: :: red :: rd_    {{ com [[t1]] reduces to [[t2]] }}
+  by
+
+    ------------------------ :: beta
+    (\x:T.t2) t1 ~> [t1/x]t2
+
+    --------------- :: eta
+    (\x:T.h(t x)) ~> t
+
+    ----------------- :: proj1
+    p1 (t1, t2) ~> t1
+
+    ----------------- :: proj2
+    p2 (t1, t2) ~> t2
+
+    ----------------- :: etaP
+    (p1 t, p2 t) ~> t
