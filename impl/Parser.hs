@@ -1,6 +1,6 @@
 {-# LANGUAGE NoMonomorphismRestriction, PackageImports #-}
 
-module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(Let, TypeCheck, ShowAST)) where
+module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(..), parseLine) where
 
 import Prelude
 import Data.List
@@ -124,6 +124,7 @@ data REPLExpr =
    Let Vnm Term                 -- Toplevel let-expression: for the REPL
  | TypeCheck Term               -- Typecheck a term
  | ShowAST Term                 -- Show a terms AST
+ | DumpState                    -- Trigger to dump the state for debugging.
  deriving Show
 
 letParser = do
@@ -134,7 +135,7 @@ letParser = do
   eof
   return $ Let n t         
 
-replCmdParser short long c p = do
+replTermCmdParser short long c p = do
   colon
   cmd <- many lower
   ws
@@ -143,9 +144,24 @@ replCmdParser short long c p = do
   if (cmd == long || cmd == short)
   then return $ c t
   else fail $ "Command \":"++cmd++"\" is unrecognized."
-                 
-typeCheckParser = replCmdParser "t" "type" TypeCheck expr
 
-showASTParser = replCmdParser "s" "show" ShowAST expr
+replIntCmdParser short long c = do
+  colon
+  cmd <- many lower
+  eof
+  if (cmd == long || cmd == short)
+  then return c
+  else fail $ "Command \":"++cmd++"\" is unrecognized."       
                  
-lineParser = letParser <|> try typeCheckParser <|> showASTParser
+typeCheckParser = replTermCmdParser "t" "type" TypeCheck expr
+
+showASTParser = replTermCmdParser "s" "show" ShowAST expr
+
+dumpStateParser = replIntCmdParser "d" "dump" DumpState
+                 
+lineParser = letParser <|> try typeCheckParser <|> try showASTParser <|> dumpStateParser
+
+parseLine :: String -> Either String REPLExpr
+parseLine s = case (parse lineParser "" s) of
+                Left msg -> Left $ show msg
+                Right l -> Right l
