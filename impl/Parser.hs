@@ -146,7 +146,7 @@ replCmdParser short long c p = do
                  
 typeCheckParser = replCmdParser "t" "type" TypeCheck expr
 
-showASTParser = replCmdParser ":s" ":show" ShowAST expr
+showASTParser = replCmdParser "s" "show" ShowAST expr
                  
 lineParser = letParser <|> typeCheckParser <|> showASTParser
 
