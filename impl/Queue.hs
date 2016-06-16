@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------
 -- Functional Queues                                                    --
 --                                                                      --
--- These are based on the definition found in Okasaki's "Purley         --
+-- These are based on the definition found in Okasaki's "Purely         --
 -- Functional Data Structures".                                         --
 --                                                                      --
 -- One unique tool this library comes with is a structural fixpoint     --
