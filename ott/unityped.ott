@@ -7,15 +7,15 @@ indexvar index, k ::=
 grammar
   t :: 't_' ::=                                {{ com term }}
     | x                   ::   :: var          {{ com variable }}
-    | ()                  ::   :: unit         {{ com unit }}
+    | triv                  ::   :: unit         {{ com unit }}
     | \ x : T . t         ::   :: abs          {{ com $\lambda$-abstraction }}
     {{tex \lambda [[x]] : [[T]] . [[t]] }}
     | t1 t2               ::   :: app          {{ com function application }}
     | ( t1 , t2 )         ::   :: pair         {{ com pair constructor }}
-    | p1 t                ::   :: proj1        {{ com first projection }}
-    {{tex \mathsf{proj}_1\,[[t]] }}
-    | p2 t                ::   :: proj2        {{ com second projection }}
-    {{tex \mathsf{proj}_2\,[[t]] }}
+    | fst t                ::   :: proj1        {{ com first projection }}
+    {{tex \mathsf{fst}\,[[t]] }}
+    | snd t                ::   :: proj2        {{ com second projection }}
+    {{tex \mathsf{snd}\,[[t]] }}
     | succ t              ::   :: successor    {{ com successor function }}
     | 0                   ::   :: zero         {{ com zero }}
     | ( t )               :: S :: parens
@@ -59,6 +59,8 @@ grammar
     {{tex \in }}
     | ~>                  ::   :: red
     {{tex \rightsquigarrow }}
+    | triv                ::   :: triv
+    {{tex \mathsf{triv} }}
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
@@ -148,8 +150,8 @@ defn
     ------------ :: var
     G |- x : T
 
-    -------------- :: unit
-    G |- () : Unit
+    ---------------- :: unit
+    G |- triv : Unit
 
     ------------- :: zero
     G |- 0 : Nat
@@ -163,12 +165,12 @@ defn
     G |- (t1,t2) : T1 x T2
 
     G |- t : T1 x T2
-    ---------------- :: proj1
-    G |- p1 t : T1
+    ---------------- :: fst
+    G |- fst t : T1
 
     G |- t : T1 x T2
-    ---------------- :: proj2
-    G |- p2 t : T2
+    ---------------- :: snd
+    G |- snd t : T2
 
     G, x : T1 |- t : T2
     ----------------------- :: abs
@@ -198,10 +200,10 @@ defn
     (\x:T.h(t x)) ~> t
 
     ----------------- :: proj1
-    p1 (t1, t2) ~> t1
+    fst (t1, t2) ~> t1
 
     ----------------- :: proj2
-    p2 (t1, t2) ~> t2
+    snd (t1, t2) ~> t2
 
     ----------------- :: etaP
-    (p1 t, p2 t) ~> t
+    (fst t, snd t) ~> t
