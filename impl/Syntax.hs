@@ -3,7 +3,7 @@ module Syntax (module Unbound.LocallyNameless,
                module Unbound.LocallyNameless.Alpha,
                Vnm,
                Type(Nat, Unit, Arr, Prod, U),
-               Term(Var, Fun, Triv, App, Pair, Fst, Snd, Zero, Succ, Let)) where
+               Term(Var, Fun, Triv, App, Pair, Fst, Snd, Zero, Succ)) where
 
 import Unbound.LocallyNameless 
 import Unbound.LocallyNameless.Alpha
@@ -28,7 +28,6 @@ data Term =
  | Snd Term                     -- Second projection
  | Succ Term                    -- Successor of a natural number
  | Zero                         -- The natural number 0
- | Let Vnm Term                 -- Toplevel let-expression: for the REPL
  deriving Show
 
 -- Derives all of the meta-machinary like substitution and

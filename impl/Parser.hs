@@ -1,6 +1,6 @@
 {-# LANGUAGE NoMonomorphismRestriction, PackageImports #-}
 
-module Parser (module Text.Parsec, expr, letParser, lineParser) where
+module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(Let, TypeCheck, ShowAST)) where
 
 import Prelude
 import Data.List
@@ -18,7 +18,7 @@ import Syntax
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2"]
+  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -119,16 +119,34 @@ appParse = do
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
 ------------------------------------------------------------------------        
-             
+
+data REPLExpr =
+   Let Vnm Term                 -- Toplevel let-expression: for the REPL
+ | TypeCheck Term               -- Typecheck a term
+ | ShowAST Term                 -- Show a terms AST
+ deriving Show
+
 letParser = do
   reservedOp "let"
-  ws
   n <- varName
-  ws
   symbol "="
-  ws
   t <- expr
   eof
   return $ Let n t         
 
-lineParser = letParser <|> expr <* eof
+replCmdParser short long c p = do
+  colon
+  cmd <- many lower
+  ws
+  t <- p
+  eof
+  if (cmd == long || cmd == short)
+  then return $ c t
+  else fail $ "Command \":"++cmd++"\" is unrecognized."
+                 
+typeCheckParser = replCmdParser "t" "type" TypeCheck expr
+
+showASTParser = replCmdParser ":s" ":show" ShowAST expr
+                 
+lineParser = letParser <|> typeCheckParser <|> showASTParser
+
