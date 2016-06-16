@@ -1,3 +1,13 @@
+--------------------------------------------------------------------------
+-- Functional Queues                                                    --
+--                                                                      --
+-- These are based on the definition found in Okasaki's "Purley         --
+-- Functional Data Structures".                                         --
+--                                                                      --
+-- One unique tool this library comes with is a structural fixpoint     --
+-- combinator over queues to make complex function definitions easier.  --
+--------------------------------------------------------------------------
+
 module Queue where
 
 data Queue a = Queue [a] [a]
@@ -5,6 +15,7 @@ data Queue a = Queue [a] [a]
 toList :: Queue a -> [a]
 toList (Queue f r) = f ++ (reverse r)
 
+-- This instance allows us to use Haskell's built in foldl and foldr.
 instance Foldable Queue where
     foldMap m = (foldMap m).toList
 
@@ -27,13 +38,28 @@ snoc (Queue f r) x = queue f (x:r)
 tailQ :: Queue a -> Queue a
 tailQ (Queue (x:f) r) = queue f r
                        
-showQueue :: Show a => Queue a -> String
-showQueue = show.toList
-
 mapQ :: (a -> b) -> Queue a -> Queue b
 mapQ m (Queue f r) = Queue (map m f) (map m r)
 
-fix :: Queue a -> b -> (a -> Queue a -> b -> b) -> b
-fix (Queue [] []) base _ = base
-fix (Queue [] r) base step = fix (queue [] r) base step
-fix (Queue (x:f) r) base step = step x (Queue f r) (fix (Queue f r) base step)
+-- The following fixpoint operation makes it easier to do structural
+-- recursion over queues.
+--
+--   fixQ q baseCase stepCase
+--
+-- The stepcase is a function that takes in the head of q, the tail of
+-- q, and the recursive call.
+--
+-- For example, if we have the following queue:
+--
+-- testQ = snoc (snoc (snoc (snoc (snoc (snoc (snoc emptyQ 1) 2) 3) 4) 5) 6) 7
+--
+-- then we can output it to STDOUT as follows:
+--
+-- fixQ testQ (return ()) (\x q r -> (putStrLn.show $ x) >> r)
+
+fixQ :: Queue a -> b -> (a -> Queue a -> b -> b) -> b
+fixQ (Queue [] []) base _ = base
+fixQ (Queue [] r) base step = fixQ (queue [] r) base step
+fixQ (Queue (x:f) r) base step =
+    let q = Queue f r
+     in step x q (fixQ q base step)
