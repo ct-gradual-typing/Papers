@@ -63,7 +63,9 @@ handleCMD s =
                                 in io $ putStrLn "Type checking: not implemented yet."
     handleLine (ShowAST t) = io $ putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
-    handleLine DumpState = get >>= io.print
+    handleLine DumpState = get >>= io.print.(mapQ prettyREPLExpr)
+     where
+       prettyREPLExpr (Let x t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
 
 banner :: String
 banner = "Welcome to Grady!\n\nThis is the gradual typing from a categorical perspective repl.\n\n"
