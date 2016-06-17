@@ -1,4 +1,3 @@
-{-# LANGUAGE FlexibleContexts, MultiParamTypeClasses, FlexibleInstances #-}
 module Repl where
 
 import Control.Monad.State
