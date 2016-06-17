@@ -66,6 +66,7 @@ handleCMD s =
     handleLine DumpState = get >>= io.print.(mapQ prettyREPLExpr)
      where
        prettyREPLExpr (Let x t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
+       prettyREPLExpr _ = error "Error: internal state is not consistent: state should contain only top-level definitions."
 
 banner :: String
 banner = "Welcome to Grady!\n\nThis is the gradual typing from a categorical perspective repl.\n\n"
