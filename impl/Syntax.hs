@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleInstances, TemplateHaskell, MultiParamTypeClasses, UndecidableInstances #-}
 module Syntax (module Unbound.LocallyNameless, 
                module Unbound.LocallyNameless.Alpha,
+               n2s,
                Vnm,
                Type(Nat, Unit, Arr, Prod, U),
                Term(Var, Fun, Triv, App, Pair, Fst, Snd, Zero, Succ)) where
@@ -40,3 +41,6 @@ instance Subst Term Type
 instance Subst Term Term where
   isvar (Var x) = Just (SubstName x)
   isvar _ = Nothing
+
+n2s :: Name a -> String
+n2s = name2String

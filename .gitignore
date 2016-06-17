@@ -2,3 +2,5 @@
 *.log
 *.tex
 /impl/.history
+/impl/#Syntax.hs#
+/impl/.#Syntax.hs

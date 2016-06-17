@@ -125,6 +125,7 @@ data REPLExpr =
  | TypeCheck Term               -- Typecheck a term
  | ShowAST Term                 -- Show a terms AST
  | DumpState                    -- Trigger to dump the state for debugging.
+ | Unfold Term                  -- Unfold the definitions in a term for debugging.
  deriving Show
 
 letParser = do
@@ -157,9 +158,11 @@ typeCheckParser = replTermCmdParser "t" "type" TypeCheck expr
 
 showASTParser = replTermCmdParser "s" "show" ShowAST expr
 
+unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr                
+
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
                  
-lineParser = letParser <|> try typeCheckParser <|> try showASTParser <|> dumpStateParser
+lineParser = letParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> dumpStateParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of

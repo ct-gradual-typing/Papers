@@ -8,6 +8,7 @@ import System.Exit
 import Queue    
 import Syntax
 import Parser
+import Pretty
 import TypeChecker
             
 type REPLStateIO = StateT (Queue REPLExpr) IO
