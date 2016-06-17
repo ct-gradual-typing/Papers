@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Pretty (prettyType, prettyTerm) where
+module Pretty (prettyType, prettyTerm, runPrettyTerm, runPrettyType) where
 
 import Syntax
 import Parser
@@ -64,3 +64,9 @@ testPretty parser pretty s = do
 
 testPrettyTerm :: String -> String
 testPrettyTerm = testPretty expr prettyTerm
+
+runPrettyType :: Type -> String
+runPrettyType = prettyType
+                 
+runPrettyTerm :: Term -> String
+runPrettyTerm = runFreshM.prettyTerm
