@@ -12,15 +12,15 @@ module Queue where
 
 data Queue a = Queue [a] [a]
 
-toList :: Queue a -> [a]
-toList (Queue f r) = f ++ (reverse r)
+toListQ :: Queue a -> [a]
+toListQ (Queue f r) = f ++ (reverse r)
 
 -- This instance allows us to use Haskell's built in foldl and foldr.
 instance Foldable Queue where
-    foldMap m = (foldMap m).toList
+    foldMap m = (foldMap m).toListQ
 
 instance Show a => Show (Queue a) where
-    show = show.toList
+    show = show.toListQ
                 
 emptyQ :: Queue a
 emptyQ = Queue [] []

@@ -1,4 +1,4 @@
-{-# LANGUAGE NoMonomorphismRestriction, PackageImports #-}
+{-# LANGUAGE NoMonomorphismRestriction, PackageImports, TemplateHaskell #-}
 
 module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(..), parseLine) where
 
@@ -127,7 +127,7 @@ data REPLExpr =
  | DumpState                    -- Trigger to dump the state for debugging.
  | Unfold Term                  -- Unfold the definitions in a term for debugging.
  deriving Show
-
+                    
 letParser = do
   reservedOp "let"
   n <- varName

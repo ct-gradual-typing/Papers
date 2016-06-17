@@ -1,17 +1,19 @@
+{-# LANGUAGE FlexibleContexts, MultiParamTypeClasses, FlexibleInstances #-}
 module Repl where
 
 import Control.Monad.State
 import System.Console.Haskeline
 import System.Console.Haskeline.MonadException    
 import System.Exit    
+import Unbound.LocallyNameless.Subst
 
-import qualified Queue as Q
+import Queue
 import Syntax
 import Parser
 import Pretty
 import TypeChecker
             
-type REPLStateIO = StateT (Q.Queue REPLExpr) IO
+type REPLStateIO = StateT (Queue REPLExpr) IO
 
 instance MonadException m => MonadException (StateT s m) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
@@ -22,19 +24,33 @@ io :: IO a -> REPLStateIO a
 io i = liftIO $ i
     
 pop :: REPLStateIO (Vnm, Term)
-pop = get >>= io.caseLet.(Q.headQ)
+pop = get >>= io.caseLet.(headQ)
  where
    caseLet :: REPLExpr -> IO (Vnm, Term)
    caseLet (Let n t) = return $ (n , t)
    caseLet _ = fail "Error: internal state is not consistent: state should contain only top-level definitions."
 
 push :: REPLExpr -> REPLStateIO ()
-push (t@(Let _ _)) = get >>= put.(`Q.snoc` t) 
+push (t@(Let _ _)) = get >>= put.(`snoc` t) 
 push _ = io $ fail "Error: tried to push non-toplevel definition."
 
 
-unfoldDefsInTerm :: (Q.Queue REPLExpr) -> Term -> Term
-unfoldDefsInTerm q t = undefined
+unfoldDefsInTerm :: (Queue REPLExpr) -> Term -> Term
+unfoldDefsInTerm q t =
+    let uq = toListQ $ mapQ toPair (unfoldQueue q)
+     in substs uq t
+ where
+   toPair (Let x t) = (x , t)
+   toPair _ = error "Error: internal state is not consistent: state should contain only top-level definitions."
+
+unfoldQueue :: (Queue REPLExpr) -> (Queue REPLExpr)
+unfoldQueue q = fixQ q emptyQ step
+ where
+   step e@(Let x t) _ r = (mapQ (substREPLExpr x t) r) `snoc` e
+    where
+      substREPLExpr :: Name Term -> Term -> REPLExpr -> REPLExpr
+      substREPLExpr x t (Let y t') = Let y $ subst x t t'
+   step _ _ _ = error "Error: internal state is not consistent: state should contain only top-level definitions."
 
 handleCMD :: String -> REPLStateIO ()
 handleCMD s =
@@ -56,7 +72,7 @@ banner = "Welcome to Grady!\n\nThis is the gradual typing from a categorical per
 main :: IO ()
 main = do
   putStr banner
-  evalStateT (runInputT defaultSettings loop) Q.emptyQ
+  evalStateT (runInputT defaultSettings loop) emptyQ
    where 
        loop :: InputT REPLStateIO ()
        loop = do           
