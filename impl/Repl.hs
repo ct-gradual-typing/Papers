@@ -20,7 +20,7 @@ instance MonadException m => MonadException (StateT s m) where
                     in fmap (flip runStateT s) $ f run'
     
 io :: IO a -> REPLStateIO a
-io i = liftIO $ i
+io i = liftIO i
     
 pop :: REPLStateIO (Vnm, Term)
 pop = get >>= io.caseLet.(headQ)
@@ -52,7 +52,8 @@ unfoldQueue q = fixQ q emptyQ step
    step _ _ _ = error "Error: internal state is not consistent: state should contain only top-level definitions."
 
 handleCMD :: String -> REPLStateIO ()
-handleCMD s =
+handleCMD "" = return ()
+handleCMD s =    
     case (parseLine s) of
       Left msg -> io $ putStrLn msg
       Right l -> handleLine l
@@ -61,7 +62,7 @@ handleCMD s =
     handleLine (t@(Let _ _)) = push t
     handleLine (TypeCheck t) = let ty = typeCheck t  -- unfold top-level definitions first.
                                 in io $ putStrLn "Type checking: not implemented yet."
-    handleLine (ShowAST t) = io $ putStrLn.show $ t
+    handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine DumpState = get >>= io.print.(mapQ prettyREPLExpr)
      where
@@ -81,5 +82,5 @@ main = do
            minput <- getInputLine "Grady> "
            case minput of
                Nothing -> return ()
-               Just input | input == ":q" || input == ":quit" -> lift.io $ putStrLn "Goodbye!" >> return ()
+               Just input | input == ":q" || input == ":quit" -> liftIO $ putStrLn "Goodbye!" >> return ()
                           | otherwise -> (lift.handleCMD $ input) >> loop
