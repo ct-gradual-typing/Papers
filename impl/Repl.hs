@@ -14,6 +14,7 @@ import TypeChecker
 
 type Qelm = (Vnm, Term)
 type REPLStateIO = StateT (Queue Qelm) IO
+
 instance MonadException m => MonadException (StateT s m) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
                     run' = RunIO (fmap (StateT . const) . run . flip runStateT s)
