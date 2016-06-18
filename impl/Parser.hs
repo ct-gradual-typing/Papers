@@ -114,7 +114,9 @@ funParse = do
 
 appParse = do
   l <- many aterm
-  return $ foldl1 App l         
+  case l of
+    [] -> fail "A term must be supplied"
+    _ -> return $ foldl1 App l         
 
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
@@ -149,6 +151,7 @@ replTermCmdParser short long c p = do
 replIntCmdParser short long c = do
   colon
   cmd <- many lower
+  ws
   eof
   if (cmd == long || cmd == short)
   then return c
