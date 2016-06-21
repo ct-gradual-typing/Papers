@@ -51,7 +51,15 @@ handleCMD s =
   where
     handleLine :: REPLExpr -> REPLStateIO ()
     handleLine (Let x t) = push (x , t)
-    handleLine (TypeCheck t) = get >>= (\defs -> io.putStrLn.prettyType.typeCheck.unfoldDefsInTerm defs $ t)
+
+    handleLine (TypeCheck t) = do
+      defs <- get
+      let tu = unfoldDefsInTerm defs t
+          r = typeCheck tu
+       in case r of
+            Left m -> io.putStrLn $ m
+            Right ty ->  io.putStrLn.prettyType $ ty
+                         
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
