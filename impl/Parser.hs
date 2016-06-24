@@ -18,7 +18,8 @@ import Syntax
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show"]
+  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
+                           "gen", "spec"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -53,9 +54,7 @@ varName' p msg = do
       when (p h || isNumber h) $ unexpColon (n++" : "++msg)
   return . s2n $ n
 
-parseConst s c = do
-  reservedOp s
-  return c
+parseConst s c = symbol s >> return c
          
 tyNat = parseConst "Nat" Nat
 tyU = parseConst "U" U
@@ -70,7 +69,7 @@ typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
-aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> var
+aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try genParse <|> try specParse <|> var
 expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error" 
               
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
@@ -79,12 +78,22 @@ var = var' varName Var
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
 
+genParse = do
+  symbol "gen"
+  ty <- between (symbol "<") (symbol ">") typeParser  
+  return $ Gen ty
+
+specParse = do
+  symbol "spec"
+  ty <- between (symbol "<") (symbol ">") typeParser  
+  return $ Spec ty
+
 succParse = do
   reservedOp "succ"
   ws
   t <- expr
   return $ Succ t
-
+         
 pairParse = do
   t1 <- expr
   comma

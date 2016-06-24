@@ -3,36 +3,10 @@ module TypeChecker (typeCheck) where
 import Syntax
 import Pretty
 
-convTy :: Type -> Type
-convTy (Arr x y) =
-    case (x', y') of
-      (U , U) -> U
-      _ -> Arr x' y'
- where
-    x' = convTy x
-    y' = convTy y
-convTy (Prod x y) = Prod (convTy x) (convTy y)
-convTy x = x
-
-consistent :: Type -> Type -> Bool
-consistent x y = consistent' (convTy x) (convTy y)
- where
-   consistent' :: Type -> Type -> Bool
-   consistent' Nat Nat = True
-   consistent' U _ = True
-   consistent' _ U = True
-   consistent' (Prod x y) (Prod x' y') =
-       (consistent' x x') && (consistent' y y')
-   consistent' (Arr x y) (Arr x' y') =
-       (consistent' x x') && (consistent' y y')
-   consistent' _ _ = False
-                    
 type TyCtx = [(Vnm, Type)]
 
 typeCheck :: Term -> Either String Type
-typeCheck t = r >>= return.convTy
-    where
-      r = runFreshM $ typeCheck_aux [] t
+typeCheck t = runFreshM $ typeCheck_aux [] t
 
 typeCheck_aux :: Fresh m => TyCtx -> Term -> m (Either String Type)
 typeCheck_aux ctx (Var x) = 
@@ -43,6 +17,8 @@ typeCheck_aux ctx (Var x) =
    e = lookup x ctx
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
+typeCheck_aux ctx (Gen ty) = return.Right $ Arr ty U
+typeCheck_aux ctx (Spec ty) = return.Right $ Arr U ty
 typeCheck_aux ctx (Succ t) = do
   r <- typeCheck_aux ctx t
   case r of
@@ -87,9 +63,9 @@ typeCheck_aux ctx (App t1 t2) = do
     (Right r3, Right ty3) ->
         case r3 of 
           Arr ty1 ty2 ->
-              if (consistent ty1 ty3)
+              if (ty1 == ty3)
               then return.Right $ ty2
-              else return.Left $ "Type error: inconsistent type application: "++(prettyType ty1)++" !~ "++(prettyType ty3)
+              else return.Left $ "Type error: types don't match "++(prettyType ty1)++" !~ "++(prettyType ty3)
           _ -> return.Left $ "Type error (application): "++(prettyType r3)
 
 typeCheck_aux ctx (Pair t1 t2) = do

@@ -7,14 +7,22 @@ indexvar index, k ::=
 grammar
   t :: 't_' ::=                                {{ com term }}
     | x                   ::   :: var          {{ com variable }}
-    | triv                  ::   :: unit         {{ com unit }}
+    | triv                ::   :: unit         {{ com unit }}
+    | squash              ::   :: inj          {{ com injection of the retract }}
+    {{tex \mathsf{squash} }}
+    | split               ::   :: surj         {{ com surjection of the retract }}
+    {{tex \mathsf{split} }}
+    | gen                 ::   :: gen          {{ com generalize to the untyped universe }}
+    {{tex \mathsf{gen} }}
+    | spec                ::   :: spec         {{ com specialize the untyped universe to a specific type }}
+    {{tex \mathsf{spec} }}
     | \ x : T . t         ::   :: abs          {{ com $\lambda$-abstraction }}
     {{tex \lambda [[x]] : [[T]] . [[t]] }}
     | t1 t2               ::   :: app          {{ com function application }}
     | ( t1 , t2 )         ::   :: pair         {{ com pair constructor }}
-    | fst t                ::   :: proj1        {{ com first projection }}
+    | fst t               ::   :: proj1        {{ com first projection }}
     {{tex \mathsf{fst}\,[[t]] }}
-    | snd t                ::   :: proj2        {{ com second projection }}
+    | snd t               ::   :: proj2        {{ com second projection }}
     {{tex \mathsf{snd}\,[[t]] }}
     | succ t              ::   :: successor    {{ com successor function }}
     | 0                   ::   :: zero         {{ com zero }}
@@ -75,39 +83,6 @@ defns
   ConvType :: '' ::=
 
 defn
-    T1 ~U T2 :: :: conv :: cv_ {{com [[T1]] can can be converted into [[T2]] }}
-  by
-    
-    ----- :: refl
-    T ~U T
-    
-    T1 ~U T2 && T2 ~U T3
-    ------------------ :: trans
-    T1 ~U T3
-
-    ------------ :: inj
-    (? -> ?) ~U ?
-
-    ------------ :: surj
-    ? ~U (? -> ?)
-
-    T1 ~U T1'
-    ---------------------- :: pair1
-    (T1 x T2) ~U (T1' x T2)
-
-    T2 ~U T2'
-    ---------------------- :: pair2
-    (T1 x T2) ~U (T1 x T2')
-
-    T1 ~U T1'
-    ------------------------ :: fun1
-    (T1 -> T2) ~U (T1' -> T2)
-
-    T2 ~U T2'
-    ------------------------ :: fun2
-    (T1 -> T2) ~U (T1 -> T2')
-
-defn
     T1 ~ T2 :: :: cons :: cs_ {{com [[T1]] is consistent with [[T2]] }}
   by
 
@@ -119,10 +94,6 @@ defn
 
   ----- :: ur
   T ~ ?
-
-  T1 ~U T2
-  -------- :: conv
-  T1 ~ T2
 
   T1 ~ T1' && T2 ~ T2'
   ----------------------- :: pair
@@ -141,6 +112,18 @@ defn
     x : T elem G
     ------------ :: var
     G |- x : T
+
+    --------------------------- :: inj
+    G |- squash : (? -> ?) -> ?
+
+    -------------------------- :: surj
+    G |- split : ? -> (? -> ?)
+
+    ----------------- :: gen
+    G |- gen : T -> ?
+
+    ------------------ :: spec
+    G |- spec : ? -> T
 
     ---------------- :: unit
     G |- triv : Unit
@@ -168,15 +151,9 @@ defn
     ----------------------- :: abs
     G |- \x:T1.t : T1 -> T2
 
-    G |- t : T1 && T1 ~U T2
-    ----------------------- :: U
-    G |- t : T2
-
-    G |- t1 : T1 -> T2 && (G |- t2 : T3 && T3 ~ T1)
-    ----------------------------------------------- :: app
-    G |- t1 t2 : T2
-
-    
+    G |- t1 : T1 -> T2 && G |- t2 : T3
+    ---------------------------------- :: app
+    G |- t1 t2 : T2    
 
 defns
   Reduction :: '' ::=
@@ -188,6 +165,12 @@ defn
     ------------------------ :: beta
     (\x:T.t2) t1 ~> [t1/x]t2
 
+    --------------------- :: retract
+    split (squash t) ~> t
+
+    ----------------- :: retractTy
+    spec (gen t) ~> t
+
     --------------- :: eta
     (\x:T.h(t x)) ~> t
 
@@ -197,5 +180,5 @@ defn
     ----------------- :: proj2
     snd (t1, t2) ~> t2
 
-    ----------------- :: etaP
+    ------------------- :: etaP
     (fst t, snd t) ~> t

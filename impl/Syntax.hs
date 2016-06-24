@@ -3,8 +3,8 @@ module Syntax (module Unbound.LocallyNameless,
                module Unbound.LocallyNameless.Alpha,
                n2s,
                Vnm,
-               Type(Nat, Unit, Arr, Prod, U),
-               Term(Var, Fun, Triv, App, Pair, Fst, Snd, Zero, Succ)) where
+               Type(..),
+               Term(..)) where
 
 import Unbound.LocallyNameless 
 import Unbound.LocallyNameless.Alpha
@@ -22,6 +22,8 @@ type Vnm = Name Term            -- Variable name
 data Term =
    Var Vnm                      -- Free varialbe
  | Triv                         -- Unit's inhabitant
+ | Gen Type                     -- Generalize
+ | Spec Type                    -- Specialize   
  | Fun Type (Bind Vnm Term)     -- \lambda-abstraction
  | App Term Term                -- Function application
  | Pair Term Term               -- Pairs
