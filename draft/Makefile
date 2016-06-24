@@ -28,7 +28,7 @@ all: pdf
 
 pdf : $(PDF)
 
-$(OTTOutputFile) : $(OttFile) $(Main)
+$(OTTOutputFile) : $(OTTFile) $(Main)
 	@echo "\n\n***OTT: Preprocessing L.ott in main.tex.***"
 	@$(OTT) $(OTT_FLAGS) -i $(OTTFile)  -o $(OTTGen) -tex_name_prefix $(OTTPrefix) \
 		-tex_filter $(Main) $(OTTOutputFile)
