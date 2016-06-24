@@ -1,7 +1,7 @@
 PDFLATEX = pdflatex
 BIBTEX = bibtex
 OTT = ott
-OTT_FLAGS := -tex_wrap false -tex_show_meta true -picky_multiple_parses false
+OTT_FLAGS := -tex_wrap false -tex_show_meta false -picky_multiple_parses false
 SKIM := skim_revert.sh
 SKIMRevinPath := $(shell command -v $(SKIM) 2> /dev/null)
 
