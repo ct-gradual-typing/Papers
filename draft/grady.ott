@@ -14,6 +14,8 @@ grammar
     {{tex \mathsf{split} }}
     | gen                 ::   :: gen          {{ com generalize to the untyped universe }}
     {{tex \mathsf{gen} }}
+    | gen t < T >         ::   :: gen2         {{ com generalize to the untyped universe }}
+    {{tex \mathsf{gen}\,[[t]]\langle [[T]] \rangle }}
     | spec                ::   :: spec         {{ com specialize the untyped universe to a specific type }}
     {{tex \mathsf{spec} }}
     | \ x : T . t         ::   :: abs          {{ com $\lambda$-abstraction }}
@@ -113,17 +115,19 @@ defn
     ------------ :: var
     G |- x : T
 
-    --------------------------- :: inj
-    G |- squash : (? -> ?) -> ?
-
-    -------------------------- :: surj
-    G |- split : ? -> (? -> ?)
-
     ----------------- :: gen
     G |- gen : T -> ?
 
+    G |- t : T
+    ----------------- :: gen2
+    G |- gen t<T> : ?
+
     ------------------ :: spec
     G |- spec : ? -> T
+
+    G |- gen t<T> : ?
+    ------------------ :: spec2
+    G |- spec t : T
 
     ---------------- :: unit
     G |- triv : Unit
@@ -155,6 +159,12 @@ defn
     ---------------------------------- :: app
     G |- t1 t2 : T2    
 
+    --------------------------- :: inj
+    G |- squash : (? -> ?) -> ?
+
+    -------------------------- :: surj
+    G |- split : ? -> (? -> ?)
+
 defns
   Reduction :: '' ::=
 
@@ -165,10 +175,7 @@ defn
     ------------------------ :: beta
     (\x:T.t2) t1 ~> [t1/x]t2
 
-    --------------------- :: retract
-    split (squash t) ~> t
-
-    ----------------- :: retractTy
+    ----------------- :: retract
     spec (gen t) ~> t
 
     --------------- :: eta
@@ -182,3 +189,6 @@ defn
 
     ------------------- :: etaP
     (fst t, snd t) ~> t
+    
+    --------------------- :: retractS
+    split (squash t) ~> t    
