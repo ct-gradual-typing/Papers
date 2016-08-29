@@ -28,6 +28,8 @@ grammar
     | 0                   ::   :: zero         {{ com zero }}
     | ( t )               :: S :: parens
     | [ t1 / x ] t2       :: M :: subst
+    | wrong               :: M :: wrong
+    {{tex \mathsf{wrong} }}
     | h( t )              :: M :: hparens
     {{tex [[t]] }}
     
@@ -46,6 +48,8 @@ grammar
     | A1 x A2             ::   :: Pairs        {{ com cartesian product type }}
     {{tex [[A1]] \times [[A2]] }}     
     | ( A )               :: S :: paren
+    | TypeError           :: M :: typeError
+    {{tex \mathsf{TypeError} }}
 
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
     | .                   ::   :: em           {{ com empty context }}
@@ -87,6 +91,8 @@ grammar
     {{tex [[formula]] }}
     | x nin FV ( t )      :: M :: FV
     {{tex [[x]] \not\in \mathsf{FV}([[t]]) }}
+    | t != t'             :: M :: NeqT
+    {{tex [[t]] \neq [[t']] }}
 
 defns
   Typing :: '' ::=
@@ -144,12 +150,16 @@ defns
   Reduction :: '' ::=
 
 defn
-    G |- t1 ~> t2  : A :: :: red :: rd_    {{ com [[t1]] is reduces to [[t2]] }}
+    G |- t1 ~> t2  : A :: :: red :: rd_    {{ com [[t1]] reduces to [[t2]] with type [[A]] in context [[G]] }}
 by
 
     G |- t : T
     ----------------------------- :: retracT
     G |- unbox (box T t) ~> t : T
+
+    t != box T t'
+    --------------------------------- :: unboxErr
+    G |- unbox t ~> wrong : TypeError 
 
     G |- t : ? -> ?
     ----------------------------------- :: retractU
