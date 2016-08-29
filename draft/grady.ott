@@ -45,8 +45,6 @@ grammar
     | T                   ::   :: term         {{ com terminating type }}
     | ?                   ::   :: unitype      {{ com untyped universe }}
     | A1 -> A2            ::   :: arrow        {{ com function type }}
-    | A1 x A2             ::   :: Pairs        {{ com cartesian product type }}
-    {{tex [[A1]] \times [[A2]] }}     
     | ( A )               :: S :: paren
     | TypeError           :: M :: typeError
     {{tex \mathsf{TypeError} }}
@@ -126,17 +124,17 @@ defn
     ----------------- :: succ
     G |- succ t : Nat
 
-    G |- t1 : A1 && G |- t2 : A2
+    G |- t1 : T1 && G |- t2 : T2
     ---------------------------- :: pair
-    G |- (t1,t2) : A1 x A2
+    G |- (t1,t2) : T1 x T2
 
-    G |- t : A1 x A2
+    G |- t : T1 x T2
     ---------------- :: fst
-    G |- fst t : A1
+    G |- fst t : T1
 
-    G |- t : A1 x A2
+    G |- t : T1 x T2
     ---------------- :: snd
-    G |- snd t : A2
+    G |- snd t : T2
 
     G, x : A1 |- t : A2
     ----------------------- :: abs
@@ -173,17 +171,17 @@ by
     ------------------------------------ :: beta
     G |- (\x:A1.t2) t1 ~> [t1/x]t2 : A2
 
-    G |- t1 : A1 && G |- t2 : A2
+    G |- t1 : T1 && G |- t2 : T2
     ---------------------------- :: proj1
-    G |- fst (t1, t2) ~> t1 : A1
+    G |- fst (t1, t2) ~> t1 : T1
 
-    G |- t1 : A1 && G |- t2 : A2
+    G |- t1 : T1 && G |- t2 : T2
     ---------------------------- :: proj2
-    G |- snd (t1, t2) ~> t2 : A2
+    G |- snd (t1, t2) ~> t2 : T2
 
-    G |- t : A1 x A2
+    G |- t : T1 x T2
     ---------------------------------- :: etaP
-    G |- (fst t, snd t) ~> t : A1 x A2
+    G |- (fst t, snd t) ~> t : T1 x T2
 
     G, x : A1 |- t ~> t' : A2
     ---------------------------------- :: lam
@@ -197,18 +195,18 @@ by
     ---------------------------------------- :: app2
     G |- t1 t2 ~> t1 t'2 : A2
 
-    G |- t ~> t' : A1 x A2
+    G |- t ~> t' : T1 x T2
     ------------------------ :: fst
-    G |- fst t ~> fst t' : A1
+    G |- fst t ~> fst t' : T1
 
-    G |- t ~> t' : A1 x A2
+    G |- t ~> t' : T1 x T2
     ------------------------ :: snd
-    G |- snd t ~> snd t' : A2
+    G |- snd t ~> snd t' : T2
 
-    G |- t1 ~> t'1 : A1 && G |- t2 : A2
+    G |- t1 ~> t'1 : T1 && G |- t2 : T2
     ---------------------------------- :: pair1
-    G |- (t1,t2) ~> (t'1,t2) : A1 x A2
+    G |- (t1,t2) ~> (t'1,t2) : T1 x T2
 
-    G |- t1 : A1 && G |- t2  ~> t'2 : A2
+    G |- t1 : T1 && G |- t2  ~> t'2 : T2
     ----------------------------------- :: pair2
-    G |- (t1,t2) ~> (t1,t'2) : A1 x A2
+    G |- (t1,t2) ~> (t1,t'2) : T1 x T2
