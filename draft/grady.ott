@@ -1,6 +1,6 @@
-% -*- compile-command: "make" -*-
+                  % -*- compile-command: "make" -*-
 
-metavar termvar, x ::=
+metavar termvar, x, z ::=
 
 indexvar index, k ::=
 
@@ -12,14 +12,12 @@ grammar
     {{tex \mathsf{squash} }}
     | split               ::   :: surj         {{ com surjection of the retract }}
     {{tex \mathsf{split} }}
-    | gen                 ::   :: gen          {{ com generalize to the untyped universe }}
-    {{tex \mathsf{gen} }}
-    | gen t < T >         ::   :: gen2         {{ com generalize to the untyped universe }}
-    {{tex \mathsf{gen}\,[[t]]\langle [[T]] \rangle }}
-    | spec                ::   :: spec         {{ com specialize the untyped universe to a specific type }}
-    {{tex \mathsf{spec} }}
-    | \ x : T . t         ::   :: abs          {{ com $\lambda$-abstraction }}
-    {{tex \lambda [[x]] : [[T]] . [[t]] }}
+    | box T               ::   :: gen          {{ com generalize to the untyped universe }}
+    {{tex \mathsf{box}_{[[T]]} }}
+    | unbox               ::   :: spec         {{ com specialize the untyped universe to a specific type }}
+    {{tex \mathsf{unbox} }}
+    | \ x : A . t         ::   :: abs          {{ com $\lambda$-abstraction }}
+    {{tex \lambda [[x]] : [[A]] . [[t]] }}
     | t1 t2               ::   :: app          {{ com function application }}
     | ( t1 , t2 )         ::   :: pair         {{ com pair constructor }}
     | fst t               ::   :: proj1        {{ com first projection }}
@@ -33,18 +31,25 @@ grammar
     | h( t )              :: M :: hparens
     {{tex [[t]] }}
     
-  T :: 'T_' ::=                                {{ com type }}  
+  T :: 'T_' ::=                                {{ com terminating types }}  
     | Unit                ::   :: unit         {{ com unit type }}
     | Nat                 ::   :: nat          {{ com natural number type }}
-    | ?                   ::   :: unitype      {{ com untyped universe }}
     | T1 -> T2            ::   :: arrow        {{ com function type }}
     | T1 x T2             ::   :: Pairs        {{ com cartesian product type }}
     {{tex [[T1]] \times [[T2]] }} 
     | ( T )               :: S :: paren
 
+  A :: 'A_' ::=                                {{ com type }}  
+    | T                   ::   :: term         {{ com terminating type }}
+    | ?                   ::   :: unitype      {{ com untyped universe }}
+    | A1 -> A2            ::   :: arrow        {{ com function type }}
+    | A1 x A2             ::   :: Pairs        {{ com cartesian product type }}
+    {{tex [[A1]] \times [[A2]] }}     
+    | ( A )               :: S :: paren
+
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
     | .                   ::   :: em           {{ com empty context }}
-    | G , x : T           ::   :: vn           {{ com cons }}
+    | G , x : A           ::   :: vn           {{ com cons }}
     | G , G'              :: M :: append       {{ com append }}
 
   terminals :: 'terminals_' ::=
@@ -74,60 +79,36 @@ grammar
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
-    | x : T elem G        ::   :: xTelemG
+    | x : A elem G        ::   :: xTelemG
     | formula1 && formula2 ::  :: Quad
     {{tex [[formula1]] \quad [[formula2]] }}
     | not formula         ::   :: not
     | ( formula )         :: S :: parens
     {{tex [[formula]] }}
-
-defns
-  ConvType :: '' ::=
-
-defn
-    T1 ~ T2 :: :: cons :: cs_ {{com [[T1]] is consistent with [[T2]] }}
-  by
-
-  ----- :: refl
-  T ~ T
-
-  ----- :: ul
-  ? ~ T
-
-  ----- :: ur
-  T ~ ?
-
-  T1 ~ T1' && T2 ~ T2'
-  ----------------------- :: pair
-  (T1 x T2) ~ (T1' x T2') 
-
-  T1 ~ T1' && T2 ~ T'2
-  ------------------------ :: arrow
-  (T1 -> T2) ~ (T1' -> T'2)
+    | x nin FV ( t )      :: M :: FV
+    {{tex [[x]] \not\in \mathsf{FV}([[t]]) }}
 
 defns
   Typing :: '' ::=
 
 defn
-    G |- t : T :: :: type :: ''    {{ com [[t]] has type [[T]] in context [[G]] }} by
+    G |- t : A :: :: type :: ''    {{ com [[t]] has type [[A]] in context [[G]] }} by
 
-    x : T elem G
+    x : A elem G
     ------------ :: var
-    G |- x : T
+    G |- x : A
 
-    ----------------- :: gen
-    G |- gen : T -> ?
+    ------------------- :: Box
+    G |- box T : T -> ?
 
-    G |- t : T
-    ----------------- :: gen2
-    G |- gen t<T> : ?
+    ------------------- :: Unbox
+    G |- unbox : ? -> T
 
-    ------------------ :: spec
-    G |- spec : ? -> T
+    --------------------------- :: inj
+    G |- squash : (? -> ?) -> ?
 
-    G |- gen t<T> : ?
-    ------------------ :: spec2
-    G |- spec t : T
+    -------------------------- :: surj
+    G |- split : ? -> (? -> ?)
 
     ---------------- :: unit
     G |- triv : Unit
@@ -139,56 +120,85 @@ defn
     ----------------- :: succ
     G |- succ t : Nat
 
-    G |- t1 : T1 && G |- t2 : T2
+    G |- t1 : A1 && G |- t2 : A2
     ---------------------------- :: pair
-    G |- (t1,t2) : T1 x T2
+    G |- (t1,t2) : A1 x A2
 
-    G |- t : T1 x T2
+    G |- t : A1 x A2
     ---------------- :: fst
-    G |- fst t : T1
+    G |- fst t : A1
 
-    G |- t : T1 x T2
+    G |- t : A1 x A2
     ---------------- :: snd
-    G |- snd t : T2
+    G |- snd t : A2
 
-    G, x : T1 |- t : T2
+    G, x : A1 |- t : A2
     ----------------------- :: abs
-    G |- \x:T1.t : T1 -> T2
+    G |- \x:A1.t : A1 -> A2
 
-    G |- t1 : T1 -> T2 && G |- t2 : T3
+    G |- t1 : A1 -> A2 && G |- t2 : A2
     ---------------------------------- :: app
-    G |- t1 t2 : T2    
-
-    --------------------------- :: inj
-    G |- squash : (? -> ?) -> ?
-
-    -------------------------- :: surj
-    G |- split : ? -> (? -> ?)
+    G |- t1 t2 : A2
 
 defns
   Reduction :: '' ::=
 
 defn
-    t1 ~> t2 :: :: red :: rd_    {{ com [[t1]] reduces to [[t2]] }}
-  by
+    G |- t1 ~> t2  : A :: :: red :: rd_    {{ com [[t1]] is reduces to [[t2]] }}
+by
 
-    ------------------------ :: beta
-    (\x:T.t2) t1 ~> [t1/x]t2
+    G |- t : T
+    ----------------------------- :: retracT
+    G |- unbox (box T t) ~> t : T
 
-    ----------------- :: retract
-    spec (gen t) ~> t
+    G |- t : ? -> ?
+    ----------------------------------- :: retractU
+    G |- split (squash t) ~> t : ? -> ?
 
-    --------------- :: eta
-    (\x:T.h(t x)) ~> t
+    G |- t : A1 -> A2 && x nin FV(t)
+    -------------------------------- :: eta
+    G |- \x:A1.h(t x) ~> t : A1 -> A2
 
-    ----------------- :: proj1
-    fst (t1, t2) ~> t1
+    G, x : A1 |- t2 : A2 && G |- t1 : A1    
+    ------------------------------------ :: beta
+    G |- (\x:A1.t2) t1 ~> [t1/x]t2 : A2
 
-    ----------------- :: proj2
-    snd (t1, t2) ~> t2
+    G |- t1 : A1 && G |- t2 : A2
+    ---------------------------- :: proj1
+    G |- fst (t1, t2) ~> t1 : A1
 
-    ------------------- :: etaP
-    (fst t, snd t) ~> t
-    
-    --------------------- :: retractS
-    split (squash t) ~> t    
+    G |- t1 : A1 && G |- t2 : A2
+    ---------------------------- :: proj2
+    G |- snd (t1, t2) ~> t2 : A2
+
+    G |- t : A1 x A2
+    ---------------------------------- :: etaP
+    G |- (fst t, snd t) ~> t : A1 x A2
+
+    G, x : A1 |- t ~> t' : A2
+    ---------------------------------- :: lam
+    G |- \x:A1.t ~> \x:A1.t' : A1 -> A2
+
+    G |- t1 ~> t'1 : A1 -> A2 && G |- t2 : A1
+    ---------------------------------------- :: app1
+    G |- t1 t2 ~> t'1 t2 : A2
+
+    G |- t1 : A1 -> A2 && G |- t2 ~> t'2 : A1
+    ---------------------------------------- :: app2
+    G |- t1 t2 ~> t1 t'2 : A2
+
+    G |- t ~> t' : A1 x A2
+    ------------------------ :: fst
+    G |- fst t ~> fst t' : A1
+
+    G |- t ~> t' : A1 x A2
+    ------------------------ :: snd
+    G |- snd t ~> snd t' : A2
+
+    G |- t1 ~> t'1 : A1 && G |- t2 : A2
+    ---------------------------------- :: pair1
+    G |- (t1,t2) ~> (t'1,t2) : A1 x A2
+
+    G |- t1 : A1 && G |- t2  ~> t'2 : A2
+    ----------------------------------- :: pair2
+    G |- (t1,t2) ~> (t1,t'2) : A1 x A2
