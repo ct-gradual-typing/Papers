@@ -5,8 +5,14 @@ import Pretty
 
 type TyCtx = [(Vnm, Type)]
 
+-- Make a type error data type.  This will be used to throw errors
+-- that can be caught and handled later.
+    
 typeCheck :: Term -> Either String Type
 typeCheck t = runFreshM $ typeCheck_aux [] t
+
+-- Use the Reader monad transformer with the Except monad transformer.
+-- The Reader will hold onto the context.
 
 typeCheck_aux :: Fresh m => TyCtx -> Term -> m (Either String Type)
 typeCheck_aux ctx (Var x) = 
