@@ -37,10 +37,9 @@ prettyUnaryArg t f c = parenTerm t f >>= (\r -> return $ c++" "++r)
 prettyTerm :: Fresh m => Term -> m String
 prettyTerm Triv = return "triv"
 prettyTerm Zero = return "0"
-prettyTerm (Gen ty) = let sty = prettyType ty
-                       in return $ "gen<"++sty++">"
-prettyTerm (Spec ty) = let sty = prettyType ty
-                       in return $ "gen<"++sty++">"                          
+prettyTerm (Box ty) = let sty = prettyType ty
+                       in return $ "box<"++sty++">"
+prettyTerm (Unbox) = undefined                          
 prettyTerm (Var x) = return.n2s $ x
 prettyTerm (Fst t) = prettyUnaryArg t prettyTerm "fst"
 prettyTerm (Snd t) = prettyUnaryArg t prettyTerm "snd"

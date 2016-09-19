@@ -13,13 +13,13 @@ import Control.Monad -- For debugging messages.
 import Data.Functor.Identity
 
 import Syntax
-    
+
 ------------------------------------------------------------------------
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
   Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
-                           "gen", "spec"]
+                           "box", "unbox"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -69,7 +69,7 @@ typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
-aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try genParse <|> try specParse <|> var
+aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try boxParse <|> try unboxParse <|> var
 expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error" 
               
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
@@ -78,15 +78,16 @@ var = var' varName Var
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
 
-genParse = do
-  symbol "gen"
+boxParse = do
+  symbol "box"
   ty <- between (symbol "<") (symbol ">") typeParser  
-  return $ Gen ty
+  return $ Box ty
 
-specParse = do
-  symbol "spec"
+unboxParse = do
+  symbol "unbox"
   ty <- between (symbol "<") (symbol ">") typeParser  
-  return $ Spec ty
+  --should unbox also have a type like box?
+  return $ Unbox
 
 succParse = do
   reservedOp "succ"

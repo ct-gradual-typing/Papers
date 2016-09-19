@@ -2,8 +2,11 @@ module TypeChecker (typeCheck) where
 
 import Syntax
 import Pretty
+import qualified Data.Map.Strict as Map
 
-type TyCtx = [(Vnm, Type)]
+--Create dictionary for TyCtx
+type TyCtx = instance Map
+--type TyCtx = [(Vnm, Type)]
 
 -- Make a type error data type.  This will be used to throw errors
 -- that can be caught and handled later.
@@ -14,17 +17,17 @@ typeCheck t = runFreshM $ typeCheck_aux [] t
 -- Use the Reader monad transformer with the Except monad transformer.
 -- The Reader will hold onto the context.
 
-typeCheck_aux :: Fresh m => TyCtx -> Term -> m (Either String Type)
+typeCheck_aux :: (Fresh m, Map.Map TyCtx) => TyCtx -> Term -> m (Either String Type)
 typeCheck_aux ctx (Var x) = 
     case e of
       Just ty -> return.Right $ ty
       Nothing -> return.Left $ "Type error: variable "++(n2s x)++" is free, but I can only typecheck closed terms."
  where
-   e = lookup x ctx
+   e = Map.lookup x ctx
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
-typeCheck_aux ctx (Gen ty) = return.Right $ Arr ty U
-typeCheck_aux ctx (Spec ty) = return.Right $ Arr U ty
+typeCheck_aux ctx (Box ty) = return.Right $ Arr ty U
+typeCheck_aux ctx (Unbox) = undefined
 typeCheck_aux ctx (Succ t) = do
   r <- typeCheck_aux ctx t
   case r of
