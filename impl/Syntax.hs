@@ -30,10 +30,10 @@ type Vnm = Name Term            -- Variable name
 data Term =
    Var Vnm                      -- Free varialbe
  | Triv                         -- Unit's inhabitant
- | Sqsh				            -- Injection of the retract
- | Split			            -- Surjection of the retract
- | Box Type     		        -- Generalize to the untyped universe
- | Unbox			            -- Specialize the untype universe to a specific type
+ | Sqsh				-- Injection of the retract
+ | Split			-- Surjection of the retract
+ | Box Type     		-- Generalize to the untyped universe
+ | Unbox			-- Specialize the untype universe to a specific type
  | Fun Type (Bind Vnm Term)     -- \lambda-abstraction
  | App Term Term                -- Function application
  | Pair Term Term               -- Pairs

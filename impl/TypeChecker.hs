@@ -1,29 +1,38 @@
 module TypeChecker (typeCheck) where
 
+import Control.Monad.Reader
+import Control.Monad.Except    
+import qualified Data.Map.Strict as M    
+    
 import Syntax
 import Pretty
-import qualified Data.Map.Strict as Map
 
+    
 --Create dictionary for TyCtx
-type TyCtx = instance Map
+type TyCtx = M.Map Vnm Type
 --type TyCtx = [(Vnm, Type)]
 
 -- Make a type error data type.  This will be used to throw errors
 -- that can be caught and handled later.
+
+-- Type checking type.
+
+--type TCM = ReaderT TyCtx (ExceptT ???? LFreshM)
     
 typeCheck :: Term -> Either String Type
-typeCheck t = runFreshM $ typeCheck_aux [] t
-
+typeCheck t = undefined -- runFreshM $ typeCheck_aux [] t
+{-
 -- Use the Reader monad transformer with the Except monad transformer.
 -- The Reader will hold onto the context.
+-- 
 
-typeCheck_aux :: (Fresh m, Map.Map TyCtx) => TyCtx -> Term -> m (Either String Type)
+typeCheck_aux :: Term -> TCM Type
 typeCheck_aux ctx (Var x) = 
     case e of
       Just ty -> return.Right $ ty
       Nothing -> return.Left $ "Type error: variable "++(n2s x)++" is free, but I can only typecheck closed terms."
  where
-   e = Map.lookup x ctx
+   e = M.lookup x ctx
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
 typeCheck_aux ctx (Box ty) = return.Right $ Arr ty U
@@ -85,3 +94,4 @@ typeCheck_aux ctx (Pair t1 t2) = do
     (Left m , _) -> return.Left $ m
     (_ , Left m) -> return.Left $ m
     (Right ty1, Right ty2) -> return.Right $ Prod ty1 ty2
+-}

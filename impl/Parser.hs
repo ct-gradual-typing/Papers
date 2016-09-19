@@ -85,8 +85,6 @@ boxParse = do
 
 unboxParse = do
   symbol "unbox"
-  ty <- between (symbol "<") (symbol ">") typeParser  
-  --should unbox also have a type like box?
   return $ Unbox
 
 succParse = do
