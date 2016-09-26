@@ -6,35 +6,36 @@ import qualified Data.Map.Strict as M
     
 import Syntax
 import Pretty
-
     
 type TyCtx = M.Map Vnm Type
 
 --Error Types
-data TypeError = FreeVarsError Term | SuccError Term | FstError Term | SndError Term | FunError Term | AppError Term  deriving(Show)
+data TypeError = FreeVarsError Vnm
+               | SuccError Term
+               | FstError Term
+               | SndError Term
+               | FunError Term
+               | AppError Term
+  deriving(Show)
   
 readTypeError :: TypeError -> String
-readTypeError (FreeVarsError a) = "Type error: variable is free, but I can only typecheck closed terms."
+readTypeError (FreeVarsError a) =
+    "Type error: variable is free, but I can only typecheck closed terms."
 readTypeError (SuccError a) = "Type error (successor)"
 readTypeError (FstError a) = "Type error(first projection)"
 readTypeError (SndError a) = "Type error (second projection)"
 readTypeError (FunError a) = "Type error (application)"
 readTypeError (AppError a) = "Type error: types don't match"
-
-
   
 -- Make a type error data type.  This will be used to throw errors
 -- that can be caught and handled later.
 
 -- Type checking type.
 
-type TCM = ReaderT TyCtx (ExceptT _ (Either TypeError LFreshM)) --hole should be the inner monad
+type TCM = ReaderT TyCtx (ExceptT TypeError LFreshM) 
     
 typeCheck :: Term -> Either TypeError Type
 typeCheck t = undefined -- runFreshM $ typeCheck_aux [] t
-
---Do we want to use Control.Applicative.Lift instead of the Except monad transformer, the former collects all of the 
---errors and lets computations continue whereas the latter doesn't
 
 -- Use the Reader monad transformer with the Except monad transformer.
 -- The Reader will hold onto the context.
@@ -45,7 +46,7 @@ typeCheck_aux (Var x) = undefined
 {-
     case e of
       Just ty -> return.Right $ ty
-      Nothing -> return.Left $ (FreeVarsError (Var x)) --why not (Var x)? It's the only Term available
+      Nothing -> throwError (FreeVarsError x) --why not (Var x)? It's the only Term available
  where
    e = do
         f <- ask
@@ -107,9 +108,5 @@ typeCheck_aux ctx (App t1 t2) = do
 typeCheck_aux ctx (Pair t1 t2) = do
   r1 <- typeCheck_aux ctx t1
   r2 <- typeCheck_aux ctx t2
-  case (r1 , r2) of
-    (Left m1 , Left m2) -> return.Left $ m1 ++ "\n" ++ m2
-    (Left m , _) -> return.Left $ m
-    (_ , Left m) -> return.Left $ m
-    (Right ty1, Right ty2) -> return.Right $ Prod ty1 ty2
+  return $ Prod ty1 ty2
 -}
