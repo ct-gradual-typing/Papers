@@ -8,10 +8,15 @@ import Syntax
 import Pretty
 
     
---Create dictionary for TyCtx
 type TyCtx = M.Map Vnm Type
---type TyCtx = [(Vnm, Type)]
 
+--Error Types
+data TypeError = FreeVarsError Term | SuccError Term | FstError Term | SndError Term | FunError Term | AppError Term |
+                  PairError Term deriving(Show)
+
+-- getTypeError :: TypeError -> Term -> String
+-- getTypeError FreeVars Term = "Type error: variable "++(n2s a)++" is free, but I can only typecheck closed terms."
+                
 -- Make a type error data type.  This will be used to throw errors
 -- that can be caught and handled later.
 
