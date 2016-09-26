@@ -11,12 +11,18 @@ import Pretty
 type TyCtx = M.Map Vnm Type
 
 --Error Types
-data TypeError = FreeVarsError Term | SuccError Term | FstError Term | SndError Term | FunError Term | AppError Term |
-                  PairError Term deriving(Show)
+data TypeError = FreeVarsError Term | SuccError Term | FstError Term | SndError Term | FunError Term | AppError Term  deriving(Show)
+  
+readTypeError :: TypeError -> String
+readTypeError (FreeVarsError a) = "Type error: variable is free, but I can only typecheck closed terms."
+readTypeError (SuccError a) = "Type error (successor)"
+readTypeError (FstError a) = "Type error(first projection)"
+readTypeError (SndError a) = "Type error (second projection)"
+readTypeError (FunError a) = "Type error (application)"
+readTypeError (AppError a) = "Free Variable Error"
 
--- getTypeError :: TypeError -> Term -> String
--- getTypeError FreeVars Term = "Type error: variable "++(n2s a)++" is free, but I can only typecheck closed terms."
-                
+
+  
 -- Make a type error data type.  This will be used to throw errors
 -- that can be caught and handled later.
 
@@ -24,8 +30,8 @@ data TypeError = FreeVarsError Term | SuccError Term | FstError Term | SndError 
 
 --type TCM = ReaderT TyCtx (ExceptT ???? LFreshM)
     
-typeCheck :: Term -> Either String Type
-typeCheck t = undefined -- runFreshM $ typeCheck_aux [] t
+typeCheck :: Term -> Either TypeError Type
+typeCheck t = undefined --runFreshM $ typeCheck_aux [] t
 {-
 -- Use the Reader monad transformer with the Except monad transformer.
 -- The Reader will hold onto the context.
@@ -38,6 +44,7 @@ typeCheck_aux ctx (Var x) =
       Nothing -> return.Left $ "Type error: variable "++(n2s x)++" is free, but I can only typecheck closed terms."
  where
    e = M.lookup x ctx
+   
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
 typeCheck_aux ctx (Box ty) = return.Right $ Arr ty U
