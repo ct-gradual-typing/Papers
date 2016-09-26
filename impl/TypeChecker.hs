@@ -19,7 +19,7 @@ readTypeError (SuccError a) = "Type error (successor)"
 readTypeError (FstError a) = "Type error(first projection)"
 readTypeError (SndError a) = "Type error (second projection)"
 readTypeError (FunError a) = "Type error (application)"
-readTypeError (AppError a) = "Free Variable Error"
+readTypeError (AppError a) = "Type error: types don't match"
 
 
   
@@ -28,23 +28,29 @@ readTypeError (AppError a) = "Free Variable Error"
 
 -- Type checking type.
 
---type TCM = ReaderT TyCtx (ExceptT ???? LFreshM)
+type TCM = ReaderT TyCtx (ExceptT _ (Either TypeError LFreshM)) --hole should be the inner monad
     
 typeCheck :: Term -> Either TypeError Type
-typeCheck t = undefined --runFreshM $ typeCheck_aux [] t
-{-
+typeCheck t = undefined -- runFreshM $ typeCheck_aux [] t
+
+--Do we want to use Control.Applicative.Lift instead of the Except monad transformer, the former collects all of the 
+--errors and lets computations continue whereas the latter doesn't
+
 -- Use the Reader monad transformer with the Except monad transformer.
 -- The Reader will hold onto the context.
 -- 
 
 typeCheck_aux :: Term -> TCM Type
-typeCheck_aux ctx (Var x) = 
+typeCheck_aux (Var x) = undefined
+{-
     case e of
       Just ty -> return.Right $ ty
-      Nothing -> return.Left $ "Type error: variable "++(n2s x)++" is free, but I can only typecheck closed terms."
+      Nothing -> return.Left $ (FreeVarsError (Var x)) --why not (Var x)? It's the only Term available
  where
-   e = M.lookup x ctx
-   
+   e = do
+        f <- ask
+        M.lookup x f
+
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
 typeCheck_aux ctx (Box ty) = return.Right $ Arr ty U
