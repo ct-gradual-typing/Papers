@@ -16,16 +16,18 @@ data TypeError = FreeVarsError Vnm
                | SndError Term
                | FunError Term
                | AppError Term
+               | FreshError 
   deriving(Show)
   
 readTypeError :: TypeError -> String
 readTypeError (FreeVarsError a) =
-    "Type error: variable is free, but I can only typecheck closed terms."
+    "Type error: variable " ++(n2s a) ++ "is free, but I can only typecheck closed terms."
 readTypeError (SuccError a) = "Type error (successor)"
 readTypeError (FstError a) = "Type error(first projection)"
 readTypeError (SndError a) = "Type error (second projection)"
 readTypeError (FunError a) = "Type error (application)"
 readTypeError (AppError a) = "Type error: types don't match"
+readTypeError (FreshError) = "Type error: Fresh error"
   
 -- Make a type error data type.  This will be used to throw errors
 -- that can be caught and handled later.
@@ -35,7 +37,8 @@ readTypeError (AppError a) = "Type error: types don't match"
 type TCM = ReaderT TyCtx (ExceptT TypeError LFreshM) 
     
 typeCheck :: Term -> Either TypeError Type
-typeCheck t = undefined -- runFreshM $ typeCheck_aux [] t
+typeCheck t = ask $ (typeCheck_aux t)
+                        
 
 -- Use the Reader monad transformer with the Except monad transformer.
 -- The Reader will hold onto the context.
