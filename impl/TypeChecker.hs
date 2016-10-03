@@ -37,7 +37,8 @@ readTypeError (FreshError) = "Type error: Fresh error"
 type TCM = ReaderT TyCtx (ExceptT TypeError LFreshM) 
     
 typeCheck :: Term -> Either TypeError Type
-typeCheck t = ask $ (typeCheck_aux t)
+typeCheck t = undefined
+--ask $ (typeCheck_aux t)
                         
 
 -- Use the Reader monad transformer with the Except monad transformer.
