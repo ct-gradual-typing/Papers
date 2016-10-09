@@ -56,7 +56,7 @@ handleCMD s =
     handleLine (TypeCheck t) = do
       defs <- get
       let tu = unfoldDefsInTerm defs t
-          r = typeCheck tu
+          r = runTC tu
        in case r of
             Left m -> io.putStrLn .readTypeError $ m
             Right ty ->  io.putStrLn.prettyType $ ty

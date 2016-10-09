@@ -1,4 +1,4 @@
-module TypeChecker (typeCheck) where
+module TypeChecker (runTC) where
 
 
 import qualified Data.Map.Strict as M    
@@ -17,10 +17,11 @@ type TyCtx = M.Map Vnm Type
 
 type TCM = TE.ReaderT TyCtx (TE.ExceptT TE.TypeError LFreshM) 
     
-typeCheck :: Term -> Either TE.TypeError Type
-typeCheck t = undefined
---ask $ (typeCheck_aux t)
-                        
+typeCheck :: Term -> TE.ExceptT TE.TypeError LFreshM Type
+typeCheck t = TE.runReaderT (typeCheck_aux t) M.empty
+
+runTC :: Term -> Either TE.TypeError Type
+runTC t = runLFreshM $ TE.runExceptT $ typeCheck t
 
 -- Use the Reader monad transformer with the Except monad transformer.
 -- The Reader will hold onto the context.
@@ -30,7 +31,7 @@ typeCheck_aux :: Term -> TCM Type
 typeCheck_aux (Var x) = undefined
 {-
     case e of
-      Just ty -> return.Right $ ty
+      Just ty -> return ty
       Nothing -> throwError (FreeVarsError x) --why not (Var x)? It's the only Term available
  where
    e = do

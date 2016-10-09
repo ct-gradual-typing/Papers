@@ -1,4 +1,5 @@
-module TypeErrors (ReaderT, ExceptT, TypeError, readTypeError)where
+module TypeErrors (module Control.Monad.Reader,
+                   module Control.Monad.Except, TypeError, readTypeError)where
 
 import Control.Monad.Reader
 import Control.Monad.Except  
