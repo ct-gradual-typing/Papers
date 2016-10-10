@@ -82,10 +82,15 @@ boxParse = do
   symbol "box"
   ty <- between (symbol "<") (symbol ">") typeParser  
   return $ Box ty
+  -- add this to boxParse
+  -- ws
+  -- t <- expr
+  -- return $ Succ t
 
 unboxParse = do
   symbol "unbox"
   return $ Unbox
+  -- (symbol "<") (symbol ">") add this because unbox will now take a annotation
 
 succParse = do
   reservedOp "succ"

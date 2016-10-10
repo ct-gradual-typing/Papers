@@ -13,7 +13,7 @@ type TyCtx = M.Map Vnm Type
 -- that can be caught and handled later.
 
 -- Type checking type.
-
+ 
 type TCM = TE.ReaderT TyCtx (TE.ExceptT TE.TypeError LFreshM) 
     
 typeCheck :: Term -> TE.ExceptT TE.TypeError LFreshM Type
@@ -28,11 +28,13 @@ runTC t = runLFreshM $ TE.runExceptT $ typeCheck t
 
 typeCheck_aux :: Term -> TCM Type
 typeCheck_aux (Var x) = case e of
-      Just ty -> return ty
-      Nothing -> TE.throwError _ -- (TE.TypeError x)
+      Just ty -> ty
+      Nothing -> TE.throwError _-- make new TypeError for this situation
  where
    e = do
-        M.lookup x _
+     ctx <- TE.ask
+     M.lookup x ctx
+        
 {-
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
