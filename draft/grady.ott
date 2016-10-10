@@ -12,10 +12,10 @@ grammar
     {{tex \mathsf{squash} }}
     | split               ::   :: surj         {{ com surjection of the retract }}
     {{tex \mathsf{split} }}
-    | box T               ::   :: gen          {{ com generalize to the untyped universe }}
-    {{tex \mathsf{box}_{[[T]]} }}
-    | unbox               ::   :: spec         {{ com specialize the untyped universe to a specific type }}
-    {{tex \mathsf{unbox} }}
+    | box                 ::   :: gen          {{ com generalize to the untyped universe }}
+    {{tex \mathsf{box} }}
+    | unbox T             ::   :: spec         {{ com specialize the untyped universe to a specific type }}
+    {{tex \mathsf{unbox}_{[[T]]} }}
     | \ x : A . t         ::   :: abs          {{ com $\lambda$-abstraction }}
     {{tex \lambda [[x]] : [[A]] . [[t]] }}
     | t1 t2               ::   :: app          {{ com function application }}
@@ -104,11 +104,12 @@ defn
     ------------ :: var
     G |- x : A
 
+    G |- t : T
     ------------------- :: Box
-    G |- box T : T -> ?
+    G |- box t : ?
 
-    ------------------- :: Unbox
-    G |- unbox : ? -> T
+    --------------------- :: Unbox
+    G |- unbox T : ? -> T
 
     --------------------------- :: inj
     G |- squash : (? -> ?) -> ?
@@ -139,7 +140,7 @@ defn
     G |- snd t : A2
 
     G, x : A1 |- t : A2
-    ----------------------- :: abs
+    ----------------------- :: lam
     G |- \x:A1.t : A1 -> A2
 
     G |- t1 : A1 -> A2 && G |- t2 : A1
@@ -154,12 +155,12 @@ defn
 by
 
     G |- t : T
-    ----------------------------- :: retracT
-    G |- unbox (box T t) ~> t : T
+    ------------------------------- :: retracT
+    G |- unbox T (box t) ~> t : T
 
-    t != box T t'
-    --------------------------------- :: unboxErr
-    G |- unbox t ~> wrong : TypeError 
+    t != box t'
+    ----------------------------------- :: unboxErr
+    G |- unbox T t ~> wrong : TypeError 
 
     G |- t : ? -> ?
     ----------------------------------- :: retractU
