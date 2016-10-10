@@ -9,7 +9,6 @@ import Pretty
     
 type TyCtx = M.Map Vnm Type
 
-
 -- Make a type error data type.  This will be used to throw errors
 -- that can be caught and handled later.
 
@@ -28,16 +27,13 @@ runTC t = runLFreshM $ TE.runExceptT $ typeCheck t
 -- 
 
 typeCheck_aux :: Term -> TCM Type
-typeCheck_aux (Var x) = undefined
-{-
-    case e of
+typeCheck_aux (Var x) = case e of
       Just ty -> return ty
-      Nothing -> throwError (FreeVarsError x) --why not (Var x)? It's the only Term available
+      Nothing -> TE.throwError _ -- (TE.TypeError x)
  where
    e = do
-        f <- ask
-        M.lookup x f
-
+        M.lookup x _
+{-
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
 typeCheck_aux ctx (Box ty) = return.Right $ Arr ty U
