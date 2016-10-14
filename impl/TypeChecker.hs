@@ -36,7 +36,7 @@ typeCheck_aux (Var x) = do
                          maybeType <- lookup_ctx x
                          case maybeType of
                             Just found -> return $ found
-                            Nothing -> TE.throwError _
+                            Nothing -> TE.throwError $ TE.NoMatchError $ Var x
 {-
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat
