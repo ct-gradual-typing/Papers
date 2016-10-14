@@ -15,26 +15,28 @@ type TyCtx = M.Map Vnm Type
 -- Type checking type.
  
 type TCM = TE.ReaderT TyCtx (TE.ExceptT TE.TypeError LFreshM) 
-    
-typeCheck :: Term -> TE.ExceptT TE.TypeError LFreshM Type
-typeCheck t = TE.runReaderT (typeCheck_aux t) M.empty
+
 
 runTC :: Term -> Either TE.TypeError Type
 runTC t = runLFreshM $ TE.runExceptT $ typeCheck t
 
--- Use the Reader monad transformer with the Except monad transformer.
--- The Reader will hold onto the context.
--- 
+    
+typeCheck :: Term -> TE.ExceptT TE.TypeError LFreshM Type
+typeCheck t = TE.runReaderT (typeCheck_aux t) M.empty
+
+
+lookup_ctx :: Vnm -> TCM (Maybe Type)
+lookup_ctx n = do
+                ctx <- TE.ask
+                return $ M.lookup n ctx
+         
 
 typeCheck_aux :: Term -> TCM Type
-typeCheck_aux (Var x) = case e of
-      Just ty -> ty
-      Nothing -> TE.throwError _-- make new TypeError for this situation
- where
-   e = do
-     ctx <- TE.ask
-     M.lookup x ctx
-        
+typeCheck_aux (Var x) = do
+                         maybeType <- lookup_ctx x
+                         case maybeType of
+                            Just found -> return $ found
+                            Nothing -> TE.throwError _
 {-
 typeCheck_aux ctx Triv = return.Right $ Unit
 typeCheck_aux ctx Zero = return.Right $ Nat

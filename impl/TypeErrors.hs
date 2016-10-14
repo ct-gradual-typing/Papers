@@ -14,7 +14,8 @@ data TypeError = FreeVarsError Vnm
                | SndError Term
                | FunError Term
                | AppError Term
-               | FreshError 
+               | FreshError
+               | NoMatchError Term
   deriving(Show)
   
 readTypeError :: TypeError -> String
@@ -26,4 +27,4 @@ readTypeError (SndError a) = "Type error (second projection)"
 readTypeError (FunError a) = "Type error (application)"
 readTypeError (AppError a) = "Type error: types don't match"
 readTypeError (FreshError) = "Type error: Fresh error"
-  
+readTypeError (NoMatchError a) = "Type error: No type was found"  
