@@ -36,12 +36,13 @@ typeCheck_aux (Var x) = do
                          maybeType <- lookup_ctx x
                          case maybeType of
                             Just found -> return $ found
-                            Nothing -> TE.throwError $ TE.NoMatchError $ Var x
-{-
-typeCheck_aux ctx Triv = return.Right $ Unit
-typeCheck_aux ctx Zero = return.Right $ Nat
-typeCheck_aux ctx (Box ty) = return.Right $ Arr ty U
+                            Nothing -> TE.throwError $ TE.FreeVarsError $ x
+
+typeCheck_aux Triv = return $ Unit
+typeCheck_aux Zero = return $ Nat
+typeCheck_aux (Box ty) = return $ Arr ty U
 typeCheck_aux ctx (Unbox) = undefined
+{-
 typeCheck_aux ctx (Succ t) = do
   r <- typeCheck_aux ctx t
   case r of

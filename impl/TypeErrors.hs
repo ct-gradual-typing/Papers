@@ -21,7 +21,7 @@ data TypeError = FreeVarsError Vnm
 readTypeError :: TypeError -> String
 readTypeError (FreeVarsError a) =
     "Type error: variable " ++(n2s a) ++ "is free, but I can only typecheck closed terms."
-readTypeError (SuccError a) = "Type error (successor)"
+readTypeError (SuccError a) = "Type error (successor)"++(prettyType a)
 readTypeError (FstError a) = "Type error(first projection)"
 readTypeError (SndError a) = "Type error (second projection)"
 readTypeError (FunError a) = "Type error (application)"

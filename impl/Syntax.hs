@@ -4,7 +4,8 @@ module Syntax (module Unbound.LocallyNameless,
                n2s,
                Vnm,
                Type(..),
-               Term(..)) where
+               Term(..),
+               isTerminating) where
 
 import Unbound.LocallyNameless 
 import Unbound.LocallyNameless.Alpha
