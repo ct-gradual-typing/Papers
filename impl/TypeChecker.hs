@@ -35,8 +35,10 @@ typeCheck_aux (Var x) = do
 
 typeCheck_aux Triv = return $ Unit
 typeCheck_aux Zero = return $ Nat
-typeCheck_aux (Box ty) = return $ Arr ty U
--- if ty is a terminating type then you can unbox it
+typeCheck_aux (Box ty) = if(isTerminating ty)
+                            then return $ Arr ty U 
+                            else TE.throwError $ TE.BoxError $ (Box ty)
+
 typeCheck_aux (Unbox ty) = if(isTerminating ty)
                             then return $ Arr U ty      
                             else TE.throwError $ TE.UnboxError $ (Unbox ty)
@@ -59,36 +61,24 @@ typeCheck_aux (Snd t) = do
    Prod t1 t2 -> return $ t2
    _ -> TE.throwError $ TE.SndError $ (Snd t)
    
-{-
+
 typeCheck_aux (Fun ty1 b) = do
   (x, t) <- unbind b
-  r <- typeCheck_aux t
-  case r of
-    Just ty2 -> return $ Arr ty1 ty2
-    Nothing -> TE.throwError $ TE.FunError $ (Fun ty1 b)
+  _
+  -- ty2 <- typeCheck_aux t
+  -- return $ Arr ty1 ty2
     
 
-typeCheck_aux ctx (App t1 t2) = do
-  r1 <- typeCheck_aux ctx t1
-  r2 <- typeCheck_aux ctx t2
-  case (r1 , r2) of
-    (Left m1 , Left m2) -> return.Left $ m1 ++ "\n" ++ m2
-    (Left m , _) -> return.Left $ m
-    (_ , Left m) -> return.Left $ m
-    (Right r3, Right ty3) ->
-        case r3 of 
-          Arr ty1 ty2 ->
-              if (ty1 == ty3)
-              then return.Right $ ty2
-              else return.Left $ "Type error: types don't match "++(prettyType ty1)++" !~ "++(prettyType ty3)
-          _ -> return.Left $ "Type error (application): "++(prettyType r3)
-
-typeCheck_aux (Pair t1 t2) = do
-  r1 <- typeCheck_aux t1
-  r2 <- typeCheck_aux t2
-  case (r1, r2) of
-    (Just ty1, Just ty2) -> return $ Prod ty1 ty2
-    (_,Just ty2) -> undefined
-    (Just ty1, _) -> undefined
-    (_,_)  -> undefined
--}
+typeCheck_aux (App t1 t2) = do
+  ty1 <- typeCheck_aux t1
+  ty2 <- typeCheck_aux t2
+  let ty3 = Arr ty1 ty2
+  if (ty1 == ty3)
+    then return $ ty2
+    else TE.throwError $ TE.AppError $ (App t1 t2)
+    
+typeCheck_aux (Pair t1 t2) = do 
+  ty1 <- typeCheck_aux t1
+  ty2 <- typeCheck_aux t2
+  return $ Prod ty1 ty2
+   

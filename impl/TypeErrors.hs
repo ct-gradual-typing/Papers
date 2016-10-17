@@ -17,6 +17,7 @@ data TypeError = FreeVarsError Vnm
                | FreshError
                | NoTypeError Term
                | UnboxError Term
+               | BoxError Term
   deriving(Show)
   
 readTypeError :: TypeError -> String
