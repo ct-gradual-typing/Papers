@@ -64,9 +64,8 @@ typeCheck_aux (Snd t) = do
 
 typeCheck_aux (Fun ty1 b) = do
   (x, t) <- unbind b
-  _
-  -- ty2 <- typeCheck_aux t
-  -- return $ Arr ty1 ty2
+  ty2 <- typeCheck_aux t
+  return $ Arr ty1 ty2
     
 
 typeCheck_aux (App t1 t2) = do
