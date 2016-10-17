@@ -13,11 +13,12 @@ data TypeError = FreeVarsError Vnm
                | FstError Term
                | SndError Term
                | FunError Term
-               | AppError Term
+               | AppError Type
                | FreshError
                | NoTypeError Term
                | UnboxError Term
                | BoxError Term
+               | UnMatchedTypes Type Type
   deriving(Show)
   
 readTypeError :: TypeError -> String

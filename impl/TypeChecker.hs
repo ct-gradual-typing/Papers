@@ -63,18 +63,20 @@ typeCheck_aux (Snd t) = do
    
 
 typeCheck_aux (Fun ty1 b) = do
-  (x, t) <- unbind b
-  ty2 <- typeCheck_aux t
-  return $ Arr ty1 ty2
+  lunbind b $ (\(x,t) -> do
+      ty2 <- typeCheck_aux t
+      return $ Arr ty1 ty2)
     
 
 typeCheck_aux (App t1 t2) = do
   ty1 <- typeCheck_aux t1
   ty2 <- typeCheck_aux t2
-  let ty3 = Arr ty1 ty2
-  if (ty1 == ty3)
-    then return $ ty2
-    else TE.throwError $ TE.AppError $ (App t1 t2)
+  case ty1 of 
+    Arr a b -> 
+        if(a == ty2)
+            then return $ b
+            else TE.throwError $ TE.UnMatchedTypes a ty2
+    _ -> TE.throwError $ TE.AppError $ ty1
     
 typeCheck_aux (Pair t1 t2) = do 
   ty1 <- typeCheck_aux t1
