@@ -15,16 +15,18 @@ data TypeError = FreeVarsError Vnm
                | FunError Term
                | AppError Term
                | FreshError
-               | NoMatchError Term
+               | NoTypeError Term
+               | UnboxError Term
+               | BoxError Term
   deriving(Show)
   
 readTypeError :: TypeError -> String
 readTypeError (FreeVarsError a) =
     "Type error: variable " ++(n2s a) ++ "is free, but I can only typecheck closed terms."
-readTypeError (SuccError a) = "Type error (successor)"
+readTypeError (SuccError a) = "Type error (successor)"  -- ++(prettyType a)
 readTypeError (FstError a) = "Type error(first projection)"
 readTypeError (SndError a) = "Type error (second projection)"
 readTypeError (FunError a) = "Type error (application)"
 readTypeError (AppError a) = "Type error: types don't match"
 readTypeError (FreshError) = "Type error: Fresh error"
-readTypeError (NoMatchError a) = "Type error: No type was found"  
+readTypeError (NoTypeError a) = "Type error: No type was found"  

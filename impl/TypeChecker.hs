@@ -8,11 +8,6 @@ import Syntax
 import Pretty
     
 type TyCtx = M.Map Vnm Type
-
--- Make a type error data type.  This will be used to throw errors
--- that can be caught and handled later.
-
--- Type checking type.
  
 type TCM = TE.ReaderT TyCtx (TE.ExceptT TE.TypeError LFreshM) 
 
@@ -36,63 +31,54 @@ typeCheck_aux (Var x) = do
                          maybeType <- lookup_ctx x
                          case maybeType of
                             Just found -> return $ found
-                            Nothing -> TE.throwError $ TE.NoMatchError $ Var x
-{-
-typeCheck_aux ctx Triv = return.Right $ Unit
-typeCheck_aux ctx Zero = return.Right $ Nat
-typeCheck_aux ctx (Box ty) = return.Right $ Arr ty U
-typeCheck_aux ctx (Unbox) = undefined
-typeCheck_aux ctx (Succ t) = do
-  r <- typeCheck_aux ctx t
-  case r of
-    Left m -> return.Left $ m
-    Right ty ->
-           case ty of
-             Nat -> return.Right $ Nat
-             _ -> return.Left $ "Type error (successor): "++(prettyType ty)
-      
-typeCheck_aux ctx (Fst t) = do
-  r <- typeCheck_aux ctx t
-  case r of
-    Left m -> return.Left $ m
-    Right ty ->
-        case ty of
-          Prod t1 t2 -> return.Right $ t1
-          _ -> return.Left $ "Type error(first projection): "++(prettyType ty)
+                            Nothing -> TE.throwError $ TE.FreeVarsError $ x
 
-typeCheck_aux ctx (Snd t) = do
-  r <- typeCheck_aux ctx t
-  case r of
-    Left m -> return.Left $ m
-    Right ty ->
-        case ty of
-          Prod t1 t2 -> return.Right $ t2
-          _ -> return.Left $ "Type error (second projection): "++(prettyType ty)
+typeCheck_aux Triv = return $ Unit
+typeCheck_aux Zero = return $ Nat
+typeCheck_aux (Box ty) = if(isTerminating ty)
+                            then return $ Arr ty U 
+                            else TE.throwError $ TE.BoxError $ (Box ty)
 
-typeCheck_aux ctx (Fun ty1 b) = do
+typeCheck_aux (Unbox ty) = if(isTerminating ty)
+                            then return $ Arr U ty      
+                            else TE.throwError $ TE.UnboxError $ (Unbox ty)
+
+typeCheck_aux (Succ t) = do
+  r <- typeCheck_aux t
+  case r of
+    Nat -> return $ Nat
+    _ -> TE.throwError $ TE.SuccError $ (Succ t) 
+     
+typeCheck_aux (Fst t) = do
+  r <- typeCheck_aux t
+  case r of
+   Prod t1 t2 -> return $ t1
+   _ -> TE.throwError $ TE.FstError $ (Fst t)
+
+typeCheck_aux (Snd t) = do
+  r <- typeCheck_aux t
+  case r of
+   Prod t1 t2 -> return $ t2
+   _ -> TE.throwError $ TE.SndError $ (Snd t)
+   
+
+typeCheck_aux (Fun ty1 b) = do
   (x, t) <- unbind b
-  r <- typeCheck_aux ((x , ty1):ctx) t
-  case r of
-    Left m -> return.Left $ m
-    Right ty2 -> return.Right $ Arr ty1 ty2
+  _
+  -- ty2 <- typeCheck_aux t
+  -- return $ Arr ty1 ty2
+    
 
-typeCheck_aux ctx (App t1 t2) = do
-  r1 <- typeCheck_aux ctx t1
-  r2 <- typeCheck_aux ctx t2
-  case (r1 , r2) of
-    (Left m1 , Left m2) -> return.Left $ m1 ++ "\n" ++ m2
-    (Left m , _) -> return.Left $ m
-    (_ , Left m) -> return.Left $ m
-    (Right r3, Right ty3) ->
-        case r3 of 
-          Arr ty1 ty2 ->
-              if (ty1 == ty3)
-              then return.Right $ ty2
-              else return.Left $ "Type error: types don't match "++(prettyType ty1)++" !~ "++(prettyType ty3)
-          _ -> return.Left $ "Type error (application): "++(prettyType r3)
-
-typeCheck_aux ctx (Pair t1 t2) = do
-  r1 <- typeCheck_aux ctx t1
-  r2 <- typeCheck_aux ctx t2
+typeCheck_aux (App t1 t2) = do
+  ty1 <- typeCheck_aux t1
+  ty2 <- typeCheck_aux t2
+  let ty3 = Arr ty1 ty2
+  if (ty1 == ty3)
+    then return $ ty2
+    else TE.throwError $ TE.AppError $ (App t1 t2)
+    
+typeCheck_aux (Pair t1 t2) = do 
+  ty1 <- typeCheck_aux t1
+  ty2 <- typeCheck_aux t2
   return $ Prod ty1 ty2
--}
+   
