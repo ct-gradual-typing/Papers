@@ -39,7 +39,7 @@ prettyTerm Triv = return "triv"
 prettyTerm Zero = return "0"
 prettyTerm (Box ty) = let sty = prettyType ty
                        in return $ "box<"++sty++">"
-prettyTerm (Unbox) = return "unbox"                   
+prettyTerm (Unbox ty) = return "unbox"   --TODO: Do I want to return the type that unbox used (ty)                
 prettyTerm (Var x) = return.n2s $ x
 prettyTerm (Fst t) = prettyUnaryArg t prettyTerm "fst"
 prettyTerm (Snd t) = prettyUnaryArg t prettyTerm "snd"
