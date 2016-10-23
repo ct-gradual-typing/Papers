@@ -34,7 +34,7 @@ data Term =
  | Sqsh                         -- Injection of the retract
  | Split                        -- Surjection of the retract
  | Box Type                     -- Generalize to the untyped universe
- | Unbox Type                       -- Specialize the untype universe to a specific type
+ | Unbox Type                   -- Specialize the untype universe to a specific type
  | Fun Type (Bind Vnm Term)     -- \lambda-abstraction
  | App Term Term                -- Function application
  | Pair Term Term               -- Pairs

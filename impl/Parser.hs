@@ -19,7 +19,7 @@ import Syntax
 ------------------------------------------------------------------------
 lexer = haskellStyle {
   Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
-                           "box", "unbox"]
+                           "box", "unbox", ":l", ":load", ":r", ":reload"]
 }
 tokenizer = Token.makeTokenParser lexer
 
