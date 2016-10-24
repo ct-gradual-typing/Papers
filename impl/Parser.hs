@@ -57,7 +57,7 @@ varName' p msg = do
 parseConst s c = symbol s >> return c
          
 tyNat = parseConst "Nat" Nat
-tyU = parseConst "U" U
+tyU = parseConst "?" U
 tyUnit = parseConst "1" Unit         
         
 -- The initial expression parsing table for types.

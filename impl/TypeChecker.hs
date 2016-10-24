@@ -26,6 +26,9 @@ lookup_ctx n = do
                 return $ M.lookup n ctx
          
 
+extend_ctx :: Vnm -> Type -> TCM a -> TCM a
+extend_ctx x ty = TE.local (M.insert x ty)
+
 typeCheck_aux :: Term -> TCM Type
 typeCheck_aux (Var x) = do
                          maybeType <- lookup_ctx x
@@ -61,12 +64,11 @@ typeCheck_aux (Snd t) = do
    Prod t1 t2 -> return $ t2
    _ -> TE.throwError $ TE.SndError $ (Snd t)
    
-
 typeCheck_aux (Fun ty1 b) = do
-  lunbind b $ (\(x,t) -> do
-      ty2 <- typeCheck_aux t
-      return $ Arr ty1 ty2)
-    
+  lunbind b $ (\(x,t) ->
+      extend_ctx x ty1 $ do
+        ty2 <- typeCheck_aux t
+        return $ Arr ty1 ty2)
 
 typeCheck_aux (App t1 t2) = do
   ty1 <- typeCheck_aux t1
