@@ -7,7 +7,7 @@ import Parser
 prettyType :: Type -> String
 prettyType Nat = "Nat"
 prettyType Unit = "1"
-prettyType U = "U"
+prettyType U = "?"
 prettyType (Arr t1 t2) =
     case t1 of
       Arr _ _ -> "("++s1++") -> "++s2
@@ -39,7 +39,8 @@ prettyTerm Triv = return "triv"
 prettyTerm Zero = return "0"
 prettyTerm (Box ty) = let sty = prettyType ty
                        in return $ "box<"++sty++">"
-prettyTerm (Unbox ty) = return "unbox"   --TODO: Do I want to return the type that unbox used (ty)                
+prettyTerm (Unbox ty) = let sty = prettyType ty
+                         in return $"unbox<"++sty++">"   --TODO: Do I want to return the type that unbox used (ty)                
 prettyTerm (Var x) = return.n2s $ x
 prettyTerm (Fst t) = prettyUnaryArg t prettyTerm "fst"
 prettyTerm (Snd t) = prettyUnaryArg t prettyTerm "snd"
