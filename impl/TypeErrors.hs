@@ -31,3 +31,6 @@ readTypeError (FunError a) = "Type error (application)"
 readTypeError (AppError a) = "Type error: types don't match"
 readTypeError (FreshError) = "Type error: Fresh error"
 readTypeError (NoTypeError a) = "Type error: No type was found"  
+readTypeError (UnMatchedTypes a b) = "Type error: "++(n2s a) ++" and "++(n2s b) ++" aren't the same type."
+readTypeError (BoxError a) = "Type error: You cannot box "++(n2s a)
+readTypeError (UnboxError a) = "Type error: You cannont unbox "++(n2s a)
