@@ -1,2 +1,16 @@
 Examples:
-Function and Application: :t \(m:?).\(n:Nat).\(f:? -> Nat).\(h:Nat -> ?).h (f m)
+1.  Function and Application: \(m:?).\(n:Nat).\(f:? -> Nat).\(h:Nat -> ?).h (f m)
+
+2.  Succ:
+    let m = 0
+    :t succ m
+    
+3.  Box: \(m:?).\(n:Nat).\(f:? -> Nat).box<Nat> (f m)
+
+4.  Unbox: \(m:?).\(n:Nat).\(h:Nat -> ?).h (unbox<Nat> m)
+
+5.  Pair: ((succ 0),(succ 0))
+
+6.  First:  fst(succ 0,triv)
+
+7.  Second:  snd(succ 0,triv)

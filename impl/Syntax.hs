@@ -29,10 +29,10 @@ isTerminating _ = True
 type Vnm = Name Term            -- Variable name
 
 data Term =
-   Var Vnm                      -- Free varialbe
+   Var Vnm                      -- Free variable
  | Triv                         -- Unit's inhabitant
- | Sqsh                         -- Injection of the retract
- | Split                        -- Surjection of the retract
+ | Sqsh Term                    -- Injection of the retract
+ | Split Term                   -- Surjection of the retract
  | Box Type                     -- Generalize to the untyped universe
  | Unbox Type                   -- Specialize the untype universe to a specific type
  | Fun Type (Bind Vnm Term)     -- \lambda-abstraction

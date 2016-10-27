@@ -19,7 +19,7 @@ import Syntax
 ------------------------------------------------------------------------
 lexer = haskellStyle {
   Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
-                           "box", "unbox", ":l", ":load", ":r", ":reload"]
+                           "box", "unbox", ":l", ":load", ":r", ":reload", "sqsh"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -70,7 +70,7 @@ typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
 aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try boxParse <|> try unboxParse <|> var
-expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error" 
+expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> sqsh <|> parens expr <?> "parse error"
               
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = var' varName Var
@@ -95,11 +95,9 @@ succParse = do
   return $ Succ t
          
 pairParse = do
-  symbol "("
   t1 <- expr
   comma
   t2 <- expr
-  symbol ")"
   return $ Pair t1 t2
 
 fstParse = do
@@ -111,6 +109,8 @@ sndParse = do
   reservedOp "snd"
   t <- expr
   return $ Snd t
+  
+  
          
 funParse = do
   reservedOp "\\"
@@ -127,7 +127,12 @@ appParse = do
   l <- many aterm
   case l of
     [] -> fail "A term must be supplied"
-    _ -> return $ foldl1 App l         
+    _ -> return $ foldl1 App l      
+
+sqsh = do
+  reservedOp "sqsh"
+  t <- expr
+  return $ Sqsh t
 
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
