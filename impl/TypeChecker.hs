@@ -84,4 +84,19 @@ typeCheck_aux (Pair t1 t2) = do
   ty1 <- typeCheck_aux t1
   ty2 <- typeCheck_aux t2
   return $ Prod ty1 ty2
+  
+-- Not sure which version is right
+-- typeCheck_aux (Sqsh t) = do
+  -- ty1 <- typeCheck_aux t
+  -- case ty1 of
+    -- Arr (Arr a b) c -> return $ (Arr (Arr a b) c)
+    -- _ -> TE.throwError $ TE.SqshError $ t
+    
+typeCheck_aux (Sqsh t) = do
+  ty1 <- typeCheck_aux t
+  case ty1 of
+    Arr a b -> if(a == b)
+                then return $ b
+                else TE.throwError $ TE.SqshError $ t
+    _ -> TE.throwError $ TE.SqshError $ t
    

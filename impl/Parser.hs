@@ -19,7 +19,7 @@ import Syntax
 ------------------------------------------------------------------------
 lexer = haskellStyle {
   Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
-                           "box", "unbox", ":l", ":load", ":r", ":reload", "sqsh"]
+                           "box", "unbox", ":l", ":load", ":r", ":reload", "sqsh", "split"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -70,7 +70,7 @@ typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
 aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try boxParse <|> try unboxParse <|> var
-expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> sqsh <|> parens expr <?> "parse error"
+expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> sqsh <|> split <|> parens expr <?> "parse error"
               
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = var' varName Var
@@ -131,8 +131,14 @@ appParse = do
 
 sqsh = do
   reservedOp "sqsh"
+  ws
   t <- expr
   return $ Sqsh t
+  
+split = do
+  reservedOp "split"
+  t <- expr
+  return $ Split t  
 
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
