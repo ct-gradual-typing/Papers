@@ -40,7 +40,7 @@ prettyTerm Zero = return "0"
 prettyTerm (Box ty) = let sty = prettyType ty
                        in return $ "box<"++sty++">"
 prettyTerm (Unbox ty) = let sty = prettyType ty
-                         in return $"unbox<"++sty++">"   --TODO: Do I want to return the type that unbox used (ty)                
+                         in return $"unbox<"++sty++">"   
 prettyTerm (Var x) = return.n2s $ x
 prettyTerm (Fst t) = prettyUnaryArg t prettyTerm "fst"
 prettyTerm (Snd t) = prettyUnaryArg t prettyTerm "snd"
@@ -59,6 +59,9 @@ prettyTerm (Pair t1 t2) = do
   s1 <- parenTerm t1 prettyTerm
   s2 <- parenTerm t2 prettyTerm
   return $ "("++s1++", "++s2++")"
+  
+prettyTerm Sqsh = return "sqsh"
+prettyTerm Split = return "split"
 
 testPretty parser pretty s = do
   let o = parse parser "" s in  

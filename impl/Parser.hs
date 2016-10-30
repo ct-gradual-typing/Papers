@@ -131,14 +131,11 @@ appParse = do
 
 sqsh = do
   reservedOp "sqsh"
-  ws
-  t <- expr
-  return $ Sqsh t
+  return $ Sqsh
   
 split = do
   reservedOp "split"
-  t <- expr
-  return $ Split t  
+  return $ Split
 
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
