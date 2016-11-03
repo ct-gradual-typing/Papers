@@ -69,8 +69,8 @@ typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
-aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try boxParse <|> try unboxParse <|> var
-expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> sqsh <|> split <|> parens expr <?> "parse error"
+aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try squash <|> try split <|> try boxParse <|> try unboxParse <|> var
+expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error"
               
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = var' varName Var
@@ -129,9 +129,9 @@ appParse = do
     [] -> fail "A term must be supplied"
     _ -> return $ foldl1 App l      
 
-sqsh = do
-  reservedOp "sqsh"
-  return $ Sqsh
+squash = do
+  reservedOp "squash"
+  return $ Squash
   
 split = do
   reservedOp "split"

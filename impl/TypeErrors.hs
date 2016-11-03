@@ -19,7 +19,6 @@ data TypeError = FreeVarsError Vnm
                | UnboxError Term
                | BoxError Term
                | UnMatchedTypes Type Type
-               | SqshError Term
   deriving(Show)
   
 readTypeError :: TypeError -> String
@@ -33,6 +32,5 @@ readTypeError (AppError a) = "Type error (application): types don't match"
 readTypeError (FreshError) = "Type error: Fresh error"
 readTypeError (NoTypeError a) = "Type error: No type was found"  
 readTypeError (UnMatchedTypes a b) = "Type error: "++ (show a) ++" and "++ (show b) ++" aren't the same type."
-readTypeError (BoxError a) = "Type error: You cannot box "++ (show a)
-readTypeError (UnboxError a) = "Type error: You cannont unbox "++ (show a)
-readTypeError (SqshError a) = "Type error (squash)"
+readTypeError (BoxError a) = "Type error: You cannot "++ (show a)++", you can only box terminating types"
+readTypeError (UnboxError a) = "Type error: You cannont "++ (show a)++", you can only unbox terminating types"

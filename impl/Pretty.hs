@@ -60,7 +60,7 @@ prettyTerm (Pair t1 t2) = do
   s2 <- parenTerm t2 prettyTerm
   return $ "("++s1++", "++s2++")"
   
-prettyTerm Sqsh = return "sqsh"
+prettyTerm Squash = return "squash"
 prettyTerm Split = return "split"
 
 testPretty parser pretty s = do

@@ -2,15 +2,36 @@ Examples:
 1.  Function and Application: \(m:?).\(n:Nat).\(f:? -> Nat).\(h:Nat -> ?).h (f m)
 
 2.  Succ:
-    let m = 0
-    :t succ m
+        :t succ 0 returns Nat
+        :t succ (succ 0) returns Nat
     
-3.  Box: \(m:?).\(n:Nat).\(f:? -> Nat).box<Nat> (f m)
+3.  Box: 
+        :t \(m:?).\(n:Nat).\(f:? -> Nat).box<Nat> (f m) returns ? -> Nat -> (? -> Nat) -> ?
 
-4.  Unbox: \(m:?).\(n:Nat).\(h:Nat -> ?).h (unbox<Nat> m)
+4.  Unbox: 
+        :t \(m:?).\(n:Nat).\(h:Nat -> ?).h (unbox<Nat> m) returns ? -> Nat -> (Nat -> ?) -> ?
+        :t \(m:?).\(n:Nat).\(h:Nat -> ?).h (unbox<?> m) returns - Type error: You cannont Unbox U
+        :t \(m:?).\(n:Nat).\(f:? -> Nat).box<(Prod ? ?)> (f m) returns - error: unexpected '<'
+        :t \(m:?).\(n:Nat).\(f:? -> Nat).box<?> (f m) returns Type error: You cannot Box U
 
-5.  Pair: ((succ 0),(succ 0))
+5.  Pair: 
+        :t ((succ 0),(succ 0)) returns Nat x Nat
+        :t (((succ 0),(succ 0)),((succ 0),(succ 0))) returns Nat x Nat x Nat x Nat
 
-6.  First:  fst(succ 0,triv)
+6.  First:  
+        :t fst(succ 0,triv) returns Nat
+        :t fst(succ 0) returns - Type error (first projection)
 
-7.  Second:  snd(succ 0,triv)
+7.  Second:  
+        :t snd(succ 0,triv) returns 1
+        :t snd( triv) returns - Type error (second projection)
+
+8.  Squash/Split: 
+        :t \(x:? -> ?).(squash x) returns (? -> ?) -> ?
+        :t \(x:? -> ?).(x (squash x)) returns (? -> ?) -> ?         Should the last two give the same answer?
+        :t \(x:?).(squash(split x)) returns ? -> ?
+        :t \(x:? -> ?).(split (squash x)) returns (? -> ?) -> ? -> ?
+        
+9. Miscellaneous:
+        :t 0 returns Nat
+        :t zero returns Type error: variable zero is free, but I can only typecheck closed terms.
