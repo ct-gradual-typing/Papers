@@ -40,17 +40,17 @@ typeCheck_aux Triv = return $ Unit
 typeCheck_aux Zero = return $ Nat
 typeCheck_aux (Box ty) = if(isTerminating ty)
                             then return $ Arr ty U 
-                            else TE.throwError $ TE.BoxError $ (Box ty)
+                            else TE.throwError $ TE.BoxError ty
 
 typeCheck_aux (Unbox ty) = if(isTerminating ty)
                             then return $ Arr U ty      
-                            else TE.throwError $ TE.UnboxError $ (Unbox ty)
+                            else TE.throwError $ TE.UnboxError ty
 
 typeCheck_aux (Succ t) = do
   r <- typeCheck_aux t
   case r of
     Nat -> return $ Nat
-    _ -> TE.throwError $ TE.SuccError $ (Succ t) 
+    _ -> TE.throwError $ TE.SuccError $ t 
      
 typeCheck_aux (Fst t) = do
   r <- typeCheck_aux t
@@ -77,8 +77,8 @@ typeCheck_aux (App t1 t2) = do
     Arr a b -> 
         if(a == ty2)
             then return $ b
-            else TE.throwError $ TE.UnMatchedTypes a ty2
-    _ -> TE.throwError $ TE.AppError $ ty1
+            else TE.throwError $ TE.UnMatchedTypes ty2 a
+    _ -> TE.throwError $ TE.AppError ty1 ty2
     
 typeCheck_aux (Pair t1 t2) = do 
   ty1 <- typeCheck_aux t1
