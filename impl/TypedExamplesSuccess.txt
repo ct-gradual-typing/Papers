@@ -1,0 +1,53 @@
+The Following are all examples that should all typecheck:
+1.  Function and Application: 
+        :t \(m:?).\(n:Nat).\(f:? -> Nat).\(h:Nat -> ?).h (f m) 
+            returns - ? -> Nat -> (? -> Nat) -> (Nat -> ?) -> ?
+        :t \(m:?).\(n:Nat).\(f:? -> Nat).\(h:Nat -> ?).(f ) 
+            return -  ? -> Nat -> (? -> Nat) -> (Nat -> ?) -> ? -> Nat
+
+2.  Succ:
+        :t succ 0 
+            returns - Nat
+        :t succ (succ 0) 
+            returns - Nat
+    
+3.  Box: 
+        :t \(m:?).\(n:Nat).\(f:? -> Nat).box<Nat> (f m) 
+            returns - ? -> Nat -> (? -> Nat) -> ?
+
+4.  Unbox: 
+        :t \(m:?).\(n:Nat).\(h:Nat -> ?).h (unbox<Nat> m) 
+            returns - ? -> Nat -> (Nat -> ?) -> ?
+        
+
+5.  Pair: 
+        :t ((succ 0),(succ 0)) 
+            returns - Nat x Nat
+        :t (((succ 0),(succ 0)),((succ 0),(succ 0))) 
+            returns - Nat x Nat x Nat x Nat
+        :t ((succ 0),((succ 0),(succ 0))) 
+            returns - Nat x Nat x Nat
+
+6.  First:  
+        :t fst(succ 0,triv) 
+            returns - Nat
+        
+7.  Second:  
+        :t snd(succ 0,triv) 
+            returns - 1
+        
+8.  Squash/Split: 
+        :t \(x:? -> ?).(squash x) 
+            returns - (? -> ?) -> ?
+        :t \(x:? -> ?).(x (squash x)) 
+            returns - (? -> ?) -> ?         Should the last two give the same answer?
+        :t \(x:?).(squash(split x)) 
+            returns - ? -> ?
+        :t \(x:? -> ?).(split (squash x)) 
+            returns - (? -> ?) -> ? -> ?
+        
+9. Miscellaneous:
+        :t 0 
+            returns - Nat
+        :t triv
+            returns - 1
