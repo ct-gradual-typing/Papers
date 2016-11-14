@@ -11,6 +11,7 @@ import Syntax
 import Parser
 import Pretty
 import TypeChecker
+import TypeErrors
 
 type Qelm = (Vnm, Term)
 type REPLStateIO = StateT (Queue Qelm) IO
@@ -55,11 +56,10 @@ handleCMD s =
     handleLine (TypeCheck t) = do
       defs <- get
       let tu = unfoldDefsInTerm defs t
-          r = typeCheck tu
+          r = runTC tu
        in case r of
-            Left m -> io.putStrLn $ m
+            Left m -> io.putStrLn .readTypeError $ m
             Right ty ->  io.putStrLn.prettyType $ ty
-                         
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)

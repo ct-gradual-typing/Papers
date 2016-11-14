@@ -13,13 +13,13 @@ import Control.Monad -- For debugging messages.
 import Data.Functor.Identity
 
 import Syntax
-    
+
 ------------------------------------------------------------------------
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
   Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
-                           "gen", "spec"]
+                           "box", "unbox", ":l", ":load", ":r", ":reload", "sqsh", "split"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -57,7 +57,7 @@ varName' p msg = do
 parseConst s c = symbol s >> return c
          
 tyNat = parseConst "Nat" Nat
-tyU = parseConst "U" U
+tyU = parseConst "?" U
 tyUnit = parseConst "1" Unit         
         
 -- The initial expression parsing table for types.
@@ -69,8 +69,8 @@ typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
-aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try genParse <|> try specParse <|> var
-expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error" 
+aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try squash <|> try split <|> try boxParse <|> try unboxParse <|> var
+expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error"
               
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = var' varName Var
@@ -78,15 +78,15 @@ var = var' varName Var
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
 
-genParse = do
-  symbol "gen"
+boxParse = do
+  symbol "box"
   ty <- between (symbol "<") (symbol ">") typeParser  
-  return $ Gen ty
+  return $ Box ty
 
-specParse = do
-  symbol "spec"
-  ty <- between (symbol "<") (symbol ">") typeParser  
-  return $ Spec ty
+unboxParse = do
+  symbol "unbox"
+  t <- between (symbol "<") (symbol ">") typeParser 
+  return $ Unbox t
 
 succParse = do
   reservedOp "succ"
@@ -109,6 +109,8 @@ sndParse = do
   reservedOp "snd"
   t <- expr
   return $ Snd t
+  
+  
          
 funParse = do
   reservedOp "\\"
@@ -125,7 +127,15 @@ appParse = do
   l <- many aterm
   case l of
     [] -> fail "A term must be supplied"
-    _ -> return $ foldl1 App l         
+    _ -> return $ foldl1 App l      
+
+squash = do
+  reservedOp "squash"
+  return $ Squash
+  
+split = do
+  reservedOp "split"
+  return $ Split
 
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
