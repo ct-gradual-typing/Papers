@@ -40,7 +40,7 @@ The Following are all examples that should all typecheck:
         :t \(x:? -> ?).(squash x) 
             returns - (? -> ?) -> ?
         :t \(x:? -> ?).(x (squash x)) 
-            returns - (? -> ?) -> ?         Should the last two give the same answer?
+            returns - (? -> ?) -> ?         
         :t \(x:?).(squash(split x)) 
             returns - ? -> ?
         :t \(x:? -> ?).(split (squash x)) 
