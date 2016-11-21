@@ -45,9 +45,39 @@ The Following are all examples that should all typecheck:
             returns - ? -> ?
         :t \(x:? -> ?).(split (squash x)) 
             returns - (? -> ?) -> ? -> ?
+        :t :t \(s:?).\(z:?).(split s)((split s) z)
+            returns - ? -> ? -> ?
+        :t \(x:?).(split x) (squash(\(x:?). (split x) x))
+            returns - ? -> ?
         
 9. Miscellaneous:
         :t 0 
             returns - Nat
         :t triv
             returns - 1
+            
+10. Peano Numbers:
+    Number 2:
+            :t \(s:? -> ?).\(z:?).s (s z)
+                returns - (? -> ?) -> ? -> ?
+    Addition:
+            :t \(n1:(? -> ?) -> ? -> ?).\(n2:(? -> ?) -> ? -> ?).\(s:? -> ?).\(z:?).n1 s (n2 s z)
+                returns - ((? -> ?) -> ? -> ?) -> ((? -> ?) -> ? -> ?) -> (? -> ?) -> ? -> ?
+                
+11. Church-Encodings:
+    True: 
+        :t \(p:?).\(q:?).p
+            returns - ? -> ? -> ?
+    False: 
+        :t \(p:?).\(q:?).q
+            returns - ? -> ? -> ?
+    Pair:
+        :t \(x: ? -> ?).\(y:?).\(z:? -> ?). z (x y)
+            returns - (? -> ?) -> ? -> (? -> ?) -> ?
+    First:
+        :t \(p:(? -> ?) -> (? -> ?)).\(x: ? -> ?).\(y:?).p x
+            returns - ((? -> ?) -> ? -> ?) -> (? -> ?) -> ? -> ? -> ?
+    Second: 
+         :t \(p:? -> ?).\(x: ? -> ?).\(y:?).p y
+            returns - (? -> ?) -> (? -> ?) -> ? -> ?
+    
