@@ -9,11 +9,8 @@ grammar
     | x                   ::   :: var          {{ com variable }}
     | triv                ::   :: unit         {{ com unit }}
     | squash              ::   :: inj          {{ com injection of the retract }}
-    {{tex \mathsf{squash} }}
     | split               ::   :: surj         {{ com surjection of the retract }}
-    {{tex \mathsf{split} }}
     | box t               ::   :: gen          {{ com generalize to the untyped universe }}
-    {{tex \mathsf{box}\,[[t]] }}
     | unbox T             ::   :: spec         {{ com specialize the untyped universe to a specific type }}
     {{tex \mathsf{unbox}_{[[T]]} }}
     | \ x : A . t         ::   :: abs          {{ com $\lambda$-abstraction }}
@@ -21,18 +18,31 @@ grammar
     | t1 t2               ::   :: app          {{ com function application }}
     | ( t1 , t2 )         ::   :: pair         {{ com pair constructor }}
     | fst t               ::   :: proj1        {{ com first projection }}
-    {{tex \mathsf{fst}\,[[t]] }}
     | snd t               ::   :: proj2        {{ com second projection }}
-    {{tex \mathsf{snd}\,[[t]] }}
     | succ t              ::   :: successor    {{ com successor function }}
     | 0                   ::   :: zero         {{ com zero }}
     | ( t )               :: S :: parens
     | [ t1 / x ] t2       :: M :: subst
     | wrong               :: M :: wrong
     {{tex \mathsf{wrong} }}
-    | h( t )              :: M :: hparens
+    | H( t )              :: M :: hparens
     {{tex [[t]] }}
-    
+
+  h :: 'h_' ::= {{com head-normal forms}}
+    | triv       :: :: triv
+    | split      :: :: split
+    | squash     :: :: squash
+    | box t      :: :: box
+    | unbox T    :: :: unbox
+    {{tex \mathsf{unbox}_{[[T]]} }}    
+    | \ x : A . t :: :: abs
+    {{tex \lambda [[x]] : [[A]] . [[t]] }}
+    | ( t1 , t2 )  :: :: pair
+    | fst t      :: :: fst
+    | snd t      :: :: snd
+    | succ t     :: :: suc
+    | 0          :: :: zero
+
   T :: 'T_' ::=                                {{ com terminating types }}  
     | Unit                ::   :: unit         {{ com unit type }}
     | Nat                 ::   :: nat          {{ com natural number type }}
@@ -42,9 +52,12 @@ grammar
     | ( T )               :: S :: paren
 
   A :: 'A_' ::=                                {{ com type }}  
-    | T                   ::   :: term         {{ com terminating type }}
+    | Unit                ::   :: term         {{ com unit type }}
+    | Nat                 ::   :: nat          {{ com natural number type }}
     | ?                   ::   :: unitype      {{ com untyped universe }}
     | A1 -> A2            ::   :: arrow        {{ com function type }}
+    | T1 x T2             ::   :: pair         {{ com cartesian product type }}
+    {{tex [[T1]] \times [[T2]] }}     
     | ( A )               :: S :: paren
     | TypeError           :: M :: typeError
     {{tex \mathsf{TypeError} }}
@@ -56,9 +69,11 @@ grammar
 
   terminals :: 'terminals_' ::=
     |  ->                 ::   :: arrow
-      {{tex \rightarrow }}
+    {{tex \rightarrow }}
     | |-                  ::   :: turnstile
-      {{tex \vdash }}
+    {{tex \vdash }}
+    | |~                  ::   :: ndash
+    {{tex \not \vdash }}    
     | Unit                ::   :: unit
       {{tex 1 }}
     | Nat                 ::   :: nat
@@ -78,9 +93,27 @@ grammar
     {{tex \rightsquigarrow }}
     | triv                ::   :: triv
     {{tex \mathsf{triv} }}
+    | split      :: :: split
+    {{tex \mathsf{split} }}
+    | squash     :: :: squash
+    {{tex \mathsf{squash} }}
+    | box        :: :: box
+    {{tex \mathsf{box} }}
+    | unbox        :: :: unbox
+    {{tex \mathsf{unbox} }}
+    | fst        :: :: fst
+    {{tex \mathsf{fst} }}
+    | snd        :: :: snd
+    {{tex \mathsf{snd} }}                
+
+  vd :: 'vd_' ::=
+    | |- :: :: vdash
+    | |~ :: :: ndash
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
+    | ~ formula           ::   :: notj
+    {{tex \lnot [[formula]] }}
     | x : A elem G        ::   :: xTelemG
     | formula1 && formula2 ::  :: Quad
     {{tex [[formula1]] \quad [[formula2]] }}
@@ -92,11 +125,17 @@ grammar
     | t != t'             :: M :: NeqT
     {{tex [[t]] \neq [[t']] }}
 
+subrules
+  h <:: t
+  T <:: A
+  
 defns
   Typing :: '' ::=
 
 defn
-    G |- t : A :: :: type :: ''    {{ com [[t]] has type [[A]] in context [[G]] }} by
+    G vd t : A :: :: type :: ''    {{ com [[t]] has type [[A]] in context [[G]] }}
+    {{tex [[G]] [[vd]] [[t]] : [[A]] }} by
+    
 
     x : A elem G
     ------------ :: var
@@ -156,17 +195,33 @@ by
     ------------------------------- :: retracT
     G |- unbox T (box t) ~> t : T
 
-    t != box t'
-    ----------------------------------- :: unboxErr
-    G |- unbox T t ~> wrong : TypeError 
+    G |~ t : T
+    ----------------------------------------- :: tWrong
+    G |- unbox T (box t) ~> wrong : TypeError
+
+    h != box t
+    ------------------------------------ :: hWrong
+    G |- unbox T h ~> wrong : TypeError
+
+    G |- t ~> t' : ?
+    -------------------------------- :: unbox
+    G |- unbox T t ~> unbox T t' : T
 
     G |- t : ? -> ?
     ----------------------------------- :: retractU
     G |- split (squash t) ~> t : ? -> ?
 
+    G |- t ~> t' : ?
+    ----------------------------------- :: split
+    G |- split t ~> split t' : ? -> ?
+
+    G |- t ~> t' : ? -> ?
+    ------------------------------ :: spuash
+    G |- squash t ~> squash t' : ?
+
     G |- t : A1 -> A2 && x nin FV(t)
     -------------------------------- :: eta
-    G |- \x:A1.h(t x) ~> t : A1 -> A2
+    G |- \x:A1.H(t x) ~> t : A1 -> A2
 
     G, x : A1 |- t2 : A2 && G |- t1 : A1    
     ------------------------------------ :: beta
