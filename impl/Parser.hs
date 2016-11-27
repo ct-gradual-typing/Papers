@@ -13,13 +13,14 @@ import Control.Monad -- For debugging messages.
 import Data.Functor.Identity
 
 import Syntax
+import Queue
 
 ------------------------------------------------------------------------
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
   Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
-                           "box", "unbox", ":l", ":load", ":r", ":reload", "sqsh", "split"]
+                           "box", "unbox", ":l", "sqsh", "split"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -149,6 +150,9 @@ data Prog =
 
 type GFile = Queue Prog -- Grady file
 
+
+  
+
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
 ------------------------------------------------------------------------        
@@ -159,6 +163,7 @@ data REPLExpr =
  | ShowAST Term                 -- Show a terms AST
  | DumpState                    -- Trigger to dump the state for debugging.
  | Unfold Term                  -- Unfold the definitions in a term for debugging.
+ | LoadFile String
  deriving Show
                     
 letParser = do
@@ -167,8 +172,15 @@ letParser = do
   symbol "="
   t <- expr
   eof
-  return $ Let n t         
+  return $ Let n t        
 
+fileParser = do
+  reservedOp ":l"
+  ws
+  path <- many1 alphaNum
+  eof  
+  return $ LoadFile path
+  
 replTermCmdParser short long c p = do
   colon
   cmd <- many lower
@@ -195,8 +207,8 @@ showASTParser = replTermCmdParser "s" "show" ShowAST expr
 unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr                
 
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
-                 
-lineParser = letParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
+               
+lineParser = letParser <|> try fileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of
