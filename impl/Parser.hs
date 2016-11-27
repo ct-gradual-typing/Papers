@@ -11,6 +11,7 @@ import qualified Text.Parsec.Token as Token
 import Text.Parsec.Language
 import Control.Monad -- For debugging messages.
 import Data.Functor.Identity
+import Text.Parsec.Extra
 
 import Syntax
 import Queue
@@ -149,6 +150,22 @@ data Prog =
   Def Vnm Type Term
 
 type GFile = Queue Prog -- Grady file
+
+--parseTypeDef :: String -> TypeDef
+parseTypeDef = do
+  n <- varName
+  colon
+  ty <- typeParser
+  return $ (n,ty)
+
+parseExpDef = do
+  n <- varName
+  symbol "="
+  t <- expr
+  eol
+  return $ (n,t)
+
+
 
 
   
