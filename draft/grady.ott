@@ -10,7 +10,7 @@ grammar
     | triv                ::   :: unit         {{ com unit }}
     | squash              ::   :: inj          {{ com injection of the retract }}
     | split               ::   :: surj         {{ com surjection of the retract }}
-    | box t               ::   :: gen          {{ com generalize to the untyped universe }}
+    | box                 ::   :: gen          {{ com generalize to the untyped universe }}
     | unbox T             ::   :: spec         {{ com specialize the untyped universe to a specific type }}
     {{tex \mathsf{unbox}_{[[T]]} }}
     | \ x : A . t         ::   :: abs          {{ com $\lambda$-abstraction }}
@@ -32,7 +32,7 @@ grammar
     | triv       :: :: triv
     | split      :: :: split
     | squash     :: :: squash
-    | box t      :: :: box
+    | box        :: :: box
     | unbox T    :: :: unbox
     {{tex \mathsf{unbox}_{[[T]]} }}    
     | \ x : A . t :: :: abs
@@ -56,8 +56,8 @@ grammar
     | Nat                 ::   :: nat          {{ com natural number type }}
     | ?                   ::   :: unitype      {{ com untyped universe }}
     | A1 -> A2            ::   :: arrow        {{ com function type }}
-    | T1 x T2             ::   :: pair         {{ com cartesian product type }}
-    {{tex [[T1]] \times [[T2]] }}     
+    | A1 x A2             ::   :: pair         {{ com cartesian product type }}
+    {{tex [[A1]] \times [[A2]] }}     
     | ( A )               :: S :: paren
     | TypeError           :: M :: typeError
     {{tex \mathsf{TypeError} }}
@@ -141,9 +141,8 @@ defn
     ------------ :: var
     G |- x : A
 
-    G |- t : T
-    ------------------- :: Box
-    G |- box t : ?
+    ----------------- :: Box
+    G |- box : T -> ?
 
     --------------------- :: Unbox
     G |- unbox T : ? -> T
@@ -203,29 +202,17 @@ by
     ------------------------------------ :: hWrong
     G |- unbox T h ~> wrong : TypeError
 
-    G |- t ~> t' : ?
-    -------------------------------- :: unbox
-    G |- unbox T t ~> unbox T t' : T
-
     G |- t : ? -> ?
     ----------------------------------- :: retractU
     G |- split (squash t) ~> t : ? -> ?
 
-    G |- t ~> t' : ?
-    ----------------------------------- :: split
-    G |- split t ~> split t' : ? -> ?
-
-    G |- t ~> t' : ? -> ?
-    ------------------------------ :: spuash
-    G |- squash t ~> squash t' : ?
+    G, x : A1 |- t2 : A2 && G |- t1 : A1    
+    ------------------------------------ :: beta
+    G |- (\x:A1.t2) t1 ~> [t1/x]t2 : A2
 
     G |- t : A1 -> A2 && x nin FV(t)
     -------------------------------- :: eta
     G |- \x:A1.H(t x) ~> t : A1 -> A2
-
-    G, x : A1 |- t2 : A2 && G |- t1 : A1    
-    ------------------------------------ :: beta
-    G |- (\x:A1.t2) t1 ~> [t1/x]t2 : A2
 
     G |- t1 : T1 && G |- t2 : T2
     ---------------------------- :: proj1
