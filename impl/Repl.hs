@@ -62,6 +62,7 @@ handleCMD s =
             Right ty ->  io.putStrLn.prettyType $ ty
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
+    handleLine (LoadFile p) = undefined
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
      where
        prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
