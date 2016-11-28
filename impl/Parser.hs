@@ -147,14 +147,14 @@ type TypeDef = (Vnm, Type)
 type ExpDef = (Vnm, Term)
 
 data Prog =
-  Vnm Type Term
+  Def Vnm Type Term
 
 type GFile = Queue Prog -- Grady file
 
 parseTypeDef = do
   n <- varName
   colon
-  ty <- expr
+  ty <- typeParser
   return $ (n,ty)
 
 parseExpDef = do
@@ -164,16 +164,23 @@ parseExpDef = do
   eol
   return $ (n,t) 
   
-lineFileParser = parseExpDef <|> parseTypeDef
+--lineFileParser = parseExpDef <|> parseTypeDef
 
+parseDef = do
+            (n, ty) <- parseTypeDef
+            (m,t) <- parseExpDef
+            if( m == n )
+             then return $ Def n ty t
+             else error "Definition name and expression name do not match"
+            
+parseFile = many parseDef  
 
--- parseFileLine :: String -> Prog
--- parseFileLine s = do
-            -- (n,t) <- parse parseExpDef "" s
-            -- (n, ty) <- parse parseTypeDef "" s
-            -- (n ty t)
-  
-  
+-- TODO: Function for running parseFile, this should return Either String GFile
+runParseFile :: String -> Either String GFile
+runParseFile s = case (parse parseFile "" s) of
+                Left msg -> Left $ show msg
+                Right l -> return $ (fromList l)
+
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
 ------------------------------------------------------------------------        

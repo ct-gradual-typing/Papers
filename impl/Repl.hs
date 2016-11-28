@@ -62,6 +62,7 @@ handleCMD s =
             Right ty ->  io.putStrLn.prettyType $ ty
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
+    --case split on return to sift out errors
     handleLine (LoadFile p) = undefined
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
      where

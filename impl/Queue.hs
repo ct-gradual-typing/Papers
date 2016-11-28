@@ -15,6 +15,10 @@ data Queue a = Queue [a] [a]
 toListQ :: Queue a -> [a]
 toListQ (Queue f r) = f ++ (reverse r)
 
+fromList :: [a] -> Queue a
+fromList [] = emptyQ
+fromList ls = queue [] ls
+
 -- This instance allows us to use Haskell's built in foldl and foldr.
 instance Foldable Queue where
     foldMap m = (foldMap m).toListQ
