@@ -83,7 +83,7 @@ trivParse = parseConst "triv" Triv
 boxParse = do
   symbol "box"
   ty <- between (symbol "<") (symbol ">") typeParser  
-  return $ Box x
+  return $ Box ty
 
 unboxParse = do
   symbol "unbox"
@@ -154,7 +154,7 @@ type GFile = Queue Prog -- Grady file
 parseTypeDef = do
   n <- varName
   colon
-  ty <- typeParser
+  ty <- expr
   return $ (n,ty)
 
 parseExpDef = do
@@ -162,21 +162,16 @@ parseExpDef = do
   symbol "="
   t <- expr
   eol
-  return $ (n,t)
+  return $ (n,t) 
   
--- parentParser :: String -> Prog
--- parentParser s = do
-  -- (n,ty) <- parseTypeDef
-  -- (n,t) <- parseExpDef
-  -- (n ty t) 
-  
-lineFileParser = parseExpDef <|> parseTypeDef <?> "parse error"
+lineFileParser = parseExpDef <|> parseTypeDef
 
 
-parseFileLine :: String -> Either String Prog
-parseFileLine s = case (parse lineFileParser "" s) of
-                Left msg -> Left $ show msg
-                Right l -> Right l
+-- parseFileLine :: String -> Prog
+-- parseFileLine s = do
+            -- (n,t) <- parse parseExpDef "" s
+            -- (n, ty) <- parse parseTypeDef "" s
+            -- (n ty t)
   
   
 ------------------------------------------------------------------------                 
