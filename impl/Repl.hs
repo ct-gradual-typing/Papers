@@ -62,11 +62,32 @@ handleCMD s =
             Right ty ->  io.putStrLn.prettyType $ ty
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
-    --case split on return to sift out errors
-    handleLine (LoadFile p) = undefined
+    handleLine (LoadFile p) = case runParseFile p of
+                                Left l -> io.print $ l
+                                Right r -> tyCheckQ r
+     where
+       tyCheckQ :: GFile -> REPLStateIO ()
+       --tyCheckQ emptyQ = return ()
+       tyCheckQ q = do
+                defs <- get
+                let tu = unfoldDefsInTerm defs (termFromProg (headQ q))
+                    r = runTC tu
+                 in case r of
+                    Left err -> io.putStrLn.readTypeError $ err
+                    Right ty -> undefined --run ty through FV
+        
+       termFromProg :: Prog -> Term
+       termFromProg p = case p of 
+                        (Def v ty t) -> t
+                            -- return some type of error, so change return type to an Either?
+                            -- otherwise -> io.print $ "Error with "++(n2s v)++" definition"
+        
+                                    
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
      where
+       prettyDef :: (Name a, Term) -> String
        prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
+   
 
 banner :: String
 banner = "Welcome to Grady!\n\nThis is the gradual typing from a categorical perspective repl.\n\n"

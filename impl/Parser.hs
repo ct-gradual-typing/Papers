@@ -1,6 +1,6 @@
 {-# LANGUAGE NoMonomorphismRestriction, PackageImports, TemplateHaskell #-}
 
-module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(..), parseLine) where
+module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(..), parseLine, runParseFile, GFile, Prog(..)) where
 
 import Prelude
 import Data.List
@@ -175,7 +175,6 @@ parseDef = do
             
 parseFile = many parseDef  
 
--- TODO: Function for running parseFile, this should return Either String GFile
 runParseFile :: String -> Either String GFile
 runParseFile s = case (parse parseFile "" s) of
                 Left msg -> Left $ show msg
