@@ -28,10 +28,10 @@ all: pdf
 
 pdf : $(PDF)
 
-$(OTTOutputFile) : $(OTTFile) $(Main)
-	@echo "\n\n***OTT: Preprocessing L.ott in main.tex.***"
-	@$(OTT) $(OTT_FLAGS) -i $(OTTFile)  -o $(OTTGen) -tex_name_prefix $(OTTPrefix) \
-		-tex_filter $(Main) $(OTTOutputFile)
+$(OTTOutputFile) : grady.ott annotated-gradual-LC.ott main.tex
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter main.tex main-output.tex
+	@$(OTT) $(OTT_FLAGS) -i annotated-gradual-LC.ott  -o annotated-gradual-LC-inc.tex -tex_name_prefix AGLC
 
 # Now this takes the full LaTex translation and compiles it using
 # pdflatex.

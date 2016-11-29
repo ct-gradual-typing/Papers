@@ -1,5 +1,3 @@
-                  % -*- compile-command: "make" -*-
-
 metavar termvar, x, z ::=
 
 indexvar index, k ::=
@@ -8,12 +6,8 @@ grammar
   t :: 't_' ::=                                {{ com term }}
     | x                   ::   :: var          {{ com variable }}
     | triv                ::   :: unit         {{ com unit }}
-    | squash              ::   :: inj          {{ com injection of the retract }}
-    | split               ::   :: surj         {{ com surjection of the retract }}
-    | box T               ::   :: gen          {{ com generalize to the untyped universe }}
-    {{tex \mathsf{box}_{[[T]]} }}    
-    | unbox T             ::   :: spec         {{ com specialize the untyped universe to a specific type }}
-    {{tex \mathsf{unbox}_{[[T]]} }}
+    | < A > t             ::   :: cast         {{ com type cast }}
+    {{tex \langle [[A]] \rangle [[t]] }}
     | \ x : A . t         ::   :: abs          {{ com $\lambda$-abstraction }}
     {{tex \lambda [[x]] : [[A]] . [[t]] }}
     | t1 t2               ::   :: app          {{ com function application }}
@@ -29,31 +23,7 @@ grammar
     | H( t )              :: M :: hparens
     {{tex [[t]] }}
 
-  h :: 'h_' ::= {{com head-normal forms}}
-    | triv       :: :: triv
-    | split      :: :: split
-    | squash     :: :: squash
-    | box T      :: :: box
-    {{tex \mathsf{box}_{[[T]]} }}    
-    | unbox T    :: :: unbox
-    {{tex \mathsf{unbox}_{[[T]]} }}    
-    | \ x : A . t :: :: abs
-    {{tex \lambda [[x]] : [[A]] . [[t]] }}
-    | ( t1 , t2 )  :: :: pair
-    | fst t      :: :: fst
-    | snd t      :: :: snd
-    | succ t     :: :: suc
-    | 0          :: :: zero
-
-  T :: 'T_' ::=                                {{ com terminating types }}  
-    | Unit                ::   :: unit         {{ com unit type }}
-    | Nat                 ::   :: nat          {{ com natural number type }}
-    | T1 -> T2            ::   :: arrow        {{ com function type }}
-    | T1 x T2             ::   :: Pairs        {{ com cartesian product type }}
-    {{tex [[T1]] \times [[T2]] }} 
-    | ( T )               :: S :: paren
-
-  A :: 'A_' ::=                                {{ com type }}  
+  A, B, C :: 'A_' ::=                           {{ com type }}  
     | Unit                ::   :: term         {{ com unit type }}
     | Nat                 ::   :: nat          {{ com natural number type }}
     | ?                   ::   :: unitype      {{ com untyped universe }}
@@ -66,7 +36,7 @@ grammar
 
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
     | .                   ::   :: em           {{ com empty context }}
-    | G , x : A           ::   :: vn           {{ com cons }}
+    | x : A               ::   :: vn           {{ com cons }}
     | G , G'              :: M :: append       {{ com append }}
 
   terminals :: 'terminals_' ::=
@@ -95,14 +65,6 @@ grammar
     {{tex \rightsquigarrow }}
     | triv                ::   :: triv
     {{tex \mathsf{triv} }}
-    | split      :: :: split
-    {{tex \mathsf{split} }}
-    | squash     :: :: squash
-    {{tex \mathsf{squash} }}
-    | box        :: :: box
-    {{tex \mathsf{box} }}
-    | unbox        :: :: unbox
-    {{tex \mathsf{unbox} }}
     | fst        :: :: fst
     {{tex \mathsf{fst} }}
     | snd        :: :: snd
@@ -127,12 +89,29 @@ grammar
     | t != t'             :: M :: NeqT
     {{tex [[t]] \neq [[t']] }}
 
-subrules
-  h <:: t
-  T <:: A
-  
 defns
   Typing :: '' ::=
+
+defn
+    A ~ B :: :: typeConsis :: ''    {{ com [[A]] is consistent with [[B]] }}
+    {{tex [[A]] \sim [[B]] }} by
+
+    ----- :: refl
+    A ~ A
+
+    ----- :: box
+    A ~ ?
+
+    ----- :: unbox
+    ? ~ A
+
+    A1 ~ A2 && B1 ~ B2
+    ------------------- :: arrow
+    A1 -> B1 ~ A2 -> B2
+
+    A1 ~ A2 && B1 ~ B2
+    ------------------- :: prod
+    A1 x B1 ~ A2 x B2
 
 defn
     G vd t : A :: :: type :: ''    {{ com [[t]] has type [[A]] in context [[G]] }}
@@ -142,18 +121,6 @@ defn
     x : A elem G
     ------------ :: var
     G |- x : A
-
-    ------------------- :: Box
-    G |- box T : T -> ?
-
-    --------------------- :: Unbox
-    G |- unbox T : ? -> T
-
-    --------------------------- :: inj
-    G |- squash : (? -> ?) -> ?
-
-    -------------------------- :: surj
-    G |- split : ? -> (? -> ?)
 
     ---------------- :: unit
     G |- triv : Unit
@@ -185,73 +152,6 @@ defn
     ---------------------------------- :: app
     G |- t1 t2 : A2
 
-defns
-  Reduction :: '' ::=
-
-defn
-    G |- t1 ~> t2  : A :: :: red :: rd_    {{ com [[t1]] reduces to [[t2]] with type [[A]] in context [[G]] }}
-by
-
-    G |- t : T
-    ------------------------------- :: retracT
-    G |- unbox T (box T t) ~> t : T
-
-    G |~ t : T
-    -------------------------------------------- :: tWrong
-    G |- unbox T (box T' t) ~> wrong : TypeError
-
-    h != box T t
-    ------------------------------------ :: hWrong
-    G |- unbox T h ~> wrong : TypeError
-
-    G |- t : ? -> ?
-    ----------------------------------- :: retractU
-    G |- split (squash t) ~> t : ? -> ?
-
-    G, x : A1 |- t2 : A2 && G |- t1 : A1    
-    ------------------------------------ :: beta
-    G |- (\x:A1.t2) t1 ~> [t1/x]t2 : A2
-
-    G |- t : A1 -> A2 && x nin FV(t)
-    -------------------------------- :: eta
-    G |- \x:A1.H(t x) ~> t : A1 -> A2
-
-    G |- t1 : A1 && G |- t2 : A2
-    ---------------------------- :: proj1
-    G |- fst (t1, t2) ~> t1 : A1
-
-    G |- t1 : A1 && G |- t2 : A2
-    ---------------------------- :: proj2
-    G |- snd (t1, t2) ~> t2 : A2
-
-    G |- t : A1 x A2
-    ---------------------------------- :: etaP
-    G |- (fst t, snd t) ~> t : A1 x A2
-
-    G, x : A1 |- t ~> t' : A2
-    ---------------------------------- :: lam
-    G |- \x:A1.t ~> \x:A1.t' : A1 -> A2
-
-    G |- t1 ~> t'1 : A1 -> A2 && G |- t2 : A1
-    ---------------------------------------- :: app1
-    G |- t1 t2 ~> t'1 t2 : A2
-
-    G |- t1 : A1 -> A2 && G |- t2 ~> t'2 : A1
-    ---------------------------------------- :: app2
-    G |- t1 t2 ~> t1 t'2 : A2
-
-    G |- t ~> t' : A1 x A2
-    ------------------------- :: fst
-    G |- fst t ~> fst t' : A1
-
-    G |- t ~> t' : A1 x A2
-    ------------------------- :: snd
-    G |- snd t ~> snd t' : A2
-
-    G |- t1 ~> t'1 : A1 && G |- t2 : A2
-    ----------------------------------- :: pair1
-    G |- (t1,t2) ~> (t'1,t2) : A1 x A2
-
-    G |- t1 : A1 && G |- t2  ~> t'2 : A2
-    ------------------------------------ :: pair2
-    G |- (t1,t2) ~> (t1,t'2) : A1 x A2
+    G |- t : A && A ~ B
+    ------------------- :: cast
+    G |- < B > t : B
