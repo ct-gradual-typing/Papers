@@ -68,10 +68,36 @@ unboxing' (Arr s1 s2) t (Arr a b) = do
   e' <- unboxing' s2 (App t e) b        
   return $ Fun a $ bind y $ e'
 
+unboxing' (Prod U U) t (Prod U U) = return t
+
+unboxing' (Prod U U) t (Prod U b) =
+    return $ Pair (Fst t)
+                  (App (Unbox b) (Snd t))
+
+unboxing' (Prod U U) t (Prod a U) =
+    return $ Pair (App (Unbox a) (Fst t))
+                  (Snd t)
+
 unboxing' (Prod U U) t (Prod a b) =
     return $ Pair (App (Unbox a) (Fst t))
                      (App (Unbox b) (Snd t))
-unboxing' s x ty = undefined
+
+unboxing' (Prod s U) t (Prod a b) = do
+  e <- unboxing' s (Fst t) a
+  return $ Pair e (App (Unbox b) (Snd t))
+
+unboxing' (Prod U s) t (Prod a b) = do
+  e <- unboxing' s (Snd t) b
+  return $ Pair (App (Unbox a) (Fst t)) e
+
+unboxing' (Prod s1 s2) t (Prod a b) = do
+  e1 <- unboxing' s1 (Fst t) a
+  e2 <- unboxing' s2 (Snd t) b
+  return $ Pair e1 e2
+
+unboxing' U t U = return $ t
+unboxing' U t ty = return $ App (Unbox ty) t
+unboxing' s t ty = error $ (prettyType s)++" is not a skeleton of "++(prettyType ty)++" when trying to unbox "++(runPrettyTerm t)
 
 -- boxing ty x s :
 --   Converts x of type ty into a term of type s
