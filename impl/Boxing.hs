@@ -44,12 +44,12 @@ unboxing' (Arr U U) t (Arr a b) = do
 
 unboxing' (Arr s U) t (Arr a U) = do
   y <- lfresh $ s2n "y"
-  e <- boxing' a y s
+  e <- boxing' a (Var y) s
   return $ Fun a $ bind y $ App t e
 
 unboxing' (Arr s U) t (Arr a b) = do
   y <- lfresh $ s2n "y"
-  e <- boxing' a y s
+  e <- boxing' a (Var y) s
   return $ Fun a $ bind y $ App (Unbox b) (App t e)
 
 unboxing' (Arr U s) t (Arr U b) = do
@@ -64,7 +64,7 @@ unboxing' (Arr U s) t (Arr a b) = do
 
 unboxing' (Arr s1 s2) t (Arr a b) = do
   y <- lfresh $ s2n "y"
-  e <- boxing' a y s1
+  e <- boxing' a (Var y) s1
   e' <- unboxing' s2 (App t e) b        
   return $ Fun a $ bind y $ e'
 
@@ -101,5 +101,28 @@ unboxing' s t ty = error $ (prettyType s)++" is not a skeleton of "++(prettyType
 
 -- boxing ty x s :
 --   Converts x of type ty into a term of type s
-boxing' :: Type -> Vnm -> Type -> LFreshM Term
-boxing' = undefined
+boxing' :: Type -> Term -> Type -> LFreshM Term
+boxing' (Arr U U) t (Arr U U) = return t
+boxing' (Arr a U) t (Arr U U) = do
+  y <- lfresh $ s2n "y"
+  return $ Fun U $ bind y $ App t (App (Unbox a) (Var y))
+boxing' (Arr U b) t (Arr U U) = do
+  y <- lfresh $ s2n "y"
+  return $ Fun U $ bind y $ App (Box b) (App t (Var y))
+boxing' (Arr a b) t (Arr U U) = do
+  y <- lfresh $ s2n "y"
+  return $ Fun U $ bind y $ App (Box b) (App t (App (Unbox a) (Var y)))
+boxing' (Arr a U) t (Arr s1 U) = do
+  y <- lfresh $ s2n "y"
+  e <- unboxing' s1 (Var y) a
+  return $ Fun a $ bind y $ App t e
+boxing' (Arr U b) t (Arr U s2) = do
+  y <- lfresh $ s2n "y"
+  e <- boxing' b (App t (Var y)) s2
+  return $ Fun U $ bind y e
+boxing' (Arr a b) t (Arr s1 s2) = do
+  y <- lfresh $ s2n "y"
+  e1 <- unboxing' s1 (Var y) a
+  e2 <- boxing' b (App t e1) s2        
+  return $ Fun s1 $ bind y $ e2
+boxing' ty t s = undefined
