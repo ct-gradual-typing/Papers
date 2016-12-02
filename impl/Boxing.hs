@@ -125,4 +125,17 @@ boxing' (Arr a b) t (Arr s1 s2) = do
   e1 <- unboxing' s1 (Var y) a
   e2 <- boxing' b (App t e1) s2        
   return $ Fun s1 $ bind y $ e2
-boxing' ty t s = undefined
+boxing' (Prod U U) t (Prod U U) = return t
+boxing' (Prod a U) t (Prod U U) = return $ Pair (App (Box a) (Fst t)) (Snd t)
+boxing' (Prod U b) t (Prod U U) = return $ Pair (Fst t) (App (Box b) (Snd t))
+boxing' (Prod a b) t (Prod U U) = return $ Pair (App (Box a) (Fst t)) (App (Box b) (Snd t))
+boxing' (Prod a U) t (Prod s1 U) = do
+  e <- boxing' a (Fst t) s1
+  return $ Pair e (Snd t)
+boxing' (Prod U b) t (Prod U s2) = do
+  e <- boxing' b (Snd t) s2
+  return $ Pair (Fst t) e
+boxing' (Prod a b) t (Prod s1 s2) = undefined
+boxing' U t U = return t
+boxing' ty t U = return $ App (Box ty) t
+boxing' ty t s = error $ (prettyType s)++" is not a skeleton of "++(prettyType ty)++" when trying to box "++(runPrettyTerm t)
