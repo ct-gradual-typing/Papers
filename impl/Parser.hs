@@ -1,6 +1,6 @@
 {-# LANGUAGE NoMonomorphismRestriction, PackageImports, TemplateHaskell #-}
 
-module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(..), parseLine) where
+module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(..), parseLine, parseTerm, parseType) where
 
 import Prelude
 import Data.List
@@ -65,6 +65,11 @@ table = [[binOp AssocRight "->" (\d r -> Arr d r), binOp AssocLeft "x" (\d r -> 
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ reservedOp op;ws;return f}) assoc
 typeParser = buildExpressionParser table typeParser'
 typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
+
+parseType :: String -> Either String Type
+parseType s = case (parse typeParser "" s) of
+                Left msg -> Left $ show msg
+                Right l -> Right l
 
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
@@ -137,6 +142,11 @@ split = do
   reservedOp "split"
   return $ Split
 
+parseTerm :: String -> Either String Term
+parseTerm s = case (parse expr "" s) of
+                Left msg -> Left $ show msg
+                Right l -> Right l
+         
 ------------------------------------------------------------------------                 
 -- Parsers for the REPL                                               --
 ------------------------------------------------------------------------        

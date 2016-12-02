@@ -9,11 +9,10 @@ is_atomic (Arr _ _) = False
 is_atomic (Prod _ _) = False
 is_atomic _ = True
 
-is_skeleton_of :: Type -> Type -> Bool
-is_skeleton_of U b | is_atomic b = True
-is_skeleton_of (Arr a b) (Arr c d) = (is_skeleton_of a c) && (is_skeleton_of b d)
-is_skeleton_of (Prod a b) (Prod c d) = (is_skeleton_of a c) && (is_skeleton_of b d)
-is_skeleton_of _ _ = False
+skeleton_of :: Type -> Type
+skeleton_of b | is_atomic b = U
+skeleton_of (Arr a b)  = Arr (skeleton_of a) (skeleton_of b)
+skeleton_of (Prod a b) = Prod (skeleton_of a) (skeleton_of b)
 
 free_vars :: Term -> [Vnm]
 free_vars t = (fv t) :: [Vnm]
@@ -139,3 +138,27 @@ boxing' (Prod a b) t (Prod s1 s2) = undefined
 boxing' U t U = return t
 boxing' ty t U = return $ App (Box ty) t
 boxing' ty t s = error $ (prettyType s)++" is not a skeleton of "++(prettyType ty)++" when trying to box "++(runPrettyTerm t)
+
+test_boxing :: String -> String -> String
+test_boxing sty str = case (q,r) of
+                        (Right ty, Right t) -> let s = skeleton_of ty
+                                                   b = runLFreshM $ boxing' ty t s
+                                                in runLFreshM $ prettyTerm b
+                        (Left m, Right _) -> m
+                        (Right ty, Left m) -> m
+                        (Left m1, Left m2) -> m1 ++ "\n" ++ m2
+ where
+   r = parseTerm str
+   q = parseType sty
+
+test_unboxing :: String -> String -> String
+test_unboxing sty str = case (q,r) of
+                        (Right ty, Right t) -> let s = skeleton_of ty
+                                                   b = runLFreshM $ unboxing' s t ty
+                                                in runLFreshM $ prettyTerm b
+                        (Left m, Right _) -> m
+                        (Right ty, Left m) -> m
+                        (Left m1, Left m2) -> m1 ++ "\n" ++ m2
+ where
+   r = parseTerm str
+   q = parseType sty
