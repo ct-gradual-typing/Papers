@@ -135,7 +135,7 @@ test_boxing sty str = case (q,r) of
                                                    b = runLFreshM $ boxing ty t s
                                                 in runLFreshM $ prettyTerm b
                         (Left m, Right _) -> m
-                        (Right ty, Left m) -> m
+                        (Right _, Left m) -> m
                         (Left m1, Left m2) -> m1 ++ "\n" ++ m2
  where
    r = parseTerm str
@@ -147,7 +147,20 @@ test_unboxing sty str = case (q,r) of
                                                    b = runLFreshM $ unboxing s t ty
                                                 in runLFreshM $ prettyTerm b
                         (Left m, Right _) -> m
-                        (Right ty, Left m) -> m
+                        (Right _, Left m) -> m
+                        (Left m1, Left m2) -> m1 ++ "\n" ++ m2
+ where
+   r = parseTerm str
+   q = parseType sty
+
+test_boxing_unboxing :: String -> String -> String
+test_boxing_unboxing sty str = case (q,r) of
+                        (Right ty, Right t) -> let s = skeleton_of ty
+                                                   b = runLFreshM $ boxing ty t s
+                                                   b' = runLFreshM $ unboxing s b ty
+                                                in runLFreshM $ prettyTerm b'
+                        (Left m, Right _) -> m
+                        (Right _, Left m) -> m
                         (Left m1, Left m2) -> m1 ++ "\n" ++ m2
  where
    r = parseTerm str
