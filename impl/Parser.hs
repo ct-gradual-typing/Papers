@@ -143,13 +143,14 @@ split = do
 -- Parsers for the Files                                              --
 ------------------------------------------------------------------------        
 
-type TypeDef = (Vnm, Type)
+type TypeDef = (Vnm, Type)   
 type ExpDef = (Vnm, Term)
 
 data Prog =
   Def Vnm Type Term
+  deriving (Show)
 
-type GFile = Queue Prog -- Grady file
+type GFile = Queue Prog      -- Grady file
 
 parseTypeDef = do
   n <- varName

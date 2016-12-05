@@ -67,26 +67,31 @@ handleCMD s =
                                 Right r -> tyCheckQ r
      where
        tyCheckQ :: GFile -> REPLStateIO ()
-       --tyCheckQ emptyQ = return ()
+       --tyCheckQ emptyQ = return () -- TODO: Fix- Get an overlapping patterns warning, not sure why
        tyCheckQ q = do
                 defs <- get
-                let tu = unfoldDefsInTerm defs (termFromProg (headQ q))
-                    r = runTC tu
-                 in case r of
-                    Left err -> io.putStrLn.readTypeError $ err
-                    Right ty -> undefined --run ty through FV
-        
-       termFromProg :: Prog -> Term
-       termFromProg p = case p of 
-                        (Def v ty t) -> t
-                            -- return some type of error, so change return type to an Either?
-                            -- otherwise -> io.print $ "Error with "++(n2s v)++" definition"
-        
-                                    
+                let term@(Def v ty t) = headQ q in
+                 do 
+                   -- Unfold each term from queue and see if free variables exist
+                   let tu = unfoldDefsInTerm defs t
+                   if ((length (getFV tu)) == 0)
+                   then let r = runTC tu            -- TypeCheck term from Prog
+                        in case r of
+                           Left err -> io.putStrLn.readTypeError $ err
+                           -- Verify type from TypeChecker matches expected type from file
+                           -- If it does, add to context (i.e. definition queue), if not throw error
+                           Right tyTerm -> if(ty == tyTerm)
+                                            then push (v,tu)
+                                            else io.print $ "TODO: make error message"
+                   else io.print $ "TODO: error message"
+                              
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
      where
        prettyDef :: (Name a, Term) -> String
        prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
+   
+getFV :: Term -> [Vnm]
+getFV t = fv t :: [Vnm]
    
 
 banner :: String
