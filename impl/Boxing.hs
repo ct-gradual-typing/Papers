@@ -4,16 +4,6 @@ import Syntax
 import Parser
 import Pretty
 
-is_atomic :: Type -> Bool
-is_atomic (Arr _ _) = False
-is_atomic (Prod _ _) = False
-is_atomic _ = True
-
-skeleton_of :: Type -> Type
-skeleton_of b | is_atomic b = U
-skeleton_of (Arr a b)  = Arr (skeleton_of a) (skeleton_of b)
-skeleton_of (Prod a b) = Prod (skeleton_of a) (skeleton_of b)
-
 -- unboxing s t ty :
 --   Converts t of type s into a term of type ty
 

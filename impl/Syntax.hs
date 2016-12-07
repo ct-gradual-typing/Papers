@@ -5,7 +5,9 @@ module Syntax (module Unbound.LocallyNameless,
                Vnm,
                Type(..),
                Term(..),
-               isTerminating) where
+               isTerminating,
+               is_atomic,
+               skeleton_of) where
 
 import Unbound.LocallyNameless 
 import Unbound.LocallyNameless.Alpha
@@ -25,7 +27,19 @@ isTerminating U = False
 isTerminating (Arr t1 t2) = (isTerminating t1) && (isTerminating t2)
 isTerminating (Prod t1 t2) = (isTerminating t1) && (isTerminating t2)
 isTerminating _ = True
- 
+
+-- Tests to determine if a type is atomic.
+is_atomic :: Type -> Bool
+is_atomic (Arr _ _) = False
+is_atomic (Prod _ _) = False
+is_atomic _ = True
+
+-- Converts a type into its skeleton.
+skeleton_of :: Type -> Type
+skeleton_of b | is_atomic b = U
+skeleton_of (Arr a b)  = Arr (skeleton_of a) (skeleton_of b)
+skeleton_of (Prod a b) = Prod (skeleton_of a) (skeleton_of b)
+
 type Vnm = Name Term            -- Variable name
 
 data Term =
