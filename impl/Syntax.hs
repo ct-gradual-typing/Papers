@@ -7,7 +7,8 @@ module Syntax (module Unbound.LocallyNameless,
                Term(..),
                isTerminating,
                is_atomic,
-               skeleton_of) where
+               skeleton_of,
+               is_skeleton) where
 
 import Unbound.LocallyNameless 
 import Unbound.LocallyNameless.Alpha
@@ -39,6 +40,12 @@ skeleton_of :: Type -> Type
 skeleton_of b | is_atomic b = U
 skeleton_of (Arr a b)  = Arr (skeleton_of a) (skeleton_of b)
 skeleton_of (Prod a b) = Prod (skeleton_of a) (skeleton_of b)
+
+is_skeleton :: Type -> Bool
+is_skeleton U = True
+is_skeleton (Arr a b) = (is_skeleton a) && (is_skeleton b)
+is_skeleton (Prod a b) = (is_skeleton a) && (is_skeleton b)
+is_skeleton _ = False
 
 type Vnm = Name Term            -- Variable name
 
