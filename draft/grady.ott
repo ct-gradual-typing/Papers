@@ -8,8 +8,10 @@ grammar
   t :: 't_' ::=                                {{ com term }}
     | x                   ::   :: var          {{ com variable }}
     | triv                ::   :: unit         {{ com unit }}
-    | squash              ::   :: inj          {{ com injection of the retract }}
-    | split               ::   :: surj         {{ com surjection of the retract }}
+    | squash S            ::   :: inj          {{ com injection of the retract }}
+    {{tex [[squash]]_{[[S]]} }}
+    | split S             ::   :: surj         {{ com surjection of the retract }}
+    {{tex [[split]]_{[[S]]} }}
     | box T               ::   :: gen          {{ com generalize to the untyped universe }}
     {{tex \mathsf{box}_{[[T]]} }}    
     | unbox T             ::   :: spec         {{ com specialize the untyped universe to a specific type }}
@@ -28,11 +30,14 @@ grammar
     {{tex \mathsf{wrong} }}
     | H( t )              :: M :: hparens
     {{tex [[t]] }}
+    | squash              :: M  :: injU   
+    {{tex [[squash]] }}
+    | split               :: M  :: surjU
 
   h :: 'h_' ::= {{com head-normal forms}}
     | triv       :: :: triv
-    | split      :: :: split
-    | squash     :: :: squash
+    | split S    :: :: split
+    | squash S   :: :: squash
     | box T      :: :: box
     {{tex \mathsf{box}_{[[T]]} }}    
     | unbox T    :: :: unbox
@@ -47,14 +52,24 @@ grammar
 
   T :: 'T_' ::=                                {{ com terminating types }}  
     | Unit                ::   :: unit         {{ com unit type }}
+    {{tex 1 }}
     | Nat                 ::   :: nat          {{ com natural number type }}
     | T1 -> T2            ::   :: arrow        {{ com function type }}
     | T1 x T2             ::   :: Pairs        {{ com cartesian product type }}
     {{tex [[T1]] \times [[T2]] }} 
     | ( T )               :: S :: paren
+    
+  S :: 'S_' ::=
+    | ? -> ?        ::   :: arrow
+    | ? x ?         ::   :: prod
+    | h( S )        :: M :: hparen
+    {{tex [[S]] }}
+    | ( S )         :: M :: Paren
+
 
   A :: 'A_' ::=                                {{ com type }}  
     | Unit                ::   :: term         {{ com unit type }}
+    {{tex 1}}
     | Nat                 ::   :: nat          {{ com natural number type }}
     | ?                   ::   :: unitype      {{ com untyped universe }}
     | A1 -> A2            ::   :: arrow        {{ com function type }}
@@ -63,6 +78,14 @@ grammar
     | ( A )               :: S :: paren
     | TypeError           :: M :: typeError
     {{tex \mathsf{TypeError} }}
+    | ? -> ?              :: M :: arrow2
+    | ? x ?               :: M :: pair2
+    {{tex ? \times ? }}
+    | h( A )              :: M :: hparen
+    {{tex [[A]] }}
+    | A1 --> A2           :: M :: Morph
+    {{tex [[A1]] \mto [[A2]] }}
+    
 
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
     | .                   ::   :: em           {{ com empty context }}
@@ -76,10 +99,6 @@ grammar
     {{tex \vdash }}
     | |~                  ::   :: ndash
     {{tex \not \vdash }}    
-    | Unit                ::   :: unit
-      {{tex 1 }}
-    | Nat                 ::   :: nat
-    {{tex \mathbb{N} }}
     | succ                ::   :: succ
     {{tex \mathsf{succ} }}
     | ?                   ::   :: unitype
@@ -95,10 +114,6 @@ grammar
     {{tex \rightsquigarrow }}
     | triv                ::   :: triv
     {{tex \mathsf{triv} }}
-    | split      :: :: split
-    {{tex \mathsf{split} }}
-    | squash     :: :: squash
-    {{tex \mathsf{squash} }}
     | box        :: :: box
     {{tex \mathsf{box} }}
     | unbox        :: :: unbox
@@ -126,10 +141,12 @@ grammar
     {{tex [[x]] \not\in \mathsf{FV}([[t]]) }}
     | t != t'             :: M :: NeqT
     {{tex [[t]] \neq [[t']] }}
+    | t : A               :: M :: TermHasType
 
 subrules
   h <:: t
   T <:: A
+  S <:: A  
   
 defns
   Typing :: '' ::=
@@ -150,10 +167,10 @@ defn
     G |- unbox T : ? -> T
 
     --------------------------- :: squash
-    G |- squash : (? -> ?) -> ?
+    G |- squash S : S -> ?
 
-    -------------------------- :: split
-    G |- split : ? -> (? -> ?)
+    --------------------- :: split
+    G |- split S : ? -> S
 
     ---------------- :: unit
     G |- triv : Unit
@@ -204,9 +221,9 @@ by
     ------------------------------------ :: hWrong
     G |- unbox T h ~> wrong : TypeError
 
-    G |- t : ? -> ?
-    ----------------------------------- :: retractU
-    G |- split (squash t) ~> t : ? -> ?
+    G |- t : S
+    ---------------------------------- :: retractU
+    G |- split S (squash S t) ~> t : S
 
     G, x : A1 |- t2 : A2 && G |- t1 : A1    
     ------------------------------------ :: beta

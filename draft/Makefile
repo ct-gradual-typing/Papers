@@ -28,7 +28,11 @@ all: pdf
 
 pdf : $(PDF)
 
-$(OTTOutputFile) : grady.ott annotated-gradual-LC.ott main.tex
+introduction-ott.tex : introduction.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter introduction.tex introduction-ott.tex
+
+$(OTTOutputFile) : grady.ott annotated-gradual-LC.ott main.tex introduction-ott.tex
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter main.tex main-output.tex
 	@$(OTT) $(OTT_FLAGS) -i annotated-gradual-LC.ott  -o annotated-gradual-LC-inc.tex -tex_name_prefix AGLC
