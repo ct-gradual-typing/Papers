@@ -9,13 +9,15 @@ grammar
     | x                   ::   :: var          {{ com variable }}
     | triv                ::   :: unit         {{ com unit }}
     | squash S            ::   :: inj          {{ com injection of the retract }}
-    {{tex [[squash]]_{[[S]]} }}
+    {{tex \mathsf{squash}_{[[S]]} }}
     | split S             ::   :: surj         {{ com surjection of the retract }}
-    {{tex [[split]]_{[[S]]} }}
+    {{tex \mathsf{split}_{[[S]]} }}    
     | box T               ::   :: gen          {{ com generalize to the untyped universe }}
     {{tex \mathsf{box}_{[[T]]} }}    
     | unbox T             ::   :: spec         {{ com specialize the untyped universe to a specific type }}
     {{tex \mathsf{unbox}_{[[T]]} }}
+    | < A > t             ::   :: cast         {{ com type cast }}
+    {{tex \langle [[A]] \rangle [[t]] }}    
     | \ x : A . t         ::   :: abs          {{ com $\lambda$-abstraction }}
     {{tex \lambda [[x]] : [[A]] . [[t]] }}
     | t1 t2               ::   :: app          {{ com function application }}
@@ -31,8 +33,9 @@ grammar
     | H( t )              :: M :: hparens
     {{tex [[t]] }}
     | squash              :: M  :: injU   
-    {{tex [[squash]] }}
+    {{tex \mathsf{squash} }}
     | split               :: M  :: surjU
+    {{tex \mathsf{split} }}
 
   h :: 'h_' ::= {{com head-normal forms}}
     | triv       :: :: triv
@@ -67,7 +70,7 @@ grammar
     | ( S )         :: M :: Paren
 
 
-  A :: 'A_' ::=                                {{ com type }}  
+  A,B,C :: 'A_' ::=                                {{ com type }}  
     | Unit                ::   :: term         {{ com unit type }}
     {{tex 1}}
     | Nat                 ::   :: nat          {{ com natural number type }}
@@ -152,6 +155,27 @@ defns
   Typing :: '' ::=
 
 defn
+    A ~ B :: :: typeConsis :: ''    {{ com [[A]] is consistent with [[B]] }}
+    {{tex [[A]] \sim [[B]] }} by
+
+    ----- :: refl
+    A ~ A
+
+    ----- :: box
+    A ~ ?
+
+    ----- :: unbox
+    ? ~ A
+
+    A1 ~ A2 && B1 ~ B2
+    ------------------- :: arrow
+    A1 -> B1 ~ A2 -> B2
+
+    A1 ~ A2 && B1 ~ B2
+    ------------------- :: prod
+    A1 x B1 ~ A2 x B2
+    
+defn
     G vd t : A :: :: type :: ''    {{ com [[t]] has type [[A]] in context [[G]] }}
     {{tex [[G]] [[vd]] [[t]] : [[A]] }} by
     
@@ -166,7 +190,7 @@ defn
     --------------------- :: Unbox
     G |- unbox T : ? -> T
 
-    --------------------------- :: squash
+    ---------------------- :: squash
     G |- squash S : S -> ?
 
     --------------------- :: split
@@ -201,6 +225,23 @@ defn
     G |- t1 : A1 -> A2 && G |- t2 : A1
     ---------------------------------- :: app
     G |- t1 t2 : A2
+
+% Gradual Siek16:
+
+    G |- t1 : ? && G |- t2 : A
+    -------------------------- :: appU
+    G |- t1 t1 : ?
+    
+    G |- t1 : A1 -> B
+    G |-t2 : A2 && A1 ~ A2
+    ---------------------- :: appC
+    G |- t1 t2 : B
+
+% Annotated Siek16:
+
+    G |- t : A && A ~ B
+    ------------------- :: cast
+    G |- < B > t : B
 
 defns
   Reduction :: '' ::=
