@@ -1,6 +1,6 @@
 
 
-metavar termvar, x, z ::=
+metavar termvar, x, y , z ::=
 
 indexvar index, k ::=
 
@@ -36,7 +36,22 @@ grammar
     {{tex \mathsf{squash} }}
     | split               :: M  :: surjU
     {{tex \mathsf{split} }}
+    | <?> t               :: M  :: castU
+    {{tex \langle ? \rangle [[t]] }}
+    | drop-cast t         :: M :: DropCast
+    {{tex \mathsf{drop}\text{-}\mathsf{cast}\,[[t]] }}    
 
+  s :: 's_' ::= {{com simple values }}
+    | x                   ::   :: var  
+    | triv                ::   :: unit         {{ com unit }}
+    | 0                   ::   :: zero         {{ com zero }}
+
+  v :: 'v_' ::= {{com values }}
+    | x                   ::   :: var
+    | triv                ::   :: unit         {{ com unit }}
+    | 0                   ::   :: zero         {{ com zero }}
+    | <?> s               ::   :: cast         {{ com untype cast }}
+    
   h :: 'h_' ::= {{com head-normal forms}}
     | triv       :: :: triv
     | split S    :: :: split
@@ -69,11 +84,17 @@ grammar
     {{tex [[S]] }}
     | ( S )         :: M :: Paren
 
-
-  A,B,C :: 'A_' ::=                                {{ com type }}  
+  C :: 'C_' ::=                                {{ com atomic type }}  
     | Unit                ::   :: term         {{ com unit type }}
     {{tex 1}}
     | Nat                 ::   :: nat          {{ com natural number type }}
+    {{tex \mathsf{Nat} }}
+
+  A, B :: 'A_' ::=                                {{ com type }}  
+    | Unit                ::   :: term         {{ com unit type }}
+    {{tex 1}}
+    | Nat                 ::   :: nat          {{ com natural number type }}
+    {{tex \mathsf{Nat} }}    
     | ?                   ::   :: unitype      {{ com untyped universe }}
     | A1 -> A2            ::   :: arrow        {{ com function type }}
     | A1 x A2             ::   :: pair         {{ com cartesian product type }}
@@ -148,8 +169,12 @@ grammar
 
 subrules
   h <:: t
+  v <:: t
+  s <:: t
+  s <:: v
   T <:: A
-  S <:: A  
+  S <:: A
+  C <:: A
   
 defns
   Typing :: '' ::=
@@ -250,6 +275,10 @@ defn
     G |- t1 ~> t2  : A :: :: red :: rd_    {{ com [[t1]] reduces to [[t2]] with type [[A]] in context [[G]] }}
 by
 
+    G |- s : A
+    --------------- :: values
+    G |- s ~> s : A
+
     G |- t : T
     ------------------------------- :: retracT
     G |- unbox T (box T t) ~> t : T
@@ -306,6 +335,77 @@ by
     ------------------------- :: snd
     G |- snd t ~> snd t' : A2
 
+    G |- t1 ~> t'1 : A1 && G |- t2 : A2
+    ----------------------------------- :: pair1
+    G |- (t1,t2) ~> (t'1,t2) : A1 x A2
+
+    G |- t1 : A1 && G |- t2  ~> t'2 : A2
+    ------------------------------------ :: pair2
+    G |- (t1,t2) ~> (t1,t'2) : A1 x A2
+
+defn
+    G |- t1 ~> t2 : A :: :: redA :: rdA_ {{com Reduction for annotated Siek16}}
+by
+    % Values:
+
+    G |- v : A
+    --------------- :: values
+    G |- v ~> v : A
+
+    % Casting:
+
+    G |- drop-cast v : C
+    ----------------------------- :: castA
+    G |- <C> v ~> drop-cast v : C
+
+    G |- t : A1 -> B1 && (A1 -> B1) ~ (A2 -> B2)
+    ----------------------------------------------------- :: castLam
+    G |- <A2 -> B2>t ~> \y : A2.<B2> (t <A1>y) : A2 -> B2
+
+    G |- t : A1 x B1 && (A1 x B1) ~ (A2 x B2)
+    ------------------------------------------------------ :: castPair
+    G |- <A2 x B2>t ~> (<A2>(fst t),<B2>(snd t)) : A2 x B2
+
+    G |- t1 ~> t2 : A && A ~ B
+    -------------------------- :: cast
+    G |- <B>t1 ~> <B>t2 : B
+
+    % Functions:
+
+    G, x : A1 |- t2 : A2 && G |- t1 : A1    
+    ------------------------------------ :: beta
+    G |- (\x:A1.t2) t1 ~> [t1/x]t2 : A2
+
+    G |- t : A1 -> A2 && x nin FV(t)
+    -------------------------------- :: eta
+    G |- \x:A1.H(t x) ~> t : A1 -> A2
+
+    G, x : A1 |- t ~> t' : A2
+    ---------------------------------- :: lam
+    G |- \x:A1.t ~> \x:A1.t' : A1 -> A2
+
+    G |- t1 ~> t'1 : A1 -> A2 && G |- t2 : A1
+    ---------------------------------------- :: app1
+    G |- t1 t2 ~> t'1 t2 : A2
+
+    G |- t1 : A1 -> A2 && G |- t2 ~> t'2 : A1
+    ---------------------------------------- :: app2
+    G |- t1 t2 ~> t1 t'2 : A2
+
+    % Pairs:
+    
+    G |- t ~> t' : A1 x A2
+    ------------------------- :: fst
+    G |- fst t ~> fst t' : A1
+
+    G |- t ~> t' : A1 x A2
+    ------------------------- :: snd
+    G |- snd t ~> snd t' : A2
+
+    G |- t : A1 x A2
+    ---------------------------------- :: etaP
+    G |- (fst t, snd t) ~> t : A1 x A2
+    
     G |- t1 ~> t'1 : A1 && G |- t2 : A2
     ----------------------------------- :: pair1
     G |- (t1,t2) ~> (t'1,t2) : A1 x A2
