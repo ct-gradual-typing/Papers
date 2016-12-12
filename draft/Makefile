@@ -28,11 +28,15 @@ all: pdf
 
 pdf : $(PDF)
 
+gradual-typing-ott.tex : gradual-typing.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter gradual-typing.tex gradual-typing-ott.tex
+
 introduction-ott.tex : introduction.tex grady.ott
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter introduction.tex introduction-ott.tex
 
-$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex
+$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter main.tex main-output.tex
 
