@@ -1,0 +1,194 @@
+The strength and main motivation for giving a categorical model to a
+programming language is that it can expose the fundamental structure
+of the language.  This arises because a lot of the language features
+that often cloud the picture go away, for example, syntactic notions
+like variables disappear.  Reynolds \cite{?} was a big advocate for
+category theory for these reasons. This can often simplify things and
+expose the underlying structure.  For example, when giving the simply
+typed $\lambda$-calculus a categorical model we see that it is a
+cartesian closed category, but we also know that intuitionistic logic
+has the same model due to \cite{Lambek:1980}; on the syntactic side
+these two theories are equivalent as well due to
+\cite{Howard:1980}. Thus, the fundamental structure of the simply
+typed $\lambda$-calculus is intuitionistic logic.  This also shows a
+relationship between seemingly unrelated theories.  It is quite
+surprising that these two theories are related.  Another more recent
+example of this can be found in the connection between dependent type
+theory and homotopy theory \cite{??}.
+
+Another major benefit of studying the categorical model of programming
+languages is that it gives us a powerful tool to study language
+extensions.  For example, purely functional programming in Haskell
+would not be where it is without the seminal work of Moggi and Wadler
+\cite{??}  on using monads -- a purely categorical notion -- to add
+side effects to Haskell.  Thus, we believe that developing these types
+of models for new language designs and features can be hugely
+beneficial.
+
+We give a categorical model for $\lambda^?_\to$ and $\lambda^{\langle
+  [[A]] \rangle}_\to$. We will show how to interpret the typing of the
+former into the model, and then show how to do the same for the
+latter, furthermore, we show that reduction can be interpreted into
+the model as well, thus concluding soundness for $\lambda^{\langle
+  [[A]] \rangle}_\to$ with respect to our model.
+
+The model we develop here builds on the seminal work of
+\cite{Lambek:1980} and \cite{Scott:1980}.  \cite{Lambek:1980} showed
+that the typed $\lambda$-calculus can be modeled by a cartesian closed
+category.  In the same volume as Lambek, Scott essentially showed that
+the untyped $\lambda$-calculus is actually typed.  That is, typed
+theories are more fundamental than untyped ones.  He accomplished this
+by adding a single type, $[[?]]$, and two functions $[[squash : (? ->
+    ?) -> ?]]$ and $[[split : ? -> (?  -> ?)]]$, such that,
+$[[squash]];[[split]] = \id : [[(? -> ?) -> (?  -> ?)]]$. At this
+point he was able to translate the untyped $\lambda$-calculus into
+this unityped one.  Categorically, he modeled $[[split]]$ and
+$[[squash]]$ as the morphisms in a retract within a cartesian closed
+category -- the same model as typed $\lambda$-calculus.
+
+\begin{definition}
+  \label{def:retract}
+  Suppose $\cat{C}$ is a category.  Then an object $A$ is a
+  \textbf{retract} of an object $B$ if there are morphisms $i : A \mto
+  B$ and $r : B \mto A$ such that the following diagram commutes:
+  \[
+  \bfig
+  \qtriangle/->`=`->/[A`B`A;i``r]
+  \efig
+  \]
+\end{definition}
+Thus, $[[? -> ?]]$ is a retract of $[[?]]$, but we extend this
+slightly to include $[[? x ?]]$ being a retract of $[[?]]$.  This is
+only a slight extension of Scott's model, because our languages will
+have products where he did not consider products, because he was
+considering the traditional definition of the untyped
+$\lambda$-calculus.
+
+We can now define our categorical model of the untyped
+$\lambda$-calculus with products.
+\begin{definition}
+  \label{def:model-untyped}
+  An \textbf{untyped $\lambda$-model}, $(\cat{C}, ?, \split,
+  \squash)$, is a cartesian closed category $\cat{C}$ with a
+  distinguished object $?$ and morphisms $\squash : S \mto ?$ and
+  $\split : ? \mto S$ making the object $S$ a retract of $?$, where
+  $S$ is either $[[? -> ?]]$ or $[[? x ?]]$.
+\end{definition}
+
+\begin{theorem}[\citet{Scott:1980}]
+  \label{thm:untyped-lambda-model-sound-complete}
+  An untyped $\lambda$-model is a sound and complete model of the untyped $\lambda$-calculus.
+\end{theorem}
+
+Since all of the languages we are studying here contain the natural
+numbers we must be able to interpret them into our model.  We give a
+novel approach to modeling the natural numbers with their
+(non-recursive) eliminator using what we call a Scott natural number
+object.  Now the natural number eliminator is not part of
+$\lambda^?_\to$ or $\lambda^{\langle [[A]] \rangle}_\to$, but we want
+Grady to contain it, and Grady will directly correspond to the model.
+\begin{definition}
+  \label{def:SNNO}
+  Suppose $\cat{C}$ is a cartesian closed category.  A
+  \textbf{Scott natural number object (SNNO)} is an object $[[Nat]]$ of $\cat{C}$ and
+  morphisms $\mathsf{z} : 1 \mto [[Nat]]$ and $[[succ]] : [[Nat]]  \mto [[Nat]]$ of $\cat{C}$,
+  such that, for any morphisms $f : [[Y]] \mto X$ and $g : [[Y x Nat]] \mto X$ of $\cat{C}$ there is a unique morphism
+  $\case_X : [[Y x Nat]] \mto X$ making the following diagrams commute:
+       \[
+       \begin{array}{lll}
+         \bfig
+         \qtriangle|amm|<1000,500>[
+           [[Y x Nat]]`
+           [[Y x Nat]]`
+           X;
+           \id_Y \times \mathsf{z}`
+           \pi_1;f`
+           \case_X]
+
+         \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
+           [[Y x Nat]]`
+           [[Y x Nat]]`
+           X;
+           \id_Y \times [[succ]]`
+           \case_X`
+           g ]
+         \efig                               
+       \end{array}
+       \]
+       Informally, the two diagrams essentially assert that we can
+       define $\case_X$ as follows:
+       \begin{center}
+         \begin{math}
+           \begin{array}{rll}
+             \case_X\,y\,0 & = & f\,y\\
+             \case_X\,y\,[[(succ x)]] & = &  g\,y\,x
+           \end{array}
+         \end{math}
+       \end{center}
+\end{definition}
+\noindent This formalization of natural numbers is inspired by the
+definition of Scott Numerals \cite{??} where the notion of a case
+distinction is built into the encoding. We can think of $[[Y]]$ in the
+source object of $\case$ as the type of additional inputs that will be
+passed to both $f$ and $g$, but we can think of $[[Nat]]$ in the
+source object of $\case$ as the type of the scrutiny.  Thus, since in
+the base case there is no predecessor, $f$, will not require the
+scrutiny, and so it is ignored.
+
+One major difference between SNNOs and the more traditional natural
+number objects is that in the definition of the latter $g$ is defined
+by well-founded recursion.  However, SNNOs do not allow this, but in
+the presence of fixpoints we are able to regain this feature without
+having to bake it into the definition of natural number objects.
+However, to allow this we have found that when combining fixpoints and
+case analysis to define terminating functions on the natural numbers
+it is necessary to uniformly construct the input to both $f$ and $g$
+due to the reduction rule of the Y combinator.  Thus, we extend the
+type of $f$ to $[[Y x Nat]]$, but then ignore the second projection
+when reaching the base case.
+
+So far we can model the untyped and the typed $\lambda$-calculi within
+a cartesian closed category, but we do not have any way of moving
+typed data into the untyped part and vice versa.  That is, we need a
+way of casting data into $[[?]]$ and vice versa.  To accomplish this
+we add two new morphisms $[[box C : C --> ?]]$ and $[[unbox C : ? -->
+    C]]$ such that $[[box C]];[[unbox C]] = \id : C \mto C$ for every
+atomic type $[[C]]$.  Thus, each atomic type is a retract of $[[?]]$.
+This enforces that the only time we can really consider something as
+typed is if it were boxed up in the first place.  We can look at this
+from another perspective as well.  If the programmer tries to unbox
+something that is truly untyped, then their program may actually type
+check, but they will obtain a dynamic type error at runtime, because
+the unbox will never have been matched up with the correct boxed data.
+For example, we can cast $3$ to type $\mathsf{Bool}$ by
+$[[unbox]]_{\mathsf{Bool}} ([[box Nat]]\, 3)$, but if this program is
+every run, then we will obtain a dynamic type error.  Note that we can
+type the previous program in $\lambda^{\langle [[A]] \rangle}_\to$ as
+well, but if we run the program it will result in a dynamic type
+error.
+
+Now we combine everything we have discussed so far to obtain the
+categorical model.
+\begin{definition}
+  \label{def:gradual-lambda-model}
+  A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?, \T,
+  \split,\squash, \bx,$ $\unbox)$, where $\cat{T}$ is a discrete
+  category with at least two objects $[[Nat]]$ and $[[Unit]]$, and
+  $\cat{C}$ is a cartesian closed category with a SNNO,
+  $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model, $\T :
+  \cat{T} \mto \cat{C}$ is an embedding -- a full and faithful functor
+  that is injective on objects -- and for every object $A$ of
+  $\cat{T}$ there are morphisms $\bx_A : TA \mto ?$ and $\unbox_A : ?
+  \mto TA$ making $TA$ a retract of $?$.
+\end{definition}
+\noindent
+We call the category $\cat{T}$ the category of atomic types.  Note
+that we do not consider $[[?]]$ an atomic type. The model really is
+the cartesian closed category $\cat{C}$, but it is extended with the
+structure of both the typed and the untyped $\lambda$-calculus with
+the ability to cast data.
+
+Interpreting the typing rules for $\lambda^?_\to$ will require the
+interpretation of type consistency.  Thus, we must be able to cast any
+type $[[A]]$ to $[[?]]$, but as stated the model only allows atomic
+types to be casted.  In turns out that this can be lifted to any type.

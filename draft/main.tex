@@ -1,0 +1,156 @@
+%% Submission instructions:
+%%
+%% Full paper of at most 12 pages (6 pages for an Experience Report),
+%% in standard SIGPLAN conference format, including figures but
+%% ***excluding bibliography***.
+%% 
+%% The deadlines will be strictly enforced and papers exceeding the page
+%% limits will be summarily rejected.
+%% 
+%% ***ICFP 2017 will employ a lightweight double-blind reviewing
+%% process.*** To facilitate this, submitted papers must adhere to two
+%% rules:
+%% 
+%%  1. ***author names and institutions must be omitted***, and
+%% 
+%%  2. ***references to authors' own related work should be in the third
+%%     person*** (e.g., not "We build on our previous work ..." but
+%%     rather "We build on the work of ...").
+\documentclass[preprint]{sigplanconf}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amssymb,amsmath,amsthm}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{mathpartir}
+\usepackage[barr]{xy}
+\usepackage{mdframed}
+\usepackage{supertabular}
+\usepackage{todonotes}
+
+\newcommand{\cL}{{\cal L}}
+
+\let\mto\to                     % Used for arrows
+\let\to\relax                   % Used for implication
+\newcommand{\to}{\rightarrow}
+\newcommand{\id}{\mathsf{id}}
+\newcommand{\redto}{\rightsquigarrow}
+\newcommand{\cat}[1]{\mathcal{#1}}
+\newcommand{\case}[0]{\mathsf{case}}
+
+\let\split\relax
+
+\newcommand{\split}[0]{\mathsf{split}}
+\newcommand{\squash}[0]{\mathsf{squash}}
+\newcommand{\bx}[0]{\mathsf{box}}
+\newcommand{\unbox}[0]{\mathsf{unbox}}
+\newcommand{\T}[0]{\mathsf{T}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}[theorem]{Example}
+
+%% Ott includes:
+\input{grady-inc}
+\renewcommand{\Gradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\Gradydrulename{#4}}}
+\renewcommand{\Gradydrulename}[1]{#1}
+\renewcommand{\GradydrulesndUName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydrulefstUName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydrulesuccUName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydrulecastName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydruleappCName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydruleappUName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydrulereflName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydruleboxName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydruleunboxName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydrulearrowName}[0]{\Gradydrulename{}}
+\renewcommand{\GradydruleprodName}[0]{\Gradydrulename{}}
+
+\begin{document}
+
+\conferenceinfo{ICFP ’17}{September 3--9, 2017, Oxford, United Kingdom}
+\copyrightyear{2017}
+\copyrightdata{???}
+\copyrightdoi{????}
+
+\titlebanner{}
+\preprintfooter{}
+
+\title{The Combination of Dynamic and Static Typing from a Categorical Perspective}
+
+\authorinfo{Harley Eades III and Michael Townsend}
+           {Augusta University}
+           {\{heades,mitownsend\}@augusta.edu}
+
+\maketitle
+
+\category{D.1.1}{Programming Technique}[Applicative (Functional) Programming]
+\category{D.3.1}{Formal Definitions and Theory}[Semantics]
+\category{F.3.3}{Studies of Program Constructs}[Type structure]
+\category{F.4.1}{Mathematical Logic and Formal Languages}[Lambda calculus and related systems]
+
+\terms typed lambda-calculus, untyped lambda-calculus, gradual typing,
+static typing, dynamic typing, categorical model, functional
+programming
+
+\keywords static typing, dynamic typing, gradual typing, categorical
+semantics, retract
+
+\begin{abstract}
+  Gradual typing was first proposed by Siek and Taha in 2006 as a way
+  for a programming language to combine the strengths of both static
+  and dynamic typing.  However one question we must ask is, what is
+  gradual typing?  This paper contributes to answering this question
+  by providing the first categorical model of gradual typing using the
+  seminal work of Scott and Lambek on the categorical models of the
+  untyped and typed $\lambda$-calculus.  We then extract a functional
+  programming language, called Grady, from the categorical model using
+  the Curry-Howard-Lambek correspondence that combines both static and
+  dynamic typing, but Grady is an annotated language and not a gradual
+  type system.  Finally, we show that Siek and Taha's gradual type
+  system can be translated into Grady, and that their original
+  annotated language is equivalent in expressive power to Grady.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+\input{introduction-ott}
+% section introduction (end)
+
+\section{Gradual Typing}
+\label{sec:gradual_typing}
+\input{gradual-typing-ott}
+% section gradual_typing (end)
+
+\section{The Categorical Model}
+\label{sec:categorical_model}
+\input{categorical-model-ott}
+% section categorical_model (end)
+
+\section{Grady}
+\label{sec:grady}
+
+% section grady (end)
+
+\section{Grady and Gradual Typing}
+\label{sec:grady_and_gradual_typing}
+
+% section grady_and_gradual_typing (end)
+
+
+\nocite{*}
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+
+\section{The Complete Spec of Grady}
+\label{sec:the_complete_spec_of_grady}
+\Gradyall{}
+% section the_complete_spec_of_grady (end)
+
+\end{document}
