@@ -2,19 +2,19 @@ The strength and main motivation for giving a categorical model to a
 programming language is that it can expose the fundamental structure
 of the language.  This arises because a lot of the language features
 that often cloud the picture go away, for example, syntactic notions
-like variables disappear.  Reynolds \cite{?} was a big advocate for
-category theory for these reasons. This can often simplify things and
-expose the underlying structure.  For example, when giving the simply
-typed $\lambda$-calculus a categorical model we see that it is a
-cartesian closed category, but we also know that intuitionistic logic
-has the same model due to \cite{Lambek:1980}; on the syntactic side
-these two theories are equivalent as well due to
-\cite{Howard:1980}. Thus, the fundamental structure of the simply
-typed $\lambda$-calculus is intuitionistic logic.  This also shows a
-relationship between seemingly unrelated theories.  It is quite
-surprising that these two theories are related.  Another more recent
-example of this can be found in the connection between dependent type
-theory and homotopy theory \cite{??}.
+like variables disappear.  This can often simplify things and expose
+the underlying structure.  Reynolds \cite{?} was a big advocate for
+the use of category theory in programming language research for these
+reasons.  For example, when giving the simply typed $\lambda$-calculus
+a categorical model we see that it is a cartesian closed category, but
+we also know that intuitionistic logic has the same model due to
+\cite{Lambek:1980}; on the syntactic side these two theories are
+equivalent as well due to \cite{Howard:1980}. Thus, the fundamental
+structure of the simply typed $\lambda$-calculus is intuitionistic
+logic.  This also shows a relationship between seemingly unrelated
+theories.  It is quite surprising that these two theories are related.
+Another more recent example of this can be found in the connection
+between dependent type theory and homotopy theory \cite{??}.
 
 Another major benefit of studying the categorical model of programming
 languages is that it gives us a powerful tool to study language
@@ -25,9 +25,27 @@ side effects to Haskell.  Thus, we believe that developing these types
 of models for new language designs and features can be hugely
 beneficial.
 
-We give a categorical model for $\lambda^?_\to$ and $\lambda^{\langle
-  [[A]] \rangle}_\to$. We will show how to interpret the typing of the
-former into the model, and then show how to do the same for the
+Interpreting a programming language into a categorical model requires
+three steps.  First, the types are interpreted as objects.  Then
+programs are interpreted as morphisms in the category, but this is a
+simplification.  Every morphism, $f$, in a category has a source
+object and a target object, we usually denote this by $f : A \mto B$.
+Thus, in order to interpret programs as morphisms the program must
+have a source and target.  So instead of interpreting raw terms as
+morphisms we interpret terms in their typing context.  That is, we
+must show how to interpret every $[[G |- t : A]]$ as a morphism $[[t]]
+: \interp{[[G]]} \mto \interp{[[A]]}$.  The third step is to show that
+whenever one program reduces to another their interpretations are
+isomorphic in the model. This means that whenever $[[G |- t1 ~> t2 :
+    A]]$, then $[[ [|t1|] ]] \cong [[ [|t2|] ]] : [[ [| G |] --> [| A
+      |] ]]$.  This is the reason why we defined our reduction in a
+typed fashion to aid us in understanding how it relates to the model.
+For a more thorough introduction see \cite{Crole:1994}.
+
+We now give a categorical model for $\lambda^?_\to$ and
+$\lambda^{\langle [[A]] \rangle}_\to$.  Then we complete the three
+steps summarized above. We will show how to interpret the typing of
+the former into the model, and then show how to do the same for the
 latter, furthermore, we show that reduction can be interpreted into
 the model as well, thus concluding soundness for $\lambda^{\langle
   [[A]] \rangle}_\to$ with respect to our model.
@@ -149,8 +167,7 @@ when reaching the base case.
 
 So far we can model the untyped and the typed $\lambda$-calculi within
 a cartesian closed category, but we do not have any way of moving
-typed data into the untyped part and vice versa.  That is, we need a
-way of casting data into $[[?]]$ and vice versa.  To accomplish this
+typed data into the untyped part and vice versa.  To accomplish this
 we add two new morphisms $[[box C : C --> ?]]$ and $[[unbox C : ? -->
     C]]$ such that $[[box C]];[[unbox C]] = \id : C \mto C$ for every
 atomic type $[[C]]$.  Thus, each atomic type is a retract of $[[?]]$.
@@ -164,8 +181,8 @@ For example, we can cast $3$ to type $\mathsf{Bool}$ by
 $[[unbox]]_{\mathsf{Bool}} ([[box Nat]]\, 3)$, but if this program is
 every run, then we will obtain a dynamic type error.  Note that we can
 type the previous program in $\lambda^{\langle [[A]] \rangle}_\to$ as
-well, but if we run the program it will result in a dynamic type
-error.
+well, but if we run the program it will result in a dynamic type error
+too.
 
 Now we combine everything we have discussed so far to obtain the
 categorical model.
@@ -173,7 +190,7 @@ categorical model.
   \label{def:gradual-lambda-model}
   A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?, \T,
   \split,\squash, \bx,$ $\unbox)$, where $\cat{T}$ is a discrete
-  category with at least two objects $[[Nat]]$ and $[[Unit]]$, and
+  category with at least two objects $[[Nat]]$ and $[[Unit]]$,
   $\cat{C}$ is a cartesian closed category with a SNNO,
   $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model, $\T :
   \cat{T} \mto \cat{C}$ is an embedding -- a full and faithful functor

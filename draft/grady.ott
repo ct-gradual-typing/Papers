@@ -40,6 +40,8 @@ grammar
     {{tex \mathsf{drop}\text{-}\mathsf{cast}\,[[t]] }}
     | 42                  :: M :: Forty2
     | 3                   :: M :: Three
+    | [| t |]             :: M :: Interp
+    {{tex \interp{[[t]]} }}
 
   % s :: 's_' ::= {{com simple values }}
   %   | x                   ::   :: var  
@@ -106,6 +108,10 @@ grammar
     {{tex [[A]] }}
     | A1 --> A2           :: M :: Morph
     {{tex [[A1]] \mto [[A2]] }}
+    | [| G |]             :: M :: InterpCtx
+    {{tex \interp{[[G]]} }}
+    | [| A |]             :: M :: InterpType
+    {{tex \interp{[[A]]} }}    
     
 
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
