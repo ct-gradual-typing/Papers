@@ -86,13 +86,13 @@ grammar
   %   {{tex [[S]] }}
   %   | ( S )         :: M :: Paren
 
-  C :: 'C_' ::=                                {{ com atomic type }}  
-    | Unit                ::   :: term         {{ com unit type }}
-    {{tex 1}}
-    | Nat                 ::   :: nat          {{ com natural number type }}
-    {{tex \mathsf{Nat} }}
+  % C :: 'C_' ::=                                {{ com atomic type }}  
+  %   | Unit                ::   :: term         {{ com unit type }}
+  %   {{tex 1}}
+  %   | Nat                 ::   :: nat          {{ com natural number type }}
+  %   {{tex \mathsf{Nat} }}
 
-  A, B, S, X, Y, Z :: 'A_' ::=                                {{ com type }}  
+  A, B, C, S, X, Y, Z :: 'A_' ::=                                {{ com type }}  
     | Unit                ::   :: term         {{ com unit type }}
     {{tex 1}}
     | Nat                 ::   :: nat          {{ com natural number type }}
@@ -111,7 +111,9 @@ grammar
     | [| G |]             :: M :: InterpCtx
     {{tex \interp{[[G]]} }}
     | [| A |]             :: M :: InterpType
-    {{tex \interp{[[A]]} }}    
+    {{tex \interp{[[A]]} }}
+    | skeleton A          :: M :: Skeleton
+    {{tex \mathsf{skeleton}\,[[A]] }}
     
 
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
@@ -172,7 +174,7 @@ grammar
 subrules
   h <:: t
   T <:: A
-  C <:: A  
+  
 defns
   Typing :: '' ::=
 

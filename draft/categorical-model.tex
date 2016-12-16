@@ -199,13 +199,67 @@ categorical model.
   \mto TA$ making $TA$ a retract of $?$.
 \end{definition}
 \noindent
-We call the category $\cat{T}$ the category of atomic types.  Note
-that we do not consider $[[?]]$ an atomic type. The model really is
-the cartesian closed category $\cat{C}$, but it is extended with the
-structure of both the typed and the untyped $\lambda$-calculus with
-the ability to cast data.
+We call the category $\cat{T}$ the category of atomic types.  We call
+an object, $[[A]]$, \textbf{atomic} iff there is some object $[[A']]$
+in $\cat{T}$ such that $[[A]] = \T[[A']]$. Note that we do not
+consider $[[?]]$ an atomic type.  The model really is the cartesian
+closed category $\cat{C}$, but it is extended with the structure of
+both the typed and the untyped $\lambda$-calculus with the ability to
+cast data.
 
 Interpreting the typing rules for $\lambda^?_\to$ will require the
 interpretation of type consistency.  Thus, we must be able to cast any
 type $[[A]]$ to $[[?]]$, but as stated the model only allows atomic
-types to be casted.  In turns out that this can be lifted to any type.
+types to be casted.  It turns out that this can be lifted to any type.
+
+To cast any type $[[A]]$ to $[[?]]$ we will build casting morphisms
+that first take the object $[[A]]$ to its skeleton, and then takes the
+skeleton to $[[?]]$.
+\begin{definition}
+  \label{def:skeleton}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model.  Then the \textbf{skeleton} of an
+  object $[[A]]$ of $\cat{C}$ is an object $[[S]]$ that is constructed
+  by replacing each atomic type in $[[A]]$ with $[[?]]$. Given an
+  object $[[A]]$ we denote its skeleton by $[[skeleton A]]$.
+\end{definition}
+One should think of the skeleton of an object as the supporting type
+structure of the object, but we do not know what kind of data is
+actually in the structure. For example, the skeleton of the object
+$[[Nat]]$ is $[[?]]$, and the skeleton of $[[(Nat x Unit) -> Nat ->
+    Nat]]$ is $[[(?  x ?) -> ? -> ?]]$.
+
+The next definition defines a means of constructing a casting morphism
+that casts a type $[[A]]$ to its skeleton and vice versa.  This
+definition is by mutual recursion on the input type.
+\begin{definition}
+  \label{def:boxing-unboxing}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model.  Then for any object $[[A]]$ whose
+  skeleton is $[[S]]$ we define the functions
+  $\widehat{\mathsf{box}}\,[[A]]$ and
+  $\widehat{\mathsf{unbox}}\,[[S]]\,[[A]]$ by mutual recursion on
+  $[[A]]$ as follows:
+  \[
+  \begin{array}{lll}
+    \widehat{[[box]]}\,?\,[[A]] = [[box A]]\\
+    \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
+    \\
+    \widehat{[[box]]}\,[[?]]\,[[?]] = \id_{[[?]]}\\
+    \\
+    \widehat{[[box]]}\,([[A1 -> A2]]) = (\widehat{[[unbox]]}\,([[skeleton A1]])\,[[A1]]) \to (\widehat{[[box]]}\,[[S2]]\,[[A2]])\\
+    \\
+    \widehat{[[box]]}\,([[A1 x A2]]) = (\widehat{[[box]]}\,[[A1]]) \times (\widehat{[[box]]}\,[[A2]])\\
+    \\
+    \widehat{[[unbox]]}\,?\,[[A]] = [[unbox A]]\\
+    \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
+    \\
+    \widehat{[[unbox]]}\,[[?]]\,[[?]] = \id_{[[?]]}\\
+    \\
+    \widehat{[[unbox]]}\,([[S1 -> S2]])\,([[A1 -> A2]]) = (\widehat{[[box]]}\,[[A1]]) \to (\widehat{[[unbox]]}\,[[S2]]\,[[A2]])\\
+    \\
+    \widehat{[[unbox]]}\,([[S1 x S2]])\,([[A1 x A2]]) = (\widehat{[[unbox]]}\,[[S1]]\,[[A1]]) \times (\widehat{[[unbox]]}\,[[S2]]\,[[A2]])\\        
+  \end{array}
+  \]
+\end{definition}
+
