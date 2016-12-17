@@ -16,6 +16,14 @@ grammar
     {{tex \mathsf{box}_{[[C]]} }}    
     | unbox C             ::   :: spec         {{ com specialize the untyped universe to a specific type }}
     {{tex \mathsf{unbox}_{[[C]]} }}
+    | lbox C               :: M  :: lgen
+    {{tex \widehat{\mathsf{box} }_{[[C]]} }}    
+    | lunbox C             :: M  :: lspec
+    {{tex \widehat{\mathsf{unbox} }_{[[C]]} }}
+    | lsplit S               :: M  :: lsplit
+    {{tex \widehat{\mathsf{split} }_{[[S]]} }}    
+    | lsquash S             :: M  :: lsquash
+    {{tex \widehat{\mathsf{squash} }_{[[S]]} }}        
     | < A > t             ::   :: cast         {{ com type cast }}
     {{tex \langle [[A]] \rangle [[t]] }}    
     | \ x : A . t         ::   :: abs          {{ com $\lambda$-abstraction }}

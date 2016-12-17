@@ -212,9 +212,12 @@ interpretation of type consistency.  Thus, we must be able to cast any
 type $[[A]]$ to $[[?]]$, but as stated the model only allows atomic
 types to be casted.  It turns out that this can be lifted to any type.
 
-To cast any type $[[A]]$ to $[[?]]$ we will build casting morphisms
-that first take the object $[[A]]$ to its skeleton, and then takes the
-skeleton to $[[?]]$.
+We call any morphism defined completely in terms of $\id$, the functors
+$- \times -$ and $- \to -$, $[[split]]$ and $[[squash]]$, and
+$[[box]]$ and $[[unbox]]$ a \textbf{casting morphism}. To cast any
+type $[[A]]$ to $[[?]]$ we will build casting morphisms that first
+take the object $[[A]]$ to its skeleton, and then takes the skeleton
+to $[[?]]$.
 \begin{definition}
   \label{def:skeleton}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
@@ -236,30 +239,236 @@ definition is by mutual recursion on the input type.
   \label{def:boxing-unboxing}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
   is a gradual $\lambda$-model.  Then for any object $[[A]]$ whose
-  skeleton is $[[S]]$ we define the functions
-  $\widehat{\mathsf{box}}\,[[A]]$ and
-  $\widehat{\mathsf{unbox}}\,[[S]]\,[[A]]$ by mutual recursion on
+  skeleton is $[[S]]$ we define the morphisms
+  $[[lbox A]] : [[A --> S]]$ and
+  $[[lunbox A]] : [[S --> A]]$ by mutual recursion on
   $[[A]]$ as follows:
   \[
   \begin{array}{lll}
-    \widehat{[[box]]}\,?\,[[A]] = [[box A]]\\
+    \begin{array}{lll}
+      [[lbox A]] = [[box A]]\\
     \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
     \\
-    \widehat{[[box]]}\,[[?]]\,[[?]] = \id_{[[?]]}\\
+    [[lbox ?]] = \id_{[[?]]}\\
     \\
-    \widehat{[[box]]}\,([[A1 -> A2]]) = (\widehat{[[unbox]]}\,([[skeleton A1]])\,[[A1]]) \to (\widehat{[[box]]}\,[[S2]]\,[[A2]])\\
+    [[lbox (A1 -> A2)]] = [[lunbox A1]] \to [[lbox A2]]\\
     \\
-    \widehat{[[box]]}\,([[A1 x A2]]) = (\widehat{[[box]]}\,[[A1]]) \times (\widehat{[[box]]}\,[[A2]])\\
+    [[lbox (A1 x A2)]] = [[lbox A1]] \times [[lbox A2]]\\        
+    \end{array} & \quad \quad 
     \\
-    \widehat{[[unbox]]}\,?\,[[A]] = [[unbox A]]\\
+    \\\hline 
+    \\
+    \begin{array}{lll}
+    [[lunbox A]] = [[unbox A]]\\
     \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
     \\
-    \widehat{[[unbox]]}\,[[?]]\,[[?]] = \id_{[[?]]}\\
+    [[lunbox ?]] = \id_{[[?]]}\\
     \\
-    \widehat{[[unbox]]}\,([[S1 -> S2]])\,([[A1 -> A2]]) = (\widehat{[[box]]}\,[[A1]]) \to (\widehat{[[unbox]]}\,[[S2]]\,[[A2]])\\
+    [[lunbox (A1 -> A2)]] = [[lbox A1]] \to [[lunbox A2]]\\
     \\
-    \widehat{[[unbox]]}\,([[S1 x S2]])\,([[A1 x A2]]) = (\widehat{[[unbox]]}\,[[S1]]\,[[A1]]) \times (\widehat{[[unbox]]}\,[[S2]]\,[[A2]])\\        
+    [[lunbox (A1 x A2)]] = [[lunbox A1]] \times [[lunbox A2]]\\        
+    \end{array}
   \end{array}
   \]
 \end{definition}
+\noindent
+The definition of both $\widehat{[[box]]}$ or $\widehat{[[unbox]]}$
+uses the functor $- \to - : \catop{C} \times \cat{C} \mto \cat{C}$
+which is contravariant in its first argument, and thus, in that
+contravariant position we must make a recursive call to the opposite
+function, and hence, they must be mutually defined. Every call to
+either $\widehat{[[box]]}$ or $\widehat{[[unbox]]}$ in the previous
+definition is on a smaller object than the input object.  Thus, their
+definitions are well founded.  Furthermore, $\widehat{[[box]]}$ and
+$\widehat{[[unbox]]}$ form a retract between $[[A]]$ and $[[S]]$.
+\begin{lemma}[Boxing and Unboxing Lifted Retract]
+  \label{lemma:lifted_retract}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model.  Then for any object $[[A]]$,
+  \[ [[lbox A]];[[lunbox A]] = \id_A : [[A --> A]]. \]
+\end{lemma}
+\begin{proof}  
+  This proof holds by induction on the form $[[A]]$.  Please see
+  Appendix~\ref{subsec:proof_of_lifted_retract} for the complete
+  proof.
+\end{proof}
 
+As an example, suppose we wanted to cast the type $[[(Nat x ?) ->
+    Nat]]$ to its skeleton $[[(? x ?) -> ?]]$.  Then we can obtain a
+casting morphisms that will do this as follows:
+\[
+\begin{array}{lll}
+  [[lbox ((Nat x ?) -> Nat)]]
+  & = & [[lunbox (Nat x ?)]] \to [[lbox Nat]]\\
+  & = & ([[lunbox Nat]] \times [[lunbox ?]]) \to [[lbox Nat]]\\
+  & = & ([[unbox Nat]] \times \id_{[[?]]}) \to [[box Nat]]\\
+\end{array}
+\]
+We can also cast a morphism $[[A]] \mto^f [[B]]$ to a morphism
+\[ [[S1]] \mto^{[[lunbox A]]} A \mto^{f} B \mto^{[[lbox B]]} [[S2]]\]
+where $[[S1]] = [[skeleton A]]$ and $[[S2]] = [[skeleton B]]$.  Now if
+we have a second
+\[ [[S2]] \mto^{[[lunbox B]]} B \mto^{g} C \mto^{[[lbox C]]} [[S3]]\]
+then their composition reduces to composition at the typed level:
+\[
+\bfig
+\square|amma|/->`->`->`<-/<500,500>[
+  [[S1]]`
+  [[A]]`
+  [[S3]]`
+  [[C]];
+  [[lunbox A]]``
+  f;g`
+  [[lbox C]]
+]
+
+\square(500,0)|amma|/->`->`=`<-/<500,500>[
+  [[A]]`
+  [[B]]`
+  [[C]]`
+  [[B]];
+  f`
+  f;g``
+  g]
+
+\square(1000,0)|amma|/->`=`=`<-/<500,500>[
+  [[B]]`
+  [[S2]]`
+  [[B]]`
+  [[S2]];
+  [[lbox B]]```
+  [[lunbox B]]
+] 
+\efig
+\]
+The right most diagram commutes because $[[B]]$ is a retract of
+$[[S2]]$, and the left unannotated arrow is the composition $[[lunbox
+    A]];f;g;[[lbox C]]$.  This tells us that we have a functor $\S
+: \cat{C} \mto \cat{S}$:
+\[
+\begin{array}{lll}
+  \S[[A]] = [[skeleton A]]\\
+  \S (f : [[A --> B]]) = [[lunbox A]];f;[[lbox A]]
+\end{array}
+\]
+where $\cat{S}$ is the full subcategory of $\cat{C}$ consisting of the
+skeletons and morphisms between them, that is, $\cat{S}$ is a
+cartesian closed category with one basic object $[[?]]$ such that
+$(\cat{S},[[?]],[[split]],[[squash]])$ is an untyped $\lambda$-model.
+The following turns out to be true.
+\begin{lemma}[$\S$ is faithful]
+  \label{lemma:S_is_faithful}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model, and
+  $(\cat{S},[[?]],[[split]],[[squash]])$ is the category of skeletons.
+  Then the functor $\S : \cat{C} \mto \cat{S}$ is faithful.
+\end{lemma}
+\begin{proof}
+  This proof follows from the definition $\S$ and
+  Lemma~\ref{lemma:lifted_retract}.  For the full proof see
+  Appendix~\ref{subsec:proof_of_S_is_faithful}.
+\end{proof}
+Thus, we can think of the functor $\S$ as an injection of the typed
+world into the untyped one.
+
+Now that we can cast any type into its skeleton we must show that
+every skeleton can be cast to $[[?]]$.  We do this similarly to the
+above and lift $[[split]]$ and $[[squash]]$ to arbitrary skeletons.
+\begin{definition}
+  \label{def:lifted-split-squash}
+  Suppose $(\cat{S}, [[?]], [[split]],[[squash]])$ is the category of
+  skeletons.  Then for any skeleton $[[S]]$ we define the morphisms
+  $[[lsquash S]] : [[S --> ?]]$ and $[[lsplit S]] : [[? --> S]]$ by
+  mutual recursion on $[[S]]$ as follows:
+  \[
+    \begin{array}{lll}
+      [[lsquash ?]] = id_?\\
+      \\
+      [[lsquash (S1 -> S2)]] = ([[lsplit S1]] \to [[lsquash S2]]);[[squash ? -> ?]]\\
+      \\
+      [[lsquash (S1 x S2)]] = ([[lsquash S1]] \times [[lsquash S2]]);[[squash ? x ?]]\\
+      \\ \hline \\
+      [[lsplit ?]] = \id_?\\
+      \\
+      [[lsplit (S1 -> S2)]] = [[split ? -> ?]];([[lsquash S1]] \to [[lsplit S2]])\\
+      \\
+      [[lsplit (S1 x S2)]] = [[split ? x ?]];([[lsplit S1]] \times [[lsplit S2]])\\      
+    \end{array}  
+  \]
+\end{definition}
+\noindent
+As an example we will construct the casting morphism that casts the
+skeleton $[[(? x ?) -> ?]]$ to $[[?]]$:
+\[
+\begin{array}{lll}
+  [[lsquash (? x ?) -> ?]]\\
+  = ([[lsplit ? x ?]] \to [[lsquash ?]]);[[squash ? -> ?]]\\
+  = ([[split ? x ?]];([[lsplit ?]] \times [[lsplit ?]])) \to [[lsquash ?]]);[[squash ? -> ?]]\\
+  = (([[split ? x ?]];(\id_? \times \id_?)) \to \id_?);[[squash ? -> ?]]\\
+  = ([[split ? x ?]] \to \id_?);[[squash ? -> ?]]\\
+\end{array}
+\]
+
+The morphisms $[[lsplit S]]$ and $[[lsquash S]]$ form a retract
+between $[[S]]$ and $[[?]]$.
+
+\begin{lemma}[Splitting and Squashing Lifted Retract]
+  \label{lemma:lifted_retract_for_?}
+  Suppose $(\cat{S}, [[?]], [[split]],[[squash]])$ is the category of
+  skeletons.  Then for any skeleton $[[S]]$,
+  \[
+    [[lsquash A]];[[lsplit A]] = \id_A : [[A --> A]]
+  \]
+\end{lemma}
+\begin{proof}
+  The proof is similar to the proof of the boxing and unboxing lifted
+  retract (Lemma~\ref{lemma:lifted_retract}).
+\end{proof}
+There is also a faithful functor from $\cat{S}$ to $\cat{U}$ where
+$\cat{U}$ is the full subcategory of $\cat{S}$ that consists of the
+single object $[[?]]$ and all its morphisms between it:
+\[
+\begin{array}{lll}
+  \U S = ?\\
+  \U (f : [[S1 --> S2]]) = [[lsplit S1]];f;[[lsquash S2]]
+\end{array}
+\]
+This finally implies that there is a functor $\C : \cat{C} \mto
+\cat{U}$ that injects all of $\cat{C}$ into the object $[[?]]$.
+\begin{lemma}[Casting to $[[?]]$]
+  \label{lemma:casting_to_?}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model, $(\cat{S},[[?]],[[split]],[[squash]])$
+  is the full subcategory of skeletons, and $(\cat{U},[[?]])$ is the
+  full subcategory containing only $[[?]]$ and its morphisms.  Then
+  there is a faithful functor $\C = \cat{C} \mto^{\S} \cat{S} \mto^{\U} \cat{U}$.
+\end{lemma}
+In a way we can think of $\C : \cat{C} \mto \cat{U}$ as a forgetful
+functor.  It forgets the type information.
+
+Getting back the typed information is harder.  There is no nice
+functor from $\cat{U}$ to $\cat{C}$, because we need more information.
+However, given a type $[[A]]$ we can always obtain a casting morphism
+from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
+[[? --> A]]$.  Finally, we have the following result.
+\begin{lemma}[Casting Morphisms]
+  \label{lemma:casting_morphisms}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$\\ $\squash, \bx,
+  \unbox)$ is a gradual $\lambda$-model, and $[[A]]$ is an object of
+  $\cat{C}$.  Then there exists casting morphisms from
+  $[[A]]$ to $[[?]]$ and vice versa.
+\end{lemma}
+\begin{proof}
+  The two morphisms are as follows:
+  \[
+  \begin{array}{lll}
+    [[lbox A]];[[lsquash (skeleton A)]] : [[A --> ?]]\\
+    \\
+    [[(lsplit (skeleton A))]];([[lunbox A]]) : [[? --> A]]
+  \end{array}
+  \]
+\end{proof}
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

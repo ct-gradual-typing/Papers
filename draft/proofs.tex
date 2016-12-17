@@ -1,0 +1,107 @@
+\subsection{Proof of Lifted Retract (Lemma~\ref{lemma:lifted_retract})}
+\label{subsec:proof_of_lifted_retract}
+This is a proof by induction on the form of $[[A]]$.
+
+\begin{itemize}
+\item[] Case. Suppose $[[A]]$ is atomic.  Then:
+  \[
+    [[lbox A]];[[lunbox A]] = [[box A]];[[unbox A]] = \id_{[[A]]}
+    \]
+    
+  \item[] Case. Suppose $[[A]]$ is $[[?]]$.  Then:
+    \[
+    \begin{array}{lll}
+      [[lbox A]];[[lunbox A]] & = & [[lbox ?]];[[lunbox ?]]\\
+      & = & \id_{[[?]]};\id_{[[?]]}\\
+      & = & \id_{[[?]]}\\
+      & = & \id_{[[A]]}
+    \end{array}
+    \]
+
+  \item[] Case. Suppose $[[A]] = [[A1 -> A2]]$.  Then:
+    \[\small
+    \begin{array}{lll}
+      [[lbox A]];[[lunbox A]]
+      & = & [[lbox (A1 -> A2)]];[[lunbox (A1 -> A2)]]\\
+      & = & ([[lunbox A1]] \to [[lbox A2]]);([[lbox A1]] \to [[lbox A2]])\\
+      & = & ([[lbox A1]];[[lunbox A1]]) \to ([[lbox A2]];[[lunbox A2]])\\
+    \end{array}
+    \]
+    By two applications of the induction hypothesis we know the
+    following:
+    \[
+    \begin{array}{lll}
+      [[lbox A1]];[[lunbox A1]] = \id_{[[A1]]} & \text{ and } & [[lbox A2]];[[lunbox A2]] = \id_{[[A2]]}
+    \end{array}
+    \]
+    Thus, we know the following:
+    \[
+    \begin{array}{lll}
+      ([[lbox A1]];[[lunbox A1]]) \to ([[lbox A2]];[[lunbox A2]])
+      & = & \id_{[[A1]]} \to \id_{[[A2]]}\\
+      & = & \id_{[[A1 -> A2]]}\\
+      & = & \id_{[[A]]}
+    \end{array}
+    \]
+
+  \item[] Case. Suppose $[[A]] = [[A1 x A2]]$.  Then:
+    \[\small
+    \begin{array}{lll}
+      [[lbox A]];[[lunbox A]]
+      & = & [[lbox (A1 x A2)]];[[lunbox (A1 x A2)]]\\
+      & = & ([[lbox A1]] \times [[lbox A2]]);([[lunbox A1]] \times [[lbox A2]])\\
+      & = & ([[lbox A1]];[[lunbox A1]]) \times ([[lbox A2]];[[lunbox A2]])\\
+    \end{array}
+    \]
+    By two applications of the induction hypothesis we know the
+    following:
+    \[
+    \begin{array}{lll}
+      [[lbox A1]];[[lunbox A1]] = \id_{[[A1]]} & \text{ and } & [[lbox A2]];[[lunbox A2]] = \id_{[[A2]]}
+    \end{array}
+    \]
+    Thus, we know the following:
+    \[
+    \begin{array}{lll}
+      ([[lbox A1]];[[lunbox A1]]) \times ([[lbox A2]];[[lunbox A2]])
+      & = & \id_{[[A1]]} \times \id_{[[A2]]}\\
+      & = & \id_{[[A1 x A2]]}\\
+      & = & \id_{[[A]]}
+    \end{array}
+    \]
+\end{itemize}
+% subsection proof_of_lifted_retract (end)
+
+\subsection{Proof of Lemma~\ref{lemma:S_is_faithful}}
+\label{subsec:proof_of_S_is_faithful}
+We must show that the function
+  \[ \S_{A,B} : \Hom{C}{A}{B} \mto \Hom{S}{\S A}{\S B} \]
+  is injective.
+
+  So suppose $f \in \Hom{C}{A}{B}$ and $g \in \Hom{C}{A}{B}$ such that
+  $\S f = \S g : \S A \mto \S B$.  Then we can easily see that:
+  \[
+  \begin{array}{lll}
+    \S f & = & [[lunbox A]];f;[[lbox B]] \\
+         & = & [[lunbox A]];g;[[lbox B]]\\
+         & = & \S g\\
+  \end{array}
+  \]
+  But, we have the following equalities:
+  \[\scriptsize
+  \begin{array}{rll}
+    [[lunbox A]];f;[[lbox B]] & = & [[lunbox A]];g;[[lbox B]]\\
+    [[lbox A]];[[lunbox A]];f;[[lbox B]];[[lunbox B]] & = & [[lbox A]];[[lunbox A]];g;[[lbox B]];[[lunbox B]]\\
+    \id_A;f;[[lbox B]];[[lunbox B]] & = & \id_A;g;[[lbox B]];[[lunbox B]]\\
+    \id_A;f;\id_B & = & \id_A;g;\id_B\\
+    f & = & g\\
+  \end{array}
+  \]
+  The previous equalities hold due to
+  Lemma~\ref{lemma:lifted_retract}.
+% subsection proof_of_S_is_faithful (end)
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

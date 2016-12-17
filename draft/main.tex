@@ -37,16 +37,22 @@
 \newcommand{\id}{\mathsf{id}}
 \newcommand{\redto}{\rightsquigarrow}
 \newcommand{\cat}[1]{\mathcal{#1}}
+\newcommand{\catop}[1]{\mathcal{#1}^{\mathsf{op}}}
 \newcommand{\case}[0]{\mathsf{case}}
 
 \let\split\relax
+\let\S\relax
 
 \newcommand{\split}[0]{\mathsf{split}}
 \newcommand{\squash}[0]{\mathsf{squash}}
 \newcommand{\bx}[0]{\mathsf{box}}
 \newcommand{\unbox}[0]{\mathsf{unbox}}
 \newcommand{\T}[0]{\mathsf{T}}
+\newcommand{\S}[0]{\mathsf{S}}
+\newcommand{\U}[0]{\mathsf{U}}
+\newcommand{\C}[0]{\mathsf{C}}
 \newcommand{\interp}[1]{[\negthinspace[#1]\negthinspace]}
+\newcommand{\Hom}[3]{\mathsf{Hom}_{\cat{#1}}(#2,#3)}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -148,6 +154,12 @@ semantics, retract
 \bibliography{references}
 
 \appendix
+
+\section{Proofs}
+\label{sec:proofs}
+\input{proofs-ott}
+% section proofs (end)
+
 
 \section{The Complete Spec of Grady}
 \label{sec:the_complete_spec_of_grady}
