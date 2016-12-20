@@ -1,6 +1,14 @@
 {-# LANGUAGE NoMonomorphismRestriction, PackageImports, TemplateHaskell #-}
 
-module Parser (module Text.Parsec, expr, Vnm, letParser, lineParser, REPLExpr(..), parseLine, runParseFile, GFile, Prog(..)) where
+module Parser (module Text.Parsec, expr, 
+               Vnm, 
+               letParser, 
+               lineParser, 
+               REPLExpr(..), 
+               parseLine, 
+               runParse, 
+               GFile, 
+               Prog(..)) where
 
 import Prelude
 import Data.List
@@ -162,10 +170,8 @@ parseExpDef = do
   n <- varName
   symbol "="
   t <- expr
-  eol
   return $ (n,t) 
   
---lineFileParser = parseExpDef <|> parseTypeDef
 
 parseDef = do
             (n, ty) <- parseTypeDef
@@ -181,8 +187,13 @@ runParseFile s = case (parse parseFile "" s) of
                 Left msg -> Left $ show msg
                 Right l -> return $ (fromList l)
 
+runParse :: FilePath -> IO(Either String GFile)
+runParse path = do
+    s <- readFile path
+    return $ runParseFile s
+
 ------------------------------------------------------------------------                 
--- Parsers for the REPL                                               --
+--                  Parsers for the REPL                              --
 ------------------------------------------------------------------------        
 
 data REPLExpr =
@@ -205,7 +216,7 @@ letParser = do
 fileParser = do
   reservedOp ":l"
   ws
-  path <- many1 alphaNum
+  path <- many1 anyChar
   eof  
   return $ LoadFile path
   

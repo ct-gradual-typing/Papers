@@ -62,9 +62,11 @@ handleCMD s =
             Right ty ->  io.putStrLn.prettyType $ ty
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
-    handleLine (LoadFile p) = case runParseFile p of
-                                Left l -> io.print $ l
-                                Right r -> tyCheckQ r
+    handleLine (LoadFile p) = do
+                        msgOrGFile <- lift $ runParse p
+                        case msgOrGFile of
+                            Left l -> io.print $ l
+                            Right r -> tyCheckQ r
      where
        tyCheckQ :: GFile -> REPLStateIO ()
        --tyCheckQ emptyQ = return () -- TODO: Fix- Get an overlapping patterns warning, not sure why
@@ -74,7 +76,8 @@ handleCMD s =
                  do 
                    -- Unfold each term from queue and see if free variables exist
                    let tu = unfoldDefsInTerm defs t
-                   if ((length (getFV tu)) == 0)
+                   let numFV = length (getFV tu)
+                   if (numFV == 0)
                    then let r = runTC tu            -- TypeCheck term from Prog
                         in case r of
                            Left err -> io.putStrLn.readTypeError $ err
@@ -83,7 +86,7 @@ handleCMD s =
                            Right tyTerm -> if(ty == tyTerm)
                                             then push (v,tu)
                                             else io.print $ "TODO: make error message"
-                   else io.print $ "TODO: error message"
+                   else io.print $ "q: "++(show q)
                               
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
      where
