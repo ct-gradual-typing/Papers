@@ -332,7 +332,7 @@ without mention.
   Thus, $[[ [| <C>v |] ]] = [[ [| v |] ]];\id_C = [[ [| v |] ]] = [[ [| drop-cast v |] ]]$.
 
   \ \\ Now suppose $v = [[<?>s]]$ for some simple value $[[s]]$.
-  Then then it must be the case that the typing derivation of $[[
+  Then it must be the case that the typing derivation of $[[
       <C>v]]$ has the following form:
   \begin{center}
     \begin{math}
@@ -392,17 +392,20 @@ without mention.
     \end{math}
   \end{center}
   Then
-  \[
+  \[\small
   \begin{array}{lll}
     [[ [| <Nat>(succ t) |] ]]
-    & = & [[ [| succ t |] ]];[[Unbox Nat]]\\
-    & = & ([[succ]];[[ [| t |] ]]);[[Unbox Nat]]\\
-    & = & [[succ]];([[ [| t |] ]];[[Unbox Nat]])\\
-    & = & [[succ]];[[ [| <Nat> t |] ]]\\
+    & = & [[ [| succ t |] ]];[[unbox Nat]]\\
+    & = & ([[ [| t |] ]];[[unbox Nat]];[[succ]];[[box Nat]]);[[unbox Nat]]\\
+    & = & [[ [| t |] ]];([[unbox Nat]];[[succ]];[[box Nat]];[[unbox Nat]])\\
+    & = & [[ [| t |] ]];([[unbox Nat]];[[succ]];\id_{[[Nat]]})\\
+    & = & [[ [| t |] ]];([[unbox Nat]];[[succ]])\\
+    & = & ([[ [| t |] ]];[[unbox Nat]]);[[succ]]\\
     & = & [[ [| succ (<Nat> t) |] ]]
   \end{array}
   \]
-  This holds because it must be the case that the typing derivation
+  The previous equality holds by
+  Lemma~\ref{lemma:casting_morphisms} and because it must be the case that the typing derivation
   of $[[succ <Nat>t]]$ ends as follows:
   \begin{center}
     \begin{math}
@@ -519,7 +522,7 @@ without mention.
     [[ [| <B>t1 |] ]]
     & = & [[ [| t1 |] ]];c\\
     & = & [[ [| t2 |] ]];c\\
-    [[ [| <B>t2 |] ]]
+    & = & [[ [| <B>t2 |] ]]
   \end{array}
   \]
   But, this clearly holds by the fact that $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.

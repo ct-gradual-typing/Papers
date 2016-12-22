@@ -520,7 +520,7 @@ These will correspond to casting morphisms.
 \end{lemma}
 \begin{proof}
 This proof holds by induction on the form $[[A ~ B]]$ using the
-morphisms $[[lbox A]] : [[A --> ?]]$ and $[[lunbox A]] : [[? --> A]]$.
+morphisms $[[Box A]] : [[A --> ?]]$ and $[[Unbox A]] : [[? --> A]]$.
 Please see
 Appendix~\ref{subsec:proof_of_type_consistency_in_the_model} for the
 complete proof.
@@ -531,13 +531,26 @@ complete proof.
   Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
   a gradual $\lambda$-model.  Then we know the following:
   \begin{enumerate}[i.]
-  \item If $[[A1 -> B1 ~ A2 -> B2]]$, then there are casting
-    morphisms $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$,
-    and $c_3 : [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
+  \item If $[[A1 -> B1 ~ A2 -> B2]]$, then there are casting morphisms:
+    \[
+    \begin{array}{lllll}
+      c & = & c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]\\
+      c' & = & c_3 \to c_4 : [[(A2 -> B2) --> (A1 -> B1)]]
+    \end{array}
+    \]
+    where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
+    [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
     
   \item If $[[A1 x B1 ~ A2 x B2]]$, then there are casting
-    morphisms $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$,
-    and $c_3 : [[A2 --> A1]]$ and $c_4 : [[B2 --> B1]]$.
+    morphisms:
+    \[
+    \begin{array}{lll}
+       c & = & c_1 \times c_2 : [[(A1 x B1) --> (A2 x B2)]]\\
+      c' & = & c_3 \to c_4 : [[(A2 x B2) --> (A1 x B1)]]
+    \end{array}
+    \]
+    where $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
+    [[A2 --> A1]]$ and $c_4 : [[B2 --> B1]]$.
   \end{enumerate}
 \end{corollary}
 \begin{proof}
