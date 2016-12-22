@@ -28,6 +28,7 @@
 \usepackage{mdframed}
 \usepackage{supertabular}
 \usepackage{todonotes}
+\usepackage{enumerate}
 
 \newcommand{\cL}{{\cal L}}
 
@@ -51,6 +52,9 @@
 \newcommand{\S}[0]{\mathsf{S}}
 \newcommand{\U}[0]{\mathsf{U}}
 \newcommand{\C}[0]{\mathsf{C}}
+\newcommand{\z}[0]{\mathsf{z}}
+\newcommand{\app}[0]{\mathsf{app}}
+\newcommand{\curry}[1]{\mathsf{curry}(#1)}
 \newcommand{\interp}[1]{[\negthinspace[#1]\negthinspace]}
 \newcommand{\Hom}[3]{\mathsf{Hom}_{\cat{#1}}(#2,#3)}
 
@@ -63,6 +67,7 @@
 
 %% Ott includes:
 \input{grady-inc}
+\renewcommand{\RightTirName}{\text}
 \renewcommand{\Gradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\Gradydrulename{#4}}}
 \renewcommand{\Gradydrulename}[1]{#1}
 \renewcommand{\GradydrulesndUName}[0]{\Gradydrulename{}}
@@ -133,10 +138,10 @@ semantics, retract
 \input{gradual-typing-ott}
 % section gradual_typing (end)
 
-\section{The Categorical Model}
-\label{sec:categorical_model}
+\section{The Categorical Perspective}
+\label{sec:categorical_perspective}
 \input{categorical-model-ott}
-% section categorical_model (end)
+% section categorical_perspective (end)
 
 \section{Grady}
 \label{sec:grady}

@@ -37,32 +37,28 @@ must show how to interpret every $[[G |- t : A]]$ as a morphism $[[t]]
 : \interp{[[G]]} \mto \interp{[[A]]}$.  The third step is to show that
 whenever one program reduces to another their interpretations are
 isomorphic in the model. This means that whenever $[[G |- t1 ~> t2 :
-    A]]$, then $[[ [|t1|] ]] \cong [[ [|t2|] ]] : [[ [| G |] --> [| A
+    A]]$, then $[[ [|t1|] ]] = [[ [|t2|] ]] : [[ [| G |] --> [| A
       |] ]]$.  This is the reason why we defined our reduction in a
 typed fashion to aid us in understanding how it relates to the model.
 For a more thorough introduction see \cite{Crole:1994}.
 
+\subsection{The Categorical Model}
+\label{subsec:the_categorical_model}
 We now give a categorical model for $\lambda^?_\to$ and
-$\lambda^{\langle [[A]] \rangle}_\to$.  Then we complete the three
-steps summarized above. We will show how to interpret the typing of
-the former into the model, and then show how to do the same for the
-latter, furthermore, we show that reduction can be interpreted into
-the model as well, thus concluding soundness for $\lambda^{\langle
-  [[A]] \rangle}_\to$ with respect to our model.
-
-The model we develop here builds on the seminal work of
-\cite{Lambek:1980} and \cite{Scott:1980}.  \cite{Lambek:1980} showed
-that the typed $\lambda$-calculus can be modeled by a cartesian closed
-category.  In the same volume as Lambek, Scott essentially showed that
-the untyped $\lambda$-calculus is actually typed.  That is, typed
-theories are more fundamental than untyped ones.  He accomplished this
-by adding a single type, $[[?]]$, and two functions $[[squash : (? ->
-    ?) -> ?]]$ and $[[split : ? -> (?  -> ?)]]$, such that,
-$[[squash]];[[split]] = \id : [[(? -> ?) -> (?  -> ?)]]$. At this
-point he was able to translate the untyped $\lambda$-calculus into
-this unityped one.  Categorically, he modeled $[[split]]$ and
-$[[squash]]$ as the morphisms in a retract within a cartesian closed
-category -- the same model as typed $\lambda$-calculus.
+$\lambda^{\langle [[A]] \rangle}_\to$.  The model we develop here
+builds on the seminal work of \cite{Lambek:1980} and
+\cite{Scott:1980}.  \cite{Lambek:1980} showed that the typed
+$\lambda$-calculus can be modeled by a cartesian closed category.  In
+the same volume as Lambek, Scott essentially showed that the untyped
+$\lambda$-calculus is actually typed.  That is, typed theories are
+more fundamental than untyped ones.  He accomplished this by adding a
+single type, $[[?]]$, and two functions $[[squash : (? -> ?) -> ?]]$
+and $[[split : ? -> (?  -> ?)]]$, such that, $[[squash]];[[split]] =
+\id : [[(? -> ?) -> (?  -> ?)]]$. At this point he was able to
+translate the untyped $\lambda$-calculus into this unityped one.
+Categorically, he modeled $[[split]]$ and $[[squash]]$ as the
+morphisms in a retract within a cartesian closed category -- the same
+model as typed $\lambda$-calculus.
 
 \begin{definition}
   \label{def:retract}
@@ -382,7 +378,7 @@ above and lift $[[split]]$ and $[[squash]]$ to arbitrary skeletons.
   mutual recursion on $[[S]]$ as follows:
   \[
     \begin{array}{lll}
-      [[lsquash ?]] = id_?\\
+      [[lsquash ?]] = \id_?\\
       \\
       [[lsquash (S1 -> S2)]] = ([[lsplit S1]] \to [[lsquash S2]]);[[squash ? -> ?]]\\
       \\
@@ -451,23 +447,153 @@ functor from $\cat{U}$ to $\cat{C}$, because we need more information.
 However, given a type $[[A]]$ we can always obtain a casting morphism
 from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
 [[? --> A]]$.  Finally, we have the following result.
-\begin{lemma}[Casting Morphisms]
+\begin{lemma}[Casting Morphisms to $[[?]]$]
   \label{lemma:casting_morphisms}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$\\ $\squash, \bx,
   \unbox)$ is a gradual $\lambda$-model, and $[[A]]$ is an object of
-  $\cat{C}$.  Then there exists casting morphisms from
-  $[[A]]$ to $[[?]]$ and vice versa.
+  $\cat{C}$.  Then there exists casting morphisms from $[[A]]$ to
+  $[[?]]$ and vice versa that make $[[A]]$ a retract of $[[?]]$.
 \end{lemma}
 \begin{proof}
   The two morphisms are as follows:
   \[
   \begin{array}{lll}
-    [[lbox A]];[[lsquash (skeleton A)]] : [[A --> ?]]\\
+    [[Box A]] := [[lbox A]];[[lsquash (skeleton A)]] : [[A --> ?]]\\
     \\
-    [[(lsplit (skeleton A))]];([[lunbox A]]) : [[? --> A]]
+    [[Unbox A]] := [[lsplit (skeleton A)]];[[lunbox A]] : [[? --> A]]
   \end{array}
   \]
+  The fact the these form a retract between $[[A]]$ and $[[?]]$ holds
+  by Lemma~\ref{lemma:lifted_retract} and
+  Lemma~\ref{lemma:lifted_retract_for_?}.
 \end{proof}
+% subsection the_categorical_model (end)
+
+\subsection{The Interpretation}
+\label{subsec:the_interpretation}
+In this section we show how to interpret $\lambda^?_\to$ and
+$\lambda^{\langle [[A]] \rangle}_\to$ into the categorical model given
+in the previous section. We complete the three steps summarized
+above. We will show how to interpret the typing of the former into the
+model, and then show how to do the same for the latter, furthermore,
+we show that reduction can be interpreted into the model as well, thus
+concluding soundness for $\lambda^{\langle [[A]] \rangle}_\to$ with
+respect to our model.
+
+First, we must give the interpretation of types and contexts, but this
+interpretation is obvious, because we have been making sure to match
+the names of types and objects throughout this paper.
+\begin{definition}
+  \label{def:interpretation-of-gradual-types}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split, \squash, \bx, \unbox)$ is
+  a gradual $\lambda$-model.  Then we define the interpretation of
+  types into $\cat{C}$ as follows:
+  \[
+  \begin{array}{lll}
+    [[ [| Unit |] ]] & = & 1\\
+    [[ [| Nat |] ]] & = & [[Nat]]\\
+    [[ [| ? |] ]] & = & [[?]]\\
+    [[ [| A1 -> A2 |] ]] & = & [[ [| A1 |] -> [| A2 |] ]]\\
+    [[ [| A1 x A2 |] ]] & = & [[ [| A1 |] x [| A2 |] ]]\\
+  \end{array}
+  \]
+  We extend this interpretation to typing contexts as follows:
+  \[
+    \begin{array}{lll}
+      [[ [| . |] ]] & = & 1\\
+      [[ [| G,x : A |] ]] & = & [[ [| G |] x [| A |] ]]\\
+    \end{array}
+  \]
+\end{definition}
+\noindent Throughout the remainder of this paper we will drop the
+interpretation symbols around types.
+
+Before we can interpret the typing rules of $\lambda^?_\to$ and
+$\lambda^{\langle [[A]] \rangle}_\to$ we must show how to interpret
+the consistency relation from Figure~\ref{fig:type-consistency}.
+These will correspond to casting morphisms.
+\begin{lemma}[Type Consistency in the Model]
+  \label{lemma:type_consistency_in_the_model}
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
+  a gradual $\lambda$-model, and $[[A ~ B]]$ for some types $[[A]]$
+  and $[[B]]$.  Then there are two casting morphisms $c_1 : [[ A --> B ]]$ and $c_2 : [[ B --> A ]]$.
+\end{lemma}
+\begin{proof}
+This proof holds by induction on the form $[[A ~ B]]$ using the
+morphisms $[[lbox A]] : [[A --> ?]]$ and $[[lunbox A]] : [[? --> A]]$.
+Please see
+Appendix~\ref{subsec:proof_of_type_consistency_in_the_model} for the
+complete proof.
+\end{proof}
+
+\begin{corollary}
+  \label{corollary:type_consist_coro}
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
+  a gradual $\lambda$-model.  Then we know the following:
+  \begin{enumerate}[i.]
+  \item If $[[A1 -> B1 ~ A2 -> B2]]$, then there are casting
+    morphisms $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$,
+    and $c_3 : [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
+    
+  \item If $[[A1 x B1 ~ A2 x B2]]$, then there are casting
+    morphisms $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$,
+    and $c_3 : [[A2 --> A1]]$ and $c_4 : [[B2 --> B1]]$.
+  \end{enumerate}
+\end{corollary}
+\begin{proof}
+  This proof holds by the construction of the casting morphisms from
+  the proof of the previous result, and the fact that the type
+  consistency rules are unique for each type.
+\end{proof}
+
+Showing that both $c_1$ and $c_2$ exist corresponds to the fact that
+$[[A ~ B]]$ is symmetric.  But, this interpretation is an over
+approximation of type consistency, because type consistency is not
+transitive, but function composition is.  Leaving type consistency
+implicit in the model just does not make good sense categorically,
+because it would break composition.  For example, if we have morphisms
+$f : [[A --> ?]]$ and $g : [[B --> C]]$, then if we implicitly allowed
+$[[?]]$ to be cast to $[[B]]$, then we could compose these two
+morphisms, but this does not fit the definition of a category, because
+it requires the target of $f$ to match the source of $g$, but this
+just is not the case.  Thus, the explicit cast must be used to obtain
+$f;[[lunbox B]];g$.
+
+At this point we have everything we need to show our main result which
+is that typing in both $\lambda^?_\to$ and $\lambda^{\langle [[A]]
+  \rangle}_\to$, and evaluation in $\lambda^{\langle [[A]] \rangle}$
+can be interpreted into the categorical model.
+
+\begin{theorem}[Interpretation of Typing]
+  \label{thm:interpretation_of_typing}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx, \unbox)$
+  is a gradual $\lambda$-model.  If $[[G |- t : A]]$ in either
+  $\lambda^?_\to$ or $\lambda^{\langle [[A]] \rangle}_\to$, then there
+  is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
+\end{theorem}
+\begin{proof}
+  The proof holds by induction on the form of $[[G |- t : A]]$ and
+  uses most of the results we have developed up to this point.  Please
+  see Appendix~\ref{subsec:proof_of_interpretation_of_types} for the
+  complete proof.
+\end{proof}
+
+\begin{theorem}[Interpretation of Evaluation]
+  \label{thm:interpretation_of_evaluation}
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$
+  is a gradual $\lambda$-model.  If $[[G |- t1 ~> t2 : A]]$, then
+  $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
+\end{theorem}
+\begin{proof}
+  This proof holds by induction on the form of $[[G |- t1 ~> t2 :
+      A]]$, and uses Theorem~\ref{thm:interpretation_of_typing},
+  Lemma~\ref{lemma:type_consistency_in_the_model}, and
+  Corollary~\ref{corollary:type_consist_coro}.  Please see
+  Appendix~\ref{subsec:proof_of_interpretation_of_evaluation} for the
+  complete proof.  
+\end{proof}
+% subsection the_interpretation (end)
+
 %%% Local Variables: ***
 %%% mode:latex ***
 %%% TeX-master: "main.tex"  ***

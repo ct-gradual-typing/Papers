@@ -2,7 +2,7 @@
 
 metavar termvar, x, y , z ::=
 
-indexvar index, k ::=
+indexvar index, i , j, k ::=
 
 grammar
   t, v, s :: 't_' ::=                                {{ com term }}
@@ -20,6 +20,10 @@ grammar
     {{tex \widehat{\mathsf{box} }_{[[C]]} }}    
     | lunbox C             :: M  :: lspec
     {{tex \widehat{\mathsf{unbox} }_{[[C]]} }}
+    | Box C               :: M  :: lGen
+    {{tex \mathsf{Box}_{[[C]]} }}    
+    | Unbox C             :: M  :: lSpec
+    {{tex \mathsf{Unbox}_{[[C]]} }}    
     | lsplit S               :: M  :: lsplit
     {{tex \widehat{\mathsf{split} }_{[[S]]} }}    
     | lsquash S             :: M  :: lsquash
@@ -102,6 +106,8 @@ grammar
 
   A, B, C, S, X, Y, Z :: 'A_' ::=                                {{ com type }}  
     | Unit                ::   :: term         {{ com unit type }}
+    {{tex \mathsf{Unit} }}
+    | 1                   ::   :: terminal
     {{tex 1}}
     | Nat                 ::   :: nat          {{ com natural number type }}
     {{tex \mathsf{Nat} }}    
@@ -122,7 +128,7 @@ grammar
     {{tex \interp{[[A]]} }}
     | skeleton A          :: M :: Skeleton
     {{tex \mathsf{skeleton}\,[[A]] }}
-    
+
 
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
     | .                   ::   :: emptyCtx     {{ com empty context }}
@@ -250,13 +256,13 @@ defn
     ---------------- :: snd
     G |- snd t : A2
 
-    G, x : A1 |- t : A2
-    ----------------------- :: lam
-    G |- \x:A1.t : A1 -> A2
+    G, x : A |- t : B
+    --------------------- :: lam
+    G |- \x:A1.t : A -> B
 
-    G |- t1 : A1 -> A2 && G |- t2 : A1
+    G |- t1 : A -> B && G |- t2 : A
     ---------------------------------- :: app
-    G |- t1 t2 : A2
+    G |- t1 t2 : B
 
 % Gradual Siek16:
 
@@ -377,7 +383,7 @@ by
     ----------------------------- :: castA
     G |- <C> v ~> drop-cast v : C
 
-    G |- t : Nat
+    G |- t : ?
     --------------------------------------- :: castNat
     G |- <Nat>(succ t) ~> succ <Nat>t : Nat
 
@@ -449,8 +455,8 @@ by
     --------------- :: zero
     G |- 0 => 0 : A
 
-    --------------------- :: triv
-    G |- triv => triv : A
+    ------------------------ :: triv
+    G |- triv => triv : Unit
 
     G |- t1 => t2 : Nat
     ----------------------------- :: succ
