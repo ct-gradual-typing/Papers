@@ -28,6 +28,10 @@ all: pdf
 
 pdf : $(PDF)
 
+grady-ott.tex : grady.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter grady.tex grady-ott.tex
+
 proofs-ott.tex : proofs.tex grady.ott
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter proofs.tex proofs-ott.tex
@@ -44,7 +48,8 @@ introduction-ott.tex : introduction.tex grady.ott
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter introduction.tex introduction-ott.tex
 
-$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex categorical-model-ott.tex proofs-ott.tex
+$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex \
+	categorical-model-ott.tex proofs-ott.tex grady-ott.tex
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter main.tex main-output.tex
 

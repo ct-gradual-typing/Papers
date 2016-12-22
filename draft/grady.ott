@@ -5,9 +5,10 @@ metavar termvar, x, y , z ::=
 indexvar index, i , j, k ::=
 
 grammar
-  t, v, s :: 't_' ::=                                {{ com term }}
+  t, v, s, n :: 't_' ::=                                {{ com term }}
     | x                   ::   :: var          {{ com variable }}
     | triv                ::   :: unit         {{ com unit }}
+    {{tex \mathsf{triv} }}
     | squash S            ::   :: inj          {{ com injection of the retract }}
     {{tex \mathsf{squash}_{[[S]]} }}
     | split S             ::   :: surj         {{ com surjection of the retract }}
@@ -38,6 +39,8 @@ grammar
     | snd t               ::   :: proj2        {{ com second projection }}
     | succ t              ::   :: successor    {{ com successor function }}
     | 0                   ::   :: zero         {{ com zero }}
+    | case t of t1 || x . t2 :: :: natElim
+    {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,[[t1]] \mid\mid [[x]].[[t2]] }}
     | ( t )               :: S :: parens
     | [ t1 / x ] t2       :: M :: subst
     | wrong               :: M :: wrong
@@ -104,7 +107,7 @@ grammar
   %   | Nat                 ::   :: nat          {{ com natural number type }}
   %   {{tex \mathsf{Nat} }}
 
-  A, B, C, S, X, Y, Z :: 'A_' ::=                                {{ com type }}  
+  A, B, C, S, U, X, Y, Z :: 'A_' ::=                                {{ com type }}  
     | Unit                ::   :: term         {{ com unit type }}
     {{tex \mathsf{Unit} }}
     | 1                   ::   :: terminal
@@ -229,10 +232,10 @@ defn
     G |- unbox C : ? -> C
 
     ---------------------- :: squash
-    G |- squash S : S -> ?
+    G |- squash U : U -> ?
 
     --------------------- :: split
-    G |- split S : ? -> S
+    G |- split U : ? -> U
 
     ---------------- :: unit
     G |- triv : Unit
@@ -243,6 +246,11 @@ defn
     G |- t : Nat
     ----------------- :: succ
     G |- succ t : Nat
+
+    G |- t : Nat
+    G |- t1 : A && G, x : Nat |- t2 : A
+    ------------------------------------ :: case
+    G |- case t of t1 || x.t2 : A
 
     G |- t1 : A1 && G |- t2 : A2
     ---------------------------- :: pair
@@ -316,9 +324,37 @@ by
     ------------------------------- :: retracT
     G |- unbox C (box C t) ~> t : C
 
-    G |- t : S
+    G |- t : U
     ---------------------------------- :: retractU
-    G |- split S (squash S t) ~> t : S
+    G |- split U (squash U t) ~> t : U
+
+    G |- t ~> t' : Nat
+    ---------------------------- :: succ
+    G |- succ t ~> succ t' : Nat
+
+    G |- t1 : A && G, x : Nat |- t2 : A
+    ----------------------------------- :: case0
+    G |- case 0 of t1 || x.t2 ~> t1 : A
+
+    G |- t : Nat    
+    G |- t1 : A && G, x : Nat |- t2 : A
+    ----------------------------------------------- :: caseSucc
+    G |- case (succ t) of t1 || x.t2 ~> [t/x]t2 : A    
+
+    G |- t ~> t' : Nat    
+    G |- t1 : A && G, x : Nat |- t2 : A
+    ------------------------------------------------------ :: case1
+    G |- case t of t1 || x.t2 ~> case t' of t1 || x.t2 : A
+
+    G |- t : Nat    
+    G |- t1 ~> t'1 : A && G, x : Nat |- t2 : A
+    ------------------------------------------------------ :: case2
+    G |- case t of t1 || x.t2 ~> case t of t'1 || x.t2 : A
+
+    G |- t : Nat
+    G |- t : A && G, x : Nat |- t2  ~> t'2 : A
+    ------------------------------------------------------ :: case3
+    G |- case t of t1 || x.t2 ~> case t of t1 || x.t'2 : A
 
     G, x : A1 |- t2 : A2 && G |- t1 : A1    
     ------------------------------------ :: beta

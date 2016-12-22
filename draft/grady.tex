@@ -1,0 +1,111 @@
+Just as the simply typed $\lambda$-calculus corresponds to cartesian
+closed categories our categorical model has a corresponding type
+theory we call Grady.  Its syntax is an extension of the syntax for
+$\lambda^?_\to$.
+
+\begin{definition}
+  \label{def:annotated-syntax}
+  Syntax for $\lambda^{\langle [[A]] \rangle}_\to$:
+  \[
+  \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+    \text{(basic skeletons)} & [[U]] & ::= & [[? -> ?]] \mid [[? x ?]]\\
+    \text{(skeletons)}       & [[S]] & ::= & [[?]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
+    \text{(atomic types)}    & [[C]] & ::= & [[Unit]] \mid [[Nat]]\\
+    \text{(terms)}           & [[t]] & ::= & \ldots \mid [[split U]] \mid [[squash U]] \mid [[box C]] \mid \\
+                             &       &     & [[unbox C]] \mid [[case t of t1 || x.t2]]\\
+    \text{(natural numbers)} & [[n]] & ::= & [[0]] \mid [[succ n]]\\
+    \text{(simple values)}   & [[s]] & ::= & [[x]] \mid [[triv]] \mid [[n]] \mid [[squash U]] \mid [[split U]] \mid \\
+                             &       &     & [[box C]] \mid [[unbox C]]\\   
+  \end{array}
+  \]
+\end{definition}
+
+\noindent
+The typing rules for Grady can be found in
+Figure~\ref{fig:grady-typing} and its reduction rules can be found in
+Figure~\ref{fig:grady-reduction} and Figure~\ref{fig:grady-reduction-cont}.
+\renewcommand{\GradydruleBoxName}{\text{box}}
+\renewcommand{\GradydruleUnboxName}{\text{unbox}}
+\renewcommand{\GradydrulesquashName}{\text{squash}}
+\renewcommand{\GradydrulesplitName}{\text{split}}
+\renewcommand{\GradydrulecaseName}{[[Nat]]_e}
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \Gradydrulevar{} \and
+      \GradydruleBox{} \and
+      \GradydruleUnbox{} \and
+      \Gradydrulesquash{} \and
+      \Gradydrulesplit{} \and
+      \Gradydruleunit{} \and
+      \Gradydrulezero{} \and
+      \Gradydrulesucc{} \and
+      \Gradydrulecase{} \and
+      \Gradydrulepair{} \and
+      \Gradydrulefst{} \and
+      \Gradydrulesnd{} \and
+      \Gradydrulelam{} \and
+      \Gradydruleapp{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Typing rules for Grady}
+  \label{fig:grady-typing}
+\end{figure}
+\renewcommand{\GradydrulerdXXvaluesName}{\text{values}} 
+\renewcommand{\GradydrulerdXXretracTName}{\text{retract}_1} 
+\renewcommand{\GradydrulerdXXretractUName}{\text{retract}_2} 
+\renewcommand{\GradydrulerdXXbetaName}{\beta} 
+\renewcommand{\GradydrulerdXXetaName}{\eta} 
+\renewcommand{\GradydrulerdXXprojOneName}{\times_{e_1}} 
+\renewcommand{\GradydrulerdXXprojTwoName}{\times_{e_2}} 
+\renewcommand{\GradydrulerdXXetaPName}{\times_\eta} 
+\renewcommand{\GradydrulerdXXlamName}{\to} 
+\renewcommand{\GradydrulerdXXappOneName}{\to_{e_1}} 
+\renewcommand{\GradydrulerdXXappTwoName}{\to_{e_2}} 
+\renewcommand{\GradydrulerdXXfstName}{[[fst]]} 
+\renewcommand{\GradydrulerdXXsndName}{[[snd]]} 
+\renewcommand{\GradydrulerdXXpairOneName}{\times_1} 
+\renewcommand{\GradydrulerdXXpairTwoName}{\times_2}
+\renewcommand{\GradydrulerdXXsuccName}{\text{succ}}       
+\renewcommand{\GradydrulerdXXcaseZeroName}{[[Nat]]_{e_0}} 
+\renewcommand{\GradydrulerdXXcaseSuccName}{[[Nat]]_{e_1}} 
+\renewcommand{\GradydrulerdXXcaseOneName}{\text{case}_1} 
+\renewcommand{\GradydrulerdXXcaseTwoName}{\text{case}_2} 
+\renewcommand{\GradydrulerdXXcaseThreeName}{\text{case}_3}       
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \GradydrulerdXXvalues{} \and
+      \GradydrulerdXXretracT{} \and
+      \GradydrulerdXXretractU{} \and
+      \GradydrulerdXXbeta{} \and
+      \GradydrulerdXXeta{} \and
+      \GradydrulerdXXprojOne{} \and
+      \GradydrulerdXXprojTwo{} \and
+      \GradydrulerdXXetaP{} \and
+      \GradydrulerdXXsucc{} \and      
+      \GradydrulerdXXcaseZero{} \and
+      \GradydrulerdXXcaseSucc{} \and
+      \GradydrulerdXXcaseOne{} \and
+      \GradydrulerdXXcaseTwo{} \and
+      \GradydrulerdXXcaseThree{} \and      
+      \GradydrulerdXXlam{} \and      
+      \GradydrulerdXXappOne{} \and
+      \GradydrulerdXXappTwo{} \and      
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Reduction rules for Grady}
+  \label{fig:grady-reduction}
+\end{figure}
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \GradydrulerdXXfst{} \and
+      \GradydrulerdXXsnd{} \and
+      \GradydrulerdXXpairOne{} \and
+      \GradydrulerdXXpairTwo{}    
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Reduction rules for Grady continued}
+  \label{fig:grady-reduction-cont}
+\end{figure}
