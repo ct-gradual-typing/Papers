@@ -28,7 +28,9 @@ prettyType (Prod t1 t2) =
 parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
 parenTerm t@Triv f = f t
-parenTerm t@Zero f = f t                     
+parenTerm t@Zero f = f t             
+parenTerm t@Split f = f t
+parenTerm t@Squash f = f t        
 parenTerm t f = f t >>= (\r -> return $ "("++r++")")
 
 prettyUnaryArg :: Term -> (Term -> LFreshM String) -> String -> LFreshM String
