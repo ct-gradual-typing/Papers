@@ -6,11 +6,9 @@ module Syntax (module Unbound.LocallyNameless,
                Type(..),
                Term(..),
                isTerminating,
-               is_atomic,
-               skeleton_of,
-               is_skeleton) where
+               is_atomic) where
 
-import Unbound.LocallyNameless 
+import Unbound.LocallyNameless hiding (comp)
 import Unbound.LocallyNameless.Alpha
       
 data Type =               -- Types:
@@ -34,18 +32,6 @@ is_atomic :: Type -> Bool
 is_atomic (Arr _ _) = False
 is_atomic (Prod _ _) = False
 is_atomic _ = True
-
--- Converts a type into its skeleton.
-skeleton_of :: Type -> Type
-skeleton_of b | is_atomic b = U
-skeleton_of (Arr a b)  = Arr (skeleton_of a) (skeleton_of b)
-skeleton_of (Prod a b) = Prod (skeleton_of a) (skeleton_of b)
-
-is_skeleton :: Type -> Bool
-is_skeleton U = True
-is_skeleton (Arr a b) = (is_skeleton a) && (is_skeleton b)
-is_skeleton (Prod a b) = (is_skeleton a) && (is_skeleton b)
-is_skeleton _ = False
 
 type Vnm = Name Term            -- Variable name
 
