@@ -170,6 +170,7 @@ parseExpDef = do
   n <- varName
   symbol "="
   t <- expr
+  symbol "\\"
   return $ (n,t) 
   
 
@@ -185,7 +186,7 @@ parseFile = many parseDef
 runParseFile :: String -> Either String GFile
 runParseFile s = case (parse parseFile "" s) of
                 Left msg -> Left $ show msg
-                Right l -> return $ (fromList l)
+                Right l -> return $ (fromList l)      
 
 runParse :: FilePath -> IO(Either String GFile)
 runParse path = do

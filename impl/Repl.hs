@@ -86,7 +86,7 @@ handleCMD s =
                            Right tyTerm -> if(ty == tyTerm)
                                             then push (v,tu)
                                             else io.print $ "TODO: make error message"
-                   else io.print $ "q: "++(show q)
+                   else io.print $ "error - free variables found in q: "++(show q)
                               
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
      where
