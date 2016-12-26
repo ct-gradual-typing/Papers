@@ -1,8 +1,6 @@
 %% Submission instructions:
 %%
-%% Full paper of at most 12 pages (6 pages for an Experience Report),
-%% in standard SIGPLAN conference format, including figures but
-%% ***excluding bibliography***.
+%% Full paper of at most 24 pages ***excluding bibliography***.
 %% 
 %% The deadlines will be strictly enforced and papers exceeding the page
 %% limits will be summarily rejected.
@@ -16,7 +14,7 @@
 %%  2. ***references to authors' own related work should be in the third
 %%     person*** (e.g., not "We build on our previous work ..." but
 %%     rather "We build on the work of ...").
-\documentclass[preprint]{sigplanconf}
+\documentclass[pacmpl,review,anonymous]{acmart}\settopmatter{printfolios=true}
 \usepackage[utf8]{inputenc}
 
 \usepackage{amssymb,amsmath,amsthm}
@@ -58,12 +56,12 @@
 \newcommand{\interp}[1]{[\negthinspace[#1]\negthinspace]}
 \newcommand{\Hom}[3]{\mathsf{Hom}_{\cat{#1}}(#2,#3)}
 
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{example}[theorem]{Example}
+%% \newtheorem{theorem}{Theorem}
+%% \newtheorem{lemma}[theorem]{Lemma}
+%% \newtheorem{corollary}[theorem]{Corollary}
+%% \newtheorem{definition}[theorem]{Definition}
+%% \newtheorem{proposition}[theorem]{Proposition}
+%% \newtheorem{example}[theorem]{Example}
 
 %% Ott includes:
 \input{grady-inc}
@@ -82,35 +80,71 @@
 \renewcommand{\GradydrulearrowName}[0]{\Gradydrulename{}}
 \renewcommand{\GradydruleprodName}[0]{\Gradydrulename{}}
 
+\makeatletter\if@ACM@journal\makeatother
+%% Journal information (used by PACMPL format)
+%% Supplied to authors by publisher for camera-ready submission
+\acmJournal{PACMPL}
+\acmVolume{1}
+\acmNumber{1}
+\acmArticle{1}
+\acmYear{2017}
+\acmMonth{1}
+\acmDOI{10.1145/nnnnnnn.nnnnnnn}
+\startPage{1}
+\else\makeatother
+
+\acmConference[ICFP'17]{ACM SIGPLAN International Conference on Functional Programming}{September 03--09, 2017}{Oxford, United Kingdom}
+\acmYear{2017}
+\acmISBN{978-x-xxxx-xxxx-x/YY/MM}
+\acmDOI{10.1145/nnnnnnn.nnnnnnn}
+\startPage{1}
+\fi
+
+%% Copyright information
+%% Supplied to authors (based on authors' rights management selection;
+%% see authors.acm.org) by publisher for camera-ready submission
+\setcopyright{none}             %% For review submission
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\copyrightyear{2017}           %% If different from \acmYear
+
+%% Bibliography style
+\bibliographystyle{ACM-Reference-Format}
+%% Citation style
+\citestyle{acmauthoryear}  %% For author/year citations
+
 \begin{document}
 
-\conferenceinfo{ICFP ’17}{September 3--9, 2017, Oxford, United Kingdom}
-\copyrightyear{2017}
-\copyrightdata{???}
-\copyrightdoi{????}
+\title[Combining Dynamic and Static Typing: A Categorical Perspective]{The Combination of Dynamic and Static Typing from a Categorical Perspective}
 
-\titlebanner{}
-\preprintfooter{}
+%% \authorinfo{Harley Eades III and Michael Townsend}
+%%            {Augusta University}
+%%            {\{heades,mitownsend\}@augusta.edu}
 
-\title{The Combination of Dynamic and Static Typing from a Categorical Perspective}
+\author{Harley Eades III}
+\affiliation{
+  \department{Computer and Information Sciences}              %% \department is recommended
+  \institution{Augusta University}            %% \institution is required
+  \streetaddress{1120 15th Street}
+  \city{Augusta}
+  \state{Georgia}
+  \postcode{30912}
+  \country{USA}
+}
+\email{heades@augusta.edu}          %% \email is recommended
 
-\authorinfo{Harley Eades III and Michael Townsend}
-           {Augusta University}
-           {\{heades,mitownsend\}@augusta.edu}
-
-\maketitle
-
-\category{D.1.1}{Programming Technique}[Applicative (Functional) Programming]
-\category{D.3.1}{Formal Definitions and Theory}[Semantics]
-\category{F.3.3}{Studies of Program Constructs}[Type structure]
-\category{F.4.1}{Mathematical Logic and Formal Languages}[Lambda calculus and related systems]
-
-\terms typed lambda-calculus, untyped lambda-calculus, gradual typing,
-static typing, dynamic typing, categorical model, functional
-programming
-
-\keywords static typing, dynamic typing, gradual typing, categorical
-semantics, retract
+\author{Michael Townsend}
+\affiliation{
+  \department{Computer and Information Sciences}              %% \department is recommended
+  \institution{Augusta University}            %% \institution is required
+  \streetaddress{1120 15th Street}
+  \city{Augusta}
+  \state{Georgia}
+  \postcode{30912}
+  \country{USA}
+}
+\email{mitownsend@augusta.edu}          %% \email is recommended
 
 \begin{abstract}
   Gradual typing was first proposed by Siek and Taha in 2006 as a way
@@ -127,6 +161,51 @@ semantics, retract
   system can be translated into Grady, and that their original
   annotated language is equivalent in expressive power to Grady.
 \end{abstract}
+
+%% 2012 ACM Computing Classification System (CSS) concepts
+%% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10003752.10010124.10010131.10010133</concept_id>
+<concept_desc>Theory of computation~Denotational semantics</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010131.10010137</concept_id>
+<concept_desc>Theory of computation~Categorical semantics</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10003790.10011740</concept_id>
+<concept_desc>Theory of computation~Type theory</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010125.10010127</concept_id>
+<concept_desc>Theory of computation~Functional constructs</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010125.10010130</concept_id>
+<concept_desc>Theory of computation~Type structures</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Theory of computation~Denotational semantics}
+\ccsdesc[500]{Theory of computation~Categorical semantics}
+\ccsdesc[300]{Theory of computation~Type theory}
+\ccsdesc[300]{Theory of computation~Functional constructs}
+\ccsdesc[300]{Theory of computation~Type structures}
+
+\keywords{static typing, dynamic typing, gradual typing, categorical
+  semantics, retract,typed lambda-calculus, untyped lambda-calculus,
+  gradual typing, static typing, dynamic typing, categorical model,
+  functional programming}
+
+\maketitle
 
 \section{Introduction}
 \label{sec:introduction}
@@ -149,7 +228,6 @@ semantics, retract
 % section grady (end)
 
 \nocite{*}
-\bibliographystyle{plainnat}
 \bibliography{references}
 
 \appendix

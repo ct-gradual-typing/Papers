@@ -16,10 +16,8 @@ the following definition.
     \[
 \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
   \text{(types)} & [[A]],[[B]] & ::=  & [[Unit]] \mid [[Nat]] \mid [[?]] \mid [[A x B]] \mid [[A1 -> A2]]\\
-  \\
-  \text{(terms)} & [[t]] & ::=  & [[x]] \mid [[triv]] \mid [[0]]       \mid [[succ t]] \mid [[\x:A.t]]  \mid [[t1 t2]]\\
-  &                      & \mid & [[(t1,t2)]] \mid [[fst t]] \mid [[snd t]] \\
-  \\
+  \text{(terms)} & [[t]] & ::=  & [[x]] \mid [[triv]] \mid [[0]] \mid [[succ t]] \mid [[\x:A.t]]  \mid [[t1 t2]]
+                                        \mid [[(t1,t2)]] \mid [[fst t]] \mid [[snd t]] \\
   \text{(contexts)} & [[G]] & ::= & [[.]] \mid [[x : A]] \mid [[G1,G2]]\\
 \end{array}
 \]

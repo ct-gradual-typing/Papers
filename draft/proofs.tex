@@ -88,7 +88,7 @@ $\S f = \S g : \S A \mto \S B$.  Then we can easily see that:
 \end{array}
 \]
 But, we have the following equalities:
-\[\scriptsize
+\[
 \begin{array}{rll}
   [[lunbox A]];f;[[lbox B]] & = & [[lunbox A]];g;[[lbox B]]\\
   [[lbox A]];[[lunbox A]];f;[[lbox B]];[[lunbox B]] & = & [[lbox A]];[[lunbox A]];g;[[lbox B]];[[lunbox B]]\\
@@ -392,7 +392,7 @@ without mention.
     \end{math}
   \end{center}
   Then
-  \[\small
+  \[
   \begin{array}{lll}
     [[ [| <Nat>(succ t) |] ]]
     & = & [[ [| succ t |] ]];[[unbox Nat]]\\
@@ -466,12 +466,12 @@ without mention.
   We prove this equality from right to left as follows:
   \[
   \begin{array}{lll}
-    [[ [| \y : A2.<B2> (t <A1>y) |] ]]\\
-    \,\,\,\,\,\,\,\,\,\,\,\,= \curry{([[ [| t |] ]] \times c_1);\app_{[[A1]],[[B1]]};c_2}\\
-    \,\,\,\,\,\,\,\,\,\,\,\,= [[ [| t |] ]];\curry{\app_{[[A1]],[[B1]]}};(c_1 \to c_2)\\
-    \,\,\,\,\,\,\,\,\,\,\,\,= [[ [| t |] ]];\id_{[[A1 -> B1]]};(c_1 \to c_2)\\
-    \,\,\,\,\,\,\,\,\,\,\,\,= [[ [| t |] ]];(c_1 \to c_2)\\
-    \,\,\,\,\,\,\,\,\,\,\,\,= [[ [| <A2 -> B2>t |] ]]
+    [[ [| \y : A2.<B2> (t <A1>y) |] ]]
+    & = & \curry{([[ [| t |] ]] \times c_1);\app_{[[A1]],[[B1]]};c_2}\\
+    & = & [[ [| t |] ]];\curry{\app_{[[A1]],[[B1]]}};(c_1 \to c_2)\\
+    & = & [[ [| t |] ]];\id_{[[A1 -> B1]]};(c_1 \to c_2)\\
+    & = & [[ [| t |] ]];(c_1 \to c_2)\\
+    & = & [[ [| <A2 -> B2>t |] ]]
   \end{array}
   \]
 

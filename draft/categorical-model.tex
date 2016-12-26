@@ -240,7 +240,7 @@ definition is by mutual recursion on the input type.
   $[[lunbox A]] : [[S --> A]]$ by mutual recursion on
   $[[A]]$ as follows:
   \[
-  \begin{array}{lll}
+  \begin{array}{lllllllllll}
     \begin{array}{lll}
       [[lbox A]] = [[box A]]\\
     \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
@@ -251,9 +251,7 @@ definition is by mutual recursion on the input type.
     \\
     [[lbox (A1 x A2)]] = [[lbox A1]] \times [[lbox A2]]\\        
     \end{array} & \quad \quad 
-    \\
-    \\\hline 
-    \\
+    & \quad & 
     \begin{array}{lll}
     [[lunbox A]] = [[unbox A]]\\
     \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
@@ -377,18 +375,22 @@ above and lift $[[split]]$ and $[[squash]]$ to arbitrary skeletons.
   $[[lsquash S]] : [[S --> ?]]$ and $[[lsplit S]] : [[? --> S]]$ by
   mutual recursion on $[[S]]$ as follows:
   \[
-    \begin{array}{lll}
-      [[lsquash ?]] = \id_?\\
-      \\
-      [[lsquash (S1 -> S2)]] = ([[lsplit S1]] \to [[lsquash S2]]);[[squash ? -> ?]]\\
-      \\
-      [[lsquash (S1 x S2)]] = ([[lsquash S1]] \times [[lsquash S2]]);[[squash ? x ?]]\\
-      \\ \hline \\
-      [[lsplit ?]] = \id_?\\
-      \\
-      [[lsplit (S1 -> S2)]] = [[split ? -> ?]];([[lsquash S1]] \to [[lsplit S2]])\\
-      \\
-      [[lsplit (S1 x S2)]] = [[split ? x ?]];([[lsplit S1]] \times [[lsplit S2]])\\      
+    \begin{array}{llllllll}
+      \begin{array}{lll}
+        [[lsquash ?]] = \id_?\\
+        \\
+          [[lsquash (S1 -> S2)]] = ([[lsplit S1]] \to [[lsquash S2]]);[[squash ? -> ?]]\\
+          \\
+            [[lsquash (S1 x S2)]] = ([[lsquash S1]] \times [[lsquash S2]]);[[squash ? x ?]]\\
+      \end{array}
+      & \quad & 
+      \begin{array}{lll}
+        [[lsplit ?]] = \id_?\\
+        \\
+        [[lsplit (S1 -> S2)]] = [[split ? -> ?]];([[lsquash S1]] \to [[lsplit S2]])\\
+        \\
+        [[lsplit (S1 x S2)]] = [[split ? x ?]];([[lsplit S1]] \times [[lsplit S2]])\\      
+      \end{array}
     \end{array}  
   \]
 \end{definition}
@@ -546,7 +548,7 @@ complete proof.
     \[
     \begin{array}{lll}
        c & = & c_1 \times c_2 : [[(A1 x B1) --> (A2 x B2)]]\\
-      c' & = & c_3 \to c_4 : [[(A2 x B2) --> (A1 x B1)]]
+      c' & = & c_3 \times c_4 : [[(A2 x B2) --> (A1 x B1)]]
     \end{array}
     \]
     where $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
