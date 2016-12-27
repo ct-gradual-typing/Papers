@@ -250,7 +250,7 @@ unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr
 
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
                
-lineParser = try letParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
+lineParser = try letParser <|> try fileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of

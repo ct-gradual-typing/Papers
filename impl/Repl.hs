@@ -69,7 +69,7 @@ handleCMD s =
                             Right r -> tyCheckQ r
      where
        tyCheckQ :: GFile -> REPLStateIO ()
-       --tyCheckQ emptyQ = return () -- TODO: Fix- Get an overlapping patterns warning, not sure why
+       tyCheckQ (Queue [] []) = return () -- TODO: Fix- Get an overlapping patterns warning, not sure why
        tyCheckQ q = do
                 defs <- get
                 let term@(Def v ty t) = headQ q in
@@ -78,13 +78,16 @@ handleCMD s =
                    let tu = unfoldDefsInTerm defs t
                    let numFV = length (getFV tu)
                    if (numFV == 0)
-                   then let r = runTC tu            -- TypeCheck term from Prog
+                   -- TypeCheck term from Prog
+                   then let r = runTC tu            
                         in case r of
                            Left err -> io.putStrLn.readTypeError $ err
                            -- Verify type from TypeChecker matches expected type from file
-                           -- If it does, add to context (i.e. definition queue), if not throw error
+                           -- If it does, add to context (i.e. definition queue)
                            Right tyTerm -> if(ty == tyTerm)
-                                            then push (v,tu)
+                                            then do
+                                                 push (v,tu)
+                                                 tyCheckQ $ tailQ q
                                             else io.print $ "TODO: make error message"
                    else io.print $ "error - free variables found in q: "++(show q)
                               
