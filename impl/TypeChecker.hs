@@ -38,14 +38,14 @@ typeCheck_aux (Var x) = do
 
 typeCheck_aux Triv = return $ Unit
 typeCheck_aux Zero = return $ Nat
-typeCheck_aux (Box ty) = if(isTerminating ty)
-                            then return $ Arr ty U 
-                            else TE.throwError $ TE.BoxError ty
+typeCheck_aux (Box ty) | ty == Nat = return $ Arr ty U
+                       | ty == Unit = return $ Arr ty U
+                       | otherwise = TE.throwError $ TE.BoxError ty
 
-typeCheck_aux (Unbox ty) = if(isTerminating ty)
-                            then return $ Arr U ty      
-                            else TE.throwError $ TE.UnboxError ty
-
+typeCheck_aux (Unbox ty) | ty == Nat = return $ Arr U ty
+                         | ty == Unit = return $ Arr U ty
+                         | otherwise = TE.throwError $ TE.BoxError ty
+                         
 typeCheck_aux (Succ t) = do
   r <- typeCheck_aux t
   case r of
