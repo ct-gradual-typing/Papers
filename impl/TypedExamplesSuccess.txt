@@ -78,6 +78,14 @@ The Following are all examples that should all typecheck:
         :t \(p:(? -> ?) -> (? -> ?)).\(x: ? -> ?).\(y:?).p x
             returns - ((? -> ?) -> ? -> ?) -> (? -> ?) -> ? -> ? -> ?
     Second: 
-         :t \(p:? -> ?).\(x: ? -> ?).\(y:?).p y
+        :t \(p:? -> ?).\(x: ? -> ?).\(y:?).p y
             returns - (? -> ?) -> (? -> ?) -> ? -> ?
+    Tail : 
+        :t \(p:(? -> ? -> ?) -> ?).p false
+            returns - ((? -> ? -> ?) -> ?) -> ?
+    List:
+        :t \(m:Nat).\(n:Nat).head (cons ((cons (box<Nat> m) (box<Nat> n)) true) ((cons (box<Nat> m) (box<Nat> n)) true))
+            returns - Nat -> Nat -> ?
+        :t \(m:Nat).\(n:Nat).unbox<Nat> (head (cons ((cons (box<Nat> m) (box<Nat> n)) true) ((cons (box<Nat> m) (box<Nat> n)) true)))
+            returns - Nat -> Nat -> Nat
     
