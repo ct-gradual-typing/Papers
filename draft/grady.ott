@@ -5,7 +5,7 @@ metavar termvar, x, y , z, f ::=
 indexvar index, i , j, k ::=
 
 grammar
-  t, v, s, n :: 't_' ::=                                {{ com term }}
+  t, c, v, s, n :: 't_' ::=                    {{ com term }}
     | x                   ::   :: var          {{ com variable }}
     | triv                ::   :: unit         {{ com unit }}
     {{tex \mathsf{triv} }}
