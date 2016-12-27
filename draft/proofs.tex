@@ -529,6 +529,66 @@ without mention.
 \end{itemize}
 % subsection proof_of_interpretation_of_evaluation (end)
 
+\subsection{Proof of Lemma~\ref{lemma:syntactic_box_and_unbox}}
+\label{subsec:proof_of_lemma_syntactic_box_and_unbox}
+First, we define the identify meta-function:
+  \[
+  \id_A := [[\x : A . x]]
+  \]
+  Then composition.  Suppose $[[G |- t1 : A -> B]]$ and $[[G |- t2 : B -> D]]$
+  are two terms, then we define:
+  \[
+  [[t1 ; t2]] := [[\x : A . H(t2 (t1 x))]]
+  \]
+  It is easy to see that the following rule is admissible:
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=\text{comp}] {
+        [[G |- t1 : A -> B]]
+        \\
+          [[G |- t2 : B -> D]]
+      }{[[G |- t1;t2 : A -> D]]}
+    \end{math}
+  \end{center}
+  The functor $- \times -$ requires two morphisms $[[G |- t1 : A -> D]]$ and
+  $[[G |- t2 : B -> E]]$, and is defined as follows:
+  \[
+  [[t1]] \times [[t2]] := [[\ x : A x B.(t1 (fst x), t2 (snd x))]]
+  \]
+  The following rule is admissible:
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=\text{prod}] {
+        [[G |- t1 : A -> D]]
+        \\
+        [[G |- t2 : B -> E]]
+      }{[[G |- t1 XX t2 : H(A x B) -> H(D x E)]]}
+    \end{math}
+  \end{center}
+  The functor $- \to -$ requires two morphisms $[[G |- t1 : D -> A]]$ and
+  $[[G |- t2 : B -> E]]$, and is defined as follows:
+  \[
+  [[t1 -> t2]] := [[\ f : A -> B.\y : D.H(t2 (f (t1 y)))]]
+  \]
+  The following rule is admissible:
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=\text{prod}] {
+        [[G |- t1 : D -> A]]
+        \\
+        [[G |- t2 : B -> E]]
+      }{[[G |- t1 -> t2 : (A -> B) -> (D -> E)]]}
+    \end{math}
+  \end{center}
+  At this point it is straightforward to carry out the definition of
+  $[[Box A]]$ and $[[Unbox A]]$ using the definitions from the model.
+  Showing the admissibility of the typing and reduction rules follows
+  by induction on $[[A]]$.
+% subsection proof_of_lemma_syntactic_box_and_unbox (end)
+
 %%% Local Variables: ***
 %%% mode:latex ***
 %%% TeX-master: "main.tex"  ***

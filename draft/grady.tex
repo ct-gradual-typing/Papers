@@ -1,6 +1,7 @@
 Just as the simply typed $\lambda$-calculus corresponds to cartesian
 closed categories our categorical model has a corresponding type
-theory we call Grady.  Its syntax is an extension of the syntax for
+theory we call Grady.  It consists of all of the structure found in
+the model.  Its syntax is an extension of the syntax for
 $\lambda^?_\to$.
 
 \begin{definition}
@@ -17,13 +18,17 @@ $\lambda^?_\to$.
   \end{array}
   \]
 \end{definition}
-
 \noindent
-The typing rules for Grady can be found in
+The types of Grady are the same as the types of $\lambda^?_\to$
+(Definition~\ref{def:gradual-syntax}), in addition, it encompasses all
+the terms of $\lambda^?_\to$, and so we do not repeat either of them
+here.  The typing rules for Grady can be found in
 Figure~\ref{fig:grady-typing} and its reduction rules can be found in
-Figure~\ref{fig:grady-reduction} and Figure~\ref{fig:grady-reduction-cont}.
+Figure~\ref{fig:grady-reduction}.
 \renewcommand{\GradydruleBoxName}{\text{box}}
 \renewcommand{\GradydruleUnboxName}{\text{unbox}}
+\renewcommand{\GradydruleBoxGName}{\text{Box}}
+\renewcommand{\GradydruleUnboxGName}{\text{Unbox}}
 \renewcommand{\GradydrulesquashName}{\text{squash}}
 \renewcommand{\GradydrulesplitName}{\text{split}}
 \renewcommand{\GradydrulecaseName}{[[Nat]]_e}
@@ -50,7 +55,8 @@ Figure~\ref{fig:grady-reduction} and Figure~\ref{fig:grady-reduction-cont}.
   \label{fig:grady-typing}
 \end{figure}
 \renewcommand{\GradydrulerdXXvaluesName}{\text{values}} 
-\renewcommand{\GradydrulerdXXretracTName}{\text{retract}_1} 
+\renewcommand{\GradydrulerdXXretracTName}{\text{retract}_1}
+\renewcommand{\GradydrulerdXXretracTGName}{\text{retract}_3} 
 \renewcommand{\GradydrulerdXXretractUName}{\text{retract}_2} 
 \renewcommand{\GradydrulerdXXbetaName}{\beta} 
 \renewcommand{\GradydrulerdXXetaName}{\eta} 
@@ -89,21 +95,45 @@ Figure~\ref{fig:grady-reduction} and Figure~\ref{fig:grady-reduction-cont}.
       \GradydrulerdXXcaseThree{} \and      
       \GradydrulerdXXlam{} \and      
       \GradydrulerdXXappOne{} \and
-      \GradydrulerdXXappTwo{} \and      
-    \end{mathpar}
-  \end{mdframed}
-  \caption{Reduction rules for Grady}
-  \label{fig:grady-reduction}
-\end{figure}
-\begin{figure}
-  \begin{mdframed}
-    \begin{mathpar}
+      \GradydrulerdXXappTwo{} \and
       \GradydrulerdXXfst{} \and
       \GradydrulerdXXsnd{} \and
       \GradydrulerdXXpairOne{} \and
       \GradydrulerdXXpairTwo{}    
     \end{mathpar}
   \end{mdframed}
-  \caption{Reduction rules for Grady continued}
-  \label{fig:grady-reduction-cont}
+  \caption{Reduction rules for Grady}
+  \label{fig:grady-reduction}
 \end{figure}
+
+Just as we did for the categorical model
+(Lemma~\ref{lemma:casting_morphisms}) we can lift $[[box C]]$ and
+$[[unbox C]]$ to arbitrary type.
+\begin{lemma}[Syntactic $[[Box A]]$ and $[[Unbox A]]$]
+  \label{lemma:syntactic_box_and_unbox}
+  Given any type $[[A]]$ there are functions $[[Box A]]$ and $[[Unbox
+      A]]$ such that the following typing rules are admissible:
+  \[
+  \begin{array}{lll}
+    \GradydruleBoxG{} & \quad & \GradydruleUnboxG{}
+  \end{array}
+  \]
+  Furthermore, the following reduction rule is admissible:
+  \[
+  \begin{array}{lll}
+    \GradydrulerdXXretracTG{} 
+  \end{array}
+  \]
+\end{lemma}
+\begin{proof}
+  The functions $[[Box A]]$ and $[[Unbox A]]$ can be defined using the
+  construction from the categorical model,
+  e.g. Definition~\ref{def:boxing-unboxing},
+  Definition~\ref{def:lifted-split-squash}, and
+  Lemma~\ref{lemma:casting_morphisms}.  However, the categorical
+  notions of composition, identity, and the functors $- \to -$ and $-
+  \times -$ must be defined as meta-functions first, but after they
+  are, then the same constructions apply.  Please see
+  Appendix~\ref{subsec:proof_of_interpretation_of_evaluation} for the
+  constructions.
+\end{proof}

@@ -1,6 +1,6 @@
 
 
-metavar termvar, x, y , z ::=
+metavar termvar, x, y , z, f ::=
 
 indexvar index, i , j, k ::=
 
@@ -24,10 +24,14 @@ grammar
     | Box C               :: M  :: lGen
     {{tex \mathsf{Box}_{[[C]]} }}    
     | Unbox C             :: M  :: lSpec
-    {{tex \mathsf{Unbox}_{[[C]]} }}    
-    | lsplit S               :: M  :: lsplit
+    {{tex \mathsf{Unbox}_{[[C]]} }}
+    | t1 ; t2             :: M :: Comp
+    | t1 -> t2            :: M :: Arrow
+    | t1 XX t2             :: M :: Prod
+    {{tex [[t1]] \times [[t2]] }}
+    | lsplit S            :: M  :: lsplit
     {{tex \widehat{\mathsf{split} }_{[[S]]} }}    
-    | lsquash S             :: M  :: lsquash
+    | lsquash S           :: M  :: lsquash
     {{tex \widehat{\mathsf{squash} }_{[[S]]} }}        
     | < A > t             ::   :: cast         {{ com type cast }}
     {{tex \langle [[A]] \rangle [[t]] }}    
@@ -107,7 +111,7 @@ grammar
   %   | Nat                 ::   :: nat          {{ com natural number type }}
   %   {{tex \mathsf{Nat} }}
 
-  A, B, C, S, U, X, Y, Z :: 'A_' ::=                                {{ com type }}  
+  A, B, C, D, E, S, U, X, Y, Z :: 'A_' ::=                                {{ com type }}  
     | Unit                ::   :: term         {{ com unit type }}
     {{tex \mathsf{Unit} }}
     | 1                   ::   :: terminal
@@ -231,6 +235,12 @@ defn
     --------------------- :: Unbox
     G |- unbox C : ? -> C
 
+    ------------------- :: BoxG
+    G |- Box A : A -> ?
+
+    --------------------- :: UnboxG
+    G |- Unbox A : ? -> A
+
     ---------------------- :: squash
     G |- squash U : U -> ?
 
@@ -323,6 +333,10 @@ by
     G |- t : C
     ------------------------------- :: retracT
     G |- unbox C (box C t) ~> t : C
+
+    G |- t : A
+    ------------------------------- :: retracTG
+    G |- Unbox A (Box A t) ~> t : A
 
     G |- t : U
     ---------------------------------- :: retractU
