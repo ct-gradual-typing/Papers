@@ -2,7 +2,7 @@
 module Pretty (prettyType, prettyTerm, runPrettyTerm, runPrettyType) where
 
 import Syntax
-import Parser
+-- import Parser
 
 prettyType :: Type -> String
 prettyType Nat = "Nat"
@@ -65,14 +65,14 @@ prettyTerm (Pair t1 t2) = do
 prettyTerm Squash = return "squash"
 prettyTerm Split = return "split"
 
-testPretty parser pretty s = do
-  let o = parse parser "" s in  
-    case o of
-      Left e -> error $ show e
-      Right r -> runLFreshM (pretty r)
+-- testPretty parser pretty s = do
+--   let o = parse parser "" s in  
+--     case o of
+--       Left e -> error $ show e
+--       Right r -> runLFreshM (pretty r)
 
-testPrettyTerm :: String -> String
-testPrettyTerm = testPretty expr prettyTerm
+-- testPrettyTerm :: String -> String
+-- testPrettyTerm = testPretty expr prettyTerm
 
 runPrettyType :: Type -> String
 runPrettyType = prettyType

@@ -23,6 +23,7 @@ import Text.Parsec.Extra
 
 import Syntax
 import Queue
+import Pretty
 
 ------------------------------------------------------------------------
 -- We first setup the lexer.                                          --
@@ -37,14 +38,7 @@ ident      = Token.identifier tokenizer
 reserved   = Token.reserved tokenizer
 reservedOp = Token.reservedOp tokenizer
 parens     = Token.parens tokenizer
-angles     = Token.angles tokenizer
-brackets   = Token.brackets tokenizer
-braces     = Token.braces tokenizer
 ws         = Token.whiteSpace tokenizer
-natural    = Token.natural tokenizer
-dot        = Token.dot tokenizer
-comma      = Token.comma tokenizer
-colon      = Token.colon tokenizer
 symbol     = Token.symbol tokenizer             
 
 unexpColon msg = unexpected msg -- Used for error handing.
@@ -92,13 +86,15 @@ trivParse = parseConst "triv" Triv
 
 boxParse = do
   symbol "box"
-  ty <- between (symbol "<") (symbol ">") typeParser  
+  ty <- between (symbol "<") (symbol ">") typeParser
   return $ Box ty
 
 unboxParse = do
   symbol "unbox"
-  t <- between (symbol "<") (symbol ">") typeParser 
-  return $ Unbox t
+  symbol "<"
+  ty <- typeParser
+  symbol ">"
+  return $ Unbox ty
 
 succParse = do
   reservedOp "succ"
@@ -107,7 +103,7 @@ succParse = do
          
 pairParse = do
   t1 <- expr
-  comma
+  symbol ","
   t2 <- expr
   return $ Pair t1 t2
 
@@ -126,19 +122,18 @@ funParse = do
   symbol "("
   name <- varName
   ws
-  colon
-  ws
+  symbol ":"
   ty <- typeParser
   symbol ")"
-  dot
+  symbol "."
   body <- expr
   return . Fun ty . bind name $ body
 
 appParse = do
-  l <- sepBy aterm (symbol " ")
+  l <- many (ws *> aterm)
   case l of
     [] -> fail "A term must be supplied"
-    _ -> return $ foldl1 App l      
+    _ -> return $ foldl1 App l
 
 squash = do
   reservedOp "squash"
@@ -162,30 +157,28 @@ data Prog =
 type GFile = Queue Prog      -- Grady file
 
 parseTypeDef = do
-  n <- varName 
+  n <- varName
   ws
-  colon 
-  ws
+  symbol ":"    
   ty <- (typeParser) 
   return (n,ty)
 
 parseExpDef = do
-  n <- varName 
+  n <- varName
   ws
   symbol "=" 
-  ws
-  t <- expr
-  ws
+  t <- expr 
   return (n,t)   
 
 parseDef = do
-  (n, ty) <- parseTypeDef 
-  (m,t) <- parseExpDef 
+  (n, ty) <- ws *> parseTypeDef
+  (m,t) <- ws *> parseExpDef
+  symbol ";"
   if( m == n )
   then return $ Def n ty t
   else error "Definition name and expression name do not match"
             
-parseFile = ws *> many parseDef 
+parseFile = ws *> many parseDef
 
 runParseFile :: String -> Either String GFile
 runParseFile s = case (parse parseFile "" s) of
@@ -212,33 +205,34 @@ data REPLExpr =
                     
 letParser = do
   reservedOp "let"
+  ws
   n <- varName
+  ws
   symbol "="
-  t <- expr
-  eof
+  ws
+  t <- expr <?> "Failed expr"
+  eof <?> "Failed eof "++(runPrettyTerm t)
   return $ Let n t        
 
 fileParser = do
   reservedOp ":l"
-  ws
   path <- many1 anyChar
   eof  
   return $ LoadFile path
   
 replTermCmdParser short long c p = do
-  colon
+  symbol ":"
   cmd <- many lower
   ws
-  t <- p
+  t <- p       
   eof
   if (cmd == long || cmd == short)
   then return $ c t
   else fail $ "Command \":"++cmd++"\" is unrecognized."
 
 replIntCmdParser short long c = do
-  colon
+  symbol ":"
   cmd <- many lower
-  ws
   eof
   if (cmd == long || cmd == short)
   then return c
@@ -252,7 +246,7 @@ unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr
 
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
                
-lineParser = letParser <|> try fileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
+lineParser = try letParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of
