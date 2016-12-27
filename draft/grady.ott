@@ -1,7 +1,7 @@
 
 
 metavar termvar, x, y , z, f ::=
-
+metavar typevar, X, Y , Z ::=
 indexvar index, i , j, k ::=
 
 grammar
@@ -20,11 +20,15 @@ grammar
     | lbox C               :: M  :: lgen
     {{tex \widehat{\mathsf{box} }_{[[C]]} }}    
     | lunbox C             :: M  :: lspec
-    {{tex \widehat{\mathsf{unbox} }_{[[C]]} }}
+    {{tex \widehat{\mathsf{unbox} }_{[[C]]} }}    
     | Box C               :: M  :: lGen
     {{tex \mathsf{Box}_{[[C]]} }}    
     | Unbox C             :: M  :: lSpec
     {{tex \mathsf{Unbox}_{[[C]]} }}
+    | Lam X . t           ::    :: TypeLam
+    {{tex \Lambda [[X]].[[t]] }}
+    | [ A ] t             ::   :: TypeApp
+    {{tex [ [[A]] ] [[t]] }}
     | t1 ; t2             :: M :: Comp
     | t1 -> t2            :: M :: Arrow
     | t1 XX t2             :: M :: Prod
@@ -61,6 +65,7 @@ grammar
     | 3                   :: M :: Three
     | [| t |]             :: M :: Interp
     {{tex \interp{[[t]]} }}
+    | [ A / X ] t         :: M :: TypeSub
 
   % s :: 's_' ::= {{com simple values }}
   %   | x                   ::   :: var  
@@ -111,7 +116,14 @@ grammar
   %   | Nat                 ::   :: nat          {{ com natural number type }}
   %   {{tex \mathsf{Nat} }}
 
-  A, B, C, D, E, S, U, X, Y, Z :: 'A_' ::=                                {{ com type }}  
+  K :: 'K_' ::=
+    | * :: :: TypeOfTypes
+    {{tex \star }}
+
+  A, B, C, D, E, S, U :: 'A_' ::=                                {{ com type }}
+    | X                   ::   :: Var
+    | Forall X . A        ::   :: Forall
+    {{tex \forall [[X]] . [[A]]}}
     | Unit                ::   :: term         {{ com unit type }}
     {{tex \mathsf{Unit} }}
     | 1                   ::   :: terminal
@@ -135,13 +147,17 @@ grammar
     {{tex \interp{[[A]]} }}
     | skeleton A          :: M :: Skeleton
     {{tex \mathsf{skeleton}\,[[A]] }}
+    | [ A / X ] B         :: M :: TypeSub
 
 
   G {{ tex \Gamma }} :: G_ ::=                 {{ com typing context }}
     | .                   ::   :: emptyCtx     {{ com empty context }}
-    {{tex \cdot }}    
+    {{tex \cdot }}
+    | G , X : *           ::   :: tvn
+    {{tex [[G]],[[X]]:\star }}
     | G , x : A           ::   :: vn           {{ com cons }}
     | G , G'              :: M :: append       {{ com append }}
+    | ( G )               :: M :: parens
 
   terminals :: 'terminals_' ::=
     |  ->                 ::   :: arrow
@@ -179,6 +195,8 @@ grammar
     | ~ formula           ::   :: notj
     {{tex \lnot [[formula]] }}
     | x : A elem G        ::   :: xTelemG
+    | X : * elem G        ::   :: XTelemG
+    {{tex [[X]] : \star \in [[G]] }}
     | formula1 && formula2 ::  :: Quad
     {{tex [[formula1]] \quad [[formula2]] }}
     | not formula         ::   :: not
@@ -198,6 +216,50 @@ subrules
   
 defns
   Typing :: '' ::=
+
+defn
+   G |- A : * :: :: kind :: 'K_'
+   {{tex [[G]] \vdash [[A]] : \star }} by
+
+   X : * elem G
+   ------------ :: var
+   G |- X : *
+
+   ------------- :: unit
+   G |- Unit : *
+
+   ------------ :: nat
+   G |- Nat : *
+
+   ---------- :: unitype
+   G |- ? : *
+
+   G |- A : * && G |- B : *
+   ------------------------ :: arrow
+   G |- A -> B : *
+
+   G |- A : * && G |- B : *
+   ------------------------ :: prod
+   G |- A x B : *
+
+   G, X : * |-  A : *
+   --------------------- :: forall
+   G |- Forall X . A : *
+
+defn
+    G Ok :: :: ctxOk :: 'Ok_'
+    {{tex [[G]]\,\text{Ok} }} by
+
+   ---- :: empty
+   . Ok
+
+   G Ok
+   ----------- :: typeVar
+   (G, X : *) Ok
+
+   G Ok && G |- A : *
+   ------------------ :: var
+   (G, x : A) Ok
 
 defn
     A ~ B :: :: typeConsis :: ''    {{ com [[A]] is consistent with [[B]] }}
@@ -229,10 +291,22 @@ defn
     ------------ :: var
     G |- x : A
 
+    x : A elem G && G Ok
+    -------------------- :: varP
+    G |- x : A
+
     ------------------- :: Box
     G |- box C : C -> ?
 
+    G Ok
+    ------------------- :: BoxP
+    G |- box C : C -> ?
+
     --------------------- :: Unbox
+    G |- unbox C : ? -> C
+
+    G Ok
+    --------------------- :: UnboxP
     G |- unbox C : ? -> C
 
     ------------------- :: BoxG
@@ -244,13 +318,29 @@ defn
     ---------------------- :: squash
     G |- squash U : U -> ?
 
+    G Ok
+    ---------------------- :: squashP
+    G |- squash U : U -> ?
+
     --------------------- :: split
+    G |- split U : ? -> U
+
+    G Ok
+    --------------------- :: splitP
     G |- split U : ? -> U
 
     ---------------- :: unit
     G |- triv : Unit
 
+    G Ok
+    ---------------- :: unitP
+    G |- triv : Unit
+
     ------------- :: zero
+    G |- 0 : Nat
+
+    G Ok
+    ------------- :: zeroP
     G |- 0 : Nat
 
     G |- t : Nat
@@ -281,6 +371,14 @@ defn
     G |- t1 : A -> B && G |- t2 : A
     ---------------------------------- :: app
     G |- t1 t2 : B
+
+    G, X : * |- t : A
+    --------------------------- :: Lam
+    G |- Lam X . t : Forall X.A
+
+    G |- t : Forall X . B && G |- A : *
+    ----------------------------------- :: typeApp
+    G |- [A] t : [A/X]B
 
 % Gradual Siek16:
 
@@ -417,6 +515,18 @@ by
     G |- t1 : A1 && G |- t2  ~> t'2 : A2
     ------------------------------------ :: pair2
     G |- (t1,t2) ~> (t1,t'2) : A1 x A2
+
+    G, X : * |- t : B
+    -------------------------------------- :: typeBeta
+    G |- [A](Lam X . t) ~> [A/X]t : [A/X]B
+
+    G |- t1 ~> t2 : Forall X.B
+    ---------------------------- :: typeApp
+    G |- [A]t1 ~> [A]t2 : [A/X]B
+
+    G, X : * |- t1 ~> t2 : A
+    -------------------------------------- :: Lam
+    G |- Lam X.t1 ~> Lam X.t2 : Forall X.A
 
 defn
     G |- t1 ~> t2 : A :: :: redA :: rdA_ {{com Reduction for annotated Siek16}}

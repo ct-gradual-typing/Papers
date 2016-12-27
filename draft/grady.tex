@@ -188,6 +188,121 @@ several ways the typed and untyped fragments can be mixed.
 \end{itemize}
 % subsection exploiting_the_untyped_lambda-calculus (end)
 
+\subsection{Extending Grady with Impredicative Polymorphism}
+\label{subsec:extending_grady_with_impredicative_polymorphism}
+The simplistic nature of Grady makes it well suited to extend with new
+features.  In this section we add polymorphism to Grady extending its
+typed fragment to System F \cite{Girard:1989}.
+\begin{definition}
+  \label{def:poly-grady-syntax}
+  The syntax of polymorphic Grady as an extension of Grady's is as
+  follows:
+  \[
+  \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+    \text{(kinds)}           & [[K]] & ::= & [[*]]\\
+    \text{(boxable types)}   & [[C]] & ::= & [[Unit]] \mid [[Nat]] \mid [[X]]\\
+    \text{(types)}           & [[A]],[[B]],[[D]],[[E]] & ::= & \ldots \mid [[X]] \mid [[Forall X.A]]\\
+    \text{(terms)}           & [[t]] & ::= & \ldots \mid [[Lam X . t]] \mid [[ [A]t ]]\\
+    \text{(contexts)}        & [[G]] & ::= & [[.]] \mid [[G,X : *]] \mid [[G,x : A]]\\
+  \end{array}
+  \]  
+\end{definition}
+We renamed the atomic type syntactic category to boxable types, and
+added type variables to this category.  This will allow generic
+functions to treat the incoming data as untyped.  The rules for
+kinding and well-formed contexts can be found in
+Figure~\ref{fig:poly-grady-kinding} and
+Figure~\ref{fig:poly-grady-ctx-ok}.  The typing rules can be found in
+Figure~\ref{fig:poly-grady-typing}, but we recount the entire system,
+because a number of rules had to be changed to insure that the typing
+context is always well formed.
+\renewcommand{\GradydruleKXXvarName}{\text{var}}
+\renewcommand{\GradydruleKXXunitName}{\text{unit}}
+\renewcommand{\GradydruleKXXnatName}{[[Nat]]}
+\renewcommand{\GradydruleKXXunitypeName}{[[?]]}
+\renewcommand{\GradydruleKXXarrowName}{\to}
+\renewcommand{\GradydruleKXXprodName}{\times}
+\renewcommand{\GradydruleKXXforallName}{\forall}
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \GradydruleKXXvar{} \and
+      \GradydruleKXXunit{} \and
+      \GradydruleKXXnat{} \and
+      \GradydruleKXXunitype{} \and
+      \GradydruleKXXarrow{} \and
+      \GradydruleKXXprod{} \and
+      \GradydruleKXXforall{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Kinding rules for Polymorphic Grady}
+  \label{fig:poly-grady-kinding}
+\end{figure}
+\renewcommand{\GradydruleOkXXemptyName}{\text{empty}} 
+\renewcommand{\GradydruleOkXXtypeVarName}{\text{type-var}} 
+\renewcommand{\GradydruleOkXXvarName}{\text{var}}
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \GradydruleOkXXempty{} \and
+      \GradydruleOkXXtypeVar{} \and
+      \GradydruleOkXXvar{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Well-formed contexts for Polymorphic Grady}
+  \label{fig:poly-grady-ctx-ok}
+\end{figure}
+\renewcommand{\GradydruleBoxPName}{\text{box}}
+\renewcommand{\GradydruleUnboxPName}{\text{unbox}}
+\renewcommand{\GradydrulesquashPName}{\text{squash}}
+\renewcommand{\GradydrulesplitPName}{\text{split}}
+\renewcommand{\GradydrulevarPName}[0]{\text{var}}
+\renewcommand{\GradydruleunitPName}[0]{\text{unit}}
+\renewcommand{\GradydrulezeroPName}[0]{\text{zero}}
+\renewcommand{\GradydruleLamName}[0]{\forall}
+\renewcommand{\GradydruletypeAppName}[0]{\forall_e}
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \GradydrulevarP{} \and
+      \GradydruleBoxP{} \and
+      \GradydruleUnboxP{} \and
+      \GradydrulesquashP{} \and
+      \GradydrulesplitP{} \and
+      \GradydruleunitP{} \and
+      \GradydrulezeroP{} \and
+      \Gradydrulesucc{} \and
+      \Gradydrulecase{} \and
+      \Gradydrulepair{} \and
+      \Gradydrulefst{} \and
+      \Gradydrulesnd{} \and
+      \Gradydrulelam{} \and
+      \Gradydruleapp{} \and
+      \GradydruleLam{} \and
+      \GradydruletypeApp{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Typing rules for Polymorphic Grady}
+  \label{fig:poly-grady-typing}
+\end{figure}
+\noindent
+The evaluation rules require far less changes.
+\renewcommand{\GradydrulerdXXtypeBetaName}{\text{type}_\beta}
+\renewcommand{\GradydrulerdXXtypeAppName}{\forall_e}
+\renewcommand{\GradydrulerdXXLamName}{\forall}
+\begin{definition}
+  \label{def:poly-grady-eval}
+  The evaluation rules of polymorphic Grady
+  (Definition~\ref{fig:grady-reduction}) are an extension of Grady's
+  by adding the following rules:
+  \begin{mathpar}
+    \GradydrulerdXXtypeBeta{} \and
+    \GradydrulerdXXLam{} \and
+    \GradydrulerdXXtypeApp{}
+  \end{mathpar}
+\end{definition}
+
+% subsection extending_grady_with_impredicative_polymorphism (end)
 
 %%% Local Variables: ***
 %%% mode:latex ***
