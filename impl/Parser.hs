@@ -29,8 +29,8 @@ import Pretty
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", ":t", ":type", ":s", ":show", "Nat", "Triv",
-                           "box", "unbox", ":l", "sqsh", "split"]
+  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", "Nat", "Triv",
+                           "box", "unbox", "sqsh", "split"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -218,11 +218,15 @@ letParser = do
   eof <?> "Failed eof "++(runPrettyTerm t)
   return $ Let n t        
 
-fileParser = do
-  reservedOp ":l"
+replFileCmdParser short long c = do
+  symbol ":"
+  cmd <- many lower
+  ws
   path <- many1 anyChar
-  eof  
-  return $ LoadFile path
+  eof
+  if(cmd == long || cmd == short)
+  then return $ c path
+  else fail $ "Command \":"++cmd++"\" is unrecognized."
   
 replTermCmdParser short long c p = do
   symbol ":"
@@ -249,8 +253,10 @@ showASTParser = replTermCmdParser "s" "show" ShowAST expr
 unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr                
 
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
+
+loadFileParser = replFileCmdParser "l" "load" LoadFile
                
-lineParser = try letParser <|> try fileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
+lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of
