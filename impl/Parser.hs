@@ -1,4 +1,4 @@
-{-# LANGUAGE NoMonomorphismRestriction, PackageImports, TemplateHaskell #-}
+{-# LANGUAGE NoMonomorphismRestriction, PackageImports, TemplateHaskell, FlexibleContexts #-}
 
 module Parser (module Text.Parsec, expr, 
                Vnm, 
@@ -58,7 +58,6 @@ var' p c = do
 
 varName' p msg = do
   n <- many1 alphaNum
-  ws
   when ((length n) > 0) $
     let h = head n in 
       when (p h || isNumber h) $ unexpColon (n++" : "++msg)
@@ -79,7 +78,10 @@ typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
-aterm = try (parens pairParse) <|> parens expr <|> zeroParse <|> trivParse <|> try squash <|> try split <|> try boxParse <|> try unboxParse <|> var
+aterm = try (parens pairParse) <|> parens expr    <|> zeroParse 
+                               <|> try trivParse  <|> try squash
+                               <|> try split      <|> try boxParse
+                               <|> try unboxParse <|> var
 expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error"
               
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
@@ -100,7 +102,6 @@ unboxParse = do
 
 succParse = do
   reservedOp "succ"
-  ws
   t <- expr
   return $ Succ t
          
@@ -118,15 +119,15 @@ fstParse = do
 sndParse = do
   reservedOp "snd"
   t <- expr
-  return $ Snd t
-  
-  
+  return $ Snd t 
          
 funParse = do
   reservedOp "\\"
   symbol "("
   name <- varName
+  ws
   colon
+  ws
   ty <- typeParser
   symbol ")"
   dot
@@ -134,7 +135,7 @@ funParse = do
   return . Fun ty . bind name $ body
 
 appParse = do
-  l <- many aterm
+  l <- sepBy aterm (symbol " ")
   case l of
     [] -> fail "A term must be supplied"
     _ -> return $ foldl1 App l      
@@ -165,27 +166,30 @@ data Prog =
 type GFile = Queue Prog      -- Grady file
 
 parseTypeDef = do
-  n <- varName
-  colon
-  ty <- typeParser
-  return $ (n,ty)
+  n <- varName 
+  ws
+  colon 
+  ws
+  ty <- (typeParser) 
+  return (n,ty)
 
 parseExpDef = do
-  n <- varName
-  symbol "="
+  n <- varName 
+  ws
+  symbol "=" 
+  ws
   t <- expr
-  symbol "\\"
-  return $ (n,t) 
-  
+  ws
+  return (n,t)   
 
 parseDef = do
-            (n, ty) <- parseTypeDef
-            (m,t) <- parseExpDef
-            if( m == n )
-             then return $ Def n ty t
-             else error "Definition name and expression name do not match"
+  (n, ty) <- parseTypeDef 
+  (m,t) <- parseExpDef 
+  if( m == n )
+  then return $ Def n ty t
+  else error "Definition name and expression name do not match"
             
-parseFile = many parseDef  
+parseFile = ws *> many parseDef 
 
 runParseFile :: String -> Either String GFile
 runParseFile s = case (parse parseFile "" s) of
