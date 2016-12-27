@@ -38,14 +38,14 @@ typeCheck_aux (Var x) = do
 
 typeCheck_aux Triv = return $ Unit
 typeCheck_aux Zero = return $ Nat
-typeCheck_aux (Box ty) = if(isTerminating ty)
-                            then return $ Arr ty U 
-                            else TE.throwError $ TE.BoxError ty
+typeCheck_aux (Box ty) | ty == Nat = return $ Arr ty U
+                       | ty == Unit = return $ Arr ty U
+                       | otherwise = TE.throwError $ TE.BoxError ty
 
-typeCheck_aux (Unbox ty) = if(isTerminating ty)
-                            then return $ Arr U ty      
-                            else TE.throwError $ TE.UnboxError ty
-
+typeCheck_aux (Unbox ty) | ty == Nat = return $ Arr U ty
+                         | ty == Unit = return $ Arr U ty
+                         | otherwise = TE.throwError $ TE.BoxError ty
+                         
 typeCheck_aux (Succ t) = do
   r <- typeCheck_aux t
   case r of
@@ -85,6 +85,10 @@ typeCheck_aux (Pair t1 t2) = do
   ty2 <- typeCheck_aux t2
   return $ Prod ty1 ty2
   
-typeCheck_aux Squash = return $ Arr (Arr U U) U
-
-typeCheck_aux Split = return $ Arr U (Arr U U)
+typeCheck_aux (Squash ty) | ty == (Arr U U) = return $ Arr (Arr U U) U
+                          | ty == (Prod U U) = return $ Arr (Prod U U) U
+                          | otherwise = TE.throwError $ TE.SError ty
+                          
+typeCheck_aux (Split ty) | ty == (Arr U U) = return $ Arr U (Arr U U)
+                          | ty == (Prod U U) = return $ Arr U (Prod U U)
+                          | otherwise = TE.throwError $ TE.SError ty

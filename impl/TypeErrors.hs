@@ -19,6 +19,7 @@ data TypeError = FreeVarsError Vnm
                | UnboxError Type
                | BoxError Type
                | UnMatchedTypes Type Type
+               | SError Type
   deriving(Show)
   
 readTypeError :: TypeError -> String
@@ -31,5 +32,6 @@ readTypeError (FunError a) = "Type error (function): "++runPrettyTerm a
 readTypeError (AppError a b) = "Type error (application): types don't match " ++runPrettyType a++" !~ "++(runPrettyType b)
 readTypeError (NoTypeError a) = "Type error: No type (" ++runPrettyTerm a++ ") was found"  
 readTypeError (UnMatchedTypes a b) = "Type error: "++ (runPrettyType a) ++" must have the correct type with "++ (runPrettyType b)
-readTypeError (BoxError a) = "Type error: You cannot box "++ (runPrettyType a)++", you can only box terminating types"
-readTypeError (UnboxError a) = "Type error: You cannont unbox "++ (runPrettyType a)++", you can only unbox terminating types"
+readTypeError (BoxError a) = "Type error: You cannot box "++ (runPrettyType a)++", you can only box types Nat and Unit"
+readTypeError (UnboxError a) = "Type error: You cannot unbox "++ (runPrettyType a)++", you can only unbox types Nat and Unit"
+readTypeError (SError a) = "Type error: "++(runPrettyType a)++" must be of type ? -> ? or (? x ?)"

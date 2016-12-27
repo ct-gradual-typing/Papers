@@ -31,8 +31,8 @@ type Vnm = Name Term            -- Variable name
 data Term =
    Var Vnm                      -- Free variable
  | Triv                         -- Unit's inhabitant
- | Squash                         -- Injection of the retract
- | Split                        -- Surjection of the retract
+ | Squash Type                  -- Injection of the retract
+ | Split Type                   -- Surjection of the retract
  | Box Type                     -- Generalize to the untyped universe
  | Unbox Type                   -- Specialize the untype universe to a specific type
  | Fun Type (Bind Vnm Term)     -- \lambda-abstraction

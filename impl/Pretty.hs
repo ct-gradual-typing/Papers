@@ -29,8 +29,8 @@ parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
 parenTerm t@Triv f = f t
 parenTerm t@Zero f = f t             
-parenTerm t@Split f = f t
-parenTerm t@Squash f = f t        
+parenTerm t@(Split ty) f = f t
+parenTerm t@(Squash ty) f = f t        
 parenTerm t f = f t >>= (\r -> return $ "("++r++")")
 
 prettyUnaryArg :: Term -> (Term -> LFreshM String) -> String -> LFreshM String
@@ -62,8 +62,10 @@ prettyTerm (Pair t1 t2) = do
   s2 <- parenTerm t2 prettyTerm
   return $ "("++s1++", "++s2++")"
   
-prettyTerm Squash = return "squash"
-prettyTerm Split = return "split"
+prettyTerm (Squash ty) = let sty = prettyType ty
+                          in return $ "squash<"++sty++">"
+prettyTerm (Split ty) = let sty = prettyType ty
+                          in return $ "split<"++sty++">"
 
 -- testPretty parser pretty s = do
 --   let o = parse parser "" s in  
