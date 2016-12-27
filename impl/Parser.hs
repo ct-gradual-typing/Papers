@@ -141,11 +141,15 @@ appParse = do
 
 squash = do
   reservedOp "squash"
-  return $ Squash
+  ws
+  ty <- typeParser
+  return $ (Squash ty)
   
 split = do
   reservedOp "split"
-  return $ Split
+  ws
+  ty <- typeParser
+  return $ (Split ty)
 
 ------------------------------------------------------------------------                 
 -- Parsers for the Files                                              --

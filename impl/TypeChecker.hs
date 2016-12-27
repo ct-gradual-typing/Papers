@@ -85,6 +85,10 @@ typeCheck_aux (Pair t1 t2) = do
   ty2 <- typeCheck_aux t2
   return $ Prod ty1 ty2
   
-typeCheck_aux Squash = return $ Arr (Arr U U) U
-
-typeCheck_aux Split = return $ Arr U (Arr U U)
+typeCheck_aux (Squash ty) | ty == (Arr U U) = return $ Arr (Arr U U) U
+                          | ty == (Prod U U) = return $ Arr (Prod U U) U
+                          | otherwise = TE.throwError $ TE.SError ty
+                          
+typeCheck_aux (Split ty) | ty == (Arr U U) = return $ Arr U (Arr U U)
+                          | ty == (Prod U U) = return $ Arr U (Prod U U)
+                          | otherwise = TE.throwError $ TE.SError ty
