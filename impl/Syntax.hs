@@ -25,12 +25,13 @@ data Kind = Star
 
 data Type =                -- Types:
    TVar TVnm               -- Type Variables
+ | Top                     -- Top type
  | Nat                     -- Natural number type
  | Unit                    -- Unit type
  | U                       -- Untyped universe
  | Arr Type Type           -- Function type
  | Prod Type Type          -- Product type
- | Forall (Bind TVnm Type) -- Universal quantification
+ | Forall Type (Bind TVnm Type) -- Universal quantification
  deriving Show
 
 -- If A : Type, and isTerminating A = True, then A is a terminating
@@ -51,7 +52,7 @@ data Term =
  | Box Type                     -- Generalize to the untyped universe
  | Unbox Type                   -- Specialize the untype universe to a specific type
  | Fun Type (Bind Vnm Term)     -- \lambda-abstraction
- | TFun (Bind TVnm Term)        -- Type lambda-abstraction
+ | TFun Type (Bind TVnm Term)   -- Type lambda-abstraction
  | App Term Term                -- Function application
  | TApp Type Term               -- Type application
  | Pair Term Term               -- Pairs

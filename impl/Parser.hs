@@ -72,6 +72,7 @@ tvar = ws *> var' typeVarName TVar <* ws
 tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "1" Unit         
+tyTop = parseConst "*" Top
         
 prod = do
   symbol "("
@@ -83,16 +84,23 @@ prod = do
 
 forall = do
   reservedOp "forall"
+  ws
+  symbol "("
   v <- typeVarName
+  ws
+  symbol ":>"
+  t1 <- typeParser
+  ws
+  symbol ")"
   symbol "."
-  t <- typeParser
-  return $ Forall (bind v t)
+  t2 <- typeParser
+  return $ Forall t1 (bind v t2)
 
 -- The initial expression parsing table for types.
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try forall <|> try prod <|> tvar
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try forall <|> try prod <|> tvar
 
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
@@ -112,11 +120,16 @@ trivParse = parseConst "triv" Triv
 
 tfunParse = do
   reservedOp "\\"
+  symbol "("  
   v <- typeVarName
   ws
+  symbol "<:"
+  ty <- typeParser
+  ws
+  symbol ")"
   symbol "."
   t <- expr
-  return $ TFun $ bind v t
+  return $ TFun ty $ bind v t
 
 tappParse = do
   symbol "["

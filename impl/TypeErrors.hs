@@ -22,6 +22,7 @@ data TypeError = FreeVarsError Vnm
                | BoxError Type
                | UnMatchedTypes Type Type
                | SError Type
+               | SubtypeError Type Type
   deriving(Show)
   
 readTypeError :: TypeError -> String

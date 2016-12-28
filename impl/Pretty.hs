@@ -7,6 +7,7 @@ prettyType :: Type -> LFreshM String
 prettyType (TVar x) = return.n2s $ x
 prettyType Nat = return "Nat"
 prettyType Unit = return "1"
+prettyType Top = return "*"  
 prettyType U = return "?"
 prettyType (Arr t1 t2) =
     prettyType t1 >>= (\s1 -> prettyType t2 >>= (\s2 ->
@@ -19,9 +20,9 @@ prettyType (Prod t1 t2) =
   where
     s1 = prettyType t1
     s2 = prettyType t2
-prettyType (Forall b) =
-    lunbind b $ (\(x,ty) ->
-       prettyType ty >>= (\s -> return $ "forall "++(n2s x)++"."++s))
+prettyType (Forall ty b) =
+    lunbind b $ (\(x,ty') ->
+       prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++"<:"++s1++")."++s2)))
 
 parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
@@ -52,10 +53,11 @@ prettyTerm (Fun ty b) = do
   lunbind b $ (\(x,t) -> do           
                  s <- prettyTerm t
                  return $ "\\("++(n2s x)++":"++tyS++")."++s)
-prettyTerm (TFun b) = do
-  lunbind b $ (\(x,t) -> do           
+prettyTerm (TFun ty b) = do
+  lunbind b $ (\(x,t) -> do
+                 sy <- prettyType ty
                  s <- prettyTerm t
-                 return $ "\\"++(n2s x)++"."++s)   
+                 return $ "\\("++(n2s x)++":>"++sy++")."++s)   
 prettyTerm (App t1 t2) = do
   s1 <- parenTerm t1 prettyTerm
   s2 <- parenTerm t2 prettyTerm
