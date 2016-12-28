@@ -10,11 +10,13 @@ import Pretty
 
 --Error Types
 data TypeError = FreeVarsError Vnm
+               | FreeTVarsError TVnm
                | SuccError Term
                | FstError Term
                | SndError Term
                | FunError Term
                | AppError Type Type
+               | TAppError Term Type Type
                | NoTypeError Term
                | UnboxError Type
                | BoxError Type

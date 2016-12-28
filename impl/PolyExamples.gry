@@ -1,0 +1,8 @@
+id : forall X.X -> X
+id = \X.\(x:X).x;
+
+gbox : forall X.X -> ?
+gbox = \X.box<X>;
+
+weirdbox : (forall X.X) -> ?
+weirdbox = [forall X.X] gbox;

@@ -1,4 +1,10 @@
-{-# LANGUAGE NoMonomorphismRestriction, PackageImports, TemplateHaskell, FlexibleContexts #-}
+{-# 
+LANGUAGE 
+  NoMonomorphismRestriction, 
+  PackageImports, 
+  TemplateHaskell, 
+  FlexibleContexts 
+#-}
 
 module Parser (module Text.Parsec, expr, 
                Vnm, 
@@ -29,8 +35,9 @@ import Pretty
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv", "\\", "proj1", "proj2", "Nat", "Triv",
-                           "box", "unbox", "sqsh", "split"]
+  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv",
+                           "\\", "proj1", "proj2", "Nat", "Triv",
+                           "box", "unbox", "sqsh", "split", "forall"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -41,7 +48,7 @@ parens     = Token.parens tokenizer
 ws         = Token.whiteSpace tokenizer
 symbol     = Token.symbol tokenizer             
 
-unexpColon msg = unexpected msg -- Used for error handing.
+unexp msg = unexpected msg -- Used for error handing.
 
 ------------------------------------------------------------------------
 -- First, we implement the parser for types called typeParser.        --
@@ -54,35 +61,70 @@ varName' p msg = do
   n <- many1 alphaNum
   when ((length n) > 0) $
     let h = head n in 
-      when (p h || isNumber h) $ unexpColon (n++" : "++msg)
+      when (p h || isNumber h) $ unexp (n++" : "++msg)
   return . s2n $ n
 
 parseConst s c = symbol s >> return c
+
+typeVarName = varName' isLower "Type variables must begin with an uppercase letter."
+tvar = ws *> var' typeVarName TVar <* ws
          
 tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "1" Unit         
         
+prod = do
+  symbol "("
+  t1 <- typeParser
+  symbol ","
+  t2 <- typeParser
+  symbol ")"
+  return $ Prod t1 t2
+
+forall = do
+  reservedOp "forall"
+  v <- typeVarName
+  symbol "."
+  t <- typeParser
+  return $ Forall (bind v t)
+
 -- The initial expression parsing table for types.
-table = [[binOp AssocRight "->" (\d r -> Arr d r), binOp AssocLeft "x" (\d r -> Prod d r)]]
-binOp assoc op f = Text.Parsec.Expr.Infix (do{ reservedOp op;ws;return f}) assoc
-typeParser = buildExpressionParser table typeParser'
-typeParser' = parens typeParser <|> tyNat <|> tyU <|> tyUnit
+table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
+binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
+typeParser = ws *> buildExpressionParser table (ws *> typeParser')
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try forall <|> try prod <|> tvar
 
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
-aterm = try (parens pairParse) <|> parens expr    <|> zeroParse 
+aterm = try (parens pairParse) <|> parens expr    <|> try zeroParse 
                                <|> try trivParse  <|> try squash
                                <|> try split      <|> try boxParse
                                <|> try unboxParse <|> var
-expr = funParse <|> succParse <|> fstParse <|> sndParse <|> appParse <|> parens expr <?> "parse error"
-              
+expr = ws *> (try funParse <|> tfunParse <|> succParse <|> fstParse    <|> sndParse
+                           <|> tappParse <|> appParse  <|> parens expr <?> "parse error")
+
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
-var = var' varName Var
+var = ws *> var' varName Var <* ws
 
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
+
+tfunParse = do
+  reservedOp "\\"
+  v <- typeVarName
+  ws
+  symbol "."
+  t <- expr
+  return $ TFun $ bind v t
+
+tappParse = do
+  symbol "["
+  ty <- typeParser
+  ws
+  symbol "]"
+  t <- expr
+  return $ TApp ty t
 
 boxParse = do
   symbol "box"
@@ -120,11 +162,13 @@ sndParse = do
 funParse = do
   reservedOp "\\"
   symbol "("
+  ws
   name <- varName
   ws
   symbol ":"
   ty <- typeParser
-  symbol ")"
+  ws
+  symbol ")"  
   symbol "."
   body <- expr
   return . Fun ty . bind name $ body

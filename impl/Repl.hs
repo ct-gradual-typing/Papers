@@ -59,13 +59,13 @@ handleCMD s =
           r = runTC tu
        in case r of
             Left m -> io.putStrLn .readTypeError $ m
-            Right ty ->  io.putStrLn.prettyType $ ty
+            Right ty ->  io.putStrLn.runPrettyType $ ty
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine (LoadFile p) = do
                         msgOrGFile <- lift $ runParse p
                         case msgOrGFile of
-                            Left l -> io.print $ l
+                            Left l -> io.putStrLn $ l
                             Right r -> tyCheckQ r
      where
        tyCheckQ :: GFile -> REPLStateIO ()
@@ -84,12 +84,12 @@ handleCMD s =
                            Left err -> io.putStrLn.readTypeError $ err
                            -- Verify type from TypeChecker matches expected type from file
                            -- If it does, add to context (i.e. definition queue)
-                           Right tyTerm -> if(ty == tyTerm)
+                           Right tyTerm -> if(ty `aeq` tyTerm)
                                             then do
                                                  push (v,tu)
                                                  tyCheckQ $ tailQ q
-                                            else io.print $ "TODO: make error message"
-                   else io.print $ "error - free variables found in q: "++(show q)
+                                            else io.putStrLn $ "TODO: make error message"
+                   else io.putStrLn $ "error - free variables found in q: "++(show q)
                               
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)
      where

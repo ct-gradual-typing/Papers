@@ -2,28 +2,26 @@
 module Pretty (prettyType, prettyTerm, runPrettyTerm, runPrettyType) where
 
 import Syntax
--- import Parser
 
-prettyType :: Type -> String
-prettyType Nat = "Nat"
-prettyType Unit = "1"
-prettyType U = "?"
+prettyType :: Type -> LFreshM String
+prettyType (TVar x) = return.n2s $ x
+prettyType Nat = return "Nat"
+prettyType Unit = return "1"
+prettyType U = return "?"
 prettyType (Arr t1 t2) =
-    case t1 of
-      Arr _ _ -> "("++s1++") -> "++s2
-      _ -> s1++" -> "++s2
-  where
-    s1 = prettyType t1
-    s2 = prettyType t2
+    prettyType t1 >>= (\s1 -> prettyType t2 >>= (\s2 ->
+    return $ case t1 of
+               Arr _ _ -> "("++s1++") -> "++s2
+               _ -> s1++" -> "++s2))
 prettyType (Prod t1 t2) =
-    case (t1 , t2) of
-      (Arr _ _ , Arr _ _) -> "("++s1++") x ("++s2++")"
-      (Arr _ _ , _) -> "("++s1++") x "++s2
-      (_ , Arr _ _) -> s1++" x ("++s2++")"                       
-      _ -> s1++" x "++s2
+    prettyType t1 >>= (\s1 -> prettyType t2 >>= (\s2 ->
+    return $ "("++s1++","++s2++")"))
   where
     s1 = prettyType t1
     s2 = prettyType t2
+prettyType (Forall b) =
+    lunbind b $ (\(x,ty) ->
+       prettyType ty >>= (\s -> return $ "forall "++(n2s x)++"."++s))
 
 parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
@@ -39,45 +37,47 @@ prettyUnaryArg t f c = parenTerm t f >>= (\r -> return $ c++" "++r)
 prettyTerm :: Term -> LFreshM String
 prettyTerm Triv = return "triv"
 prettyTerm Zero = return "0"
-prettyTerm (Box ty) = let sty = prettyType ty
-                       in return $ "box<"++sty++">"
-prettyTerm (Unbox ty) = let sty = prettyType ty
-                         in return $"unbox<"++sty++">"   
+prettyTerm (Box ty) = do
+  sty <- prettyType ty
+  return $ "box<"++sty++">"
+prettyTerm (Unbox ty) = do
+  sty <- prettyType ty
+  return $"unbox<"++sty++">"   
 prettyTerm (Var x) = return.n2s $ x
 prettyTerm (Fst t) = prettyUnaryArg t prettyTerm "fst"
 prettyTerm (Snd t) = prettyUnaryArg t prettyTerm "snd"
 prettyTerm (Succ t) = prettyUnaryArg t prettyTerm "succ"
 prettyTerm (Fun ty b) = do
+  tyS <- prettyType ty
   lunbind b $ (\(x,t) -> do           
                  s <- prettyTerm t
                  return $ "\\("++(n2s x)++":"++tyS++")."++s)
- where
-   tyS = prettyType ty
+prettyTerm (TFun b) = do
+  lunbind b $ (\(x,t) -> do           
+                 s <- prettyTerm t
+                 return $ "\\"++(n2s x)++"."++s)   
 prettyTerm (App t1 t2) = do
   s1 <- parenTerm t1 prettyTerm
   s2 <- parenTerm t2 prettyTerm
   return $ s1++" "++s2
+prettyTerm (TApp ty t) = do
+  s <- parenTerm t prettyTerm
+  sy <- prettyType ty
+  return $ "["++sy++"] "++s
 prettyTerm (Pair t1 t2) = do
   s1 <- parenTerm t1 prettyTerm
   s2 <- parenTerm t2 prettyTerm
   return $ "("++s1++", "++s2++")"
   
-prettyTerm (Squash ty) = let sty = prettyType ty
-                          in return $ "squash<"++sty++">"
-prettyTerm (Split ty) = let sty = prettyType ty
-                          in return $ "split<"++sty++">"
-
--- testPretty parser pretty s = do
---   let o = parse parser "" s in  
---     case o of
---       Left e -> error $ show e
---       Right r -> runLFreshM (pretty r)
-
--- testPrettyTerm :: String -> String
--- testPrettyTerm = testPretty expr prettyTerm
+prettyTerm (Squash ty) = do
+  sty <- prettyType ty
+  return $ "squash<"++sty++">"
+prettyTerm (Split ty) = do
+  sty <- prettyType ty
+  return $ "split<"++sty++">"
 
 runPrettyType :: Type -> String
-runPrettyType = prettyType
+runPrettyType = runLFreshM.prettyType
                  
 runPrettyTerm :: Term -> String
 runPrettyTerm = runLFreshM.prettyTerm

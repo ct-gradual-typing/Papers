@@ -1,8 +1,16 @@
-{-# LANGUAGE FlexibleInstances, TemplateHaskell, MultiParamTypeClasses, UndecidableInstances #-}
+{-# 
+LANGUAGE 
+  FlexibleInstances, 
+  TemplateHaskell, 
+  MultiParamTypeClasses, 
+  UndecidableInstances 
+#-}
 module Syntax (module Unbound.LocallyNameless, 
                module Unbound.LocallyNameless.Alpha,
                n2s,
                Vnm,
+               TVnm,
+               Kind(..),
                Type(..),
                Term(..),
                isTerminating) where
@@ -10,13 +18,20 @@ module Syntax (module Unbound.LocallyNameless,
 import Unbound.LocallyNameless 
 import Unbound.LocallyNameless.Alpha
       
-data Type =               -- Types:
-   Nat                    -- Natural number type
- | Unit                   -- Unit type
- | U                      -- Untyped universe
- | Arr Type Type          -- Function type
- | Prod Type Type         -- Product type
- deriving (Show, Eq)
+type TVnm = Name Type
+
+data Kind = Star
+ deriving (Show,Eq)
+
+data Type =                -- Types:
+   TVar TVnm               -- Type Variables
+ | Nat                     -- Natural number type
+ | Unit                    -- Unit type
+ | U                       -- Untyped universe
+ | Arr Type Type           -- Function type
+ | Prod Type Type          -- Product type
+ | Forall (Bind TVnm Type) -- Universal quantification
+ deriving Show
 
 -- If A : Type, and isTerminating A = True, then A is a terminating
 -- type (or in the syntactic class T).
@@ -36,7 +51,9 @@ data Term =
  | Box Type                     -- Generalize to the untyped universe
  | Unbox Type                   -- Specialize the untype universe to a specific type
  | Fun Type (Bind Vnm Term)     -- \lambda-abstraction
+ | TFun (Bind TVnm Term)        -- Type lambda-abstraction
  | App Term Term                -- Function application
+ | TApp Type Term               -- Type application
  | Pair Term Term               -- Pairs
  | Fst Term                     -- First projection
  | Snd Term                     -- Second projection
@@ -52,6 +69,9 @@ instance Alpha Term
 instance Alpha Type
 
 instance Subst Term Type
+instance Subst Type Type where
+  isvar (TVar x) = Just (SubstName x)
+  isvar _ = Nothing
 instance Subst Term Term where
   isvar (Var x) = Just (SubstName x)
   isvar _ = Nothing
