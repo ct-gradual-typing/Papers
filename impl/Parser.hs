@@ -247,6 +247,7 @@ runParseFile s = case (parse parseFile "" s) of
                 Left msg -> Left $ show msg
                 Right l -> return $ (fromList l)      
 
+-- Change this name:
 runParse :: FilePath -> IO(Either String GFile)
 runParse path = do
     s <- readFile path
@@ -263,6 +264,7 @@ data REPLExpr =
  | DumpState                    -- Trigger to dump the state for debugging.
  | Unfold Term                  -- Unfold the definitions in a term for debugging.
  | LoadFile String
+ | Eval Term                    -- The defualt is to evaluate.
  deriving Show
                     
 letParser = do
@@ -303,7 +305,11 @@ replIntCmdParser short long c = do
   if (cmd == long || cmd == short)
   then return c
   else fail $ "Command \":"++cmd++"\" is unrecognized."       
-                 
+
+evalParser = do
+  t <- expr
+  return $ Eval t
+
 typeCheckParser = replTermCmdParser "t" "type" TypeCheck expr
 
 showASTParser = replTermCmdParser "s" "show" ShowAST expr
@@ -314,7 +320,7 @@ dumpStateParser = replIntCmdParser "d" "dump" DumpState
 
 loadFileParser = replFileCmdParser "l" "load" LoadFile
                
-lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser
+lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of

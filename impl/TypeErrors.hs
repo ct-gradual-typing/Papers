@@ -9,7 +9,6 @@ import Control.Monad.Except
 import Syntax  
 import Pretty
 
-
 --Error Types
 data TypeError = FreeVarsError Vnm
                | FreeTVarsError TVnm
@@ -34,6 +33,8 @@ data TypeError = FreeVarsError Vnm
                | TypeVariableNameMismatch TVnm TVnm
                | SplitTypeError Type
                | SquashTypeError Type
+               | SplitSquashTypeError Type Type
+               | UnboxBoxTypeError Type Type
                | NoError
   deriving(Show)
 

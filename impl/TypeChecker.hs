@@ -50,7 +50,7 @@ getType (ATTApp ty _ _) = ty
 getType (ATPair ty _ _) = ty
 getType (ATFst ty _) = ty
 getType (ATSnd ty _) = ty
-getType (ATSucc _) = Arr Nat Nat
+getType (ATSucc _) = Nat
 getType ATZero = Nat
 getType (ATSub ty _) = ty
 

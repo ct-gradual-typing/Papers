@@ -71,6 +71,7 @@ instance Alpha Term
 instance Alpha Type
 
 instance Subst Term Type
+instance Subst Type Term where
 instance Subst Type Type where
   isvar (TVar x) = Just (SubstName x)
   isvar _ = Nothing
