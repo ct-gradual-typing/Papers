@@ -1,9 +1,11 @@
 *.aux
 *.log
-*.tex
 /impl/.history
 /impl/#Syntax.hs#
 /impl/.#Syntax.hs
 *.bbl
 *.blg
 *.out
+*-ott.tex
+*-inc.tex
+*-output.tex

@@ -13,9 +13,10 @@ module Syntax (module Unbound.LocallyNameless,
                Kind(..),
                Type(..),
                Term(..),
-               isTerminating) where
+               isTerminating,
+               is_atomic) where
 
-import Unbound.LocallyNameless 
+import Unbound.LocallyNameless hiding (comp)
 import Unbound.LocallyNameless.Alpha
       
 type TVnm = Name Type
@@ -42,7 +43,13 @@ isTerminating U = False
 isTerminating (Arr t1 t2) = (isTerminating t1) && (isTerminating t2)
 isTerminating (Prod t1 t2) = (isTerminating t1) && (isTerminating t2)
 isTerminating _ = True
- 
+
+-- Tests to determine if a type is atomic.
+is_atomic :: Type -> Bool
+is_atomic (Arr _ _) = False
+is_atomic (Prod _ _) = False
+is_atomic _ = True
+
 type Vnm = Name Term            -- Variable name
 
 data Term =

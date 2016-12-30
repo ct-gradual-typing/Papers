@@ -28,10 +28,30 @@ all: pdf
 
 pdf : $(PDF)
 
-$(OTTOutputFile) : $(OTTFile) $(Main)
-	@echo "\n\n***OTT: Preprocessing L.ott in main.tex.***"
-	@$(OTT) $(OTT_FLAGS) -i $(OTTFile)  -o $(OTTGen) -tex_name_prefix $(OTTPrefix) \
-		-tex_filter $(Main) $(OTTOutputFile)
+grady-ott.tex : grady.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter grady.tex grady-ott.tex
+
+proofs-ott.tex : proofs.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter proofs.tex proofs-ott.tex
+
+categorical-model-ott.tex : categorical-model.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter categorical-model.tex categorical-model-ott.tex
+
+gradual-typing-ott.tex : gradual-typing.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter gradual-typing.tex gradual-typing-ott.tex
+
+introduction-ott.tex : introduction.tex grady.ott
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter introduction.tex introduction-ott.tex
+
+$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex \
+	categorical-model-ott.tex proofs-ott.tex grady-ott.tex
+	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+		-tex_filter main.tex main-output.tex
 
 # Now this takes the full LaTex translation and compiles it using
 # pdflatex.

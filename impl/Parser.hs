@@ -103,6 +103,11 @@ typeParser = ws *> buildExpressionParser table (ws *> typeParser')
 typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop
                                       <|> try forall <|> try prod <|> tvar
 
+parseType :: String -> Either String Type
+parseType s = case (parse typeParser "" s) of
+                Left msg -> Left $ show msg
+                Right l -> Right l
+
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
@@ -205,6 +210,11 @@ split = do
   ty <- typeParser
   return $ (Split ty)
 
+parseTerm :: String -> Either String Term
+parseTerm s = case (parse expr "" s) of
+                Left msg -> Left $ show msg
+                Right l -> Right l
+         
 ------------------------------------------------------------------------                 
 -- Parsers for the Files                                              --
 ------------------------------------------------------------------------        
