@@ -6,7 +6,8 @@ import Syntax
 prettyType :: Type -> LFreshM String
 prettyType (TVar x) = return.n2s $ x
 prettyType Nat = return "Nat"
-prettyType Unit = return "1"
+prettyType Unit = return "Unit"
+prettyType Castable = return "Cast"
 prettyType Top = return "*"  
 prettyType U = return "?"
 prettyType (Arr t1 t2) =
@@ -22,7 +23,7 @@ prettyType (Prod t1 t2) =
     s2 = prettyType t2
 prettyType (Forall ty b) =
     lunbind b $ (\(x,ty') ->
-       prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++"<:"++s1++")."++s2)))
+       prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++":>"++s1++")."++s2)))
 
 parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
