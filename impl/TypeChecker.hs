@@ -97,11 +97,21 @@ subtype' ty1 ty2 = TE.runReaderT (subtype ty1 ty2) (M.empty, M.empty)
 subtype :: Type -> Type -> TCM Bool
 subtype t1 t2 | t1 `aeq` t2 = return True
 subtype t1 Top = return True
+subtype Nat Castable = return True
+subtype Unit Castable = return True
+subtype (Arr s1 s2) Castable = do
+  b1 <- subtype s1 Castable
+  b2 <- subtype s2 Castable
+  return $ b1 && b2
+subtype (Prod s1 s2) Castable = do
+  b1 <- subtype s1 Castable
+  b2 <- subtype s2 Castable
+  return $ b1 && b2
 subtype (TVar x) t2 = do
   (tctx,_) <- TE.ask
   mty <- lookup_tctx x
   case mty of
-    Just t3 -> return $ t2 `aeq` t3               
+    Just t3 -> t3 `subtype` t2
     Nothing -> return False
 subtype (Arr s1 s2) (Arr t1 t2) = do
   b1 <- subtype t1 s1
@@ -166,16 +176,14 @@ inferType (Var x) = do
 inferType Triv = return ATTriv
 
 inferType (Box ty) = do
-             b1 <- ty `subtype` Unit
-             b2 <- ty `subtype` Nat
-             if (b1 || b2)
+             b <- ty `subtype` Castable
+             if b
              then return $ ATBox (Arr ty U) ty
              else TE.throwError $ TE.BoxError ty
 
 inferType (Unbox ty) = do
-             b1 <- ty `subtype` Unit
-             b2 <- ty `subtype` Nat
-             if (b1 || b2)
+             b <- ty `subtype` Castable
+             if b
              then return $ ATUnbox (Arr U ty) ty
              else TE.throwError $ TE.BoxError ty
 

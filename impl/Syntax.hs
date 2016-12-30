@@ -26,6 +26,7 @@ data Kind = Star
 data Type =                -- Types:
    TVar TVnm               -- Type Variables
  | Top                     -- Top type
+ | Castable                -- Castable type
  | Nat                     -- Natural number type
  | Unit                    -- Unit type
  | U                       -- Untyped universe

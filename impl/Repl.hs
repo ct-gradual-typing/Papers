@@ -69,7 +69,7 @@ handleCMD s =
                             Right r -> tyCheckQ r
      where
        tyCheckQ :: GFile -> REPLStateIO ()
-       tyCheckQ (Queue [] []) = return () -- TODO: Fix- Get an overlapping patterns warning, not sure why
+       tyCheckQ (Queue [] []) = return () 
        tyCheckQ q = do
                 defs <- get
                 let term@(Def v ty t) = headQ q in
