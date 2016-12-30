@@ -71,7 +71,7 @@ tvar = ws *> var' typeVarName TVar <* ws
          
 tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
-tyUnit = parseConst "1" Unit         
+tyUnit = parseConst "Unit" Unit         
 tyTop = parseConst "*" Top
         
 prod = do
@@ -100,7 +100,8 @@ forall = do
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try forall <|> try prod <|> tvar
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop
+                                      <|> try forall <|> try prod <|> tvar
 
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
@@ -123,7 +124,7 @@ tfunParse = do
   symbol "("  
   v <- typeVarName
   ws
-  symbol "<:"
+  symbol ":>"
   ty <- typeParser
   ws
   symbol ")"
@@ -237,8 +238,8 @@ parseDef = do
   symbol ";"
   if( m == n )
   then return $ Def n ty t
-  else error "Definition name and expression name do not match"
-            
+  else error "Definition name and expression name do not match"  
+
 parseFile = ws *> many parseDef
 
 runParseFile :: String -> Either String GFile

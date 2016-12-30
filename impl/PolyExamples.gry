@@ -1,8 +1,9 @@
-id : forall X.X -> X
-id = \X.\(x:X).x;
+id : forall (X:>*).(X -> X)
+id = \(X:>*).\(x:X).x;
 
-gbox : forall X.X -> ?
-gbox = \X.box<X>;
+gbox : forall (X:>Nat).(X -> ?)
+gbox = \(X:>Nat).box<X>; 
 
-weirdbox : (forall X.X) -> ?
-weirdbox = [forall X.X] gbox;
+-- Fails due to type error:
+-- weirdbox : (forall (X:>*).X) -> ?
+-- weirdbox = [forall (X:>*).X] gbox; 

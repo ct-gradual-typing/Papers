@@ -56,7 +56,7 @@ handleCMD s =
     handleLine (TypeCheck t) = do
       defs <- get
       let tu = unfoldDefsInTerm defs t
-          r = runTC tu
+          r = runIR tu
        in case r of
             Left m -> io.putStrLn .readTypeError $ m
             Right ty ->  io.putStrLn.runPrettyType $ ty
@@ -79,16 +79,19 @@ handleCMD s =
                    let numFV = length (getFV tu)
                    if (numFV == 0)
                    -- TypeCheck term from Prog
-                   then let r = runTC tu            
+                   then let r = runIR tu            
                         in case r of
                            Left err -> io.putStrLn.readTypeError $ err
                            -- Verify type from TypeChecker matches expected type from file
                            -- If it does, add to context (i.e. definition queue)
-                           Right tyTerm -> if(ty `aeq` tyTerm)
-                                            then do
-                                                 push (v,tu)
-                                                 tyCheckQ $ tailQ q
-                                            else io.putStrLn $ "TODO: make error message"
+                           Right ity -> do
+                                    case ity `isSubtype` ty of
+                                      Left er -> io.putStrLn.readTypeError $ er
+                                      Right b -> 
+                                          if b then do
+                                            push (v,tu)
+                                            tyCheckQ $ tailQ q
+                                          else io.putStrLn $ "TODO: make error message"
                    else io.putStrLn $ "error - free variables found in q: "++(show q)
                               
     handleLine DumpState = get >>= io.print.(mapQ prettyDef)

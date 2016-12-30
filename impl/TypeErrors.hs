@@ -1,6 +1,8 @@
 module TypeErrors (module Control.Monad.Reader,
-                   module Control.Monad.Except, TypeError(..), readTypeError)where
+                   module Control.Monad.Except,
+                   module Control.Applicative, TypeError(..), readTypeError)where
 
+import Control.Applicative
 import Control.Monad.Reader
 import Control.Monad.Except  
 
@@ -23,8 +25,22 @@ data TypeError = FreeVarsError Vnm
                | UnMatchedTypes Type Type
                | SError Type
                | SubtypeError Type Type
+               | TypeMismatch Type Type
+               | NotProdType Term Type
+               | NotArrowTypeTerm Term Type
+               | NotArrowType Type
+               | NotForallType Type
+               | NotForallTypeTerm Term Type
+               | TypeVariableNameMismatch TVnm TVnm
+               | SplitTypeError Type
+               | SquashTypeError Type
+               | NoError
   deriving(Show)
-  
+
+instance Monoid TypeError where
+  mempty = NoError
+  mappend _ r = r
+
 readTypeError :: TypeError -> String
 readTypeError (FreeVarsError a) =
     "Type error: variable " ++(n2s a) ++ " is free, but I can only typecheck closed terms."
@@ -38,3 +54,4 @@ readTypeError (UnMatchedTypes a b) = "Type error: "++ (runPrettyType a) ++" must
 readTypeError (BoxError a) = "Type error: You cannot box "++ (runPrettyType a)++", you can only box types Nat and Unit"
 readTypeError (UnboxError a) = "Type error: You cannot unbox "++ (runPrettyType a)++", you can only unbox types Nat and Unit"
 readTypeError (SError a) = "Type error: "++(runPrettyType a)++" must be of type ? -> ? or (? x ?)"
+readTypeError e = show e
