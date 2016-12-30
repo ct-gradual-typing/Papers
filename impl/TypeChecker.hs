@@ -126,6 +126,28 @@ subtype (Forall u1 b1) (Forall u2 b2) | u1 `aeq` u2 =
     lunbind b2 $ (\(y,t2) -> extend_tctx x u1 $ extend_tctx y u2 $ subtype s2 t2))
 subtype t1 t2 = return False
 
+type_ok :: Type -> TCM ()
+type_ok (TVar x) = do
+  ty <- lookup_tctx x
+  case ty of
+    Just _ -> return ()
+    Nothing -> TE.throwError $ TE.FreeTVarsError x
+type_ok (Arr t1 t2) = type_ok t1 >> type_ok t2
+type_ok (Prod t1 t2) = type_ok t1 >> type_ok t2
+type_ok (Forall ty b) = lunbind b $ (\(x,t) -> extend_tctx x ty $ type_ok t)                                    
+type_ok _ = return ()
+
+ctx_ok :: TCM ()
+ctx_ok = do
+  (tctx,ctx) <- TE.ask
+  ctx_ok' (M.toList ctx) (M.toList tctx)
+
+ctx_ok' :: [(Vnm,Type)] -> [(TVnm,Type)] -> TCM ()
+ctx_ok' ((x,ty):ctx) tctx = do
+  type_ok ty
+  ctx_ok' ctx tctx
+ctx_ok' _ _ = return ()
+
 runTC :: Term -> Type -> Either TE.TypeError ATerm
 runTC t ty = runLFreshM $ TE.runExceptT $ typeCheck t ty
 
@@ -170,7 +192,7 @@ inferType :: Term -> TCM ATerm
 inferType (Var x) = do
   mty <- lookup_ctx x
   case mty of
-    Just found -> (return $ ATVar found (translate x))
+    Just found -> ctx_ok >> (return $ ATVar found (translate x))
     Nothing -> TE.throwError $ TE.FreeVarsError x
 
 inferType Triv = return ATTriv

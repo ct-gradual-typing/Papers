@@ -36,6 +36,7 @@ data TypeError = FreeVarsError Vnm
                | SplitSquashTypeError Type Type
                | UnboxBoxTypeError Type Type
                | NoError
+               | CtxNotOk
   deriving(Show)
 
 instance Monoid TypeError where
