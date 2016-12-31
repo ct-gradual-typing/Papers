@@ -17,13 +17,14 @@ prettyType (Arr t1 t2) =
                _ -> s1++" -> "++s2))
 prettyType (Prod t1 t2) =
     prettyType t1 >>= (\s1 -> prettyType t2 >>= (\s2 ->
-    return $ "("++s1++","++s2++")"))
-  where
-    s1 = prettyType t1
-    s2 = prettyType t2
+    return $ "("++s1++","++s2++")"))  
 prettyType (Forall ty b) =
     lunbind b $ (\(x,ty') ->
        prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++":>"++s1++")."++s2)))
+prettyType (List ty) = do
+  s <- prettyType ty
+  return $ "["++s++"]"
+  
 
 parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
@@ -56,6 +57,27 @@ prettyTerm (NCase t t1 b) = do
    do
      s2 <- prettyTerm t2
      return $ "ncase "++s++" of "++s1++" || "++(n2s x)++"."++s2)
+prettyTerm Empty = return "[]"
+prettyTerm t@(Cons _ _) = do
+  s <- consToList t
+  return $ "["++s++"]"
+ where
+   consToList :: Term -> LFreshM String
+   consToList Empty = return ""
+   consToList (Cons h' Empty) = prettyTerm h'
+   consToList (Cons h' t') = do
+     s <- prettyTerm h'
+     s' <- consToList t'
+     return $ s ++ "," ++ s'
+   consToList t = prettyTerm t
+prettyTerm (LCase t t1 b) = do
+  s <- prettyTerm t
+  s1 <- prettyTerm t1
+  lunbind b $ (\(x,b') ->
+     lunbind b' $ (\(y,t2) ->
+   do
+     s2 <- prettyTerm t2
+     return $ "lcase "++s++" of "++s1++" || "++(n2s x)++","++(n2s y)++"."++s2))
 prettyTerm (Fun ty b) = do
   tyS <- prettyType ty
   lunbind b $ (\(x,t) -> do           

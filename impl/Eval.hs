@@ -40,6 +40,22 @@ evalTerm' (NCase t t1 b) = lunbind b $ (\(x,t2) ->
         Succ e' -> evalTerm' $ subst x e' e2
         _ -> return $ NCase e e1 (bind x e2))
 
+evalTerm' (LCase t t1 b) =
+    lunbind b $ (\(x,b') ->
+       lunbind b' $ (\(y,t2) ->
+           do e <- evalTerm' t
+              e1 <- evalTerm' t1
+              e2 <- evalTerm' t2
+              case e of
+                Empty -> return e1
+                Cons e' et -> evalTerm' $ subst x e' (subst y et e2)
+                _ -> return $ LCase e e1 (bind x (bind y e2))))
+
+evalTerm' (Cons h t) = do
+  e <- evalTerm' h
+  e' <- evalTerm' t
+  return $ Cons e e'
+
 evalTerm' (App t1 t2) = do
   e1 <- evalTerm' t1
   e2 <- evalTerm' t2

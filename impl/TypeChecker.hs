@@ -29,8 +29,11 @@ data ATerm =
  | ATSnd Type ATerm               
  | ATSucc ATerm                   
  | ATZero
- | ATNCase Type ATerm ATerm ATerm
+ | ATNCase Type ATerm ATerm (Bind Vnm ATerm)
  | ATSub Type ATerm
+ | ATEmpty Type                           
+ | ATCons Type ATerm ATerm           
+ | ATLCase Type ATerm ATerm (Bind Vnm (Bind Vnm ATerm))
  deriving Show
 
 $(derive [''ATerm])
@@ -54,6 +57,9 @@ getType (ATSnd ty _) = ty
 getType (ATSucc _) = Nat
 getType ATZero = Nat
 getType (ATNCase ty _ _ _) = ty
+getType (ATEmpty ty) = ty
+getType (ATCons ty _ _) = ty
+getType (ATLCase ty _ _ _) = ty
 getType (ATSub ty _) = ty
 
 type TyCtx = M.Map Vnm Type
@@ -162,6 +168,13 @@ typeCheck_aux (Pair t1 t2) ty@(Prod ty1 ty2) = do
   a2 <- typeCheck_aux t2 ty2
   return $ ATPair ty a1 a2
 typeCheck_aux t@(Pair _ _) ty = TE.throwError $ TE.NotProdType t ty
+typeCheck_aux Empty ty@(List a) = return $ ATEmpty ty
+typeCheck_aux Empty ty = TE.throwError $ TE.EmptyTypeError ty
+typeCheck_aux (Cons h t) ty@(List a) = do
+  ah <- typeCheck_aux h a
+  at <- typeCheck_aux t ty
+  return $ ATCons ty at at
+typeCheck_aux (Cons _ _) ty = TE.throwError $ TE.ConsTypeError ty
 typeCheck_aux (Fun ty b) ty'@(Arr ty1 ty2) = 
   lunbind b $ (\(x,t) -> reqSameType ty ty1 >> (extend_ctx x ty1 $ do
                    a1 <- typeCheck_aux t ty2
@@ -177,6 +190,30 @@ typeCheck_aux (TFun ty b1) ty'@(Forall ty1 b2) =
                                     return $ ATTFun ty' ty $ bind (translate x) at
                                   else TE.throwError $ TE.TypeVariableNameMismatch x y)))
 typeCheck_aux t@(TFun _ _) ty = TE.throwError $ TE.NotForallTypeTerm t ty
+typeCheck_aux Zero Nat = return $ ATZero
+typeCheck_aux Zero ty = TE.throwError $ TE.ZeroTypeError ty
+typeCheck_aux (Succ t) Nat = typeCheck_aux t Nat >>= (return.ATSucc)
+typeCheck_aux (Succ _) ty = TE.throwError $ TE.SuccTypeError ty
+typeCheck_aux Triv Unit = return $ ATTriv
+typeCheck_aux Triv ty = TE.throwError $ TE.TrivTypeError ty
+typeCheck_aux (Split s@(Arr U U)) ty@(Arr U (Arr U U)) = return $ ATSplit (Arr U s) ty
+typeCheck_aux (Split s@(Prod U U)) ty@(Arr U (Prod U U)) = return $ ATSplit (Arr U s) ty
+typeCheck_aux (Split _) ty = TE.throwError $ TE.SplitTypeError ty
+typeCheck_aux (Squash s@(Arr U U)) ty@(Arr (Arr U U) U) = return $ ATSquash (Arr s U) ty
+typeCheck_aux (Squash s@(Prod U U)) ty@(Arr (Prod U U) U) = return $ ATSquash (Arr s U) ty
+typeCheck_aux (Squash _) ty = TE.throwError $ TE.SquashTypeError ty
+typeCheck_aux (Box s) ty@(Arr t U) | s `aeq` t = do
+  b <- s `subtype` Simple
+  if b
+  then return $ ATBox (Arr s U) s
+  else TE.throwError $ TE.BoxTypeError ty
+typeCheck_aux (Box _) ty = TE.throwError $ TE.BoxTypeError ty
+typeCheck_aux (Unbox s) ty@(Arr U t) | s `aeq` t = do
+  b <- s `subtype` Simple
+  if b
+  then return $ ATUnbox (Arr U s) s
+  else TE.throwError $ TE.UnboxTypeError ty
+typeCheck_aux (Unbox _) ty = TE.throwError $ TE.UnboxTypeError ty
 typeCheck_aux t ty = do
   a <- inferType t
   return $ ATSub ty a
@@ -198,6 +235,31 @@ inferType (Var x) = do
     Nothing -> TE.throwError $ TE.FreeVarsError x
 
 inferType Triv = return ATTriv
+
+inferType Empty = return $ ATEmpty (Forall Top (bind (s2n "X") (List (TVar (s2n "X")))))
+
+inferType (Cons h t) = do
+  ah <- inferType h
+  let hty = getType ah
+  at <- typeCheck_aux t (List hty)
+  return $ ATCons (List hty) ah at
+
+inferType (LCase t t1 b) =
+    lunbind b $ (\(x,b') -> do
+      lunbind b' $ (\(y,t2) -> do
+      at <- inferType t
+      let tty = getType at
+      case tty of
+        List ety -> do
+          at1 <- inferType t1
+          extend_ctx x ety $ extend_ctx y (List ety) $ do
+              at2 <- inferType t2
+              let ty1 = getType at1
+              let ty2 = getType at2
+              if ty1 `aeq` ty2
+              then return $ ATLCase ty1 at at1 (bind x (bind y at2))
+              else TE.throwError $ TE.LCaseBranchesMistype ty1 ty2
+        _ -> TE.throwError $ TE.LCaseScrutinyTypeError t tty))
 
 inferType (Box ty) = do
              b <- ty `subtype` Simple
@@ -233,8 +295,8 @@ inferType (NCase t t1 b) =
         let ty1 = getType at1
         let ty2 = getType at2
         if ty1 `aeq` ty2
-        then return $ ATNCase ty1 at at1 at2
-        else TE.throwError $ TE.CaseBranchesMistype ty1 ty2)
+        then return $ ATNCase ty1 at at1 (bind x at2)
+        else TE.throwError $ TE.NCaseBranchesMistype ty1 ty2)
 
 inferType (Pair t1 t2) = do 
   at1 <- inferType t1

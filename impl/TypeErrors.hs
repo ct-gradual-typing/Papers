@@ -35,9 +35,18 @@ data TypeError = FreeVarsError Vnm
                | SquashTypeError Type
                | SplitSquashTypeError Type Type
                | UnboxBoxTypeError Type Type
-               | CaseBranchesMistype Type Type
+               | BoxTypeError Type
+               | UnboxTypeError Type
+               | NCaseBranchesMistype Type Type
+               | LCaseBranchesMistype Type Type
+               | LCaseScrutinyTypeError Term Type
                | NoError
                | CtxNotOk
+               | TrivTypeError Type
+               | ConsTypeError Type
+               | EmptyTypeError Type
+               | ZeroTypeError Type
+               | SuccTypeError Type
   deriving(Show)
 
 instance Monoid TypeError where

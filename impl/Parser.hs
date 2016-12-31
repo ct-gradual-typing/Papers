@@ -19,7 +19,7 @@ module Parser (module Text.Parsec, expr,
 import Prelude
 import Data.List
 import Data.Char 
-import Text.Parsec
+import Text.Parsec hiding (Empty)
 import Text.Parsec.Expr
 import qualified Text.Parsec.Token as Token
 import Text.Parsec.Language
@@ -35,8 +35,9 @@ import Pretty
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedNames = ["of","0","?","triv","proj1","proj2","split","squash","forall","ncase","box","unbox","Nat","Unit", "||"],
-  Token.reservedOpNames = ["->", "succ", "\\", "proj1", "proj2", "box", "unbox", "squash", "split", "forall", "ncase"]
+  Token.reservedNames   = ["of","0","?","triv","proj1","proj2","split","squash","forall",
+                           "ncase","box","unbox","Nat","Unit", "||", "[]", ":", "lcase"],
+  Token.reservedOpNames = ["->", "succ", "\\", "proj1", "proj2", "box", "unbox", "squash", "split", "forall", "ncase", ":", "lcase"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -93,12 +94,18 @@ forall = do
   t2 <- typeParser
   return $ Forall t1 (bind v t2)
 
+list = do
+  symbol "["
+  ty <- typeParser  
+  symbol "]"
+  return $ List ty
+
 -- The initial expression parsing table for types.
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
 typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tyCastable
-                                      <|> try forall <|> try prod <|> tvar
+                                      <|> try forall <|> try prod <|> try list <|> tvar
 
 parseType :: String -> Either String Type
 parseType s = case (parse typeParser "" s) of
@@ -111,9 +118,9 @@ parseType s = case (parse typeParser "" s) of
 aterm = try (parens pairParse) <|> parens expr    <|> try zeroParse 
                                <|> try trivParse  <|> try squash
                                <|> try split      <|> try boxParse
-                               <|> try unboxParse <|> var
+                               <|> try unboxParse <|> listParse <|> var                                
 expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
-                           <|> ncaseParse <|> tappParse <|> appParse  <|> parens expr <?> "parse error")
+                           <|> try ncaseParse <|> lcaseParse <|> tappParse <|> appParse <|> parens expr <?> "parse error")
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = ws *> var' varName Var <* ws
@@ -134,7 +141,7 @@ tfunParse = do
   t <- expr
   return $ TFun ty $ bind v t
 
-tappParse = do
+tappParse = try $ do
   symbol "["
   ty <- typeParser
   ws
@@ -220,6 +227,31 @@ split = do
   ws
   ty <- typeParser
   return $ (Split ty)
+
+listParse = do
+  symbol "["
+  l <- expr `sepBy` (symbol ",")
+  symbol "]"
+  return $ case l of
+    [] -> Empty
+    _ -> foldr Cons Empty l
+
+lcaseParse = do
+  reservedOp "lcase"
+  t <- expr
+  ws
+  reserved "of"
+  t1 <- expr 
+  ws
+  reserved "||" 
+  x <- varName 
+  ws
+  symbol ","
+  y <- varName 
+  ws
+  symbol "." 
+  t2 <- expr
+  return $ LCase t t1 (bind x (bind y t2))
 
 parseTerm :: String -> Either String Term
 parseTerm s = case (parse expr "" s) of
