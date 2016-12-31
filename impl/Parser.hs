@@ -144,7 +144,7 @@ tfunParse = do
   ty <- typeParser
   ws
   symbol ")"
-  symbol "."
+  symbol "->"
   t <- expr
   return $ TFun ty $ bind v t
 
@@ -213,7 +213,7 @@ funParse = do
   ty <- typeParser
   ws
   symbol ")"  
-  symbol "."
+  symbol "->"
   body <- expr
   return . Fun ty . bind name $ body
 

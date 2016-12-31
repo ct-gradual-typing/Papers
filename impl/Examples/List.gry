@@ -1,4 +1,4 @@
 -- This file contains several list examples.
 
 tail : forall (X<:*).([X] -> [X])
-tail = \(X<:*).\(l:[X]).lcase l of [X][] || h,t.t;
+tail = \(X<:*) -> \(l:[X]) -> lcase l of [X][] || h,t.t;
