@@ -115,7 +115,12 @@ parseType s = case (parse typeParser "" s) of
 ------------------------------------------------------------------------
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
-aterm = try (parens pairParse) <|> parens expr    <|> try zeroParse 
+
+int2term :: Integer -> Term
+int2term 0 = Zero
+int2term n = Succ $ int2term $ n-1
+
+aterm = try (parens pairParse) <|> parens expr    <|> try intParse
                                <|> try trivParse  <|> try squash
                                <|> try split      <|> try boxParse
                                <|> try unboxParse <|> listParse <|> var                                
@@ -124,6 +129,8 @@ expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndPar
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = ws *> var' varName Var <* ws
+
+intParse = integer >>= return.int2term
 
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
