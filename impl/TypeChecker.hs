@@ -141,12 +141,12 @@ ctx_ok :: TCM ()
 ctx_ok = do
   (tctx,ctx) <- TE.ask
   ctx_ok' (M.toList ctx) (M.toList tctx)
-
-ctx_ok' :: [(Vnm,Type)] -> [(TVnm,Type)] -> TCM ()
-ctx_ok' ((x,ty):ctx) tctx = do
-  type_ok ty
-  ctx_ok' ctx tctx
-ctx_ok' _ _ = return ()
+ where
+   ctx_ok' :: [(Vnm,Type)] -> [(TVnm,Type)] -> TCM ()
+   ctx_ok' ((x,ty):ctx) tctx = do
+     type_ok ty
+     ctx_ok' ctx tctx
+   ctx_ok' _ _ = return ()
 
 runTC :: Term -> Type -> Either TE.TypeError ATerm
 runTC t ty = runLFreshM $ TE.runExceptT $ typeCheck t ty
