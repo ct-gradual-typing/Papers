@@ -42,14 +42,14 @@ evalTerm' (App t1 t2) = do
                   _ -> return $ App e1 e2
     Unbox ty -> case e2 of
                   App (Box ty') e2' -> do
-                          -- We only need to check that the
-                          -- annotations are subtypes, because the
-                          -- evalTerm'uator is never run without type
-                          -- checking the input first.
-                          is <- ty `subtype'` ty' 
-                          if is
-                          then return e2'
-                          else throwError $ UnboxBoxTypeError ty ty'
+                          at2 <- infer e2'
+                          if (getType at2) `aeq` ty
+                          then do
+                            is <- ty `subtype'` ty' 
+                            if is
+                            then return e2'
+                            else throwError $ UnboxBoxTypeError ty ty'
+                          else throwError $ UnboxBoxTypeError (getType at2) ty
                   _ -> return $ App e1 e2
     _ -> return $ App e1 e2
 evalTerm' (TApp ty t) = do

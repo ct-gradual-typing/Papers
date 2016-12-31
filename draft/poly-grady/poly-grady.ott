@@ -1,5 +1,3 @@
-
-
 metavar termvar, x, y , z, f ::=
 metavar typevar, X, Y , Z ::=
 indexvar index, i , j, k ::=
@@ -168,6 +166,14 @@ defn
     {{tex [[G]] \vdash [[A]] <\hspace{-2px}\colon [[B]] }} by
 
     G Ok
+    ----------- :: Refl
+    G |- A <: A
+
+    G |- A <: B && G |- B <: C
+    -------------------------- :: Trans
+    G |- A <: C
+
+    G Ok
     -------------- :: Top
     G |- A <: Top
 
@@ -284,8 +290,8 @@ defn
     t1 ~> t2 :: :: red :: rd_    
 by
 
-    . |- t : B && . |- A <: B
-    -------------------------- :: retracT
+    . |- t : A && . |- A <: B
+    ------------------------- :: retracT
     unbox A (box B t) ~> t
 
     . |- t : U

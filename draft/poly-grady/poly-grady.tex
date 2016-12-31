@@ -195,6 +195,24 @@
 \end{ottdefnblock}}
 
 %% defn subtype
+\newcommand{\ottdruleSXXReflName}[0]{\ottdrulename{S\_Refl}}
+\newcommand{\ottdruleSXXRefl}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
+}{
+ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{A} }{%
+{\ottdruleSXXReflName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXTransName}[0]{\ottdrulename{S\_Trans}}
+\newcommand{\ottdruleSXXTrans}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}   \quad   \Gamma  \vdash  \ottnt{B}  <\hspace{-2px}\colon  \ottnt{C}  }%
+}{
+ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{C} }{%
+{\ottdruleSXXTransName}{}%
+}}
+
+
 \newcommand{\ottdruleSXXTopName}[0]{\ottdrulename{S\_Top}}
 \newcommand{\ottdruleSXXTop}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
@@ -276,6 +294,8 @@
 }}
 
 \newcommand{\ottdefnsubtype}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B} $}{}
+\ottusedrule{\ottdruleSXXRefl{}}
+\ottusedrule{\ottdruleSXXTrans{}}
 \ottusedrule{\ottdruleSXXTop{}}
 \ottusedrule{\ottdruleSXXNat{}}
 \ottusedrule{\ottdruleSXXUnit{}}
@@ -469,7 +489,7 @@
 %% defn red
 \newcommand{\ottdrulerdXXretracTName}[0]{\ottdrulename{rd\_retracT}}
 \newcommand{\ottdrulerdXXretracT}[1]{\ottdrule[#1]{%
-\ottpremise{   \cdot   \vdash  \ottnt{t}  :  \ottnt{B}   \quad    \cdot   \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
+\ottpremise{   \cdot   \vdash  \ottnt{t}  :  \ottnt{A}   \quad    \cdot   \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
 }{
  \mathsf{unbox}_{ \ottnt{A} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{B} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
 {\ottdrulerdXXretracTName}{}%
@@ -709,7 +729,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        59 good    0 bad
-Definition rule clauses: 108 good    0 bad
+Definition rules:        61 good    0 bad
+Definition rule clauses: 112 good    0 bad
 \end{verbatim}
 \end{document}
