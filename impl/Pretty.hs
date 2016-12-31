@@ -7,7 +7,7 @@ prettyType :: Type -> LFreshM String
 prettyType (TVar x) = return.n2s $ x
 prettyType Nat = return "Nat"
 prettyType Unit = return "Unit"
-prettyType Castable = return "Simple"
+prettyType Simple = return "Simple"
 prettyType Top = return "*"  
 prettyType U = return "?"
 prettyType (Arr t1 t2) =

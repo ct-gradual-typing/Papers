@@ -73,7 +73,7 @@ tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "Unit" Unit         
 tyTop = parseConst "*" Top
-tyCastable = parseConst "Simple" Castable
+tyCastable = parseConst "Simple" Simple
         
 prod = do
   symbol "("

@@ -97,15 +97,15 @@ subtype' ty1 ty2 = TE.runReaderT (subtype ty1 ty2) (M.empty, M.empty)
 subtype :: Type -> Type -> TCM Bool
 subtype t1 t2 | t1 `aeq` t2 = return True
 subtype t1 Top = return True
-subtype Nat Castable = return True
-subtype Unit Castable = return True
-subtype (Arr s1 s2) Castable = do
-  b1 <- subtype s1 Castable
-  b2 <- subtype s2 Castable
+subtype Nat Simple = return True
+subtype Unit Simple = return True
+subtype (Arr s1 s2) Simple = do
+  b1 <- subtype s1 Simple
+  b2 <- subtype s2 Simple
   return $ b1 && b2
-subtype (Prod s1 s2) Castable = do
-  b1 <- subtype s1 Castable
-  b2 <- subtype s2 Castable
+subtype (Prod s1 s2) Simple = do
+  b1 <- subtype s1 Simple
+  b2 <- subtype s2 Simple
   return $ b1 && b2
 subtype (TVar x) t2 = do
   (tctx,_) <- TE.ask
@@ -128,9 +128,9 @@ subtype t1 t2 = return False
 
 type_ok :: Type -> TCM ()
 type_ok (TVar x) = do
-  ty <- lookup_tctx x
-  case ty of
-    Just _ -> return ()
+  mty <- lookup_tctx x
+  case mty of
+    Just ty -> type_ok ty >> return ()
     Nothing -> TE.throwError $ TE.FreeTVarsError x
 type_ok (Arr t1 t2) = type_ok t1 >> type_ok t2
 type_ok (Prod t1 t2) = type_ok t1 >> type_ok t2
@@ -198,13 +198,13 @@ inferType (Var x) = do
 inferType Triv = return ATTriv
 
 inferType (Box ty) = do
-             b <- ty `subtype` Castable
+             b <- ty `subtype` Simple
              if b
              then return $ ATBox (Arr ty U) ty
              else TE.throwError $ TE.BoxError ty
 
 inferType (Unbox ty) = do
-             b <- ty `subtype` Castable
+             b <- ty `subtype` Simple
              if b
              then return $ ATUnbox (Arr U ty) ty
              else TE.throwError $ TE.BoxError ty
