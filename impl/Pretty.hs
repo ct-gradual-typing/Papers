@@ -49,6 +49,13 @@ prettyTerm (Var x) = return.n2s $ x
 prettyTerm (Fst t) = prettyUnaryArg t prettyTerm "fst"
 prettyTerm (Snd t) = prettyUnaryArg t prettyTerm "snd"
 prettyTerm (Succ t) = prettyUnaryArg t prettyTerm "succ"
+prettyTerm (NCase t t1 b) = do
+  s <- prettyTerm t
+  s1 <- prettyTerm t1
+  lunbind b $ (\(x,t2) ->
+   do
+     s2 <- prettyTerm t2
+     return $ "ncase "++s++" of "++s1++" || "++(n2s x)++"."++s2)
 prettyTerm (Fun ty b) = do
   tyS <- prettyType ty
   lunbind b $ (\(x,t) -> do           

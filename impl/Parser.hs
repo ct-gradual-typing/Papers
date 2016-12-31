@@ -35,9 +35,8 @@ import Pretty
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedOpNames = ["x", "->", "0", "succ", "?", "triv",
-                           "\\", "proj1", "proj2", "Nat", "Triv",
-                           "box", "unbox", "sqsh", "split", "forall"]
+  Token.reservedNames = ["of","0","?","triv","proj1","proj2","split","squash","forall","ncase","box","unbox","Nat","Unit", "||"],
+  Token.reservedOpNames = ["->", "succ", "\\", "proj1", "proj2", "box", "unbox", "squash", "split", "forall", "ncase"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -58,10 +57,7 @@ var' p c = do
   return (c var_name)  
 
 varName' p msg = do
-  n <- many1 alphaNum
-  when ((length n) > 0) $
-    let h = head n in 
-      when (p h || isNumber h) $ unexp (n++" : "++msg)
+  n <- ident  
   return . s2n $ n
 
 parseConst s c = symbol s >> return c
@@ -116,8 +112,8 @@ aterm = try (parens pairParse) <|> parens expr    <|> try zeroParse
                                <|> try trivParse  <|> try squash
                                <|> try split      <|> try boxParse
                                <|> try unboxParse <|> var
-expr = ws *> (try funParse <|> tfunParse <|> succParse <|> fstParse    <|> sndParse
-                           <|> tappParse <|> appParse  <|> parens expr <?> "parse error")
+expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
+                           <|> ncaseParse <|> tappParse <|> appParse  <|> parens expr <?> "parse error")
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = ws *> var' varName Var <* ws
@@ -163,6 +159,20 @@ succParse = do
   t <- expr
   return $ Succ t
          
+ncaseParse = do
+  reservedOp "ncase"
+  t <- expr
+  ws
+  reserved "of"
+  t1 <- expr 
+  ws
+  reserved "||" 
+  x <- varName 
+  ws
+  symbol "." 
+  t2 <- expr
+  return $ NCase t t1 (bind x t2)  
+
 pairParse = do
   t1 <- expr
   symbol ","

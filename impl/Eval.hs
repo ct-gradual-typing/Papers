@@ -26,10 +26,20 @@ evalTerm' (Fst t) = do
              _ -> Fst e
 evalTerm' (Snd t) = do
   e <- evalTerm' t
-  return $ case e of
+  return $ case e of 
              Pair e1 e2 -> e2
              _ -> Snd e
 evalTerm' (Succ t) = evalTerm' t >>= (\e -> return $ Succ e)
+
+evalTerm' (NCase t t1 b) = lunbind b $ (\(x,t2) ->
+   do e <- evalTerm' t
+      e1 <- evalTerm' t1
+      e2 <- evalTerm' t2
+      case e of
+        Zero -> return e1
+        Succ e' -> evalTerm' $ subst x e' e2
+        _ -> return $ NCase e e1 (bind x e2))
+
 evalTerm' (App t1 t2) = do
   e1 <- evalTerm' t1
   e2 <- evalTerm' t2

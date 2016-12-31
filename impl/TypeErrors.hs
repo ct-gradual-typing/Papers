@@ -35,6 +35,7 @@ data TypeError = FreeVarsError Vnm
                | SquashTypeError Type
                | SplitSquashTypeError Type Type
                | UnboxBoxTypeError Type Type
+               | CaseBranchesMistype Type Type
                | NoError
                | CtxNotOk
   deriving(Show)

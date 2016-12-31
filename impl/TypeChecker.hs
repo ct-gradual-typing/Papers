@@ -29,6 +29,7 @@ data ATerm =
  | ATSnd Type ATerm               
  | ATSucc ATerm                   
  | ATZero
+ | ATNCase Type ATerm ATerm ATerm
  | ATSub Type ATerm
  deriving Show
 
@@ -52,6 +53,7 @@ getType (ATFst ty _) = ty
 getType (ATSnd ty _) = ty
 getType (ATSucc _) = Nat
 getType ATZero = Nat
+getType (ATNCase ty _ _ _) = ty
 getType (ATSub ty _) = ty
 
 type TyCtx = M.Map Vnm Type
@@ -221,6 +223,18 @@ inferType Zero = return ATZero
 inferType (Succ t) = do
   at <- typeCheck_aux t Nat
   return $ ATSucc at
+
+inferType (NCase t t1 b) =
+    lunbind b $ (\(x,t2) -> do
+      at <- typeCheck_aux t Nat
+      at1 <- inferType t1
+      extend_ctx x Nat $ do
+        at2 <- inferType t2
+        let ty1 = getType at1
+        let ty2 = getType at2
+        if ty1 `aeq` ty2
+        then return $ ATNCase ty1 at at1 at2
+        else TE.throwError $ TE.CaseBranchesMistype ty1 ty2)
 
 inferType (Pair t1 t2) = do 
   at1 <- inferType t1
