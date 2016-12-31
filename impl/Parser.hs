@@ -86,7 +86,7 @@ forall = do
   symbol "("
   v <- typeVarName
   ws
-  symbol ":>"
+  symbol "<:"
   t1 <- typeParser
   ws
   symbol ")"
@@ -133,7 +133,7 @@ tfunParse = do
   symbol "("  
   v <- typeVarName
   ws
-  symbol ":>"
+  symbol "<:"
   ty <- typeParser
   ws
   symbol ")"

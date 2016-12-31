@@ -20,7 +20,7 @@ prettyType (Prod t1 t2) =
     return $ "("++s1++","++s2++")"))  
 prettyType (Forall ty b) =
     lunbind b $ (\(x,ty') ->
-       prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++":>"++s1++")."++s2)))
+       prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++"<:"++s1++")."++s2)))
 prettyType (List ty) = do
   s <- prettyType ty
   return $ "["++s++"]"
@@ -87,7 +87,7 @@ prettyTerm (TFun ty b) = do
   lunbind b $ (\(x,t) -> do
                  sy <- prettyType ty
                  s <- prettyTerm t
-                 return $ "\\("++(n2s x)++":>"++sy++")."++s)   
+                 return $ "\\("++(n2s x)++"<:"++sy++")."++s)   
 prettyTerm (App t1 t2) = do
   s1 <- parenTerm t1 prettyTerm
   s2 <- parenTerm t2 prettyTerm
