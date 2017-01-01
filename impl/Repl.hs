@@ -3,7 +3,8 @@ module Repl where
 import Control.Monad.State
 import System.Console.Haskeline
 import System.Console.Haskeline.MonadException    
-import System.Exit    
+import System.Exit
+import System.FilePath
 import Unbound.LocallyNameless.Subst
 
 import Queue
@@ -15,7 +16,7 @@ import Eval
 import TypeErrors
 
 type Qelm = (Vnm, Term)
-type REPLStateIO = StateT (Queue Qelm) IO
+type REPLStateIO = StateT (FilePath,Queue Qelm) IO
 
 instance MonadException m => MonadException (StateT s m) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
@@ -26,10 +27,12 @@ io :: IO a -> REPLStateIO a
 io i = liftIO i
     
 pop :: REPLStateIO (Vnm, Term)
-pop = get >>= return.headQ
+pop = get >>= return.headQ.snd
 
 push :: Qelm -> REPLStateIO ()
-push t = get >>= put.(`snoc` t) 
+push t = do
+  (f,q) <- get
+  put (f,(q `snoc` t))
          
 unfoldDefsInTerm :: (Queue Qelm) -> Term -> Term
 unfoldDefsInTerm q t =
@@ -47,7 +50,7 @@ unfoldQueue q = fixQ q emptyQ step
 tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
 tyCheckQ q = do
-  defs <- get
+  (f, defs) <- get
   let term@(Def v ty t) = headQ q
   do 
     -- Unfold each term from queue and see if free variables exist
@@ -81,7 +84,7 @@ handleCMD s =
   where
     handleLine :: REPLExpr -> REPLStateIO ()
     handleLine (Eval t) = do
-      defs <- get
+      (f, defs) <- get
       let tu = unfoldDefsInTerm defs t
           r = eval tu
        in case r of
@@ -89,20 +92,21 @@ handleCMD s =
             Right e -> io.putStrLn.runPrettyTerm $ e
     handleLine (Let x t) = push (x , t)
     handleLine (TypeCheck t) = do
-      defs <- get
+      (f, defs) <- get
       let tu = unfoldDefsInTerm defs t
           r = runIR tu
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  io.putStrLn.runPrettyType $ ty
     handleLine (ShowAST t) = io.putStrLn.show $ t
-    handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
+    handleLine (Unfold t) =
+        get >>= (\(f,defs) -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine (LoadFile p) = do
       msgOrGFile <- lift $ runFileParser p
       case msgOrGFile of
         Left l -> io.putStrLn $ l
         Right r -> tyCheckQ r                                          
-    handleLine DumpState = get >>= io.print.(mapQ prettyDef)
+    handleLine DumpState = get >>= io.print.(mapQ prettyDef).snd
      where
        prettyDef :: (Name a, Term) -> String
        prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
@@ -116,7 +120,7 @@ banner = "Welcome to Grady!\n\nThis is the gradual typing from a categorical per
 main :: IO ()
 main = do
   putStr banner
-  evalStateT (runInputT defaultSettings loop) emptyQ
+  evalStateT (runInputT defaultSettings loop) ("",emptyQ)
    where 
        loop :: InputT REPLStateIO ()
        loop = do           
