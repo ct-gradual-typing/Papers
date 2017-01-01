@@ -12,7 +12,7 @@ module Parser (module Text.Parsec, expr,
                lineParser, 
                REPLExpr(..), 
                parseLine, 
-               runParse, 
+               runFileParser, 
                GFile, 
                Prog(..)) where
 
@@ -272,9 +272,8 @@ parseTerm s = case (parse expr "" s) of
 type TypeDef = (Vnm, Type)   
 type ExpDef = (Vnm, Term)
 
-data Prog =
-  Def Vnm Type Term
-  deriving (Show)
+data Prog = Def Vnm Type Term
+  deriving Show
 
 type GFile = Queue Prog      -- Grady file
 
@@ -300,18 +299,81 @@ parseDef = do
   then return $ Def n ty t
   else error "Definition name and expression name do not match"  
 
-parseFile = ws *> many parseDef
+imports = try $ do
+  symbol "import"
+  fns <- many alphaNum
+  symbol ";"
+  return $ fns++".gry"
 
-runParseFile :: String -> Either String GFile
-runParseFile s = case (parse parseFile "" s) of
+parseImports = ws *> many imports
+
+parseFile = ws *> do
+  _ <- many imports
+  dfs <- many parseDef
+  return dfs
+
+runParseImports :: String -> Either String [String]
+runParseImports s = case (parse parseImports "" s) of
                 Left msg -> Left $ show msg
-                Right l -> return $ (fromList l)      
+                Right is -> Right is
 
--- Change this name:
-runParse :: FilePath -> IO(Either String GFile)
-runParse path = do
-    s <- readFile path
-    return $ runParseFile s
+runParseFile :: String -> IO (Either String [Prog])
+runParseFile s = case (parse parseFile "" s) of
+                Left msg -> return $ Left $ show msg
+                Right ds -> return $ Right ds
+
+getImports :: FilePath -> IO(Either String [String])
+getImports path = do
+    s <- readFile path   
+    let is = runParseImports s
+     in case is of
+          Left msg -> return $ Left $ show msg
+          Right ims -> let x = map getImports ims
+                        in do y <- gatherImports x
+                              case y of
+                                Left m -> return $ Left $ show m
+                                Right rims -> return $ Right $ rims ++ ims
+                                              
+gatherImports :: [IO (Either String [String])] -> IO (Either String [String])
+gatherImports [] = return $ Right []
+gatherImports (x:xs) = do
+  mi <- x
+  rest <- gatherImports xs
+  case (mi,rest) of
+    (Left m1, Left m2) -> return $ Left $ m1 ++ "\n"++m2
+    (Left m, _) -> return $ Left m
+    (_, Left m) -> return $ Left m
+    (Right im1, Right im2) -> return $ Right $ im1 ++ im2
+
+runFileParser :: FilePath -> IO (Either String GFile)
+runFileParser path = do
+    mis <- getImports path
+    case mis of
+      Left m -> return $ Left m
+      Right is' -> do
+               let is = is' ++ [path]
+               let mds1 = map runFileParser' is
+               let mds2 = gatherDefs mds1
+               mds <- mds2
+               case mds of
+                 Left m -> return $ Left m
+                 Right ds -> return $ Right $ fromList ds
+
+gatherDefs :: [IO (Either String [Prog])] -> IO (Either String [Prog])
+gatherDefs [] = return $ Right []
+gatherDefs (x:xs) = do
+  d <- x
+  rest <- gatherDefs xs
+  case (d,rest) of
+    (Left m1, Left m2) -> return $ Left $ m1 ++ m2
+    (Left m, _) -> return $ Left m
+    (_, Left m) -> return $ Left m
+    (Right d1, Right d2) -> return $ Right $ d1 ++ d2
+
+runFileParser' :: FilePath -> IO (Either String [Prog])
+runFileParser' path = do
+  s <- readFile path
+  runParseFile s
 
 ------------------------------------------------------------------------                 
 --                  Parsers for the REPL                              --

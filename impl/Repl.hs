@@ -98,7 +98,7 @@ handleCMD s =
     handleLine (ShowAST t) = io.putStrLn.show $ t
     handleLine (Unfold t) = get >>= (\defs -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine (LoadFile p) = do
-      msgOrGFile <- lift $ runParse p
+      msgOrGFile <- lift $ runFileParser p
       case msgOrGFile of
         Left l -> io.putStrLn $ l
         Right r -> tyCheckQ r                                          
