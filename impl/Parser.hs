@@ -400,7 +400,6 @@ data REPLExpr =
  | Unfold Term                  -- Unfold the definitions in a term for debugging.
  | LoadFile String
  | Eval Term                    -- The defualt is to evaluate.
- | WDir String
  deriving Show
                     
 letParser = do
@@ -446,8 +445,6 @@ evalParser = do
   t <- expr
   return $ Eval t
 
-setWDirParser = replFileCmdParser "w" "wdir" WDir
-
 typeCheckParser = replTermCmdParser "t" "type" TypeCheck expr
 
 showASTParser = replTermCmdParser "s" "show" ShowAST expr
@@ -458,7 +455,7 @@ dumpStateParser = replIntCmdParser "d" "dump" DumpState
 
 loadFileParser = replFileCmdParser "l" "load" LoadFile
                
-lineParser = try letParser <|> try loadFileParser <|> try setWDirParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
+lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of

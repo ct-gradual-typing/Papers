@@ -114,7 +114,6 @@ handleCMD s =
         set_wdir wdir
         loadFile file
       else loadFile file
-    handleLine (WDir f) = set_wdir f
     handleLine DumpState = get >>= io.print.(mapQ prettyDef).snd
      where
        prettyDef :: (Name a, Term) -> String
@@ -132,7 +131,7 @@ getFV :: Term -> [Vnm]
 getFV t = fv t :: [Vnm]
 
 banner :: String
-banner = "Welcome to Grady!\n\nThis is the gradual typing from a categorical perspective repl.\n\n"
+banner = "Welcome to Grady!\n\n"
 
 main :: IO ()
 main = do
