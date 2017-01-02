@@ -33,6 +33,11 @@ push :: Qelm -> REPLStateIO ()
 push t = do
   (f,q) <- get
   put (f,(q `snoc` t))
+
+set_wdir :: FilePath -> REPLStateIO ()
+set_wdir wdir = do
+  (_,q) <- get
+  put (wdir,q)
          
 unfoldDefsInTerm :: (Queue Qelm) -> Term -> Term
 unfoldDefsInTerm q t =
@@ -92,7 +97,7 @@ handleCMD s =
             Right e -> io.putStrLn.runPrettyTerm $ e
     handleLine (Let x t) = push (x , t)
     handleLine (TypeCheck t) = do
-      (f, defs) <- get
+      (_, defs) <- get
       let tu = unfoldDefsInTerm defs t
           r = runIR tu
        in case r of
@@ -102,14 +107,26 @@ handleCMD s =
     handleLine (Unfold t) =
         get >>= (\(f,defs) -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine (LoadFile p) = do
-      msgOrGFile <- lift $ runFileParser p
-      case msgOrGFile of
-        Left l -> io.putStrLn $ l
-        Right r -> tyCheckQ r                                          
+      let wdir = takeDirectory p
+      let file = takeFileName p
+      if (not (null wdir))
+      then do
+        set_wdir wdir
+        loadFile file
+      else loadFile file
+    handleLine (WDir f) = set_wdir f
     handleLine DumpState = get >>= io.print.(mapQ prettyDef).snd
      where
        prettyDef :: (Name a, Term) -> String
        prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
+
+loadFile :: FilePath -> REPLStateIO ()
+loadFile p = do
+  (wdir,_) <- get
+  msgOrGFile <- lift $ runFileParser p wdir
+  case msgOrGFile of
+    Left l -> io.putStrLn $ l
+    Right r -> tyCheckQ r
    
 getFV :: Term -> [Vnm]
 getFV t = fv t :: [Vnm]

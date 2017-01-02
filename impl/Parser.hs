@@ -26,6 +26,8 @@ import Text.Parsec.Language
 import Control.Monad -- For debugging messages.
 import Data.Functor.Identity
 import Text.Parsec.Extra
+import System.FilePath
+import System.Directory
 
 import Syntax
 import Queue
@@ -322,17 +324,23 @@ runParseFile s = case (parse parseFile "" s) of
                 Left msg -> return $ Left $ show msg
                 Right ds -> return $ Right ds
 
-getImports :: FilePath -> IO(Either String [String])
-getImports path = do
-    s <- readFile path   
-    let is = runParseImports s
-     in case is of
-          Left msg -> return $ Left $ show msg
-          Right ims -> let x = map getImports ims
-                        in do y <- gatherImports x
-                              case y of
-                                Left m -> return $ Left $ show m
-                                Right rims -> return $ Right $ rims ++ ims
+getImports :: FilePath -> FilePath -> IO(Either String [String])
+getImports path wdir = do
+    let file = wdir </> path
+    b <- doesFileExist file
+    if b
+    then do
+      s <- readFile file
+      let is = runParseImports s
+       in case is of
+           Left msg -> return $ Left $ show msg
+           Right ims -> let imswdir = map (wdir </>)  ims
+                            x = map (\f -> getImports f wdir) ims
+                         in do y <- gatherImports x
+                               case y of
+                                 Left m -> return $ Left $ show m
+                                 Right rims -> return $ Right $ rims ++ ims
+    else return $ Left $ file ++ " does not exist."
                                               
 gatherImports :: [IO (Either String [String])] -> IO (Either String [String])
 gatherImports [] = return $ Right []
@@ -345,14 +353,15 @@ gatherImports (x:xs) = do
     (_, Left m) -> return $ Left m
     (Right im1, Right im2) -> return $ Right $ im1 ++ im2
 
-runFileParser :: FilePath -> IO (Either String GFile)
-runFileParser path = do
-    mis <- getImports path
+runFileParser :: FilePath -> FilePath -> IO (Either String GFile)
+runFileParser file wdir = do  
+    mis <- getImports file wdir
     case mis of
       Left m -> return $ Left m
       Right is' -> do
-               let is = is' ++ [path]
-               let mds1 = map runFileParser' is
+               let is = is' ++ [file]
+               let iswdir = map (wdir </>)  is
+               let mds1 = map runFileParser' iswdir
                let mds2 = gatherDefs mds1
                mds <- mds2
                case mds of
@@ -372,8 +381,12 @@ gatherDefs (x:xs) = do
 
 runFileParser' :: FilePath -> IO (Either String [Prog])
 runFileParser' path = do
-  s <- readFile path
-  runParseFile s
+    b <- doesFileExist path
+    if b
+    then do
+      s <- readFile path
+      runParseFile s
+    else return $ Left $ path ++ " does not exist."
 
 ------------------------------------------------------------------------                 
 --                  Parsers for the REPL                              --
@@ -387,6 +400,7 @@ data REPLExpr =
  | Unfold Term                  -- Unfold the definitions in a term for debugging.
  | LoadFile String
  | Eval Term                    -- The defualt is to evaluate.
+ | WDir String
  deriving Show
                     
 letParser = do
@@ -396,8 +410,8 @@ letParser = do
   ws
   symbol "="
   ws
-  t <- expr <?> "Failed expr"
-  eof <?> "Failed eof "++(runPrettyTerm t)
+  t <- expr 
+  eof
   return $ Let n t        
 
 replFileCmdParser short long c = do
@@ -432,6 +446,8 @@ evalParser = do
   t <- expr
   return $ Eval t
 
+setWDirParser = replFileCmdParser "w" "wdir" WDir
+
 typeCheckParser = replTermCmdParser "t" "type" TypeCheck expr
 
 showASTParser = replTermCmdParser "s" "show" ShowAST expr
@@ -442,7 +458,7 @@ dumpStateParser = replIntCmdParser "d" "dump" DumpState
 
 loadFileParser = replFileCmdParser "l" "load" LoadFile
                
-lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
+lineParser = try letParser <|> try loadFileParser <|> try setWDirParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of
