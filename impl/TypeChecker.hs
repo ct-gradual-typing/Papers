@@ -252,13 +252,10 @@ inferType (LCase t t1 b) =
       case tty of
         List ety -> do
           at1 <- inferType t1
+          let ty1 = getType at1
           extend_ctx x ety $ extend_ctx y (List ety) $ do
-              at2 <- inferType t2
-              let ty1 = getType at1
-              let ty2 = getType at2
-              if ty1 `aeq` ty2
-              then return $ ATLCase ty1 at at1 (bind x (bind y at2))
-              else TE.throwError $ TE.LCaseBranchesMistype ty1 ty2
+                      at2 <- typeCheck_aux t2 ty1
+                      return $ ATLCase ty1 at at1 (bind x (bind y at2))
         _ -> TE.throwError $ TE.LCaseScrutinyTypeError t tty))
 
 inferType (Box ty) = do
@@ -290,13 +287,10 @@ inferType (NCase t t1 b) =
     lunbind b $ (\(x,t2) -> do
       at <- typeCheck_aux t Nat
       at1 <- inferType t1
+      let ty1 = getType at1
       extend_ctx x Nat $ do
-        at2 <- inferType t2
-        let ty1 = getType at1
-        let ty2 = getType at2
-        if ty1 `aeq` ty2
-        then return $ ATNCase ty1 at at1 (bind x at2)
-        else TE.throwError $ TE.NCaseBranchesMistype ty1 ty2)
+        at2 <- typeCheck_aux t2 ty1
+        return $ ATNCase ty1 at at1 (bind x at2))
 
 inferType (Pair t1 t2) = do 
   at1 <- inferType t1
