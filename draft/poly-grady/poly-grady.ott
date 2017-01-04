@@ -121,8 +121,8 @@ defn
    G |- A : * :: :: kind :: 'K_'
    {{tex [[G]] \vdash [[A]] : \star }} by
 
-   X <: A elem G
-   ------------- :: var
+   X <: A elem G && G |- A : *
+   --------------------------- :: var
    G |- X : *
 
    ------------- :: unit
@@ -290,7 +290,7 @@ defn
     t1 ~> t2 :: :: red :: rd_    
 by
 
-    . |- t : A && . |- A <: B
+    . |- t : A
     ------------------------- :: retracT
     unbox A (box B t) ~> t
 

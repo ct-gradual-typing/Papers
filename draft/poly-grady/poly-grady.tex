@@ -95,7 +95,7 @@
 %% defn kind
 \newcommand{\ottdruleKXXvarName}[0]{\ottdrulename{K\_var}}
 \newcommand{\ottdruleKXXvar}[1]{\ottdrule[#1]{%
-\ottpremise{ \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  \in  \Gamma }%
+\ottpremise{  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  \in  \Gamma   \quad   \Gamma  \vdash  \ottnt{A}  : \star  }%
 }{
  \Gamma  \vdash  \ottmv{X}  : \star }{%
 {\ottdruleKXXvarName}{}%
@@ -489,7 +489,7 @@
 %% defn red
 \newcommand{\ottdrulerdXXretracTName}[0]{\ottdrulename{rd\_retracT}}
 \newcommand{\ottdrulerdXXretracT}[1]{\ottdrule[#1]{%
-\ottpremise{   \cdot   \vdash  \ottnt{t}  :  \ottnt{A}   \quad    \cdot   \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
+\ottpremise{  \cdot   \vdash  \ottnt{t}  :  \ottnt{A} }%
 }{
  \mathsf{unbox}_{ \ottnt{A} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{B} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
 {\ottdrulerdXXretracTName}{}%
