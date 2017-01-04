@@ -70,11 +70,7 @@ evalTerm' (App t1 t2) = do
                   App (Box ty') e2' -> do
                           at2 <- infer e2'
                           if (getType at2) `aeq` ty
-                          then do
-                            is <- ty `subtype'` ty' 
-                            if is
-                            then return e2'
-                            else throwError $ UnboxBoxTypeError ty ty'
+                          then return e2'
                           else throwError $ UnboxBoxTypeError (getType at2) ty
                   _ -> return $ App e1 e2
     _ -> return $ App e1 e2
