@@ -126,7 +126,7 @@ aterm = try (parens pairParse) <|> parens expr    <|> try intParse
                                <|> try trivParse  <|> try squash
                                <|> try split      <|> try boxParse
                                <|> try unboxParse <|> listParse <|> var                                
-expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
+expr = ws *> (try intParse <|> try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
                            <|> try ncaseParse <|> lcaseParse <|> tappParse <|> appParse <|> parens expr <?> "parse error")
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
@@ -180,12 +180,18 @@ ncaseParse = do
   t <- expr
   ws
   reserved "of"
-  t1 <- expr 
   ws
-  reserved "||" 
+  symbol "0"
+  symbol "->"  
+  t1 <- expr 
+  ws  
+  symbol ","
+  symbol "("
+  symbol "succ"
   x <- varName 
   ws
-  symbol "." 
+  symbol ")"         
+  symbol "->" 
   t2 <- expr
   return $ NCase t t1 (bind x t2)  
 
@@ -250,17 +256,22 @@ lcaseParse = do
   t <- expr
   ws
   reserved "of"
+  ws
+  symbol "[]"
+  symbol "->"
   t1 <- expr 
   ws
-  reserved "||" 
-  x <- varName 
-  ws
   symbol ","
-  y <- varName 
+  symbol "("
+  hv <- varName
   ws
-  symbol "." 
+  symbol "::"
+  tv <- varName
+  ws
+  symbol ")"
+  symbol "->"
   t2 <- expr
-  return $ LCase t t1 (bind x (bind y t2))
+  return $ LCase t t1 (bind hv (bind tv t2))
 
 parseTerm :: String -> Either String Term
 parseTerm s = case (parse expr "" s) of
