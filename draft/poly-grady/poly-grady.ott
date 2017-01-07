@@ -31,13 +31,11 @@ grammar
     | snd t               ::   :: proj2        
     | succ t              ::   :: successor    
     | 0                   ::   :: zero         
-    | ncase t of 0 -> t1 , t' -> t2 :: :: natElim
-    {{tex \mathsf{ncase}\,[[t]]\,\mathsf{of}\,0 \to [[t1]], [[t']] \to [[t2]] }}
+    | case t of t3 -> t1 , t4 -> t2 :: :: natElim
+    {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
     | []                  ::   :: emptylist
     | t : : t'            ::   :: cons
     {{tex [[t]] :: [[t']] }}
-    | lcase t of [] -> t1 , t' -> t2 :: :: listElim
-    {{tex \mathsf{lcase}\,[[t]]\,\mathsf{of}\,[] \to [[t1]], [[t']] \to [[t2]] }}    
     | ( t )               :: S :: parens
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
@@ -268,7 +266,7 @@ defn
     G |- t : Nat
     G |- t1 : A && G, x : Nat |- t2 : A
     ------------------------------------------- :: ncase
-    G |- ncase t of 0 -> t1, (succ x) -> t2 : A
+    G |- case t of 0 -> t1, (succ x) -> t2 : A
 
     G Ok && G |- A : *
     -------------------------------- :: empty
@@ -281,7 +279,7 @@ defn
     G |- t : List A
     G |- t1 : B && G, x : A, y : List A |- t2 : B
     --------------------------------------------- :: lcase
-    G |- lcase t of [] -> t1, (x :: y) -> t2 : B
+    G |- case t of [] -> t1, (x :: y) -> t2 : B
 
     G |- t1 : A1 && G |- t2 : A2
     ---------------------------- :: pair
@@ -335,29 +333,29 @@ by
     succ t ~> succ t'
 
     ---------------------------------------- :: ncase0
-    ncase 0 of 0 -> t1, (succ x) -> t2 ~> t1
+    case 0 of 0 -> t1, (succ x) -> t2 ~> t1
 
     ---------------------------------------------------- :: ncaseSucc
-    ncase (succ t) of 0 -> t1, (succ x) -> t2 ~> [t/x]t2
+    case (succ t) of 0 -> t1, (succ x) -> t2 ~> [t/x]t2
 
     t ~> t'
     ------------------------------------------------------------------------- :: ncase1
-    ncase t of 0 -> t1, (succ x) -> t2 ~> ncase t' of 0 -> t1, (succ x) -> t2
+    case t of 0 -> t1, (succ x) -> t2 ~> case t' of 0 -> t1, (succ x) -> t2
 
     t1 ~> t'1
     ------------------------------------------------------------------------- :: ncase2
-    ncase t of 0 -> t1, (succ x) -> t2 ~> ncase t of 0 -> t'1, (succ x) -> t2
+    case t of 0 -> t1, (succ x) -> t2 ~> case t of 0 -> t'1, (succ x) -> t2
 
     t2  ~> t'2
     ------------------------------------------------------------------------- :: ncase3
-    ncase t of 0 -> t1, (succ x) -> t2 ~> ncase t of 0 -> t1, (succ x) -> t'2
+    case t of 0 -> t1, (succ x) -> t2 ~> case t of 0 -> t1, (succ x) -> t'2
 
 
     ------------------------------------------ :: lcaseEmpty
-    lcase [] of [] -> t1, (x :: y) -> t2 ~> t1
+    case [] of [] -> t1, (x :: y) -> t2 ~> t1
 
     -------------------------------------------------------------- :: lcaseCons
-    lcase (t1 :: t2) of [] -> t3, (x :: y) -> t4 ~> [t1/x][t2/y]t4
+    case (t1 :: t2) of [] -> t3, (x :: y) -> t4 ~> [t1/x][t2/y]t4
 
     t1 ~> t'1
     --------------------- :: head
@@ -369,15 +367,15 @@ by
 
     t ~> t'
     --------------------------------------------------------------------------- :: lcase1
-    lcase t of [] -> t1, (x :: y) -> t2 ~> lcase t' of [] -> t1, (x :: y) -> t2
+    case t of [] -> t1, (x :: y) -> t2 ~> case t' of [] -> t1, (x :: y) -> t2
 
     t1 ~> t'1
     --------------------------------------------------------------------------- :: lcase2
-    lcase t of [] -> t1, (x :: y) -> t2 ~> lcase t of [] -> t'1, (x :: y) -> t2
+    case t of [] -> t1, (x :: y) -> t2 ~> case t of [] -> t'1, (x :: y) -> t2
 
     t2 ~> t'2
     --------------------------------------------------------------------------- :: lcase3
-    lcase t of [] -> t1, (x :: y) -> t2 ~> lcase t of [] -> t1, (x :: y) -> t'2
+    case t of [] -> t1, (x :: y) -> t2 ~> case t of [] -> t1, (x :: y) -> t'2
 
     ------------------------- :: beta
     (\x:A1.t2) t1 ~> [t1/x]t2

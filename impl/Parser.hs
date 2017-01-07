@@ -127,7 +127,7 @@ aterm = try (parens pairParse) <|> parens expr    <|> try intParse
                                <|> try split      <|> try boxParse
                                <|> try unboxParse <|> listParse <|> var                                
 expr = ws *> (try intParse <|> try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
-                           <|> try ncaseParse <|> lcaseParse <|> tappParse <|> appParse <|> parens expr <?> "parse error")
+                           <|> try caseParse <|> tappParse <|> appParse <|> parens expr <?> "parse error")
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = ws *> var' varName Var <* ws
@@ -175,12 +175,15 @@ succParse = do
   t <- expr
   return $ Succ t
          
-ncaseParse = do
-  reservedOp "ncase"
+caseParse = do
+  symbol "case"
   t <- expr
   ws
   reserved "of"
   ws
+  try (ncaseParse t) <|> lcaseParse t  
+
+ncaseParse t = do  
   symbol "0"
   symbol "->"  
   t1 <- expr 
@@ -194,6 +197,23 @@ ncaseParse = do
   symbol "->" 
   t2 <- expr
   return $ NCase t t1 (bind x t2)  
+
+lcaseParse t = do
+  symbol "[]"
+  symbol "->"
+  t1 <- expr 
+  ws
+  symbol ","
+  symbol "("
+  hv <- varName
+  ws
+  symbol "::"
+  tv <- varName
+  ws
+  symbol ")"
+  symbol "->"
+  t2 <- expr
+  return $ LCase t t1 (bind hv (bind tv t2))
 
 pairParse = do
   t1 <- expr
@@ -250,28 +270,6 @@ listParse = do
   return $ case l of
     [] -> Empty
     _ -> foldr Cons Empty l
-
-lcaseParse = do
-  reservedOp "lcase"
-  t <- expr
-  ws
-  reserved "of"
-  ws
-  symbol "[]"
-  symbol "->"
-  t1 <- expr 
-  ws
-  symbol ","
-  symbol "("
-  hv <- varName
-  ws
-  symbol "::"
-  tv <- varName
-  ws
-  symbol ")"
-  symbol "->"
-  t2 <- expr
-  return $ LCase t t1 (bind hv (bind tv t2))
 
 parseTerm :: String -> Either String Term
 parseTerm s = case (parse expr "" s) of
