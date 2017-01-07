@@ -11,24 +11,33 @@ grammar
     {{tex \mathsf{squash}_{[[S]]} }}
     | split S             ::   :: surj         
     {{tex \mathsf{split}_{[[S]]} }}    
-    | box A               ::   :: gen          
-    {{tex \mathsf{box}_{[[A]]} }}    
-    | unbox A             ::   :: spec         
+    | box                 ::   :: gen          
+    {{tex \mathsf{box} }}
+    | box A               ::   :: genA
+    {{tex \mathsf{box}_{[[A]]} }}        
+    | unbox A             ::   :: specA         
     {{tex \mathsf{unbox}_{[[A]]} }}
+    | unbox               ::   :: spec
+    {{tex \mathsf{unbox} }}    
     | Lam X <: A . t      ::    :: TypeLam
-    {{tex \Lambda [[X]] <\hspace{-2px}\colon [[A]] .[[t]] }}
+    {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
     | [ A ] t             ::   :: TypeApp
     {{tex [ [[A]] ] [[t]] }}    
     | \ x : A . t         ::   :: abs          
-    {{tex \lambda [[x]] : [[A]] . [[t]] }}
+    {{tex \lambda ([[x]] : [[A]]) . [[t]] }}
     | t1 t2               ::   :: app          
     | ( t1 , t2 )         ::   :: pair         
     | fst t               ::   :: proj1        
     | snd t               ::   :: proj2        
     | succ t              ::   :: successor    
     | 0                   ::   :: zero         
-    | case t of t1 || x . t2 :: :: natElim
-    {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,[[t1]] \mid\mid [[x]].[[t2]] }}
+    | ncase t of 0 -> t1 , t' -> t2 :: :: natElim
+    {{tex \mathsf{ncase}\,[[t]]\,\mathsf{of}\,0 \to [[t1]], [[t']] \to [[t2]] }}
+    | []                  ::   :: emptylist
+    | t : : t'            ::   :: cons
+    {{tex [[t]] :: [[t']] }}
+    | lcase t of [] -> t1 , t' -> t2 :: :: listElim
+    {{tex \mathsf{lcase}\,[[t]]\,\mathsf{of}\,[] \to [[t1]], [[t']] \to [[t2]] }}    
     | ( t )               :: S :: parens
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
@@ -45,8 +54,10 @@ grammar
 
   A, B, C, D, E, S, U :: 'A_' ::=   
     | X                   ::   :: Var
-    | Forall X <: A . B   ::   :: Forall
-    {{tex \forall [[X]] <\hspace{-2px}\colon [[A]]. [[B]]}}
+    | List A              ::   :: List
+    {{tex \mathsf{List}\,[[A]] }}
+    | Forall ( X <: A ) . B   ::   :: Forall
+    {{tex \forall ([[X]] <\hspace{-2px}\colon [[A]]). [[B]]}}
     | Top                 ::   :: top
     {{tex \top }}
     | SL                  ::   :: Simple
@@ -63,7 +74,6 @@ grammar
     | H( A )              :: M :: hparen
     {{tex [[A]] }}
     | [ A / X ] B         :: M :: TypeSub
-
 
   G {{ tex \Gamma }} :: G_ ::=            
     | .                   ::   :: emptyCtx
@@ -121,9 +131,9 @@ defn
    G |- A : * :: :: kind :: 'K_'
    {{tex [[G]] \vdash [[A]] : \star }} by
 
-   X <: A elem G && G |- A : *
-   --------------------------- :: var
-   G |- X : *
+   G1 |- A : *
+   ----------------------- :: var
+   G1, X <: A,G2 |- X : *
 
    ------------- :: unit
    G |- Unit : *
@@ -133,6 +143,10 @@ defn
 
    ---------- :: unitype
    G |- ? : *
+
+   G |- A : *
+   --------------- :: list
+   G |- List A : *
 
    G |- A : * && G |- B : *
    ------------------------ :: arrow
@@ -144,7 +158,7 @@ defn
 
    G, X <: A |-  B : *
    -------------------------- :: forall
-   G |- Forall X <: A . B : *
+   G |- Forall (X <: A) . B : *
 
 defn
     G Ok :: :: ctxOk :: 'Ok_'
@@ -185,9 +199,17 @@ defn
     --------------- :: Unit
     G |- Unit <: SL
 
+    G |- A <: SL
+    ----------------- :: ListSL
+    G |- List A <: SL
+
     X <: A elem G && G Ok
     ---------------------:: Var
     G |- X <: A
+
+    G |- A <: B
+    --------------------- :: List
+    G |- List A <: List B
 
     G |- A <: SL && G |- B <: SL
     ---------------------------- :: ArrowSL
@@ -207,24 +229,21 @@ defn
 
     G, X <: A |- B1 <: B2
     ----------------------------------------- :: Forall
-    G |- Forall X <: A.B1 <: Forall X <: A.B2
+    G |- Forall (X <: A).B1 <: Forall (X <: A).B2
 
 defn
     G |- t : A :: :: type :: ''
     {{tex [[G]] \vdash [[t]] : [[A]] }} by
     
-
     x : A elem G && G Ok
     -------------------- :: varP
     G |- x : A
 
-    G |- A <: SL
-    ------------------- :: Box
-    G |- box A : A -> ?
-
-    G |- A <: SL
-    --------------------- :: Unbox
-    G |- unbox A : ? -> A
+    ------------------------------------ :: Box
+    G |- box : Forall (X <: SL).(X -> ?)
+    
+    --------------------------------------- :: Unbox
+    G |- unbox : Forall (X <: SL).(? -> X)
 
     G Ok
     ---------------------- :: squashP
@@ -244,12 +263,25 @@ defn
 
     G |- t : Nat
     ----------------- :: succ
-    G |- succ t : Nat
+    G |- succ t : Nat    
 
     G |- t : Nat
     G |- t1 : A && G, x : Nat |- t2 : A
-    ------------------------------------ :: case
-    G |- case t of t1 || x.t2 : A
+    ------------------------------------------- :: ncase
+    G |- ncase t of 0 -> t1, (succ x) -> t2 : A
+
+    G Ok && G |- A : *
+    -------------------------------- :: empty
+    G |- [] : Forall (X <: Top).List X
+
+    G |- t1 : A && G |- t2 : List A
+    ------------------------------- :: cons
+    G |- t1 :: t2 : List A
+
+    G |- t : List A
+    G |- t1 : B && G, x : A, y : List A |- t2 : B
+    --------------------------------------------- :: lcase
+    G |- lcase t of [] -> t1, (x :: y) -> t2 : B
 
     G |- t1 : A1 && G |- t2 : A2
     ---------------------------- :: pair
@@ -273,10 +305,10 @@ defn
 
     G, X <: A |- t : B
     ------------------------------------ :: Lam
-    G |- Lam X <: A. t : Forall X <: A.B
+    G |- Lam X <: A. t : Forall (X <: A).B
 
-    G |- t : Forall X<:B.C && G |- A <: B
-    ------------------------------------- :: typeApp
+    G |- t : Forall (X<:B).C && G |- A <: B
+    --------------------------------------- :: typeApp
     G |- [A]t : [A/X]C
 
     G |- t : A && G |- A <: B
@@ -299,26 +331,53 @@ by
     split U (squash U t) ~> t
 
     t ~> t'
-    ---------------------------- :: succ
+    ----------------- :: succ
     succ t ~> succ t'
 
-    -------------------------- :: case0
-    case 0 of t1 || x.t2 ~> t1
+    ---------------------------------------- :: ncase0
+    ncase 0 of 0 -> t1, (succ x) -> t2 ~> t1
 
-    -------------------------------------- :: caseSucc
-    case (succ t) of t1 || x.t2 ~> [t/x]t2
+    ---------------------------------------------------- :: ncaseSucc
+    ncase (succ t) of 0 -> t1, (succ x) -> t2 ~> [t/x]t2
 
     t ~> t'
-    --------------------------------------------- :: case1
-    case t of t1 || x.t2 ~> case t' of t1 || x.t2
+    ------------------------------------------------------------------------- :: ncase1
+    ncase t of 0 -> t1, (succ x) -> t2 ~> ncase t' of 0 -> t1, (succ x) -> t2
 
     t1 ~> t'1
-    --------------------------------------------- :: case2
-    case t of t1 || x.t2 ~> case t of t'1 || x.t2
+    ------------------------------------------------------------------------- :: ncase2
+    ncase t of 0 -> t1, (succ x) -> t2 ~> ncase t of 0 -> t'1, (succ x) -> t2
 
     t2  ~> t'2
-    --------------------------------------------- :: case3
-    case t of t1 || x.t2 ~> case t of t1 || x.t'2
+    ------------------------------------------------------------------------- :: ncase3
+    ncase t of 0 -> t1, (succ x) -> t2 ~> ncase t of 0 -> t1, (succ x) -> t'2
+
+
+    ------------------------------------------ :: lcaseEmpty
+    lcase [] of [] -> t1, (x :: y) -> t2 ~> t1
+
+    -------------------------------------------------------------- :: lcaseCons
+    lcase (t1 :: t2) of [] -> t3, (x :: y) -> t4 ~> [t1/x][t2/y]t4
+
+    t1 ~> t'1
+    --------------------- :: head
+    t1 :: t2 ~> t'1 :: t2
+
+    t2 ~> t'2
+    --------------------- :: tail
+    t1 :: t2 ~> t1 :: t'2
+
+    t ~> t'
+    --------------------------------------------------------------------------- :: lcase1
+    lcase t of [] -> t1, (x :: y) -> t2 ~> lcase t' of [] -> t1, (x :: y) -> t2
+
+    t1 ~> t'1
+    --------------------------------------------------------------------------- :: lcase2
+    lcase t of [] -> t1, (x :: y) -> t2 ~> lcase t of [] -> t'1, (x :: y) -> t2
+
+    t2 ~> t'2
+    --------------------------------------------------------------------------- :: lcase3
+    lcase t of [] -> t1, (x :: y) -> t2 ~> lcase t of [] -> t1, (x :: y) -> t'2
 
     ------------------------- :: beta
     (\x:A1.t2) t1 ~> [t1/x]t2

@@ -46,18 +46,23 @@
 \ottprodline{|}{ \mathsf{triv} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{squash}_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{split}_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{box} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{box}_{ \ottnt{A} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{unbox}_{ \ottnt{A} } }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \Lambda  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  . \ottnt{t} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{unbox} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ [  \ottnt{A}  ]  \ottnt{t} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \lambda  \ottmv{x}  :  \ottnt{A}  .  \ottnt{t} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{t_{{\mathrm{1}}}}  \ottsym{,}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{fst} \, \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{snd} \, \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{succ} \, \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{0}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{ncase}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottnt{t'}  \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottsym{[]}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \ottnt{t}  ::  \ottnt{t'} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{lcase}\, \ottnt{t} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottnt{t'}  \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{t}  \ottsym{)}} {\textsf{S}}{}{}{}}
 
 \newcommand{\ottK}{
@@ -67,7 +72,8 @@
 \newcommand{\ottA}{
 \ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottmv{X}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \forall  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} .  \ottnt{B} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{List}\, \ottnt{A} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \top }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathbb{S} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
@@ -95,9 +101,9 @@
 %% defn kind
 \newcommand{\ottdruleKXXvarName}[0]{\ottdrulename{K\_var}}
 \newcommand{\ottdruleKXXvar}[1]{\ottdrule[#1]{%
-\ottpremise{  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  \in  \Gamma   \quad   \Gamma  \vdash  \ottnt{A}  : \star  }%
+\ottpremise{ \Gamma_{{\mathrm{1}}}  \vdash  \ottnt{A}  : \star }%
 }{
- \Gamma  \vdash  \ottmv{X}  : \star }{%
+  \Gamma_{{\mathrm{1}}} , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \ottsym{,}  \Gamma_{{\mathrm{2}}}  \vdash  \ottmv{X}  : \star }{%
 {\ottdruleKXXvarName}{}%
 }}
 
@@ -126,6 +132,15 @@
 }}
 
 
+\newcommand{\ottdruleKXXlistName}[0]{\ottdrulename{K\_list}}
+\newcommand{\ottdruleKXXlist}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
+}{
+ \Gamma  \vdash   \mathsf{List}\, \ottnt{A}   : \star }{%
+{\ottdruleKXXlistName}{}%
+}}
+
+
 \newcommand{\ottdruleKXXarrowName}[0]{\ottdrulename{K\_arrow}}
 \newcommand{\ottdruleKXXarrow}[1]{\ottdrule[#1]{%
 \ottpremise{  \Gamma  \vdash  \ottnt{A}  : \star   \quad   \Gamma  \vdash  \ottnt{B}  : \star  }%
@@ -148,7 +163,7 @@
 \newcommand{\ottdruleKXXforall}[1]{\ottdrule[#1]{%
 \ottpremise{  \Gamma , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \vdash  \ottnt{B}  : \star }%
 }{
- \Gamma  \vdash   \forall  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} .  \ottnt{B}   : \star }{%
+ \Gamma  \vdash   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B}   : \star }{%
 {\ottdruleKXXforallName}{}%
 }}
 
@@ -157,6 +172,7 @@
 \ottusedrule{\ottdruleKXXunit{}}
 \ottusedrule{\ottdruleKXXnat{}}
 \ottusedrule{\ottdruleKXXunitype{}}
+\ottusedrule{\ottdruleKXXlist{}}
 \ottusedrule{\ottdruleKXXarrow{}}
 \ottusedrule{\ottdruleKXXprod{}}
 \ottusedrule{\ottdruleKXXforall{}}
@@ -240,12 +256,30 @@
 }}
 
 
+\newcommand{\ottdruleSXXListSLName}[0]{\ottdrulename{S\_ListSL}}
+\newcommand{\ottdruleSXXListSL}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{S}  }%
+}{
+ \Gamma  \vdash   \mathsf{List}\, \ottnt{A}   <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXListSLName}{}%
+}}
+
+
 \newcommand{\ottdruleSXXVarName}[0]{\ottdrulename{S\_Var}}
 \newcommand{\ottdruleSXXVar}[1]{\ottdrule[#1]{%
 \ottpremise{  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  \in  \Gamma   \quad   \Gamma \,\text{Ok}  }%
 }{
  \Gamma  \vdash  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} }{%
 {\ottdruleSXXVarName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXListName}[0]{\ottdrulename{S\_List}}
+\newcommand{\ottdruleSXXList}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B} }%
+}{
+ \Gamma  \vdash   \mathsf{List}\, \ottnt{A}   <\hspace{-2px}\colon   \mathsf{List}\, \ottnt{B}  }{%
+{\ottdruleSXXListName}{}%
 }}
 
 
@@ -289,7 +323,7 @@
 \newcommand{\ottdruleSXXForall}[1]{\ottdrule[#1]{%
 \ottpremise{  \Gamma , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \vdash  \ottnt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \ottnt{B_{{\mathrm{2}}}} }%
 }{
- \Gamma  \vdash   \forall  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} .  \ottnt{B_{{\mathrm{1}}}}   <\hspace{-2px}\colon   \forall  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} .  \ottnt{B_{{\mathrm{2}}}}  }{%
+ \Gamma  \vdash   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{1}}}}   <\hspace{-2px}\colon   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{2}}}}  }{%
 {\ottdruleSXXForallName}{}%
 }}
 
@@ -299,7 +333,9 @@
 \ottusedrule{\ottdruleSXXTop{}}
 \ottusedrule{\ottdruleSXXNat{}}
 \ottusedrule{\ottdruleSXXUnit{}}
+\ottusedrule{\ottdruleSXXListSL{}}
 \ottusedrule{\ottdruleSXXVar{}}
+\ottusedrule{\ottdruleSXXList{}}
 \ottusedrule{\ottdruleSXXArrowSL{}}
 \ottusedrule{\ottdruleSXXProdSL{}}
 \ottusedrule{\ottdruleSXXProd{}}
@@ -319,18 +355,16 @@
 
 \newcommand{\ottdruleBoxName}[0]{\ottdrulename{Box}}
 \newcommand{\ottdruleBox}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{S}  }%
 }{
- \Gamma  \vdash   \mathsf{box}_{ \ottnt{A} }   :  \ottnt{A}  \rightarrow  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
 {\ottdruleBoxName}{}%
 }}
 
 
 \newcommand{\ottdruleUnboxName}[0]{\ottdrulename{Unbox}}
 \newcommand{\ottdruleUnbox}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{S}  }%
 }{
- \Gamma  \vdash   \mathsf{unbox}_{ \ottnt{A} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{A} }{%
+ \Gamma  \vdash   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
 {\ottdruleUnboxName}{}%
 }}
 
@@ -380,13 +414,41 @@
 }}
 
 
-\newcommand{\ottdrulecaseName}[0]{\ottdrulename{case}}
-\newcommand{\ottdrulecase}[1]{\ottdrule[#1]{%
+\newcommand{\ottdrulencaseName}[0]{\ottdrulename{ncase}}
+\newcommand{\ottdrulencase}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{t}  :   \mathsf{Nat}  }%
 \ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{A}   \quad   \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}   \mathsf{Nat}   \vdash  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A}  }%
 }{
- \Gamma  \vdash   \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}}   :  \ottnt{A} }{%
-{\ottdrulecaseName}{}%
+ \Gamma  \vdash   \mathsf{ncase}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   :  \ottnt{A} }{%
+{\ottdrulencaseName}{}%
+}}
+
+
+\newcommand{\ottdruleemptyName}[0]{\ottdrulename{empty}}
+\newcommand{\ottdruleempty}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma \,\text{Ok}   \quad   \Gamma  \vdash  \ottnt{A}  : \star  }%
+}{
+ \Gamma  \vdash  \ottsym{[]}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \top  ).   \mathsf{List}\, \ottmv{X}   }{%
+{\ottdruleemptyName}{}%
+}}
+
+
+\newcommand{\ottdruleconsName}[0]{\ottdrulename{cons}}
+\newcommand{\ottdrulecons}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{A}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A}   }%
+}{
+ \Gamma  \vdash   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   :   \mathsf{List}\, \ottnt{A}  }{%
+{\ottdruleconsName}{}%
+}}
+
+
+\newcommand{\ottdrulelcaseName}[0]{\ottdrulename{lcase}}
+\newcommand{\ottdrulelcase}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t}  :   \mathsf{List}\, \ottnt{A}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{B}   \quad   \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A}  \ottsym{,}  \ottmv{y}  \ottsym{:}   \mathsf{List}\, \ottnt{A}   \vdash  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B}  }%
+}{
+ \Gamma  \vdash   \mathsf{lcase}\, \ottnt{t} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   :  \ottnt{B} }{%
+{\ottdrulelcaseName}{}%
 }}
 
 
@@ -421,7 +483,7 @@
 \newcommand{\ottdrulelam}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A}  \vdash  \ottnt{t}  :  \ottnt{B} }%
 }{
- \Gamma  \vdash   \lambda  \ottmv{x}  :  \ottnt{A}  .  \ottnt{t}   :  \ottnt{A}  \rightarrow  \ottnt{B} }{%
+ \Gamma  \vdash   \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t}   :  \ottnt{A}  \rightarrow  \ottnt{B} }{%
 {\ottdrulelamName}{}%
 }}
 
@@ -439,14 +501,14 @@
 \newcommand{\ottdruleLam}[1]{\ottdrule[#1]{%
 \ottpremise{  \Gamma , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \vdash  \ottnt{t}  :  \ottnt{B} }%
 }{
- \Gamma  \vdash   \Lambda  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  . \ottnt{t}   :   \forall  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} .  \ottnt{B}  }{%
+ \Gamma  \vdash   \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B}  }{%
 {\ottdruleLamName}{}%
 }}
 
 
 \newcommand{\ottdruletypeAppName}[0]{\ottdrulename{typeApp}}
 \newcommand{\ottdruletypeApp}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t}  :   \forall  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} .  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ).  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
 }{
  \Gamma  \vdash   [  \ottnt{A}  ]  \ottnt{t}   :  \ottsym{[}  \ottnt{A}  \ottsym{/}  \ottmv{X}  \ottsym{]}  \ottnt{C} }{%
 {\ottdruletypeAppName}{}%
@@ -470,7 +532,10 @@
 \ottusedrule{\ottdruleunitP{}}
 \ottusedrule{\ottdrulezeroP{}}
 \ottusedrule{\ottdrulesucc{}}
-\ottusedrule{\ottdrulecase{}}
+\ottusedrule{\ottdrulencase{}}
+\ottusedrule{\ottdruleempty{}}
+\ottusedrule{\ottdrulecons{}}
+\ottusedrule{\ottdrulelcase{}}
 \ottusedrule{\ottdrulepair{}}
 \ottusedrule{\ottdrulefst{}}
 \ottusedrule{\ottdrulesnd{}}
@@ -514,53 +579,114 @@
 }}
 
 
-\newcommand{\ottdrulerdXXcaseZeroName}[0]{\ottdrulename{rd\_case0}}
-\newcommand{\ottdrulerdXXcaseZero}[1]{\ottdrule[#1]{%
+\newcommand{\ottdrulerdXXncaseZeroName}[0]{\ottdrulename{rd\_ncase0}}
+\newcommand{\ottdrulerdXXncaseZero}[1]{\ottdrule[#1]{%
 }{
- \mathsf{case}\, \ottsym{0} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottnt{t_{{\mathrm{1}}}}}{%
-{\ottdrulerdXXcaseZeroName}{}%
+ \mathsf{ncase}\, \ottsym{0} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottnt{t_{{\mathrm{1}}}}}{%
+{\ottdrulerdXXncaseZeroName}{}%
 }}
 
 
-\newcommand{\ottdrulerdXXcaseSuccName}[0]{\ottdrulename{rd\_caseSucc}}
-\newcommand{\ottdrulerdXXcaseSucc}[1]{\ottdrule[#1]{%
+\newcommand{\ottdrulerdXXncaseSuccName}[0]{\ottdrulename{rd\_ncaseSucc}}
+\newcommand{\ottdrulerdXXncaseSucc}[1]{\ottdrule[#1]{%
 }{
- \mathsf{case}\, \ottsym{(}  \mathsf{succ} \, \ottnt{t}  \ottsym{)} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottsym{[}  \ottnt{t}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}}{%
-{\ottdrulerdXXcaseSuccName}{}%
+ \mathsf{ncase}\, \ottsym{(}  \mathsf{succ} \, \ottnt{t}  \ottsym{)} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottsym{[}  \ottnt{t}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}}{%
+{\ottdrulerdXXncaseSuccName}{}%
 }}
 
 
-\newcommand{\ottdrulerdXXcaseOneName}[0]{\ottdrulename{rd\_case1}}
-\newcommand{\ottdrulerdXXcaseOne}[1]{\ottdrule[#1]{%
+\newcommand{\ottdrulerdXXncaseOneName}[0]{\ottdrulename{rd\_ncase1}}
+\newcommand{\ottdrulerdXXncaseOne}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t}  \rightsquigarrow  \ottnt{t'}}%
 }{
- \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{case}\, \ottnt{t'} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}} }{%
-{\ottdrulerdXXcaseOneName}{}%
+ \mathsf{ncase}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{ncase}\, \ottnt{t'} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXncaseOneName}{}%
 }}
 
 
-\newcommand{\ottdrulerdXXcaseTwoName}[0]{\ottdrulename{rd\_case2}}
-\newcommand{\ottdrulerdXXcaseTwo}[1]{\ottdrule[#1]{%
+\newcommand{\ottdrulerdXXncaseTwoName}[0]{\ottdrulename{rd\_ncase2}}
+\newcommand{\ottdrulerdXXncaseTwo}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{1}}}}}%
 }{
- \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottnt{t'_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}} }{%
-{\ottdrulerdXXcaseTwoName}{}%
+ \mathsf{ncase}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{ncase}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t'_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXncaseTwoName}{}%
 }}
 
 
-\newcommand{\ottdrulerdXXcaseThreeName}[0]{\ottdrulename{rd\_case3}}
-\newcommand{\ottdrulerdXXcaseThree}[1]{\ottdrule[#1]{%
+\newcommand{\ottdrulerdXXncaseThreeName}[0]{\ottdrulename{rd\_ncase3}}
+\newcommand{\ottdrulerdXXncaseThree}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t_{{\mathrm{2}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{2}}}}}%
 }{
- \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottnt{t_{{\mathrm{1}}}}  \mid\mid  \ottmv{x} . \ottnt{t'_{{\mathrm{2}}}} }{%
-{\ottdrulerdXXcaseThreeName}{}%
+ \mathsf{ncase}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{ncase}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t'_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXncaseThreeName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXlcaseEmptyName}[0]{\ottdrulename{rd\_lcaseEmpty}}
+\newcommand{\ottdrulerdXXlcaseEmpty}[1]{\ottdrule[#1]{%
+}{
+ \mathsf{lcase}\, \ottsym{[]} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottnt{t_{{\mathrm{1}}}}}{%
+{\ottdrulerdXXlcaseEmptyName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXlcaseConsName}[0]{\ottdrulename{rd\_lcaseCons}}
+\newcommand{\ottdrulerdXXlcaseCons}[1]{\ottdrule[#1]{%
+}{
+ \mathsf{lcase}\, \ottsym{(}   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{3}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{4}}}}   \rightsquigarrow  \ottsym{[}  \ottnt{t_{{\mathrm{1}}}}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottsym{[}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{/}  \ottmv{y}  \ottsym{]}  \ottnt{t_{{\mathrm{4}}}}}{%
+{\ottdrulerdXXlcaseConsName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXheadName}[0]{\ottdrulename{rd\_head}}
+\newcommand{\ottdrulerdXXhead}[1]{\ottdrule[#1]{%
+\ottpremise{\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{1}}}}}%
+}{
+ \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \ottnt{t'_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXheadName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXtailName}[0]{\ottdrulename{rd\_tail}}
+\newcommand{\ottdrulerdXXtail}[1]{\ottdrule[#1]{%
+\ottpremise{\ottnt{t_{{\mathrm{2}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{2}}}}}%
+}{
+ \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t'_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXtailName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXlcaseOneName}[0]{\ottdrulename{rd\_lcase1}}
+\newcommand{\ottdrulerdXXlcaseOne}[1]{\ottdrule[#1]{%
+\ottpremise{\ottnt{t}  \rightsquigarrow  \ottnt{t'}}%
+}{
+ \mathsf{lcase}\, \ottnt{t} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{lcase}\, \ottnt{t'} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXlcaseOneName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXlcaseTwoName}[0]{\ottdrulename{rd\_lcase2}}
+\newcommand{\ottdrulerdXXlcaseTwo}[1]{\ottdrule[#1]{%
+\ottpremise{\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{1}}}}}%
+}{
+ \mathsf{lcase}\, \ottnt{t} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{lcase}\, \ottnt{t} \,\mathsf{of}\,[] \to  \ottnt{t'_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXlcaseTwoName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXlcaseThreeName}[0]{\ottdrulename{rd\_lcase3}}
+\newcommand{\ottdrulerdXXlcaseThree}[1]{\ottdrule[#1]{%
+\ottpremise{\ottnt{t_{{\mathrm{2}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{2}}}}}%
+}{
+ \mathsf{lcase}\, \ottnt{t} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow   \mathsf{lcase}\, \ottnt{t} \,\mathsf{of}\,[] \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t'_{{\mathrm{2}}}} }{%
+{\ottdrulerdXXlcaseThreeName}{}%
 }}
 
 
 \newcommand{\ottdrulerdXXbetaName}[0]{\ottdrulename{rd\_beta}}
 \newcommand{\ottdrulerdXXbeta}[1]{\ottdrule[#1]{%
 }{
-\ottsym{(}   \lambda  \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}}  .  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)} \, \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottsym{[}  \ottnt{t_{{\mathrm{1}}}}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}}{%
+\ottsym{(}   \lambda ( \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}} ) .  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)} \, \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottsym{[}  \ottnt{t_{{\mathrm{1}}}}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}}{%
 {\ottdrulerdXXbetaName}{}%
 }}
 
@@ -569,7 +695,7 @@
 \newcommand{\ottdrulerdXXeta}[1]{\ottdrule[#1]{%
 \ottpremise{ \ottmv{x}  \not\in \mathsf{FV}( \ottnt{t} ) }%
 }{
- \lambda  \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}}  .   \ottnt{t} \, \ottmv{x}    \rightsquigarrow  \ottnt{t}}{%
+ \lambda ( \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}} ) .   \ottnt{t} \, \ottmv{x}    \rightsquigarrow  \ottnt{t}}{%
 {\ottdrulerdXXetaName}{}%
 }}
 
@@ -602,7 +728,7 @@
 \newcommand{\ottdrulerdXXlam}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t}  \rightsquigarrow  \ottnt{t'}}%
 }{
- \lambda  \ottmv{x}  :  \ottnt{A}  .  \ottnt{t}   \rightsquigarrow   \lambda  \ottmv{x}  :  \ottnt{A}  .  \ottnt{t'} }{%
+ \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t}   \rightsquigarrow   \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t'} }{%
 {\ottdrulerdXXlamName}{}%
 }}
 
@@ -664,7 +790,7 @@
 \newcommand{\ottdrulerdXXtypeBetaName}[0]{\ottdrulename{rd\_typeBeta}}
 \newcommand{\ottdrulerdXXtypeBeta}[1]{\ottdrule[#1]{%
 }{
- [  \ottnt{A}  ]  \ottsym{(}   \Lambda  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B}  . \ottnt{t}   \ottsym{)}   \rightsquigarrow  \ottsym{[}  \ottnt{A}  \ottsym{/}  \ottmv{X}  \ottsym{]}  \ottnt{t}}{%
+ [  \ottnt{A}  ]  \ottsym{(}   \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ) . \ottnt{t}   \ottsym{)}   \rightsquigarrow  \ottsym{[}  \ottnt{A}  \ottsym{/}  \ottmv{X}  \ottsym{]}  \ottnt{t}}{%
 {\ottdrulerdXXtypeBetaName}{}%
 }}
 
@@ -682,7 +808,7 @@
 \newcommand{\ottdrulerdXXLam}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}}%
 }{
- \Lambda  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  . \ottnt{t_{{\mathrm{1}}}}   \rightsquigarrow   \Lambda  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  . \ottnt{t_{{\mathrm{2}}}} }{%
+ \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t_{{\mathrm{1}}}}   \rightsquigarrow   \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t_{{\mathrm{2}}}} }{%
 {\ottdrulerdXXLamName}{}%
 }}
 
@@ -690,11 +816,18 @@
 \ottusedrule{\ottdrulerdXXretracT{}}
 \ottusedrule{\ottdrulerdXXretractU{}}
 \ottusedrule{\ottdrulerdXXsucc{}}
-\ottusedrule{\ottdrulerdXXcaseZero{}}
-\ottusedrule{\ottdrulerdXXcaseSucc{}}
-\ottusedrule{\ottdrulerdXXcaseOne{}}
-\ottusedrule{\ottdrulerdXXcaseTwo{}}
-\ottusedrule{\ottdrulerdXXcaseThree{}}
+\ottusedrule{\ottdrulerdXXncaseZero{}}
+\ottusedrule{\ottdrulerdXXncaseSucc{}}
+\ottusedrule{\ottdrulerdXXncaseOne{}}
+\ottusedrule{\ottdrulerdXXncaseTwo{}}
+\ottusedrule{\ottdrulerdXXncaseThree{}}
+\ottusedrule{\ottdrulerdXXlcaseEmpty{}}
+\ottusedrule{\ottdrulerdXXlcaseCons{}}
+\ottusedrule{\ottdrulerdXXhead{}}
+\ottusedrule{\ottdrulerdXXtail{}}
+\ottusedrule{\ottdrulerdXXlcaseOne{}}
+\ottusedrule{\ottdrulerdXXlcaseTwo{}}
+\ottusedrule{\ottdrulerdXXlcaseThree{}}
 \ottusedrule{\ottdrulerdXXbeta{}}
 \ottusedrule{\ottdrulerdXXeta{}}
 \ottusedrule{\ottdrulerdXXprojOne{}}
@@ -729,7 +862,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        61 good    0 bad
-Definition rule clauses: 112 good    0 bad
+Definition rules:        74 good    0 bad
+Definition rule clauses: 135 good    0 bad
 \end{verbatim}
 \end{document}

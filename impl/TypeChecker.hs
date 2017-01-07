@@ -107,6 +107,7 @@ subtype t1 t2 | t1 `aeq` t2 = return True
 subtype t1 Top = return True
 subtype Nat Simple = return True
 subtype Unit Simple = return True
+subtype (List s) Simple = s `subtype` Simple
 subtype (Arr s1 s2) Simple = do
   b1 <- subtype s1 Simple
   b2 <- subtype s2 Simple
@@ -121,6 +122,7 @@ subtype (TVar x) t2 = do
   case mty of
     Just t3 -> t3 `subtype` t2
     Nothing -> return False
+subtype (List s) (List t) = s `subtype` t
 subtype (Arr s1 s2) (Arr t1 t2) = do
   b1 <- subtype t1 s1
   b2 <- subtype s2 t2
