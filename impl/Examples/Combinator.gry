@@ -1,10 +1,11 @@
+import Skeleton;
 import Pair;
 
 omega : (? -> ?) -> ?
-omega = \(x : ? -> ?) -> (x ((squash (? -> ?)) x));
+omega = \(x : ? -> ?) -> (x (squashar x));
 
 loop : ?
-loop = omega (\(x : ?) -> (omega ((split (? -> ?)) x)));
+loop = omega (\(x : ?) -> (omega (splitar x)));
 
 -- omega : ((? -> ?) -> ? -> ?) -> ? -> ?
 -- omega = \(x: (? -> ?) -> (? -> ?))->(x x);

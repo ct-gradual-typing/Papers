@@ -252,15 +252,13 @@ appParse = do
     _ -> return $ foldl1 App l
 
 squash = do
-  reservedOp "squash"
-  ws
-  ty <- typeParser
+  symbol "squash"
+  ty <- between (symbol "<") (symbol ">") typeParser
   return $ (Squash ty)
   
 split = do
-  reservedOp "split"
-  ws
-  ty <- typeParser
+  symbol "split"
+  ty <- between (symbol "<") (symbol ">") typeParser
   return $ (Split ty)
 
 listParse = do

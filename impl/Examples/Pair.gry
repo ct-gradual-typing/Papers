@@ -1,5 +1,3 @@
-import List;
-
 true : ? -> ? -> ?
 true = \(p:?)->\(q:?)->p;
 
