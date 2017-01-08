@@ -12,6 +12,7 @@ import qualified Data.Map.Strict as M
 
 import qualified TypeErrors as TE
 import Syntax
+import Pretty
 
 data ATerm =
    ATVar Type (Name ATerm)        
@@ -165,6 +166,14 @@ typeCheck :: Term -> Type -> TE.ExceptT TE.TypeError LFreshM ATerm
 typeCheck t ty = TE.runReaderT (typeCheck_aux t ty) (M.empty, M.empty)
 
 typeCheck_aux :: Term -> Type -> TCM ATerm
+typeCheck_aux (Var x) ty = do
+  mty <- lookup_ctx x
+  case mty of
+    Just found -> do
+             ctx_ok
+             reqSameType found ty
+             return $ ATVar found (translate x)
+    Nothing -> TE.throwError $ TE.FreeVarsError x
 typeCheck_aux (Pair t1 t2) ty@(Prod ty1 ty2) = do
   a1 <- typeCheck_aux t1 ty1
   a2 <- typeCheck_aux t2 ty2
