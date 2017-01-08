@@ -3,5 +3,8 @@ import Pair;
 omega : (? -> ?) -> ?
 omega = \(x : ? -> ?) -> (x ((squash (? -> ?)) x));
 
+loop : ?
+loop = omega (\(x : ?) -> (omega ((split (? -> ?)) x)));
+
 -- omega : ((? -> ?) -> ? -> ?) -> ? -> ?
 -- omega = \(x: (? -> ?) -> (? -> ?))->(x x);
