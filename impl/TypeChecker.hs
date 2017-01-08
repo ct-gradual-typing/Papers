@@ -44,8 +44,8 @@ instance Alpha ATerm
 getType :: ATerm -> Type
 getType (ATVar ty _) = ty
 getType ATTriv = Unit
-getType (ATSquash ty _) = Arr ty U
-getType (ATSplit ty _) = Arr U ty   
+getType (ATSquash ty _) = ty
+getType (ATSplit ty _) = ty   
 getType (ATBox ty _) = ty
 getType (ATUnbox ty _) = ty
 getType (ATFun ty _ _) = ty
@@ -282,11 +282,11 @@ inferType (Unbox ty) = do
              else TE.throwError $ TE.BoxError ty
 
 inferType (Split ty@(Arr U U)) = return $ ATSplit (Arr U ty) ty
-inferType (Split ty@(Prod U U)) = return $ ATSplit (Prod U ty) ty
+inferType (Split ty@(Prod U U)) = return $ ATSplit (Arr U ty) ty
 inferType (Split ty) = TE.throwError $ TE.SplitTypeError ty
 
-inferType (Squash ty@(Arr U U)) = return $ ATSquash (Arr U ty) ty
-inferType (Squash ty@(Prod U U)) = return $ ATSquash (Prod U ty) ty
+inferType (Squash ty@(Arr U U)) = return $ ATSquash (Arr ty U) ty
+inferType (Squash ty@(Prod U U)) = return $ ATSquash (Arr ty U) ty
 inferType (Squash ty) = TE.throwError $ TE.SquashTypeError ty
 
 inferType Zero = return ATZero
