@@ -45,6 +45,7 @@ tailQ (Queue (x:f) r) = queue f r
 mapQ :: (a -> b) -> Queue a -> Queue b
 mapQ m (Queue f r) = Queue (map m f) (map m r)
 
+
 -- The following fixpoint operation makes it easier to do structural
 -- recursion over queues.
 --

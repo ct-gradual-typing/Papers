@@ -51,6 +51,9 @@ unfoldQueue q = fixQ q emptyQ step
     where
       substDef :: Name Term -> Term -> Qelm -> Qelm
       substDef x t (y, t') = (y, subst x t t')
+      
+containsTerm :: Queue Qelm -> Vnm -> Bool
+containsTerm (Queue f r) vnm = foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f
 
 tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
@@ -74,9 +77,13 @@ tyCheckQ q = do
                         Left er -> io.putStrLn.readTypeError $ er
                         Right b -> 
                             if b
-                            then do
-                              push (v,tu)
-                              tyCheckQ $ tailQ q
+                            then
+                              -- Determine if definition already in queue
+                              if(containsTerm defs v)
+                              then  io.putStrLn $ "error: The variable "++(show v)++" is already in the context."
+                              else  do
+                                push (v,tu)
+                                tyCheckQ $ tailQ q
                             else io.putStrLn $ "TODO: make error message"
     else io.putStrLn $ "error - free variables found in q: "++(show q)
 
@@ -95,7 +102,11 @@ handleCMD s =
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right e -> io.putStrLn.runPrettyTerm $ e
-    handleLine (Let x t) = push (x , t)
+    handleLine (Let x t) = do
+      (f, defs) <- get
+      if(containsTerm defs x)
+        then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
+        else push (x , t)
     handleLine (TypeCheck t) = do
       (_, defs) <- get
       let tu = unfoldDefsInTerm defs t
