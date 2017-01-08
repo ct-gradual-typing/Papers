@@ -407,7 +407,6 @@ data REPLExpr =
  | Unfold Term                  -- Unfold the definitions in a term for debugging.
  | LoadFile String              -- Loading an external file into the context
  | Eval Term                    -- The defualt is to evaluate.
- | HelpMenu                     -- To display help menu
  deriving Show
                     
 letParser = do
@@ -462,10 +461,8 @@ unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
 
 loadFileParser = replFileCmdParser "l" "load" LoadFile
-
-helpParser = replIntCmdParser "h" "help" HelpMenu
-               
-lineParser = try letParser <|> try loadFileParser <|> try helpParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
+              
+lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of

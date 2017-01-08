@@ -95,20 +95,6 @@ handleCMD s =
       Right l -> handleLine l
   where
     handleLine :: REPLExpr -> REPLStateIO ()
-    handleLine (HelpMenu) = do
-      io.putStrLn $ "----------------------------------------------------------"
-      io.putStrLn $ "                  The Grady Help Menu                     "
-      io.putStrLn $ "----------------------------------------------------------"
-      io.putStrLn $ ":h/:help -> Display the help menu"
-      io.putStrLn $ ":t/:type <term> -> Typecheck a term"
-      io.putStrLn $ ":s/:show <term> -> Display the Abstract Syntax Type of a term"
-      io.putStrLn $ ":u/:unfold <term> -> Unfold the expression" -- TODO: Is there a better way to explaing this?
-      io.putStrLn $ ":d/:dump -> Display the context"
-      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
-      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
-      io.putStrLn $ "let <Variable name> = <expression> -> Bind an expression to a variable and load it into the context"
-      io.putStrLn $ "You may also evaluate expressions directly in the Repl"
-      io.putStrLn $ "----------------------------------------------------------"
     handleLine (Eval t) = do
       (f, defs) <- get
       let tu = unfoldDefsInTerm defs t
@@ -163,6 +149,22 @@ getFV t = fv t :: [Vnm]
 banner :: String
 banner = "Welcome to Grady!\n\n"
 
+helpMenu :: String                          
+helpMenu = 
+      "----------------------------------------------------------\n"++
+      "                  The Grady Help Menu                     \n"++
+      "----------------------------------------------------------\n"++
+      ":h/:help -> Display the help menu\n"++
+      ":t/:type <term> -> Typecheck a term\n"++
+      ":s/:show <term> -> Display the Abstract Syntax Type of a term\n"++
+      ":u/:unfold <term> -> Unfold the expression\n"++ -- TODO: Is there a better way to explaing this?
+      ":d/:dump -> Display the context\n"++
+      ":l/:load <filepath> -> Load an external file into the context\n"++
+      ":l/:load <filepath> -> Load an external file into the context\n"++
+      "let <Variable name> = <expression> -> Bind an expression to a variable and load it into the context\n"++
+      "You may also evaluate expressions directly in the Repl\n"++
+      "----------------------------------------------------------"
+
 main :: IO ()
 main = do
   putStr banner
@@ -176,4 +178,7 @@ main = do
                Just [] -> loop
                Just input | input == ":q" || input == ":quit"
                               -> liftIO $ putStrLn "Goodbye!" >> return ()
+                          | input == ":h" || input == ":help"
+                              -> (liftIO $ putStrLn helpMenu) >> loop
                           | otherwise -> (lift.handleCMD $ input) >> loop
+                          
