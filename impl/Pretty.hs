@@ -20,7 +20,7 @@ prettyType (Prod t1 t2) =
     return $ "("++s1++","++s2++")"))  
 prettyType (Forall ty b) =
     lunbind b $ (\(x,ty') ->
-       prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++"<:"++s1++")."++s2)))
+       prettyType ty >>= (\s1 -> prettyType ty' >>= (\s2 -> return $ "forall ("++(n2s x)++"<:"++s1++")."++"("++s2++")")))
 prettyType (List ty) = do
   s <- prettyType ty
   return $ "["++s++"]"
@@ -37,6 +37,18 @@ term2int' (Succ t) = 1 + (term2int' t)
 term2int :: Term -> Maybe Integer
 term2int t | isInt t = Just $ term2int' t
            | otherwise = Nothing
+           
+parenType :: Type -> (Type -> LFreshM String) -> LFreshM String
+parenType ty@(TVar _) f = f ty
+parenType ty@Nat f = f ty
+parenType ty@Unit f = f ty
+parenType ty@Simple f = f ty
+parenType ty@Top f = f ty
+parenType ty@U f = f ty
+parenType ty@(Arr t1 t2) f = f ty
+parenType ty@(Prod t1 t2) f = f ty
+parenType ty@(Forall ty' b) f = f ty >>= (\r -> return $ "("++r++")")
+parenType ty@(List ty') f = f ty 
 
 parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
