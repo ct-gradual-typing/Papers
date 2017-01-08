@@ -405,8 +405,9 @@ data REPLExpr =
  | ShowAST Term                 -- Show a terms AST
  | DumpState                    -- Trigger to dump the state for debugging.
  | Unfold Term                  -- Unfold the definitions in a term for debugging.
- | LoadFile String
+ | LoadFile String              -- Loading an external file into the context
  | Eval Term                    -- The defualt is to evaluate.
+ | HelpMenu                     -- To display help menu
  deriving Show
                     
 letParser = do
@@ -446,7 +447,7 @@ replIntCmdParser short long c = do
   eof
   if (cmd == long || cmd == short)
   then return c
-  else fail $ "Command \":"++cmd++"\" is unrecognized."       
+  else fail $ "Command \":"++cmd++"\" is unrecognized." 
 
 evalParser = do
   t <- expr
@@ -461,8 +462,10 @@ unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
 
 loadFileParser = replFileCmdParser "l" "load" LoadFile
+
+helpParser = replIntCmdParser "h" "help" HelpMenu
                
-lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
+lineParser = try letParser <|> try loadFileParser <|> try helpParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of
