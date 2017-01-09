@@ -80,6 +80,11 @@
 \renewcommand{\GradydrulearrowName}[0]{\Gradydrulename{}}
 \renewcommand{\GradydruleprodName}[0]{\Gradydrulename{}}
 
+\input{poly-grady-inc}
+\renewcommand{\RightTirName}{\text}
+\renewcommand{\PGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\Gradydrulename{#4}}}
+\renewcommand{\PGradydrulename}[1]{#1}
+
 \makeatletter\if@ACM@journal\makeatother
 %% Journal information (used by PACMPL format)
 %% Supplied to authors by publisher for camera-ready submission
@@ -226,6 +231,11 @@
 \label{sec:grady}
 \input{grady-ott}
 % section grady (end)
+
+\section{Extending Grady with Impredicative Polymorphism}
+\label{sec:extending_grady_with_impredicative_polymorphism}
+\input{poly-grady-ott}
+% section extending_grady_with_impredicative_polymorphism (end)
 
 \nocite{*}
 \bibliography{references}
