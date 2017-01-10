@@ -1,69 +1,24 @@
 import Fix;
 
+pred : Nat -> Nat
+pred = \(n:Nat) -> case n of 0 -> 0, (succ n') -> n';
+
+sub : Nat -> Nat -> Nat
+sub = \(m:Nat) -> ([Nat -> Nat]fixp)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));
+
 add : Nat -> Nat -> Nat
 add = \(m:Nat) -> ([Nat -> Nat]fixp)
        (\(r:Nat -> Nat) ->
         \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
 
-
-{-
-add 0 3
-~> ((\(m:Nat) -> ([Nat -> Nat]fixp)
+mult : Nat -> Nat -> Nat
+mult = \(m:Nat) -> ([Nat -> Nat]fixp)
        (\(r:Nat -> Nat) ->
-        \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'))) 0) 3
+        \(n:Nat) -> case n of 0 -> 0, (succ n') -> add m (r n'));
 
-~> (([Nat -> Nat]fixp)
+exp : Nat -> Nat -> Nat
+exp = \(m:Nat) -> ([Nat -> Nat]fixp)
        (\(r:Nat -> Nat) ->
-        \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) 3
-
-~> (([Nat -> Nat](\(X <: Simple) -> \(f:X -> X) -> unbox<X> (fix (\(x:?)->box<X> (f (unbox<X> x))))))
-       (\(r:Nat -> Nat) ->
-        \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) 3
-
-~> ((\(f:(Nat -> Nat) -> (Nat -> Nat)) -> unbox<Nat -> Nat> (fix (\(x:?)->box<Nat -> Nat> (f (unbox<Nat -> Nat> x)))))
-       (\(r:Nat -> Nat) ->
-        \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) 3
-
-~> ((unbox<Nat -> Nat> (fix (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x)))))) 3
-
-~> ((unbox<Nat -> Nat> ((\(f : ? -> ?) -> (\(x:?) -> f ((splitar x) x)) (squashar (\(x:?) -> f ((splitar x) x)))) (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x)))))) 3
-
-~> ((unbox<Nat -> Nat> ((\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))))) 3
-
-~> ((unbox<Nat -> Nat> (((\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))))))) 3
-
-~> (unbox<Nat -> Nat> (box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))))))) 3
-
-~> (unbox<Nat -> Nat> (box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))))))) 3
-
-~> (unbox<Nat -> Nat> (box<Nat -> Nat> (\(n:Nat) -> case n of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) n')))) 3
-
-~> (\(n:Nat) -> case n of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) n')) 3
-
-~> (case 3 of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) n'))
-
-~> (succ ((unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) 2))
-
-~> (succ ((unbox<Nat -> Nat> ((\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) 2))
-
-~> succ ((unbox<Nat -> Nat> (box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))))))) 2)
-
-~> succ ((((\(n:Nat) -> case n of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) n')))) 2)
-
-~> succ (case 2 of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) n'))
-
-~> succ (succ ((unbox<Nat -> Nat> ((splitar (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x)))) (squashar (\(x:?) -> (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) ((splitar x) x))))) 1))
-
-
-
-~> ((unbox<Nat -> Nat> ((\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))) (fix (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))))))) 3
-
-~> ((unbox<Nat -> Nat> ((box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> (fix (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x)))))))))) 3
-
-~> (unbox<Nat -> Nat> (box<Nat -> Nat> (\(n:Nat) -> case n of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> (fix (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))))) n')))) 3
-
-~> (\(n:Nat) -> case n of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> (fix (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))))) n')) 3
-
-~> case 3 of 0 -> 0, (succ n') -> succ ((unbox<Nat -> Nat> (fix (\(x:?)->box<Nat -> Nat> (((\(r:Nat -> Nat) -> \(n:Nat) -> case n of 0 -> 0, (succ n') -> succ (r n'))) (unbox<Nat -> Nat> x))))) n')
-
--}
+        \(n:Nat) -> case n of 0 -> 1, (succ n') -> mult m (r n'));
