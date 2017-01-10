@@ -152,6 +152,8 @@ handleCMD s =
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
   (wdir,_) <- get
+  -- delete definitions currently in queue, this allows reloading the same file after making changes
+  put (wdir,emptyQ)         
   msgOrGFile <- lift $ runFileParser p wdir
   case msgOrGFile of
     Left l -> io.putStrLn $ l
