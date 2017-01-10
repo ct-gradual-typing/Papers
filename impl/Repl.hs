@@ -80,12 +80,12 @@ tyCheckQ q = do
                             then do
                               -- Determine if definition already in queue
                               if(containsTerm defs v)
-                              then  io.putStrLn $ "error: The variable "++(show v)++" is already in the context."
+                              then  io.putStrLn $ "Error: The variable "++(show v)++" is already in the context."
                               else  do
                                 push (v,tu)
                                 tyCheckQ $ tailQ q
-                            else io.putStrLn $ "TODO: make error message"
-    else io.putStrLn $ "error - free variables found in q: "++(show q)
+                            else io.putStrLn $ "Error: "++(runPrettyType ity)++" is not a subtype of "++(runPrettyType ty)
+    else io.putStrLn $ "Error: free variables found in "++(show v)
 
 handleCMD :: String -> REPLStateIO ()
 handleCMD "" = return ()
