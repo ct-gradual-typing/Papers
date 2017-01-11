@@ -83,6 +83,6 @@ evalTerm' (App t1 t2) = do
 evalTerm' (TApp ty t) = do
   e <- evalTerm' t
   case e of
-    TFun ty' b -> lunbind b $ (\(x,e') -> return $ subst x ty e')
+    TFun ty' b -> lunbind b $ (\(x,e') -> evalTerm' $ subst x ty e')
     _ -> return $ TApp ty e
 evalTerm' t = return t

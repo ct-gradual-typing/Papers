@@ -133,7 +133,9 @@ handleCMD s =
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  io.putStrLn.runPrettyType $ ty
-    handleLine (ShowAST t) = io.putStrLn.show $ t
+    handleLine (ShowAST t) = do
+      (_,defs) <- get
+      io.putStrLn.show $ unfoldDefsInTerm defs t
     handleLine (Unfold t) =
         get >>= (\(f,defs) -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine (LoadFile p) = do
