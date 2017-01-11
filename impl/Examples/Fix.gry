@@ -12,4 +12,4 @@ fix = \(f : ? -> ?) -> (\(x:?) -> f ((splitar x) x)) (squashar (\(x:?) -> f ((sp
 fixp : forall (X <: Simple).((X -> X) -> X)
 fixp = \(X <: Simple) ->
        \(f:X -> X)    ->
-           unbox<X> (fix (\(x:?)->box<X> (f (unbox<X> x))));
+           unbox<X> (fix (\(y:?)->box<X> (f (unbox<X> y))));

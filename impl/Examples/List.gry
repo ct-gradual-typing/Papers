@@ -5,6 +5,17 @@ tail = \(X<:*) -> \(l:[X]) ->
              case l of [] -> [X][], (h :: t) -> t;
 
 map : forall (A <: Simple).(forall (B <: Simple).((A -> B) -> ([A] -> [B])))
-map = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B) -> ([[A] -> [B]]fixp)
-         (\(r : [A] -> [B]) -> \(l : [A]) -> case l of [] -> [B][], (x :: xs) -> (f x) :: (r xs));
+map = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B) ->
+        ([[A] -> [B]]fixp)
+           (\(r : [A] -> [B]) -> \(l : [A]) ->
+                   case l of
+                     [] -> [B][],
+                     (x :: xs) -> (f x) :: (r xs));
 
+foldr : forall (A <: Simple).(forall (B <: Simple).((A -> B -> B) -> B -> ([A] -> B)))
+foldr = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B -> B) -> \(b : B) ->
+          ([[A] -> B]fixp)
+            (\(r : [A] -> B) -> \(l : [A]) ->
+                   case l of
+                     [] -> b,
+                     (a :: as) -> (f a (r as)));

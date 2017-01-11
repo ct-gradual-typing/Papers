@@ -255,19 +255,18 @@ inferType (Cons h t) = do
   at <- typeCheck_aux t (List hty)
   return $ ATCons (List hty) ah at
 
-inferType (LCase t t1 b) =
-    lunbind b $ (\(x,b') -> do
-      lunbind b' $ (\(y,t2) -> do
+inferType (LCase t t1 b) = do    
       at <- inferType t
       let tty = getType at
       case tty of
         List ety -> do
           at1 <- inferType t1
           let ty1 = getType at1
-          extend_ctx x ety $ extend_ctx y (List ety) $ do
+          lunbind b $ (\(x,b') -> lunbind b' $ (\(y,t2) -> 
+            extend_ctx x ety $ extend_ctx y (List ety) $ do
                       at2 <- typeCheck_aux t2 ty1
-                      return $ ATLCase ty1 at at1 (bind x (bind y at2))
-        _ -> TE.throwError $ TE.LCaseScrutinyTypeError t tty))
+                      return $ ATLCase ty1 at at1 (bind x (bind y at2))))
+        _ -> TE.throwError $ TE.LCaseScrutinyTypeError t tty
 
 inferType (Box ty) = do
              b <- ty `subtype` Simple

@@ -36,7 +36,7 @@ evalTerm' (NCase t t1 b) = lunbind b $ (\(x,t2) ->
    do e <- evalTerm' t            
       case e of
         Zero -> evalTerm' t1
-        Succ e' -> (evalTerm' t2) >>= (evalTerm'.(subst x e'))
+        Succ e' -> evalTerm' $ subst x e' t2
         _ -> return $ NCase e t1 (bind x t2))
 
 evalTerm' (LCase t t1 b) =    
@@ -45,7 +45,7 @@ evalTerm' (LCase t t1 b) =
                 Empty -> evalTerm' t1
                 Cons e' et ->
                     lunbind b  $ (\(x,b') ->
-                    lunbind b' $ (\(y,t2) -> (evalTerm' t2) >>= (evalTerm'.(subst x e').(subst y et))))
+                    lunbind b' $ (\(y,t2) -> evalTerm' $ subst x e' $ subst y et t2))
                 _ -> return $ LCase e t1 b
 
 evalTerm' (Cons h t) = do
@@ -71,7 +71,7 @@ evalTerm' (App t1 t2) = do
                           at2 <- infer e2'
                           if (getType at2) `aeq` ty
                           then return e2'
-                          else throwError $ UnboxBoxTypeError (getType at2) ty
+                          else throwError $ UnboxBoxTypeError (getType at2) ty                          
           _ -> return $ App e1 e2
     Box ty -> do
       e2 <- evalTerm' t2
