@@ -1,4 +1,4 @@
-import Naturals;
+import Fix;
 
 tail : forall (X<:*).([X] -> [X])
 tail = \(X<:*) -> \(l:[X]) ->
@@ -19,3 +19,11 @@ foldr = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B -> B) -> \(b : B) ->
                    case l of
                      [] -> b,
                      (a :: as) -> (f a (r as)));
+
+foldl : forall (A <: Simple).(forall (B <: Simple).((B -> A -> B) -> (B -> [A] -> B)))
+foldl = \(A <: Simple) -> \(B <: Simple) -> \(f : B -> A -> B) ->
+          ([B -> [A] -> B]fixp)
+            (\(r : B -> [A] -> B) -> \(b : B) -> \(l : [A]) ->
+                   case l of
+                     [] -> b,
+                     (a :: as) -> r (f b a) as);

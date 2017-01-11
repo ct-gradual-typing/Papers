@@ -6,7 +6,7 @@ import Prelude hiding (map,    foldr, foldl, zip, zipWith,
 fix :: (a -> a) -> a
 fix f = f (fix f)
 
-(([a] -> [b]) -> ([a] -> [b])) -> ([a] -> [b])
+--(([a] -> [b]) -> ([a] -> [b])) -> ([a] -> [b])
 
 lcase :: [a] -> b -> (a -> [a] -> b) -> b
 lcase [] t1 _ = t1
