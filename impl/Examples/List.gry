@@ -27,3 +27,16 @@ foldl = \(A <: Simple) -> \(B <: Simple) -> \(f : B -> A -> B) ->
                    case l of
                      [] -> b,
                      (a :: as) -> r (f b a) as);
+
+reverse : forall (A <: Simple).([A] -> [A])
+reverse = \(A <: Simple) -> \(l : [A]) -> ([[A]][A]foldl) (\(acc:[A]) -> \(x:A) -> x :: acc) [] l;
+
+zipWith : forall (A <: Simple).(forall (B <: Simple).(forall (C <: Simple).((A -> B -> C) -> ([A] -> [B] -> [C]))))
+zipWith = \(A <: Simple) -> \(B <: Simple) -> \(C <: Simple) -> \(f : A -> B -> C) ->
+            ([[A] -> [B] -> [C]]fixp)
+              (\(r : [A] -> [B] -> [C]) -> \(l1 : [A]) -> \(l2 : [B]) ->
+                 case l1 of
+                   [] -> [C][],
+                   (a :: as) -> case l2 of
+                                  [] -> [C][],
+                                  (b :: bs) -> (f a b) :: (r as bs));
