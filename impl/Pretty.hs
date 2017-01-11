@@ -95,8 +95,15 @@ prettyTerm t@(Cons _ _) = do
    consToList (Cons h' Empty) = prettyTerm h'
    consToList (Cons h' t') = do
      s <- prettyTerm h'
-     s' <- consToList t'
-     return $ s ++ "," ++ s'
+     case t' of
+       (Cons _ _) -> do
+               s' <- consToList t'
+               return $ s ++ "," ++ s'
+       Empty -> return s
+       (TApp _ Empty) -> return s
+       _ -> do
+         s' <- prettyTerm t'
+         return $ s ++ "," ++ s'
    consToList t = prettyTerm t
 prettyTerm (LCase t t1 b) = do
   s <- prettyTerm t

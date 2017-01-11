@@ -125,9 +125,10 @@ int2term n = Succ $ int2term $ n-1
 aterm = try (parens pairParse) <|> parens expr    <|> try intParse
                                <|> try trivParse  <|> try squash
                                <|> try split      <|> try boxParse
-                               <|> try unboxParse <|> listParse <|> var                                
-expr = ws *> (try intParse <|> try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
-                           <|> try caseParse <|> tappParse <|> appParse <|> parens expr <?> "parse error")
+                               <|> try unboxParse <|> try emptyListParse
+                               <|> try listNParse <|> var                                
+expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
+                           <|> try caseParse <|> tappParse <|> try listParse <|> appParse <|> parens expr <?> "parse error")
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = ws *> var' varName Var <* ws
@@ -261,13 +262,26 @@ split = do
   ty <- between (symbol "<") (symbol ">") typeParser
   return $ (Split ty)
 
-listParse = do
+listNParse = do
   symbol "["
-  l <- expr `sepBy` (symbol ",")
+  l <- aterm `sepBy1` (symbol ",")
   symbol "]"
   return $ case l of
     [] -> Empty
     _ -> foldr Cons Empty l
+
+emptyListParse = do
+  symbol "[]"
+  return Empty
+
+consParse = do
+  lookAhead $ (aterm >> ws >> (symbol "::"))
+  l <- aterm `sepBy1` (ws >> symbol "::")
+  return $ case l of
+    [] -> error "empty list"
+    _ -> foldr1 Cons l
+
+listParse = (try listNParse) <|> consParse
 
 parseTerm :: String -> Either String Term
 parseTerm s = case (parse expr "" s) of

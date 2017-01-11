@@ -1,7 +1,10 @@
-import PolyExamples;
-
--- This file contains several list examples.
+import Naturals;
 
 tail : forall (X<:*).([X] -> [X])
 tail = \(X<:*) -> \(l:[X]) ->
              case l of [] -> [X][], (h :: t) -> t;
+
+map : forall (A <: Simple).(forall (B <: Simple).((A -> B) -> ([A] -> [B])))
+map = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B) -> ([[A] -> [B]]fixp)
+         (\(r : [A] -> [B]) -> \(l : [A]) -> case l of [] -> [B][], (x :: xs) -> (f x) :: (r xs));
+
