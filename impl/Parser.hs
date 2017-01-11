@@ -19,6 +19,7 @@ module Parser (module Text.Parsec, expr,
 import Prelude
 import Data.List
 import Data.Char 
+import qualified Data.Text as T
 import Text.Parsec hiding (Empty)
 import Text.Parsec.Expr
 import qualified Text.Parsec.Token as Token
@@ -439,10 +440,13 @@ replFileCmdParser short long c = do
   symbol ":"
   cmd <- many lower
   ws
-  path <- many1 anyChar
+  pathUntrimmed <- many1 anyChar
   eof
   if(cmd == long || cmd == short)
-  then return $ c path
+  then do
+    -- Trim whiteSpace from path
+    let path = T.unpack . T.strip . T.pack $ pathUntrimmed
+    return $ c path
   else fail $ "Command \":"++cmd++"\" is unrecognized."
   
 replTermCmdParser short long c p = do
