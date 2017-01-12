@@ -1,0 +1,216 @@
+/* COLOR SCHEME: Knot Just Nautical*/
+
+header, section, footer, aside, nav, main, article, figure {
+ display: block;
+}
+
+/************************************************************/
+/*Body Styling*/
+/************************************************************/
+body{
+	font-family: Calibri, Helvetica, ARial, sans-serif;
+	background-color:#2C3E50;
+	color: #FFFFFF;
+}
+
+/************************************************************/
+/*Index Styling*/
+/************************************************************/
+#wrapper{
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+}
+
+#logo{
+	float: right;
+}
+/************************************************************/
+/*Header*/
+/************************************************************/
+
+header{
+	color: #FFFFFF;
+	background-color: #FC4349;
+	background-image: url("headerPic.png");
+	background-position: right;
+	background-repeat: no-repeat;
+	border-radius: 10px 10px 0 0;
+}
+
+/************************************************************/
+/*Main Styling*/
+/************************************************************/
+main{
+	color:#2C3E50;
+	background-color:#FFFFFF;
+	padding: 10px;
+	z-index: 0;
+}
+
+main a{
+	color:#2C3E50;
+}
+/************************************************************/
+/*Footer*/
+/************************************************************/
+footer{
+	background-color: #FC4349;
+	color: #FFFFFF;
+	border-radius: 0 0 10px 10px;
+	padding: 5px 10px;
+	font-size: 10pt;
+	font-style: italic;
+}
+
+footer a{
+	color: #FFFFFF;
+}
+
+/************************************************************/
+/*General Styling*/
+/************************************************************/
+#spacer{
+    padding: 30px;
+}
+
+h1{
+	margin: 0;
+	padding: 5px 10px;
+	font-size: 42pt;
+	line-height: 36px;
+	font-weight: lighter;
+}
+
+h2{
+	margin: 0;
+	padding: 0 10px 5px;
+	font-size: 18pt;
+	line-height: 22pt;
+	font-weight: lighter;
+	font-style: italic;
+}
+
+h3{
+	font-size: 24pt;
+	font-weight: lighter;
+	margin: 0;
+}
+
+
+/************************************************************/
+/*Navigation styling*/
+/************************************************************/
+
+nav{
+	color:#2C3E50;
+	background-color:#D7DADB;
+	padding: 5px 10px;
+	font-size: 14pt;
+	font-weight: bold;
+	text-decoration: none;
+	box-shadow: 0 10px 5px -5px #6DBCDB;
+	position: relative;
+}
+
+nav a{
+	text-decoration: none;
+	color:#2C3E50;
+}
+
+nav ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+nav ul li{
+	display: inline;
+	margin-right: 10px;
+}
+
+nav a:hover{
+	border-top: 1px dashed #2C3E50;
+	border-bottom: 1px dashed #2C3E50;
+}
+
+/************************************************************/
+/*Experience Section Styling*/
+/************************************************************/
+.experience h4{
+	font-size: 18pt;
+	font-weight: lighter;
+	margin: 0;
+}
+
+.experience .title{
+	font-size: 12pt;
+	font-weight: bold;
+	font-style: italic;
+	margin-bottom: 10px;
+}
+
+.experience .dates{
+	font-size: 12pt;
+	font-style: italic;
+	font-weight: bold;
+	float: right;
+}
+
+.experience .description{
+	font-size: 11pt;
+}
+
+.experience ul{
+	margin: 0;
+	
+}
+
+.experience .responsibilities{
+	font-size: 10pt;
+	-webkit-column-count: 2;
+	-moz-column-count: 2;
+	column-count: 2;
+}
+
+.experience, .school{
+	border-left: 10px solid #2C3E50;
+	border-bottom: 1px dashed #2C3E50;
+	border-right: 1px dashed #2C3E50;
+	border-top: 1px dashed #2C3E50;
+	margin: 20px;
+	padding: 5px 10px 5px 10px;
+	overflow: auto;
+}
+
+/************************************************************/
+/*Education Styling*/
+/************************************************************/
+
+
+.school img{
+	float: left;
+}
+
+
+.school h3{
+	margin: 0 0 0 120px;
+}
+
+.school h4{
+	font-size: 14pt;
+	font-weight: lighter;
+	margin: 0 0 0 120px;
+}
+
+.school ul{
+	margin: 0 0 0 120px;
+}
+
+.details{
+	color:#2C3E50;
+	background-color:#6DBCDB;
+	float: right;
+	padding: 5px 10px;
+}
