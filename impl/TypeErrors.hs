@@ -20,7 +20,7 @@ data TypeError = FreeVarsError Vnm
                | TAppError Term Type Type
                | NoTypeError Term
                | UnboxError Type
-               | BoxError Type
+               | BoxError Type SrcPos
                | UnMatchedTypes Type Type
                | SError Type
                | SubtypeError Type Type
@@ -31,12 +31,12 @@ data TypeError = FreeVarsError Vnm
                | NotForallType Type
                | NotForallTypeTerm Term Type
                | TypeVariableNameMismatch TVnm TVnm
-               | SplitTypeError Type
-               | SquashTypeError Type
-               | SplitSquashTypeError Type Type
-               | UnboxBoxTypeError Type Type
-               | BoxTypeError Type
-               | UnboxTypeError Type
+               | SplitTypeError Type SrcPos
+               | SquashTypeError Type SrcPos
+               | SplitSquashTypeError Type Type SrcPos
+               | UnboxBoxTypeError Type Type SrcPos
+               | BoxTypeError Type SrcPos
+               | UnboxTypeError Type SrcPos
                | NCaseBranchesMistype Type Type
                | LCaseBranchesMistype Type Type
                | LCaseScrutinyTypeError Term Type
@@ -63,7 +63,7 @@ readTypeError (FunError a) = "Type error (function): "++runPrettyTerm a
 readTypeError (AppError a b) = "Type error (application): types don't match " ++runPrettyType a++" !~ "++(runPrettyType b)
 readTypeError (NoTypeError a) = "Type error: No type (" ++runPrettyTerm a++ ") was found"  
 readTypeError (UnMatchedTypes a b) = "Type error: "++ (runPrettyType a) ++" must have the correct type with "++ (runPrettyType b)
-readTypeError (BoxError a) = "Type error: You cannot box "++ (runPrettyType a)++", you can only box types Nat and Unit"
+readTypeError (BoxError a l) = "Type error: You cannot box "++ (runPrettyType a)++" : "++(show l)
 readTypeError (UnboxError a) = "Type error: You cannot unbox "++ (runPrettyType a)++", you can only unbox types Nat and Unit"
 readTypeError (SError a) = "Type error: "++(runPrettyType a)++" must be of type ? -> ? or (? x ?)"
 readTypeError e = show e

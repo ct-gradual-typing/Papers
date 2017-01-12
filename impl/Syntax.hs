@@ -7,6 +7,7 @@ LANGUAGE
 #-}
 module Syntax (module Unbound.LocallyNameless, 
                module Unbound.LocallyNameless.Alpha,
+               SrcPos,
                n2s,
                Vnm,
                TVnm,
@@ -15,10 +16,12 @@ module Syntax (module Unbound.LocallyNameless,
                Term(..),
                isTerminating,
                is_atomic) where
-
+    
 import Unbound.LocallyNameless hiding (comp)
 import Unbound.LocallyNameless.Alpha
       
+type SrcPos = (Int, Int, String)
+
 type TVnm = Name Type
 
 data Kind = Star
@@ -56,10 +59,10 @@ type Vnm = Name Term                          -- Variable name
 data Term =
    Var Vnm                                    -- Free variable
  | Triv                                       -- Unit's inhabitant
- | Squash Type                                -- Injection of the retract
- | Split Type                                 -- Surjection of the retract
- | Box Type                                   -- Generalize to the untyped universe
- | Unbox Type                                 -- Specialize the untype universe to a specific type
+ | Squash Type SrcPos                         -- Injection of the retract
+ | Split Type SrcPos                          -- Surjection of the retract
+ | Box Type SrcPos                            -- Generalize to the untyped universe
+ | Unbox Type  SrcPos                         -- Specialize the untype universe to a specific type
  | Fun Type (Bind Vnm Term)                   -- \lambda-abstraction
  | TFun Type (Bind TVnm Term)                 -- Type lambda-abstraction
  | App Term Term                              -- Function application

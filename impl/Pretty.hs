@@ -54,8 +54,8 @@ parenTerm :: Term -> (Term -> LFreshM String) -> LFreshM String
 parenTerm t@(Var _) f = f t
 parenTerm t@Triv f = f t
 parenTerm t@Zero f = f t             
-parenTerm t@(Split ty) f = f t
-parenTerm t@(Squash ty) f = f t        
+parenTerm t@(Split ty _) f = f t
+parenTerm t@(Squash ty _) f = f t        
 parenTerm t f = f t >>= (\r -> return $ "("++r++")")
 
 prettyUnaryArg :: Term -> (Term -> LFreshM String) -> String -> LFreshM String
@@ -76,10 +76,10 @@ prettyTerm (NCase t t1 b) = do
    do
      s2 <- prettyTerm t2
      return $ "ncase "++s++" of "++s1++" || "++(n2s x)++"."++s2)
-prettyTerm (Box ty) = do
+prettyTerm (Box ty _) = do
   sty <- prettyType ty
   return $ "box<"++sty++">"
-prettyTerm (Unbox ty) = do
+prettyTerm (Unbox ty _) = do
   sty <- prettyType ty
   return $"unbox<"++sty++">"   
 prettyTerm (Var x) = return.n2s $ x
@@ -136,10 +136,10 @@ prettyTerm (Pair t1 t2) = do
   s2 <- parenTerm t2 prettyTerm
   return $ "("++s1++", "++s2++")"
   
-prettyTerm (Squash ty) = do
+prettyTerm (Squash ty _) = do
   sty <- prettyType ty
   return $ "squash<"++sty++">"
-prettyTerm (Split ty) = do
+prettyTerm (Split ty _) = do
   sty <- prettyType ty
   return $ "split<"++sty++">"
 

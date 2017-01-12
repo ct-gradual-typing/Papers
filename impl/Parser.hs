@@ -163,14 +163,16 @@ tappParse = try $ do
 boxParse = do
   symbol "box"
   ty <- between (symbol "<") (symbol ">") typeParser
-  return $ Box ty
+  p <- getPos
+  return $ Box ty p
 
 unboxParse = do
   symbol "unbox"
   symbol "<"
   ty <- typeParser
   symbol ">"
-  return $ Unbox ty
+  p <- getPos
+  return $ Unbox ty p
 
 succParse = do
   reservedOp "succ"
@@ -253,15 +255,21 @@ appParse = do
     [] -> fail "A term must be supplied"
     _ -> return $ foldl1 App l
 
+getPos = do
+  p <- getPosition
+  return (sourceLine p, sourceColumn p, sourceName p)
+
 squash = do
   symbol "squash"
   ty <- between (symbol "<") (symbol ">") typeParser
-  return $ (Squash ty)
-  
+  p <- getPos
+  return $ (Squash ty p)
+
 split = do
   symbol "split"
   ty <- between (symbol "<") (symbol ">") typeParser
-  return $ (Split ty)
+  p <- getPos
+  return $ (Split ty p)
 
 listNParse = do
   symbol "["

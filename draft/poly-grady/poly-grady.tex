@@ -37,19 +37,19 @@
 \ottmetavartabular{
  $ \ottmv{termvar} ,\, \ottmv{x} ,\, \ottmv{y} ,\, \ottmv{z} ,\, \ottmv{f} $ &  \\
  $ \ottmv{typevar} ,\, \ottmv{X} ,\, \ottmv{Y} ,\, \ottmv{Z} $ &  \\
+ $ \ottmv{blamelabels} ,\, \ell $ &  \\
  $ \ottmv{index} ,\, \ottmv{i} ,\, \ottmv{j} ,\, \ottmv{k} $ &  \\
 }}
 
 \newcommand{\ottt}{
-\ottrulehead{\ottnt{t}  ,\ \ottnt{c}  ,\ \ottnt{v}  ,\ \ottnt{s}  ,\ \ottnt{n}}{::=}{}\ottprodnewline
+\ottrulehead{\ottnt{t}  ,\ \ottnt{c}  ,\ \ottnt{s}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottmv{x}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{triv} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{squash}_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{split}_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{box} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{box}_{ \ottnt{A} } }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{unbox}_{ \ottnt{A} } }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{unbox} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{squash}^{ \ell }_{ \ottnt{U} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{split}^{ \ell }_{ \ottnt{U} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{box}^{ \ell } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{unbox}^{ \ell } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{blame}_{ \ottnt{A} }\, \ell }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ [  \ottnt{A}  ]  \ottnt{t} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t} }{}{}{}{}\ottprodnewline
@@ -63,6 +63,22 @@
 \ottprodline{|}{\ottsym{[]}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \ottnt{t}  ::  \ottnt{t'} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{t}  \ottsym{)}} {\textsf{S}}{}{}{}}
+
+\newcommand{\ottn}{
+\ottrulehead{\ottnt{n}  ,\ \ottnt{m}}{::=}{}\ottprodnewline
+\ottfirstprodline{|}{\ottsym{0}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathsf{succ} \, \ottnt{n}}{}{}{}{}}
+
+\newcommand{\ottv}{
+\ottrulehead{\ottnt{v}}{::=}{}\ottprodnewline
+\ottfirstprodline{|}{ \mathsf{triv} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{squash}^{ \ell }_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{split}^{ \ell }_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{box}^{ \ell }_{ \ottnt{A} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{unbox}^{ \ell }_{ \ottnt{A} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottnt{n}}{}{}{}{}}
 
 \newcommand{\ottK}{
 \ottrulehead{\ottnt{K}}{::=}{}\ottprodnewline
@@ -90,6 +106,8 @@
 
 \newcommand{\ottgrammar}{\ottgrammartabular{
 \ottt\ottinterrule
+\ottn\ottinterrule
+\ottv\ottinterrule
 \ottK\ottinterrule
 \ottA\ottinterrule
 \ottG\ottafterlastrule
@@ -355,7 +373,7 @@
 \newcommand{\ottdruleBoxName}[0]{\ottdrulename{Box}}
 \newcommand{\ottdruleBox}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
+ \Gamma  \vdash   \mathsf{box}^{ \ell }   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
 {\ottdruleBoxName}{}%
 }}
 
@@ -363,7 +381,7 @@
 \newcommand{\ottdruleUnboxName}[0]{\ottdrulename{Unbox}}
 \newcommand{\ottdruleUnbox}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
+ \Gamma  \vdash   \mathsf{unbox}^{ \ell }   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
 {\ottdruleUnboxName}{}%
 }}
 
@@ -372,7 +390,7 @@
 \newcommand{\ottdrulesquashP}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
 }{
- \Gamma  \vdash   \mathsf{squash}_{ \ottnt{U} }   :  \ottnt{U}  \rightarrow  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash   \mathsf{squash}^{ \ell }_{ \ottnt{U} }   :  \ottnt{U}  \rightarrow  \ottsym{\mbox{?}} }{%
 {\ottdrulesquashPName}{}%
 }}
 
@@ -381,7 +399,7 @@
 \newcommand{\ottdrulesplitP}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
 }{
- \Gamma  \vdash   \mathsf{split}_{ \ottnt{U} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{U} }{%
+ \Gamma  \vdash   \mathsf{split}^{ \ell }_{ \ottnt{U} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{U} }{%
 {\ottdrulesplitPName}{}%
 }}
 
@@ -522,6 +540,14 @@
 {\ottdruleSubName}{}%
 }}
 
+
+\newcommand{\ottdruleblameName}[0]{\ottdrulename{blame}}
+\newcommand{\ottdruleblame}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash   \mathsf{blame}_{ \ottnt{A} }\, \ell   :  \ottnt{A} }{%
+{\ottdruleblameName}{}%
+}}
+
 \newcommand{\ottdefntype}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{t}  :  \ottnt{A} $}{}
 \ottusedrule{\ottdrulevarP{}}
 \ottusedrule{\ottdruleBox{}}
@@ -543,6 +569,7 @@
 \ottusedrule{\ottdruleLam{}}
 \ottusedrule{\ottdruletypeApp{}}
 \ottusedrule{\ottdruleSub{}}
+\ottusedrule{\ottdruleblame{}}
 \end{ottdefnblock}}
 
 
@@ -553,19 +580,35 @@
 %% defn red
 \newcommand{\ottdrulerdXXretracTName}[0]{\ottdrulename{rd\_retracT}}
 \newcommand{\ottdrulerdXXretracT}[1]{\ottdrule[#1]{%
-\ottpremise{  \cdot   \vdash  \ottnt{t}  :  \ottnt{A} }%
 }{
- \mathsf{unbox}_{ \ottnt{A} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{B} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
+ \mathsf{unbox}^{ \ell_{{\mathrm{1}}} }_{ \ottnt{A} }  \, \ottsym{(}   \mathsf{box}^{ \ell_{{\mathrm{2}}} }_{ \ottnt{A} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
 {\ottdrulerdXXretracTName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXretracTBName}[0]{\ottdrulename{rd\_retracTB}}
+\newcommand{\ottdrulerdXXretracTB}[1]{\ottdrule[#1]{%
+\ottpremise{ \ottnt{A}  \neq  \ottnt{B} }%
+}{
+ \mathsf{unbox}^{ \ell_{{\mathrm{1}}} }_{ \ottnt{A} }  \, \ottsym{(}   \mathsf{box}^{ \ell_{{\mathrm{2}}} }_{ \ottnt{B} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow   \mathsf{blame}_{ \ottnt{A} }\, \ell_{{\mathrm{1}}} }{%
+{\ottdrulerdXXretracTBName}{}%
 }}
 
 
 \newcommand{\ottdrulerdXXretractUName}[0]{\ottdrulename{rd\_retractU}}
 \newcommand{\ottdrulerdXXretractU}[1]{\ottdrule[#1]{%
-\ottpremise{  \cdot   \vdash  \ottnt{t}  :  \ottnt{U} }%
 }{
- \mathsf{split}_{ \ottnt{U} }  \, \ottsym{(}   \mathsf{squash}_{ \ottnt{U} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
+ \mathsf{split}^{ \ell_{{\mathrm{1}}} }_{ \ottnt{U} }  \, \ottsym{(}   \mathsf{squash}^{ \ell_{{\mathrm{2}}} }_{ \ottnt{U} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
 {\ottdrulerdXXretractUName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXretractUBName}[0]{\ottdrulename{rd\_retractUB}}
+\newcommand{\ottdrulerdXXretractUB}[1]{\ottdrule[#1]{%
+\ottpremise{ \ottnt{U_{{\mathrm{1}}}}  \neq  \ottnt{U_{{\mathrm{2}}}} }%
+}{
+ \mathsf{split}^{ \ell_{{\mathrm{1}}} }_{ \ottnt{U_{{\mathrm{1}}}} }  \, \ottsym{(}   \mathsf{squash}^{ \ell_{{\mathrm{1}}} }_{ \ottnt{U_{{\mathrm{2}}}} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow   \mathsf{blame}_{ \ottnt{U_{{\mathrm{1}}}} }\, \ell_{{\mathrm{1}}} }{%
+{\ottdrulerdXXretractUBName}{}%
 }}
 
 
@@ -723,15 +766,6 @@
 }}
 
 
-\newcommand{\ottdrulerdXXlamName}[0]{\ottdrulename{rd\_lam}}
-\newcommand{\ottdrulerdXXlam}[1]{\ottdrule[#1]{%
-\ottpremise{\ottnt{t}  \rightsquigarrow  \ottnt{t'}}%
-}{
- \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t}   \rightsquigarrow   \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t'} }{%
-{\ottdrulerdXXlamName}{}%
-}}
-
-
 \newcommand{\ottdrulerdXXappOneName}[0]{\ottdrulename{rd\_app1}}
 \newcommand{\ottdrulerdXXappOne}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{1}}}}}%
@@ -802,18 +836,11 @@
 {\ottdrulerdXXtypeAppName}{}%
 }}
 
-
-\newcommand{\ottdrulerdXXLamName}[0]{\ottdrulename{rd\_Lam}}
-\newcommand{\ottdrulerdXXLam}[1]{\ottdrule[#1]{%
-\ottpremise{\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}}%
-}{
- \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t_{{\mathrm{1}}}}   \rightsquigarrow   \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t_{{\mathrm{2}}}} }{%
-{\ottdrulerdXXLamName}{}%
-}}
-
-\newcommand{\ottdefnred}[1]{\begin{ottdefnblock}[#1]{$\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}$}{}
+\newcommand{\ottdefnred}[1]{\begin{ottdefnblock}[#1]{$\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}$}{\ottcom{call by name}}
 \ottusedrule{\ottdrulerdXXretracT{}}
+\ottusedrule{\ottdrulerdXXretracTB{}}
 \ottusedrule{\ottdrulerdXXretractU{}}
+\ottusedrule{\ottdrulerdXXretractUB{}}
 \ottusedrule{\ottdrulerdXXsucc{}}
 \ottusedrule{\ottdrulerdXXncaseZero{}}
 \ottusedrule{\ottdrulerdXXncaseSucc{}}
@@ -832,7 +859,6 @@
 \ottusedrule{\ottdrulerdXXprojOne{}}
 \ottusedrule{\ottdrulerdXXprojTwo{}}
 \ottusedrule{\ottdrulerdXXetaP{}}
-\ottusedrule{\ottdrulerdXXlam{}}
 \ottusedrule{\ottdrulerdXXappOne{}}
 \ottusedrule{\ottdrulerdXXappTwo{}}
 \ottusedrule{\ottdrulerdXXfst{}}
@@ -841,7 +867,6 @@
 \ottusedrule{\ottdrulerdXXpairTwo{}}
 \ottusedrule{\ottdrulerdXXtypeBeta{}}
 \ottusedrule{\ottdrulerdXXtypeApp{}}
-\ottusedrule{\ottdrulerdXXLam{}}
 \end{ottdefnblock}}
 
 
@@ -861,7 +886,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        74 good    0 bad
-Definition rule clauses: 135 good    0 bad
+Definition rules:        75 good    0 bad
+Definition rule clauses: 134 good    0 bad
 \end{verbatim}
 \end{document}

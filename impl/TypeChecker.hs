@@ -207,24 +207,24 @@ typeCheck_aux (Succ t) Nat = typeCheck_aux t Nat >>= (return.ATSucc)
 typeCheck_aux (Succ _) ty = TE.throwError $ TE.SuccTypeError ty
 typeCheck_aux Triv Unit = return $ ATTriv
 typeCheck_aux Triv ty = TE.throwError $ TE.TrivTypeError ty
-typeCheck_aux (Split s@(Arr U U)) ty@(Arr U (Arr U U)) = return $ ATSplit (Arr U s) ty
-typeCheck_aux (Split s@(Prod U U)) ty@(Arr U (Prod U U)) = return $ ATSplit (Arr U s) ty
-typeCheck_aux (Split _) ty = TE.throwError $ TE.SplitTypeError ty
-typeCheck_aux (Squash s@(Arr U U)) ty@(Arr (Arr U U) U) = return $ ATSquash (Arr s U) ty
-typeCheck_aux (Squash s@(Prod U U)) ty@(Arr (Prod U U) U) = return $ ATSquash (Arr s U) ty
-typeCheck_aux (Squash _) ty = TE.throwError $ TE.SquashTypeError ty
-typeCheck_aux (Box s) ty@(Arr t U) | s `aeq` t = do
+typeCheck_aux (Split s@(Arr U U) l) ty@(Arr U (Arr U U)) = return $ ATSplit (Arr U s) ty
+typeCheck_aux (Split s@(Prod U U) l) ty@(Arr U (Prod U U)) = return $ ATSplit (Arr U s) ty
+typeCheck_aux (Split _ l) ty = TE.throwError $ TE.SplitTypeError ty l
+typeCheck_aux (Squash s@(Arr U U) l) ty@(Arr (Arr U U) U) = return $ ATSquash (Arr s U) ty
+typeCheck_aux (Squash s@(Prod U U) l) ty@(Arr (Prod U U) U) = return $ ATSquash (Arr s U) ty
+typeCheck_aux (Squash _ l) ty = TE.throwError $ TE.SquashTypeError ty l
+typeCheck_aux (Box s l) ty@(Arr t U) | s `aeq` t = do
   b <- s `subtype` Simple
   if b
   then return $ ATBox (Arr s U) s
-  else TE.throwError $ TE.BoxTypeError ty
-typeCheck_aux (Box _) ty = TE.throwError $ TE.BoxTypeError ty
-typeCheck_aux (Unbox s) ty@(Arr U t) | s `aeq` t = do
+  else TE.throwError $ TE.BoxTypeError ty l
+typeCheck_aux (Box _ l) ty = TE.throwError $ TE.BoxTypeError ty l
+typeCheck_aux (Unbox s l) ty@(Arr U t) | s `aeq` t = do
   b <- s `subtype` Simple
   if b
   then return $ ATUnbox (Arr U s) s
-  else TE.throwError $ TE.UnboxTypeError ty
-typeCheck_aux (Unbox _) ty = TE.throwError $ TE.UnboxTypeError ty
+  else TE.throwError $ TE.UnboxTypeError ty l
+typeCheck_aux (Unbox _ l) ty = TE.throwError $ TE.UnboxTypeError ty l
 typeCheck_aux t ty = do
   a <- inferType t
   return $ ATSub ty a
@@ -268,25 +268,25 @@ inferType (LCase t t1 b) = do
                       return $ ATLCase ty1 at at1 (bind x (bind y at2))))
         _ -> TE.throwError $ TE.LCaseScrutinyTypeError t tty
 
-inferType (Box ty) = do
+inferType (Box ty l) = do
              b <- ty `subtype` Simple
              if b
              then return $ ATBox (Arr ty U) ty
-             else TE.throwError $ TE.BoxError ty
+             else TE.throwError $ TE.BoxError ty l
 
-inferType (Unbox ty) = do
+inferType (Unbox ty l) = do
              b <- ty `subtype` Simple
              if b
              then return $ ATUnbox (Arr U ty) ty
-             else TE.throwError $ TE.BoxError ty
+             else TE.throwError $ TE.BoxError ty l
 
-inferType (Split ty@(Arr U U)) = return $ ATSplit (Arr U ty) ty
-inferType (Split ty@(Prod U U)) = return $ ATSplit (Arr U ty) ty
-inferType (Split ty) = TE.throwError $ TE.SplitTypeError ty
+inferType (Split ty@(Arr U U) l) = return $ ATSplit (Arr U ty) ty
+inferType (Split ty@(Prod U U) l) = return $ ATSplit (Arr U ty) ty
+inferType (Split ty l) = TE.throwError $ TE.SplitTypeError ty l
 
-inferType (Squash ty@(Arr U U)) = return $ ATSquash (Arr ty U) ty
-inferType (Squash ty@(Prod U U)) = return $ ATSquash (Arr ty U) ty
-inferType (Squash ty) = TE.throwError $ TE.SquashTypeError ty
+inferType (Squash ty@(Arr U U) l) = return $ ATSquash (Arr ty U) ty
+inferType (Squash ty@(Prod U U) l) = return $ ATSquash (Arr ty U) ty
+inferType (Squash ty l) = TE.throwError $ TE.SquashTypeError ty l
 
 inferType Zero = return ATZero
 inferType (Succ t) = do

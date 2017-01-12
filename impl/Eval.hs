@@ -57,26 +57,25 @@ evalTerm' (App t1 t2) = do
   e1 <- evalTerm' t1
   case e1 of
     Fun ty b -> lunbind b $ (\(x,e) -> evalTerm' $ subst x t2 e)
-    Split ty -> do
+    Split ty l1 -> do
         e2 <- evalTerm' t2
         case e2 of
-          App (Squash ty') e2' -> if ty `aeq` ty'
-                                  then return e2'
-                                  else throwError $ SplitSquashTypeError ty ty'
+          App (Squash ty' l2) e2' -> if ty `aeq` ty'
+                                     then return e2'
+                                     else throwError $ SplitSquashTypeError ty ty' l1
           _ -> return $ App e1 e2
-    Unbox ty -> do
+    Unbox ty l1 -> do
         e2 <- evalTerm' t2
         case e2 of
-          App (Box ty') e2' -> do
-                          at2 <- infer e2'
-                          if (getType at2) `aeq` ty
+          App (Box ty' l2) e2' -> do
+                          if (ty `aeq` ty')
                           then return e2'
-                          else throwError $ UnboxBoxTypeError (getType at2) ty                          
+                          else throwError $ UnboxBoxTypeError ty ty' l1
           _ -> return $ App e1 e2
-    Box ty -> do
+    Box ty _ -> do
       e2 <- evalTerm' t2
       return $ App e1 e2
-    Squash ty -> do
+    Squash ty _ -> do
       e2 <- evalTerm' t2
       return $ App e1 e2
     _ -> return $ App e1 t2
