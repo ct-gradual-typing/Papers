@@ -1,0 +1,20 @@
+-- This file contains several convient functions for working with
+-- skeletons.
+
+squashar : (? -> ?) -> ?
+squashar = \(x : ? -> ?) -> squash<? -> ?> x;
+
+splitar : ? -> (? -> ?)
+splitar = \(x : ?) -> split<? -> ?> x;
+
+squashpd : (?, ?) -> ?
+squashpd = \(x : (?, ?)) -> squash<(?, ?)> x;
+
+splitpd : ? -> (?, ?)
+splitpd = \(x : ?) -> split<(?, ?)> x;
+
+squashar_arg2 : (? -> ? -> ?) -> ?
+squashar_arg2 = \(x : ? -> ? -> ?) -> squashar (\(y:?)->squashar (\(z:?) -> x y z));
+
+splitar_tar : (? -> ?) -> (? -> (? -> ?))
+splitar_tar = \(f : ? -> ?) -> \(x : ?) -> splitar (f x);
