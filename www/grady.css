@@ -88,14 +88,19 @@ h2{
 	padding: 0 10px 5px;
 	font-size: 18pt;
 	line-height: 22pt;
-	font-weight: lighter;
+	font-weight: bold;
 	font-style: italic;
 }
 
 h3{
-	font-size: 24pt;
-	font-weight: lighter;
+	font-size: 16pt;
+	font-weight: bold;
 	margin: 0;
+}
+
+p{
+    margin: 0;
+	padding: 0 10px 5px;
 }
 
 
@@ -135,82 +140,14 @@ nav a:hover{
 	border-bottom: 1px dashed #2C3E50;
 }
 
-/************************************************************/
-/*Experience Section Styling*/
-/************************************************************/
-.experience h4{
-	font-size: 18pt;
-	font-weight: lighter;
-	margin: 0;
-}
 
-.experience .title{
-	font-size: 12pt;
-	font-weight: bold;
-	font-style: italic;
-	margin-bottom: 10px;
-}
 
-.experience .dates{
-	font-size: 12pt;
-	font-style: italic;
-	font-weight: bold;
-	float: right;
-}
-
-.experience .description{
-	font-size: 11pt;
-}
-
-.experience ul{
-	margin: 0;
-	
-}
-
-.experience .responsibilities{
-	font-size: 10pt;
-	-webkit-column-count: 2;
-	-moz-column-count: 2;
-	column-count: 2;
-}
-
-.experience, .school{
-	border-left: 10px solid #2C3E50;
+.command{
+    border-left: 10px solid #2C3E50;
 	border-bottom: 1px dashed #2C3E50;
 	border-right: 1px dashed #2C3E50;
 	border-top: 1px dashed #2C3E50;
-	margin: 20px;
+	margin: 10px;
 	padding: 5px 10px 5px 10px;
 	overflow: auto;
-}
-
-/************************************************************/
-/*Education Styling*/
-/************************************************************/
-
-
-.school img{
-	float: left;
-}
-
-
-.school h3{
-	margin: 0 0 0 120px;
-}
-
-.school h4{
-	font-size: 14pt;
-	font-weight: lighter;
-	margin: 0 0 0 120px;
-}
-
-.school ul{
-	margin: 0 0 0 120px;
-}
-
-.details{
-	color:#2C3E50;
-	background-color:#6DBCDB;
-	float: right;
-	padding: 5px 10px;
 }

@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>How To Use</title>
+		<title>How To Use Grady</title>
 		<meta charset="utf-8" />
-		<script src="https://hcb.gru.edu/auger/scripts/auger.js"></script>
-		<link rel="stylesheet" type="text/css" href="selfie.css">
+		<link rel="stylesheet" type="text/css" href="grady.css">
 	</head>
 	<body>
 	<div id="wrapper">
 		<header>
-			<h1>How To Use</h1>
+            <h1><img  src="logo_redBackground.png" alt="Grady Logo" width="250" height="57"></h1>
 		</header>
 		<nav>
 			<ul>
@@ -25,15 +24,70 @@
 			</ul>
 		</nav>
 		<main>
-			
-	</main>
-	<footer>
-			Copyright &copy; 2016, Michael Townsend
-			<br>
-			<b>Email: </b><a href="MiTownsend@augusta.edu">MiTownsend@augusta</a>
-			<br>
-			
-	</footer>
+            <div id="Intro">
+            <h2>Introduction to Grady</h2>
+                <p>
+                   Grady includes a Repl allowing users to experience the language.  The Repl provides typechecking
+                   of terms with helpful error messages, helping new users become accustomed to the language syntax.
+                   Additionally, Grady is a highly expressive language allowing everything from programming in 
+                   untyped lambda-calculus to polymorphism.  
+                </p>
+            </div>
+			<div id="Replcmds">
+                <h2>Commands</h2>
+                <div class="command">
+                    <h3>:help/:h</h3>
+                    <p>
+                       At any time in the Repl use this command to enter into the help menu.  From here you 
+                       will see a list of all commands available.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:type/:t &lt;term&gt;</h3>
+                    <p>
+                       This command allows you to typecheck a term.  If the term typechecks, the term's type is 
+                       returned.  If the term does not typecheck, then the appropriate error message is returned.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:show/:s &lt;term&gt;</h3>
+                    <p>
+                       The show command will display the abstract syntax type of the provided term.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:unfold/:u &lt;term&gt;</h3>
+                    <p>
+                       Unfold displays your term and where appropriate substitutes terms from 
+                       the context into your term.  In this way a function that is composed of several
+                       other functions can be seen in it entirety.  
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:dump/:d</h3>
+                    <p>
+                       The dump command will display the terms in the context.  These will be displayed in the form
+                       "let &lt;variable&gt; = &lt;term&gt;"
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:load/:l &lt;filename&gt;</h3>
+                    <p>
+                       You may load an external file of definitions using this command.  The terms are all
+                       typedchecked and then add to the context where they are usable in the Repl.  The loading
+                       is done lazily, so if you have several definitions in your external file and the third one 
+                       does not typecheck, the first two will still be loaded into the context.
+                    </p>
+                </div>
+            </div>
+            <div id="syntax">
+                <h2>Syntax</h2>
+            </div>
+        </main>
+        <footer>
+                Copyright &copy; 2017, Dr. Harley Eades, Michael Townsend
+                <br>
+        </footer>
 	</div>
 </body>
 </html>
