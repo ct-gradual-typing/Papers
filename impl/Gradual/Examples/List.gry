@@ -6,7 +6,7 @@ tail = \(X<:*) -> \(l:[X]) ->
 
 append : forall (A <: Simple).([A] -> [A] -> [A])
 append = \(A <: Simple) ->
-           ([[A] -> [A] -> [A]]fixp)
+           ([[A] -> [A] -> [A]]fix)
              (\(r : [A] -> [A] -> [A]) -> \(l1 : [A]) -> \(l2 : [A]) ->
                case l1 of
                  [] -> l2,
@@ -14,7 +14,7 @@ append = \(A <: Simple) ->
 
 length : forall (A <: Simple).([A] -> Nat)
 length = \(A <: Simple) -> 
-           ([[A] -> Nat]fixp)
+           ([[A] -> Nat]fix)
              (\(r : [A] -> Nat) -> \(l : [A]) ->
                case l of
                  [] -> 0,
@@ -22,7 +22,7 @@ length = \(A <: Simple) ->
 
 map : forall (A <: Simple).(forall (B <: Simple).((A -> B) -> ([A] -> [B])))
 map = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B) ->
-        ([[A] -> [B]]fixp)
+        ([[A] -> [B]]fix)
            (\(r : [A] -> [B]) -> \(l : [A]) ->
                    case l of
                      [] -> [B][],
@@ -30,7 +30,7 @@ map = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B) ->
 
 foldr : forall (A <: Simple).(forall (B <: Simple).((A -> B -> B) -> B -> ([A] -> B)))
 foldr = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B -> B) -> \(b : B) ->
-          ([[A] -> B]fixp)
+          ([[A] -> B]fix)
             (\(r : [A] -> B) -> \(l : [A]) ->
                    case l of
                      [] -> b,
@@ -38,18 +38,18 @@ foldr = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B -> B) -> \(b : B) ->
 
 foldl : forall (A <: Simple).(forall (B <: Simple).((B -> A -> B) -> (B -> [A] -> B)))
 foldl = \(A <: Simple) -> \(B <: Simple) -> \(f : B -> A -> B) ->
-          ([B -> [A] -> B]fixp)
+          ([B -> [A] -> B]fix)
             (\(r : B -> [A] -> B) -> \(b : B) -> \(l : [A]) ->
                    case l of
                      [] -> b,
                      (a :: as) -> r (f b a) as);
 
 reverse : forall (A <: Simple).([A] -> [A])
-reverse = \(A <: Simple) -> \(l : [A]) -> ([[A]][A]foldl) (\(acc:[A]) -> \(x:A) -> x :: acc) [] l;
+reverse = \(A <: Simple) -> \(l : [A]) -> ([[A]][A]foldl) (\(acc:[A]) -> \(x:A) -> x :: acc) ([A][]) l;
 
 zipWith : forall (A <: Simple).(forall (B <: Simple).(forall (C <: Simple).((A -> B -> C) -> ([A] -> [B] -> [C]))))
 zipWith = \(A <: Simple) -> \(B <: Simple) -> \(C <: Simple) -> \(f : A -> B -> C) ->
-            ([[A] -> [B] -> [C]]fixp)
+            ([[A] -> [B] -> [C]]fix)
               (\(r : [A] -> [B] -> [C]) -> \(l1 : [A]) -> \(l2 : [B]) ->
                  case l1 of
                    [] -> [C][],
