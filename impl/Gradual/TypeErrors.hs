@@ -23,10 +23,13 @@ data TypeError = FreeVarsError Vnm
                | SError Type
                | SubtypeError Type Type
                | TypeMismatch Type Type
-               | NotProdType Term Type
+               | NotProdTypeTerm Term Type
                | NotArrowTypeTerm Term Type
                | NotArrowType Type
                | NotForallType Type
+               | NotNatType Type                 
+               | NotListType Type
+               | NotProdType Type                                  
                | NotForallTypeTerm Term Type
                | TypeVariableNameMismatch TVnm TVnm
                | NCaseBranchesMistype Type Type
@@ -40,6 +43,10 @@ data TypeError = FreeVarsError Vnm
                | ZeroTypeError Type
                | SuccTypeError Type
                | CastError Type Type
+               | BoxTypeError Type SrcPos
+               | UnboxTypeError Type SrcPos
+               | UnboxError Type
+               | BoxError Type SrcPos                 
   deriving(Show)
 
 instance Monoid TypeError where

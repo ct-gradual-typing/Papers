@@ -39,8 +39,8 @@ import Pretty
 ------------------------------------------------------------------------
 lexer = haskellStyle {
   Token.reservedNames   = ["of","0","?","triv","proj1","proj2","forall",
-                           "ncase","Nat","Unit", "||", "[]", ":", "lcase"],
-  Token.reservedOpNames = ["->", "succ", "\\", "proj1", "proj2", "forall", "ncase", ":", "lcase"]
+                           "ncase","box","unbox","Nat","Unit", "||", "[]", ":", "lcase"],
+  Token.reservedOpNames = ["->", "succ", "\\","box","unbox", "proj1", "proj2", "forall", "ncase", ":", "lcase"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -103,11 +103,13 @@ list = do
   symbol "]"
   return $ List ty
 
+tySimple = parseConst "Simple" Simple
+
 -- The initial expression parsing table for types.
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tyCastable
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tyCastable <|> try tySimple
                                       <|> try forall <|> try prod <|> try list <|> tvar
 
 parseType :: String -> Either String Type
@@ -124,7 +126,8 @@ int2term 0 = Zero
 int2term n = Succ $ int2term $ n-1
 
 aterm = try (parens pairParse) <|> parens expr    <|> try intParse
-                               <|> try trivParse  <|> try emptyListParse
+                               <|> try trivParse  <|> try boxParse
+                               <|> try unboxParse <|> try emptyListParse
                                <|> try listNParse <|> var                                
 expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
                            <|> try caseParse <|> tappParse <|> try listParse <|> appParse <|> parens expr <?> "parse error")
@@ -136,6 +139,20 @@ intParse = integer >>= return.int2term
 
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
+
+boxParse = do
+  symbol "box"
+  ty <- between (symbol "<") (symbol ">") typeParser
+  p <- getPos
+  return $ Box ty p
+
+unboxParse = do
+  symbol "unbox"
+  symbol "<"
+  ty <- typeParser
+  symbol ">"
+  p <- getPos
+  return $ Unbox ty p
 
 tfunParse = do
   reservedOp "\\"

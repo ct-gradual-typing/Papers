@@ -10,6 +10,7 @@ module Syntax (module Unbound.LocallyNameless,
                n2s,
                Vnm,
                TVnm,
+               SrcPos,
                Kind(..),
                Type(..),
                Term(..),
@@ -19,6 +20,7 @@ module Syntax (module Unbound.LocallyNameless,
 import Unbound.LocallyNameless hiding (comp)
 import Unbound.LocallyNameless.Alpha
       
+type SrcPos = (Int, Int, String)
 type TVnm = Name Type
 
 data Kind = Star
@@ -28,6 +30,7 @@ data Type =                -- Types:
    TVar TVnm               -- Type Variables
  | Top                     -- Top type
  | Consistent              -- Castable type
+ | Simple
  | Nat                     -- Natural number type
  | Unit                    -- Unit type
  | U                       -- Untyped universe
@@ -56,6 +59,8 @@ type Vnm = Name Term                          -- Variable name
 data Term =
    Var Vnm                                    -- Free variable
  | Triv                                       -- Unit's inhabitant
+ | Box Type SrcPos                            -- Generalize to the untyped universe
+ | Unbox Type  SrcPos                         -- Specialize the untype universe to a specific type   
  | Fun Type (Bind Vnm Term)                   -- \lambda-abstraction
  | TFun Type (Bind TVnm Term)                 -- Type lambda-abstraction
  | App Term Term                              -- Function application

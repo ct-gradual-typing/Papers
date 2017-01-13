@@ -6,7 +6,15 @@ grammar
   t, c, v, s, n :: 't_' ::=                    
     | x                   ::   :: var          
     | triv                ::   :: unit         
-    {{tex \mathsf{triv} }}    
+    {{tex \mathsf{triv} }}
+    | box                 ::   :: gen          
+    {{tex \mathsf{box} }}
+    | box A               :: M :: genA
+    {{tex \mathsf{box}_{[[A]]} }}        
+    | unbox A             :: M :: specA         
+    {{tex \mathsf{unbox}_{[[A]]} }}
+    | unbox               ::   :: spec
+    {{tex \mathsf{unbox} }}
     | Lam X <: A . t      ::    :: TypeLam
     {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
     | [ A ] t             ::   :: TypeApp
@@ -44,6 +52,8 @@ grammar
     {{tex \top }}
     | Cons                ::   :: Consistent
     {{tex \mathbb{C} }}
+    | SL                  ::   :: Simple
+    {{tex \mathbb{S} }}
     | Unit                ::   :: term    
     {{tex \mathsf{Unit} }}
     | Nat                 ::   :: nat     
@@ -185,16 +195,8 @@ defn
     -------------- :: Top
     G |- A <: Top
 
-    G Ok
-    ---------------- :: Nat
-    G |- Nat <: Cons
-
-    G Ok
-    ----------------- :: Unit
-    G |- Unit <: Cons
-
     G |- A <: Cons
-    ------------------- :: ListSL
+    ------------------- :: ListC
     G |- List A <: Cons   
 
     G Ok
@@ -208,6 +210,29 @@ defn
     G |- A <: Cons && G |- B <: Cons
     -------------------------------- :: ProdC
     G |- (A x B) <: Cons 
+
+    --------------- :: SL
+    G |- SL <: Cons
+
+    G Ok
+    ---------------- :: NatS
+    G |- Nat <: SL
+
+    G Ok
+    ----------------- :: UnitS
+    G |- Unit <: SL
+
+    G |- A <: SL
+    ------------------- :: ListS
+    G |- List A <: SL
+
+    G |- A <: SL && G |- B <: SL
+    -------------------------------- :: ArrowS
+    G |- (A -> B) <: SL
+
+    G |- A <: SL && G |- B <: SL
+    -------------------------------- :: ProdS
+    G |- (A x B) <: SL 
 
     G |- A <: B
     --------------------- :: List
@@ -229,6 +254,9 @@ defn
     G |- A ~ B :: :: typecons :: 'C_'
     {{tex [[G]] \vdash [[A]] \sim [[B]] }} by
 
+   ---------- :: Refl
+   G |- A ~ A
+   
    G |- A <: Cons
    -------------- :: Box
    G |- A ~ ?
@@ -236,6 +264,10 @@ defn
    G |- A <: Cons
    -------------- :: Unbox
    G |- ? ~ A
+
+   G |- A ~ B
+   ---------------------------- :: List
+   G |- (List A) ~ (List B)
 
    G |- A2 ~ A1 && G |- B1 ~ B2
    ---------------------------- :: Arrow
@@ -245,6 +277,10 @@ defn
    ---------------------------- :: Prod
    G |- (A1 x B1) ~ (A2 x B2)
 
+   G, X <: A |- B1 ~ B2
+   ------------------------------------------------ :: Forall
+   G |- (Forall (X <: A).B1) ~ (Forall (X <: A).B2)
+
 defn
     G |- t : A :: :: type :: ''
     {{tex [[G]] \vdash [[t]] : [[A]] }} by
@@ -252,6 +288,12 @@ defn
     x : A elem G && G Ok
     -------------------- :: varP
     G |- x : A
+
+    ------------------------------------ :: Box
+    G |- box : Forall (X <: SL).(X -> ?)
+    
+    -------------------------------------- :: Unbox
+    G |- unbox : Forall (X <: SL).(? -> X)
 
     G Ok
     ---------------- :: unitP

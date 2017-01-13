@@ -16,7 +16,9 @@ import Pretty
 
 data ATerm =
    ATVar Type (Name ATerm)        
- | ATTriv                         
+ | ATTriv
+ | ATBox Type Type                     
+ | ATUnbox Type Type                      
  | ATFun  Type Type (Bind (Name ATerm) ATerm) 
  | ATTFun Type Type (Bind (Name ATerm) ATerm)
  | ATApp Type ATerm ATerm         
@@ -40,6 +42,8 @@ instance Alpha ATerm
 getType :: ATerm -> Type
 getType (ATVar ty _) = ty
 getType ATTriv = Unit
+getType (ATBox ty _) = ty
+getType (ATUnbox ty _) = ty                 
 getType (ATFun ty _ _) = ty
 getType (ATTFun ty _ _) = ty
 getType (ATApp ty _ _) = ty
@@ -84,6 +88,21 @@ requireArrow :: ATerm -> TCM (Type,Type)
 requireArrow (getType -> U) = return (U, U)
 requireArrow (getType -> Arr t1 t2) = return (t1, t2)
 requireArrow (getType -> ty) = TE.throwError $ TE.NotArrowType ty
+
+requireProd :: ATerm -> TCM (Type,Type)
+requireProd (getType -> U) = return (U, U)
+requireProd (getType -> Prod t1 t2) = return (t1, t2)
+requireProd (getType -> ty) = TE.throwError $ TE.NotProdType ty                               
+
+requireNat :: ATerm -> TCM ()
+requireNat (getType -> U) = return ()
+requireNat (getType -> Nat) = return ()
+requireNat (getType -> ty) = TE.throwError $ TE.NotNatType ty
+
+requireList :: ATerm -> TCM Type
+requireList (getType -> U) = return U
+requireList (getType -> List t) = return t
+requireList (getType -> ty) = TE.throwError $ TE.NotListType ty
 
 requireForall :: ATerm -> TCM (Name Type, Type, Type)
 requireForall (getType -> Forall t1 b) = lunbind b $ (\(x,t2) -> return (x,t1,t2))
@@ -132,6 +151,18 @@ subtype (Arr s1 s2) Consistent = do
 subtype (Prod s1 s2) Consistent = do
   b1 <- subtype s1 Consistent
   b2 <- subtype s2 Consistent
+  return $ b1 && b2
+subtype Simple Consistent = return True
+subtype Nat Simple = ctx_ok >> return True
+subtype Unit Simple = ctx_ok >> return True
+subtype (List s) Simple = s `subtype` Simple
+subtype (Arr s1 s2) Simple = do
+  b1 <- subtype s1 Simple
+  b2 <- subtype s2 Simple
+  return $ b1 && b2
+subtype (Prod s1 s2) Simple = do
+  b1 <- subtype s1 Simple
+  b2 <- subtype s2 Simple
   return $ b1 && b2         
 subtype (TVar x) t2 = do
   ctx_ok
@@ -158,8 +189,9 @@ runTC :: Term -> Type -> Either TE.TypeError ATerm
 runTC t ty = runLFreshM $ TE.runExceptT $ typeCheck t ty
 
 cons :: Type -> Type -> TCM Bool
+cons ty ty' | ty `aeq` ty' = return True
 cons ty U  = ty `subtype` Consistent
-cons U ty = ty `subtype` Consistent
+cons U ty = ty `subtype` Consistent            
 cons (Arr ty1 ty2) (Arr sy1 sy2) = do
   b1 <- cons sy1 ty1
   b2 <- cons ty2 sy2
@@ -168,6 +200,11 @@ cons (Prod ty1 ty2) (Prod sy1 sy2) = do
   b1 <- cons sy1 ty1
   b2 <- cons ty2 sy2
   return $ b1 && b2
+cons (List ty1) (List ty2) = ty1 `cons` ty2
+cons (Forall ty b1) (Forall ty' b2) = do
+  reqSameType ty ty'
+  lunbind b1 $ (\(x,t1) -> lunbind b2 $ (\(y,t2) ->
+        extend_tctx x ty $ extend_tctx y ty $ t1 `cons` t2))
 cons _ _ = return False
 
 typeCheck :: Term -> Type -> TE.ExceptT TE.TypeError LFreshM ATerm
@@ -186,7 +223,7 @@ typeCheck_aux (Pair t1 t2) ty@(Prod ty1 ty2) = do
   a1 <- typeCheck_aux t1 ty1
   a2 <- typeCheck_aux t2 ty2
   return $ ATPair ty a1 a2
-typeCheck_aux t@(Pair _ _) ty = TE.throwError $ TE.NotProdType t ty
+typeCheck_aux t@(Pair _ _) ty = TE.throwError $ TE.NotProdTypeTerm t ty
 typeCheck_aux Empty ty@(List a) = return $ ATEmpty ty
 typeCheck_aux Empty ty = TE.throwError $ TE.EmptyTypeError ty
 typeCheck_aux (Cons h t) ty@(List a) = do
@@ -215,6 +252,18 @@ typeCheck_aux (Succ t) Nat = typeCheck_aux t Nat >>= (return.ATSucc)
 typeCheck_aux (Succ _) ty = TE.throwError $ TE.SuccTypeError ty
 typeCheck_aux Triv Unit = return $ ATTriv
 typeCheck_aux Triv ty = TE.throwError $ TE.TrivTypeError ty
+typeCheck_aux (Box s l) ty@(Arr t U) | s `aeq` t = do
+  b <- s `subtype` Simple
+  if b
+  then return $ ATBox (Arr s U) s
+  else TE.throwError $ TE.BoxTypeError ty l
+typeCheck_aux (Box _ l) ty = TE.throwError $ TE.BoxTypeError ty l
+typeCheck_aux (Unbox s l) ty@(Arr U t) | s `aeq` t = do
+  b <- s `subtype` Simple
+  if b
+  then return $ ATUnbox (Arr U s) s
+  else TE.throwError $ TE.UnboxTypeError ty l
+typeCheck_aux (Unbox _ l) ty = TE.throwError $ TE.UnboxTypeError ty l
 typeCheck_aux t ty = do
   a <- inferType t
   return $ ATSub ty a
@@ -237,6 +286,18 @@ inferType (Var x) = do
 
 inferType Triv = return ATTriv
 
+inferType (Box ty l) = do
+             b <- ty `subtype` Simple
+             if b
+             then return $ ATBox (Arr ty U) ty
+             else TE.throwError $ TE.BoxError ty l
+
+inferType (Unbox ty l) = do
+             b <- ty `subtype` Simple
+             if b
+             then return $ ATUnbox (Arr U ty) ty
+             else TE.throwError $ TE.BoxError ty l
+
 inferType Empty = return $ ATEmpty (Forall Top (bind (s2n "X") (List (TVar (s2n "X")))))
 
 inferType (Cons h t) = do
@@ -247,16 +308,13 @@ inferType (Cons h t) = do
 
 inferType (LCase t t1 b) = do    
       at <- inferType t
-      let tty = getType at
-      case tty of
-        List ety -> do
-          at1 <- inferType t1
-          let ty1 = getType at1
-          lunbind b $ (\(x,b') -> lunbind b' $ (\(y,t2) -> 
-            extend_ctx x ety $ extend_ctx y (List ety) $ do
+      ety <- requireList at
+      at1 <- inferType t1
+      let ty1 = getType at1
+      lunbind b $ (\(x,b') -> lunbind b' $ (\(y,t2) -> 
+          extend_ctx x ety $ extend_ctx y (List ety) $ do
                       at2 <- typeCheck_aux t2 ty1
                       return $ ATLCase ty1 at at1 (bind x (bind y at2))))
-        _ -> TE.throwError $ TE.LCaseScrutinyTypeError t tty
 
 inferType Zero = return ATZero
 inferType (Succ t) = do
@@ -265,7 +323,8 @@ inferType (Succ t) = do
 
 inferType (NCase t t1 b) =
     lunbind b $ (\(x,t2) -> do
-      at <- typeCheck_aux t Nat
+      at <- inferType t
+      requireNat at
       at1 <- inferType t1
       let ty1 = getType at1
       extend_ctx x Nat $ do
@@ -279,15 +338,13 @@ inferType (Pair t1 t2) = do
 
 inferType (Fst t) = do
   at <- inferType t
-  case (getType at) of
-   Prod t1 t2 -> return $ ATFst t1 at
-   _ -> TE.throwError $ TE.FstError $ (Fst t)
+  (t1, _) <- requireProd at
+  return $ ATFst t1 at  
 
 inferType (Snd t) = do
   at <- inferType t
-  case (getType at) of
-   Prod t1 t2 -> return $ ATSnd t2 at
-   _ -> TE.throwError $ TE.FstError $ (Snd t)
+  (_, t2) <- requireProd at
+  return $ ATSnd t2 at  
 
 inferType (Fun ty1 b) = do
   lunbind b $ (\(x,t) ->

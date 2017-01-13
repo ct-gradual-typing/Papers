@@ -44,6 +44,8 @@
 \ottrulehead{\ottnt{t}  ,\ \ottnt{c}  ,\ \ottnt{v}  ,\ \ottnt{s}  ,\ \ottnt{n}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottmv{x}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{triv} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{box} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{unbox} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \Lambda ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ) . \ottnt{t} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ [  \ottnt{A}  ]  \ottnt{t} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \lambda ( \ottmv{x}  :  \ottnt{A} ) .  \ottnt{t} }{}{}{}{}\ottprodnewline
@@ -69,6 +71,7 @@
 \ottprodline{|}{ \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \top }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathbb{C} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathbb{S} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
@@ -240,30 +243,30 @@
 }}
 
 
-\newcommand{\ottdruleSXXNatName}[0]{\ottdrulename{S\_Nat}}
-\newcommand{\ottdruleSXXNat}[1]{\ottdrule[#1]{%
+\newcommand{\ottdruleSXXNatCName}[0]{\ottdrulename{S\_NatC}}
+\newcommand{\ottdruleSXXNatC}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
 }{
  \Gamma  \vdash   \mathsf{Nat}   <\hspace{-2px}\colon   \mathbb{C}  }{%
-{\ottdruleSXXNatName}{}%
+{\ottdruleSXXNatCName}{}%
 }}
 
 
-\newcommand{\ottdruleSXXUnitName}[0]{\ottdrulename{S\_Unit}}
-\newcommand{\ottdruleSXXUnit}[1]{\ottdrule[#1]{%
+\newcommand{\ottdruleSXXUnitCName}[0]{\ottdrulename{S\_UnitC}}
+\newcommand{\ottdruleSXXUnitC}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
 }{
  \Gamma  \vdash   \mathsf{Unit}   <\hspace{-2px}\colon   \mathbb{C}  }{%
-{\ottdruleSXXUnitName}{}%
+{\ottdruleSXXUnitCName}{}%
 }}
 
 
-\newcommand{\ottdruleSXXListSLName}[0]{\ottdrulename{S\_ListSL}}
-\newcommand{\ottdruleSXXListSL}[1]{\ottdrule[#1]{%
+\newcommand{\ottdruleSXXListCName}[0]{\ottdrulename{S\_ListC}}
+\newcommand{\ottdruleSXXListC}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{C}  }%
 }{
  \Gamma  \vdash   \mathsf{List}\, \ottnt{A}   <\hspace{-2px}\colon   \mathbb{C}  }{%
-{\ottdruleSXXListSLName}{}%
+{\ottdruleSXXListCName}{}%
 }}
 
 
@@ -291,6 +294,59 @@
 }{
  \Gamma  \vdash  \ottsym{(}   \ottnt{A}  \times  \ottnt{B}   \ottsym{)}  <\hspace{-2px}\colon   \mathbb{C}  }{%
 {\ottdruleSXXProdCName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXSLName}[0]{\ottdrulename{S\_SL}}
+\newcommand{\ottdruleSXXSL}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash   \mathbb{S}   <\hspace{-2px}\colon   \mathbb{C}  }{%
+{\ottdruleSXXSLName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXNatSName}[0]{\ottdrulename{S\_NatS}}
+\newcommand{\ottdruleSXXNatS}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
+}{
+ \Gamma  \vdash   \mathsf{Nat}   <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXNatSName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXUnitSName}[0]{\ottdrulename{S\_UnitS}}
+\newcommand{\ottdruleSXXUnitS}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
+}{
+ \Gamma  \vdash   \mathsf{Unit}   <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXUnitSName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXListSName}[0]{\ottdrulename{S\_ListS}}
+\newcommand{\ottdruleSXXListS}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{S}  }%
+}{
+ \Gamma  \vdash   \mathsf{List}\, \ottnt{A}   <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXListSName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXArrowSName}[0]{\ottdrulename{S\_ArrowS}}
+\newcommand{\ottdruleSXXArrowS}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{S}    \quad   \Gamma  \vdash  \ottnt{B}  <\hspace{-2px}\colon   \mathbb{S}   }%
+}{
+ \Gamma  \vdash  \ottsym{(}  \ottnt{A}  \rightarrow  \ottnt{B}  \ottsym{)}  <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXArrowSName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXProdSName}[0]{\ottdrulename{S\_ProdS}}
+\newcommand{\ottdruleSXXProdS}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{S}    \quad   \Gamma  \vdash  \ottnt{B}  <\hspace{-2px}\colon   \mathbb{S}   }%
+}{
+ \Gamma  \vdash  \ottsym{(}   \ottnt{A}  \times  \ottnt{B}   \ottsym{)}  <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXProdSName}{}%
 }}
 
 
@@ -334,12 +390,18 @@
 \ottusedrule{\ottdruleSXXTrans{}}
 \ottusedrule{\ottdruleSXXVar{}}
 \ottusedrule{\ottdruleSXXTop{}}
-\ottusedrule{\ottdruleSXXNat{}}
-\ottusedrule{\ottdruleSXXUnit{}}
-\ottusedrule{\ottdruleSXXListSL{}}
+\ottusedrule{\ottdruleSXXNatC{}}
+\ottusedrule{\ottdruleSXXUnitC{}}
+\ottusedrule{\ottdruleSXXListC{}}
 \ottusedrule{\ottdruleSXXU{}}
 \ottusedrule{\ottdruleSXXArrowC{}}
 \ottusedrule{\ottdruleSXXProdC{}}
+\ottusedrule{\ottdruleSXXSL{}}
+\ottusedrule{\ottdruleSXXNatS{}}
+\ottusedrule{\ottdruleSXXUnitS{}}
+\ottusedrule{\ottdruleSXXListS{}}
+\ottusedrule{\ottdruleSXXArrowS{}}
+\ottusedrule{\ottdruleSXXProdS{}}
 \ottusedrule{\ottdruleSXXList{}}
 \ottusedrule{\ottdruleSXXProd{}}
 \ottusedrule{\ottdruleSXXArrow{}}
@@ -347,6 +409,14 @@
 \end{ottdefnblock}}
 
 %% defn typecons
+\newcommand{\ottdruleCXXReflName}[0]{\ottdrulename{C\_Refl}}
+\newcommand{\ottdruleCXXRefl}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash  \ottnt{A}  \sim  \ottnt{A} }{%
+{\ottdruleCXXReflName}{}%
+}}
+
+
 \newcommand{\ottdruleCXXBoxName}[0]{\ottdrulename{C\_Box}}
 \newcommand{\ottdruleCXXBox}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{C}  }%
@@ -362,6 +432,15 @@
 }{
  \Gamma  \vdash  \ottsym{\mbox{?}}  \sim  \ottnt{A} }{%
 {\ottdruleCXXUnboxName}{}%
+}}
+
+
+\newcommand{\ottdruleCXXListName}[0]{\ottdrulename{C\_List}}
+\newcommand{\ottdruleCXXList}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  \sim  \ottnt{B} }%
+}{
+ \Gamma  \vdash  \ottsym{(}   \mathsf{List}\, \ottnt{A}   \ottsym{)}  \sim  \ottsym{(}   \mathsf{List}\, \ottnt{B}   \ottsym{)} }{%
+{\ottdruleCXXListName}{}%
 }}
 
 
@@ -382,11 +461,23 @@
 {\ottdruleCXXProdName}{}%
 }}
 
+
+\newcommand{\ottdruleCXXForallName}[0]{\ottdrulename{C\_Forall}}
+\newcommand{\ottdruleCXXForall}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \vdash  \ottnt{B_{{\mathrm{1}}}}  \sim  \ottnt{B_{{\mathrm{2}}}} }%
+}{
+ \Gamma  \vdash  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{1}}}}   \ottsym{)}  \sim  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{2}}}}   \ottsym{)} }{%
+{\ottdruleCXXForallName}{}%
+}}
+
 \newcommand{\ottdefntypecons}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{A}  \sim  \ottnt{B} $}{}
+\ottusedrule{\ottdruleCXXRefl{}}
 \ottusedrule{\ottdruleCXXBox{}}
 \ottusedrule{\ottdruleCXXUnbox{}}
+\ottusedrule{\ottdruleCXXList{}}
 \ottusedrule{\ottdruleCXXArrow{}}
 \ottusedrule{\ottdruleCXXProd{}}
+\ottusedrule{\ottdruleCXXForall{}}
 \end{ottdefnblock}}
 
 %% defn type
@@ -396,6 +487,22 @@
 }{
  \Gamma  \vdash  \ottmv{x}  :  \ottnt{A} }{%
 {\ottdrulevarPName}{}%
+}}
+
+
+\newcommand{\ottdruleBoxName}[0]{\ottdrulename{Box}}
+\newcommand{\ottdruleBox}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
+{\ottdruleBoxName}{}%
+}}
+
+
+\newcommand{\ottdruleUnboxName}[0]{\ottdrulename{Unbox}}
+\newcommand{\ottdruleUnbox}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
+{\ottdruleUnboxName}{}%
 }}
 
 
@@ -538,6 +645,8 @@
 
 \newcommand{\ottdefntype}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{t}  :  \ottnt{A} $}{}
 \ottusedrule{\ottdrulevarP{}}
+\ottusedrule{\ottdruleBox{}}
+\ottusedrule{\ottdruleUnbox{}}
 \ottusedrule{\ottdruleunitP{}}
 \ottusedrule{\ottdrulezeroP{}}
 \ottusedrule{\ottdrulesucc{}}
@@ -571,7 +680,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        45 good    0 bad
-Definition rule clauses: 89 good    0 bad
+Definition rules:        56 good    0 bad
+Definition rule clauses: 107 good    0 bad
 \end{verbatim}
 \end{document}
