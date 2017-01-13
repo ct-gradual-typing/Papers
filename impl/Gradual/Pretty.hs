@@ -7,7 +7,6 @@ prettyType :: Type -> LFreshM String
 prettyType (TVar x) = return.n2s $ x
 prettyType Nat = return "Nat"
 prettyType Unit = return "Unit"
-prettyType Consistent = return "Consistent"
 prettyType Simple = return "Simple"
 prettyType Top = return "*"  
 prettyType U = return "?"
@@ -43,7 +42,6 @@ parenType :: Type -> (Type -> LFreshM String) -> LFreshM String
 parenType ty@(TVar _) f = f ty
 parenType ty@Nat f = f ty
 parenType ty@Unit f = f ty
-parenType ty@Consistent f = f ty
 parenType ty@Simple f = f ty
 parenType ty@Top f = f ty
 parenType ty@U f = f ty

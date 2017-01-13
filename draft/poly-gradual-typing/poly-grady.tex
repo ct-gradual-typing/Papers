@@ -243,24 +243,6 @@
 }}
 
 
-\newcommand{\ottdruleSXXNatCName}[0]{\ottdrulename{S\_NatC}}
-\newcommand{\ottdruleSXXNatC}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash   \mathsf{Nat}   <\hspace{-2px}\colon   \mathbb{C}  }{%
-{\ottdruleSXXNatCName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXUnitCName}[0]{\ottdrulename{S\_UnitC}}
-\newcommand{\ottdruleSXXUnitC}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash   \mathsf{Unit}   <\hspace{-2px}\colon   \mathbb{C}  }{%
-{\ottdruleSXXUnitCName}{}%
-}}
-
-
 \newcommand{\ottdruleSXXListCName}[0]{\ottdrulename{S\_ListC}}
 \newcommand{\ottdruleSXXListC}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{C}  }%
@@ -390,8 +372,6 @@
 \ottusedrule{\ottdruleSXXTrans{}}
 \ottusedrule{\ottdruleSXXVar{}}
 \ottusedrule{\ottdruleSXXTop{}}
-\ottusedrule{\ottdruleSXXNatC{}}
-\ottusedrule{\ottdruleSXXUnitC{}}
 \ottusedrule{\ottdruleSXXListC{}}
 \ottusedrule{\ottdruleSXXU{}}
 \ottusedrule{\ottdruleSXXArrowC{}}
@@ -664,9 +644,90 @@
 \ottusedrule{\ottdrulesnd{}}
 \end{ottdefnblock}}
 
+%% defn castIn
+\newcommand{\ottdruleciXXvarName}[0]{\ottdrulename{ci\_var}}
+\newcommand{\ottdruleciXXvar}[1]{\ottdrule[#1]{%
+\ottpremise{\ottmv{x}  \ottsym{:}  \ottnt{A} \, \in \, \Gamma}%
+}{
+ \Gamma  \vdash  \ottmv{x}  \Rightarrow  \ottmv{x}  :  \ottnt{A} }{%
+{\ottdruleciXXvarName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXzeroName}[0]{\ottdrulename{ci\_zero}}
+\newcommand{\ottdruleciXXzero}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash  \ottsym{0}  \Rightarrow  \ottsym{0}  :  \ottnt{A} }{%
+{\ottdruleciXXzeroName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXtrivName}[0]{\ottdrulename{ci\_triv}}
+\newcommand{\ottdruleciXXtriv}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash   \mathsf{triv}   \Rightarrow   \mathsf{triv}   :   \mathsf{Unit}  }{%
+{\ottdruleciXXtrivName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXsuccName}[0]{\ottdrulename{ci\_succ}}
+\newcommand{\ottdruleciXXsucc}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{Nat}  }%
+}{
+ \Gamma  \vdash  \mathsf{succ} \, \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \mathsf{succ} \, \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{Nat}  }{%
+{\ottdruleciXXsuccName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXpairName}[0]{\ottdrulename{ci\_pair}}
+\newcommand{\ottdruleciXXpair}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{3}}}}  :  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t_{{\mathrm{4}}}}  :  \ottnt{A_{{\mathrm{2}}}}  }%
+}{
+ \Gamma  \vdash  \ottsym{(}  \ottnt{t_{{\mathrm{1}}}}  \ottsym{,}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)}  \Rightarrow  \ottsym{(}  \ottnt{t_{{\mathrm{3}}}}  \ottsym{,}  \ottnt{t_{{\mathrm{4}}}}  \ottsym{)}  :   \ottnt{A_{{\mathrm{1}}}}  \times  \ottnt{A_{{\mathrm{2}}}}  }{%
+{\ottdruleciXXpairName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXfstTwoName}[0]{\ottdrulename{ci\_fst2}}
+\newcommand{\ottdruleciXXfstTwo}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :   \ottnt{A}  \times  \ottnt{B}  }%
+}{
+ \Gamma  \vdash  \mathsf{fst} \, \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \mathsf{fst} \, \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A} }{%
+{\ottdruleciXXfstTwoName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXsndTwoName}[0]{\ottdrulename{ci\_snd2}}
+\newcommand{\ottdruleciXXsndTwo}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :   \ottnt{A}  \times  \ottnt{B}  }%
+}{
+ \Gamma  \vdash  \mathsf{snd} \, \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \mathsf{snd} \, \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B} }{%
+{\ottdruleciXXsndTwoName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXlamName}[0]{\ottdrulename{ci\_lam}}
+\newcommand{\ottdruleciXXlam}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A_{{\mathrm{1}}}}  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}} }%
+}{
+ \Gamma  \vdash   \lambda ( \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}} ) .  \ottnt{t_{{\mathrm{1}}}}   \Rightarrow   \lambda ( \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}} ) .  \ottnt{t_{{\mathrm{2}}}}   :  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{A_{{\mathrm{2}}}} }{%
+{\ottdruleciXXlamName}{}%
+}}
+
+\newcommand{\ottdefncastIn}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A} $}{\ottcom{Cast insertion}}
+\ottusedrule{\ottdruleciXXvar{}}
+\ottusedrule{\ottdruleciXXzero{}}
+\ottusedrule{\ottdruleciXXtriv{}}
+\ottusedrule{\ottdruleciXXsucc{}}
+\ottusedrule{\ottdruleciXXpair{}}
+\ottusedrule{\ottdruleciXXfstTwo{}}
+\ottusedrule{\ottdruleciXXsndTwo{}}
+\ottusedrule{\ottdruleciXXlam{}}
+\end{ottdefnblock}}
+
 
 \newcommand{\ottdefnsTyping}{
-\ottdefnkind{}\ottdefnctxOk{}\ottdefnsubtype{}\ottdefntypecons{}\ottdefntype{}}
+\ottdefnkind{}\ottdefnctxOk{}\ottdefnsubtype{}\ottdefntypecons{}\ottdefntype{}\ottdefncastIn{}}
 
 \newcommand{\ottdefnss}{
 \ottdefnsTyping
@@ -680,7 +741,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        56 good    0 bad
-Definition rule clauses: 107 good    0 bad
+Definition rules:        62 good    0 bad
+Definition rule clauses: 117 good    0 bad
 \end{verbatim}
 \end{document}

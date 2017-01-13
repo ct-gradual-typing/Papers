@@ -73,7 +73,6 @@ tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "Unit" Unit         
 tyTop = parseConst "*" Top
-tyCastable = parseConst "Consistent" Consistent
         
 prod = do
   symbol "("
@@ -109,7 +108,7 @@ tySimple = parseConst "Simple" Simple
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tyCastable <|> try tySimple
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tySimple
                                       <|> try forall <|> try prod <|> try list <|> tvar
 
 parseType :: String -> Either String Type

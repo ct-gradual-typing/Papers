@@ -140,19 +140,18 @@ ctx_ok = do
 subtype :: Type -> Type -> TCM Bool
 subtype t1 t2 | t1 `aeq` t2 = ctx_ok >> return True
 subtype t1 Top = ctx_ok >> return True
-subtype U Consistent = ctx_ok >> return True
-subtype Nat Consistent = ctx_ok >> return True
-subtype Unit Consistent = ctx_ok >> return True
-subtype (List s) Consistent = s `subtype` Consistent
-subtype (Arr s1 s2) Consistent = do
-  b1 <- subtype s1 Consistent
-  b2 <- subtype s2 Consistent
+
+subtype U Skeleton = ctx_ok >> return True
+subtype (List s) Skeleton = s `subtype` Skeleton
+subtype (Arr s1 s2) Skeleton = do
+  b1 <- subtype s1 Skeleton
+  b2 <- subtype s2 Skeleton
   return $ b1 && b2
-subtype (Prod s1 s2) Consistent = do
-  b1 <- subtype s1 Consistent
-  b2 <- subtype s2 Consistent
+subtype (Prod s1 s2) Skeleton = do
+  b1 <- subtype s1 Skeleton
+  b2 <- subtype s2 Skeleton
   return $ b1 && b2
-subtype Simple Consistent = return True
+
 subtype Nat Simple = ctx_ok >> return True
 subtype Unit Simple = ctx_ok >> return True
 subtype (List s) Simple = s `subtype` Simple
@@ -164,6 +163,7 @@ subtype (Prod s1 s2) Simple = do
   b1 <- subtype s1 Simple
   b2 <- subtype s2 Simple
   return $ b1 && b2         
+
 subtype (TVar x) t2 = do
   ctx_ok
   (tctx,_) <- TE.ask
@@ -190,8 +190,14 @@ runTC t ty = runLFreshM $ TE.runExceptT $ typeCheck t ty
 
 cons :: Type -> Type -> TCM Bool
 cons ty ty' | ty `aeq` ty' = return True
-cons ty U  = ty `subtype` Consistent
-cons U ty = ty `subtype` Consistent            
+cons ty U  = do
+  b1 <- ty `subtype` Skeleton
+  b2 <- ty `subtype` Simple
+  return $ b1 || b2
+cons U ty = do
+  b1 <- ty `subtype` Skeleton
+  b2 <- ty `subtype` Simple
+  return $ b1 || b2
 cons (Arr ty1 ty2) (Arr sy1 sy2) = do
   b1 <- cons sy1 ty1
   b2 <- cons ty2 sy2

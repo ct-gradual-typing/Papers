@@ -29,8 +29,8 @@ data Kind = Star
 data Type =                -- Types:
    TVar TVnm               -- Type Variables
  | Top                     -- Top type
- | Consistent              -- Castable type
- | Simple
+ | Simple                  -- Universe of simple types
+ | Skeleton                -- University of skeletons
  | Nat                     -- Natural number type
  | Unit                    -- Unit type
  | U                       -- Untyped universe
