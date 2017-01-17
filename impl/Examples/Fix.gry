@@ -7,9 +7,9 @@ loop : ?
 loop = omega (\(x : ?) -> (omega (splitar x)));
 
 fix : (? -> ?) -> ?
-fix = \(f : ? -> ?) -> (\(x:?) -> f ((splitar x) x)) (squashar (\(x:?) -> f ((splitar x) x)));
+fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((splitar x) x));
 
 fixp : forall (X <: Simple).((X -> X) -> X)
 fixp = \(X <: Simple) ->
        \(f:X -> X)    ->
-           unbox<X> (fix (\(y:?)->box<X> (f (unbox<X> y))));
+           unbox<X> (fix (\(y:?)->box<X> (f (unbox<X> y))));xo

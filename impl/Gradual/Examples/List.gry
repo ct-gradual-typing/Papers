@@ -7,10 +7,10 @@ tail = \(X<:*) -> \(l:[X]) ->
 append : forall (A <: Simple).([A] -> [A] -> [A])
 append = \(A <: Simple) ->
            ([[A] -> [A] -> [A]]fix)
-             (\(r : [A] -> [A] -> [A]) -> \(l1 : [A]) -> \(l2 : [A]) ->
+             (\(r1 : [A] -> [A] -> [A]) -> \(l1 : [A]) -> \(l2 : [A]) ->
                case l1 of
                  [] -> l2,
-                 (a :: as) -> a :: (r as l2));
+                 (a :: as) -> a :: (r1 as l2));
 
 length : forall (A <: Simple).([A] -> Nat)
 length = \(A <: Simple) -> 

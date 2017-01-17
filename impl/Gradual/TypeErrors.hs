@@ -14,6 +14,8 @@ data TypeError = FreeVarsError Vnm
                | FreeTVarsError TVnm
                | SuccError Term
                | FstError Term
+               | FstErrorTypeError Type
+               | SndErrorTypeError Type
                | SndError Term
                | FunError Term
                | AppError Type Type
@@ -27,6 +29,8 @@ data TypeError = FreeVarsError Vnm
                | NotArrowTypeTerm Term Type
                | NotArrowType Type
                | NotForallType Type
+               | SplitSquashTypeError Type Type
+               | UnboxBoxTypeError Type Type
                | NotNatType Type                 
                | NotListType Type
                | NotProdType Type                                  
@@ -43,10 +47,16 @@ data TypeError = FreeVarsError Vnm
                | ZeroTypeError Type
                | SuccTypeError Type
                | CastError Type Type
-               | BoxTypeError Type SrcPos
-               | UnboxTypeError Type SrcPos
+               | BoxTypeError Type 
+               | UnboxTypeError Type
                | UnboxError Type
-               | BoxError Type SrcPos                 
+               | BoxError Type
+               | SquashError Type
+               | SplitError Type
+               | CastInsertionError Type Type
+               | ListElemTypeMismatch Term Type
+               | InconsistentTypes Type Type
+               | NonFunctionType Term Type
   deriving(Show)
 
 instance Monoid TypeError where

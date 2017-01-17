@@ -142,16 +142,14 @@ trivParse = parseConst "triv" Triv
 boxParse = do
   symbol "box"
   ty <- between (symbol "<") (symbol ">") typeParser
-  p <- getPos
-  return $ Box ty p
+  return $ Box ty
 
 unboxParse = do
   symbol "unbox"
   symbol "<"
   ty <- typeParser
   symbol ">"
-  p <- getPos
-  return $ Unbox ty p
+  return $ Unbox ty
 
 tfunParse = do
   reservedOp "\\"

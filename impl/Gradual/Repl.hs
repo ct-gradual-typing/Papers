@@ -9,10 +9,14 @@ import Unbound.LocallyNameless.Subst
 
 import Queue
 import Syntax
+import CoreSyntax
 import Parser
 import Pretty
+import CorePretty
 import TypeChecker
+import Eval
 import TypeErrors
+import CastInsertion
 
 type Qelm = (Vnm, Term)
 type REPLStateIO = StateT (FilePath,Queue Qelm) IO
@@ -143,7 +147,17 @@ handleCMD s =
      where
        prettyDef :: (Name a, Term) -> String
        prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
-
+    handleLine (Eval t) = do
+      (_, defs) <- get
+      let tu = unfoldDefsInTerm defs t
+      let r = insertCasts tu
+      case r of
+        Left m -> io.putStrLn.readTypeError $ m
+        Right (ct, _) -> let me = eval ct
+                          in case me of
+                               Left m' -> io.putStrLn.readTypeError $ m'
+                               Right e -> io.putStrLn.runPrettyCTerm $ e
+      
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
   (wdir,_) <- get

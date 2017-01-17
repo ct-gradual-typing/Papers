@@ -141,17 +141,6 @@ subtype :: Type -> Type -> TCM Bool
 subtype t1 t2 | t1 `aeq` t2 = ctx_ok >> return True
 subtype t1 Top = ctx_ok >> return True
 
-subtype U Skeleton = ctx_ok >> return True
-subtype (List s) Skeleton = s `subtype` Skeleton
-subtype (Arr s1 s2) Skeleton = do
-  b1 <- subtype s1 Skeleton
-  b2 <- subtype s2 Skeleton
-  return $ b1 && b2
-subtype (Prod s1 s2) Skeleton = do
-  b1 <- subtype s1 Skeleton
-  b2 <- subtype s2 Skeleton
-  return $ b1 && b2
-
 subtype Nat Simple = ctx_ok >> return True
 subtype Unit Simple = ctx_ok >> return True
 subtype (List s) Simple = s `subtype` Simple
@@ -188,30 +177,24 @@ subtype t1 t2 = return False
 runTC :: Term -> Type -> Either TE.TypeError ATerm
 runTC t ty = runLFreshM $ TE.runExceptT $ typeCheck t ty
 
-cons :: Type -> Type -> TCM Bool
-cons ty ty' | ty `aeq` ty' = return True
-cons ty U  = do
-  b1 <- ty `subtype` Skeleton
-  b2 <- ty `subtype` Simple
-  return $ b1 || b2
-cons U ty = do
-  b1 <- ty `subtype` Skeleton
-  b2 <- ty `subtype` Simple
-  return $ b1 || b2
-cons (Arr ty1 ty2) (Arr sy1 sy2) = do
-  b1 <- cons sy1 ty1
-  b2 <- cons ty2 sy2
+consistent :: Type -> Type -> TCM Bool
+consistent ty ty' | ty `aeq` ty' = return True
+consistent ty U  = return True  
+consistent U ty = return True
+consistent (Arr ty1 ty2) (Arr sy1 sy2) = do
+  b1 <- consistent sy1 ty1
+  b2 <- consistent ty2 sy2
   return $ b1 && b2
-cons (Prod ty1 ty2) (Prod sy1 sy2) = do
-  b1 <- cons sy1 ty1
-  b2 <- cons ty2 sy2
+consistent (Prod ty1 ty2) (Prod sy1 sy2) = do
+  b1 <- consistent sy1 ty1
+  b2 <- consistent ty2 sy2
   return $ b1 && b2
-cons (List ty1) (List ty2) = ty1 `cons` ty2
-cons (Forall ty b1) (Forall ty' b2) = do
+consistent (List ty1) (List ty2) = ty1 `consistent` ty2
+consistent (Forall ty b1) (Forall ty' b2) = do
   reqSameType ty ty'
   lunbind b1 $ (\(x,t1) -> lunbind b2 $ (\(y,t2) ->
-        extend_tctx x ty $ extend_tctx y ty $ t1 `cons` t2))
-cons _ _ = return False
+        extend_tctx x ty $ extend_tctx y ty $ t1 `consistent` t2))
+consistent _ _ = return False
 
 typeCheck :: Term -> Type -> TE.ExceptT TE.TypeError LFreshM ATerm
 typeCheck t ty = TE.runReaderT (typeCheck_aux t ty) (M.empty, M.empty)
@@ -258,18 +241,18 @@ typeCheck_aux (Succ t) Nat = typeCheck_aux t Nat >>= (return.ATSucc)
 typeCheck_aux (Succ _) ty = TE.throwError $ TE.SuccTypeError ty
 typeCheck_aux Triv Unit = return $ ATTriv
 typeCheck_aux Triv ty = TE.throwError $ TE.TrivTypeError ty
-typeCheck_aux (Box s l) ty@(Arr t U) | s `aeq` t = do
+typeCheck_aux (Box s) ty@(Arr t U) | s `aeq` t = do
   b <- s `subtype` Simple
   if b
   then return $ ATBox (Arr s U) s
-  else TE.throwError $ TE.BoxTypeError ty l
-typeCheck_aux (Box _ l) ty = TE.throwError $ TE.BoxTypeError ty l
-typeCheck_aux (Unbox s l) ty@(Arr U t) | s `aeq` t = do
+  else TE.throwError $ TE.BoxTypeError ty
+typeCheck_aux (Box _) ty = TE.throwError $ TE.BoxTypeError ty
+typeCheck_aux (Unbox s) ty@(Arr U t) | s `aeq` t = do
   b <- s `subtype` Simple
   if b
   then return $ ATUnbox (Arr U s) s
-  else TE.throwError $ TE.UnboxTypeError ty l
-typeCheck_aux (Unbox _ l) ty = TE.throwError $ TE.UnboxTypeError ty l
+  else TE.throwError $ TE.UnboxTypeError ty
+typeCheck_aux (Unbox _) ty = TE.throwError $ TE.UnboxTypeError ty
 typeCheck_aux t ty = do
   a <- inferType t
   return $ ATSub ty a
@@ -292,17 +275,17 @@ inferType (Var x) = do
 
 inferType Triv = return ATTriv
 
-inferType (Box ty l) = do
+inferType (Box ty) = do
              b <- ty `subtype` Simple
              if b
              then return $ ATBox (Arr ty U) ty
-             else TE.throwError $ TE.BoxError ty l
+             else TE.throwError $ TE.BoxError ty
 
-inferType (Unbox ty l) = do
+inferType (Unbox ty) = do
              b <- ty `subtype` Simple
              if b
              then return $ ATUnbox (Arr U ty) ty
-             else TE.throwError $ TE.BoxError ty l
+             else TE.throwError $ TE.BoxError ty
 
 inferType Empty = return $ ATEmpty (Forall Top (bind (s2n "X") (List (TVar (s2n "X")))))
 
@@ -368,7 +351,7 @@ inferType (App t1 t2) = do
   at1 <- inferType t1
   (ty1,ty2) <- requireArrow at1  
   at2 <- inferType t2
-  b <- ty1 `cons` (getType at2)
+  b <- ty1 `consistent` (getType at2)
   if b
   then return $ ATApp ty2 at1 at2
   else TE.throwError $ TE.CastError ty1 (getType at2)
