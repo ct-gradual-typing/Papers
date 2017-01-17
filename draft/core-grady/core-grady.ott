@@ -1,6 +1,5 @@
 metavar termvar, x, y , z, f ::=
 metavar typevar, X, Y , Z ::=
-metavar blamelabels, l {{tex \ell }} ::=
 indexvar index, i , j, k ::=
 
 grammar
@@ -8,20 +7,20 @@ grammar
     | x                   ::   :: var          
     | triv                ::   :: unit         
     {{tex \mathsf{triv} }}
-    | squash U l          ::   :: inj          
-    {{tex \mathsf{squash}^{[[l]]}_{[[U]]} }}
-    | split U l           ::   :: surj         
-    {{tex \mathsf{split}^{[[l]]}_{[[U]]} }}    
-    | box l               ::   :: gen          
-    {{tex \mathsf{box}^{[[l]]} }}
-    | box A l             :: M :: genA
-    {{tex \mathsf{box}^{[[l]]}_{[[A]]} }}        
-    | unbox A l           :: M :: specA         
-    {{tex \mathsf{unbox}^{[[l]]}_{[[A]]} }}
-    | unbox l             ::   :: spec
-    {{tex \mathsf{unbox}^{[[l]]} }}
-    | blame A l           ::    :: blame
-    {{tex \mathsf{blame}_{[[A]]}\,[[l]] }}
+    | squash U            :: M :: inj          
+    {{tex \mathsf{squash}_{[[U]]} }}
+    | split U             :: M :: surj         
+    {{tex \mathsf{split}_{[[U]]} }}    
+    | box                 ::   :: gen          
+    {{tex \mathsf{box} }}
+    | box A               :: M :: genA
+    {{tex \mathsf{box}_{[[A]]} }}        
+    | unbox A             :: M :: specA         
+    {{tex \mathsf{unbox}_{[[A]]} }}
+    | unbox               ::   :: spec
+    {{tex \mathsf{unbox} }}
+    | error               ::    :: blame
+    {{tex \mathsf{error} }}
     | Lam X <: A . t      ::    :: TypeLam
     {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
     | [ A ] t             ::   :: TypeApp
@@ -43,9 +42,9 @@ grammar
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
     {{tex [[t]] }}
-    | squash              :: M  :: injU   
+    | squash              ::    :: injU   
     {{tex \mathsf{squash} }}
-    | split               :: M :: surjU
+    | split               ::   :: surjU
     {{tex \mathsf{split} }}    
     | [ A / X ] t         :: M :: TypeSub
     | n                   :: M :: num
@@ -57,14 +56,15 @@ grammar
   v :: 'v_' ::=                    
     | triv                ::   :: unit         
     {{tex \mathsf{triv} }}
-    | squash S l          ::   :: inj          
-    {{tex \mathsf{squash}^{[[l]]}_{[[S]]} }}
-    | split S l           ::   :: surj         
-    {{tex \mathsf{split}^{[[l]]}_{[[S]]} }}    
-    | box A l             ::   :: genA
-    {{tex \mathsf{box}^{[[l]]}_{[[A]]} }}        
-    | unbox A l           ::   :: specA         
-    {{tex \mathsf{unbox}^{[[l]]}_{[[A]]} }}
+    | []                ::   :: Empty
+    | squash S          ::   :: inj          
+    {{tex \mathsf{squash}_{[[S]]} }}
+    | split S           ::   :: surj         
+    {{tex \mathsf{split}_{[[S]]} }}    
+    | box A             ::   :: genA
+    {{tex \mathsf{box}_{[[A]]} }}        
+    | unbox A           ::   :: specA         
+    {{tex \mathsf{unbox}_{[[A]]} }}
     | Lam X <: A . t      ::    :: TypeLam
     {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
     | \ x : A . t         ::   :: abs          
@@ -86,6 +86,8 @@ grammar
     {{tex \top }}
     | SL                  ::   :: Simple
     {{tex \mathbb{S} }}
+    | K                   ::   :: Skel
+    {{tex \mathbb{K} }}    
     | Unit                ::   :: term    
     {{tex \mathsf{Unit} }}
     | Nat                 ::   :: nat     
@@ -222,6 +224,18 @@ defn
     G |- A <: Top
 
     G Ok
+    ------------------ :: ArrowK
+    G |- (? -> ?) <: K
+
+    G Ok
+    ------------------ :: ProdK
+    G |- (? x ?) <: K
+
+    G Ok
+    ------------------ :: ListK
+    G |- (List ?) <: K
+
+    G Ok
     -------------- :: Nat
     G |- Nat <: SL
 
@@ -269,19 +283,21 @@ defn
     -------------------- :: varP
     G |- x : A
 
-    -------------------------------------- :: Box
-    G |- box l : Forall (X <: SL).(X -> ?)
-    
-    ---------------------------------------- :: Unbox
-    G |- unbox l : Forall (X <: SL).(? -> X)
+    G Ok
+    ------------------------------------ :: Box
+    G |- box : Forall (X <: SL).(X -> ?)
+
+    G Ok    
+    -------------------------------------- :: Unbox
+    G |- unbox : Forall (X <: SL).(? -> X)
 
     G Ok
-    ------------------------ :: squashP
-    G |- squash U l : U -> ?
+    -------------------------------------- :: squash
+    G |- squash : Forall (X <: K).(X -> ?)
 
     G Ok
-    ----------------------- :: splitP
-    G |- split U l : ? -> U
+    ------------------------------------- :: split
+    G |- split : Forall (X <: K).(? -> X)
 
     G Ok
     ---------------- :: unitP
@@ -345,8 +361,8 @@ defn
     ------------------------- :: Sub
     G |- t : B
 
-   ------------------ :: blame
-   G |- blame A l : A
+   -------------- :: error
+   G |- error : A
 
 defns
   Reduction :: '' ::=
@@ -356,18 +372,18 @@ defn
 by
 
     ---------------------------- :: retracT
-    unbox A l1 (box A l2 t) ~> t
+    unbox A (box A t) ~> t
 
     A != B    
-    ------------------------------------- :: retracTB
-    unbox A l1 (box B l2 t) ~> blame A l1
+    -------------------------- :: retracTE
+    unbox A (box B t) ~> error
 
-    ------------------------------- :: retractU
-    split U l1 (squash U l2 t) ~> t
+    ------------------------- :: retractU
+    split U (squash U t) ~> t
 
     U1 != U2
-    ------------------------------------------- :: retractUB
-    split U1 l1 (squash U2 l1 t) ~> blame U1 l1
+    ------------------------------- :: retractUE
+    split U1 (squash U2 t) ~> error
 
     t ~> t'
     ----------------- :: succ

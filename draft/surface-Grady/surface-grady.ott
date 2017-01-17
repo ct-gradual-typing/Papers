@@ -7,9 +7,9 @@ grammar
     | x                   ::   :: var          
     | triv                ::   :: unit         
     {{tex \mathsf{triv} }}
-    | squash U          ::   :: inj          
+    | squash U            :: M  :: inj          
     {{tex \mathsf{squash}_{[[U]]} }}
-    | split U           ::   :: surj         
+    | split U             :: M  :: surj         
     {{tex \mathsf{split}_{[[U]]} }}        
     | box                 ::   :: gen          
     {{tex \mathsf{box} }}
