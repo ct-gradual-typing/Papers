@@ -79,13 +79,13 @@ insert_casts (Fst t) = do
   case ty of
     U -> return (CFst (CApp (CSplit (Prod U U)) t'), U) 
     Prod a b -> return (CFst t', a)
-    _ -> throwError $ FstErrorTypeError ty
+    _ -> throwError $ FstTypeError ty
 insert_casts (Snd t) = do
   (t', ty) <- insert_casts t
   case ty of
     U -> return (CSnd (CApp (CSplit (Prod U U)) t'), U) 
     Prod a b -> return (CSnd t', b)
-    _ -> throwError $ SndErrorTypeError ty
+    _ -> throwError $ SndTypeError ty
 insert_casts Empty = do
   at <- inferType Empty
   return (CEmpty, getType at)

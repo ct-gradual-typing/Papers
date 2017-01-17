@@ -38,9 +38,9 @@ import Pretty
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedNames   = ["of","0","?","triv","proj1","proj2","split","squash","forall",
+  Token.reservedNames   = ["of","0","?","triv","proj1","proj2","forall",
                            "ncase","box","unbox","Nat","Unit", "||", "[]", ":", "lcase"],
-  Token.reservedOpNames = ["->", "succ", "\\", "proj1", "proj2", "box", "unbox", "squash", "split", "forall", "ncase", ":", "lcase"]
+  Token.reservedOpNames = ["->", "succ", "\\","box","unbox", "proj1", "proj2", "forall", "ncase", ":", "lcase"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -73,7 +73,6 @@ tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "Unit" Unit         
 tyTop = parseConst "*" Top
-tyCastable = parseConst "Simple" Simple
         
 prod = do
   symbol "("
@@ -103,11 +102,13 @@ list = do
   symbol "]"
   return $ List ty
 
+tySimple = parseConst "Simple" Simple
+
 -- The initial expression parsing table for types.
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tyCastable
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tySimple
                                       <|> try forall <|> try prod <|> try list <|> tvar
 
 parseType :: String -> Either String Type
@@ -124,8 +125,7 @@ int2term 0 = Zero
 int2term n = Succ $ int2term $ n-1
 
 aterm = try (parens pairParse) <|> parens expr    <|> try intParse
-                               <|> try trivParse  <|> try squash
-                               <|> try split      <|> try boxParse
+                               <|> try trivParse  <|> try boxParse
                                <|> try unboxParse <|> try emptyListParse
                                <|> try listNParse <|> var                                
 expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
@@ -138,6 +138,18 @@ intParse = integer >>= return.int2term
 
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
+
+boxParse = do
+  symbol "box"
+  ty <- between (symbol "<") (symbol ">") typeParser
+  return $ Box ty
+
+unboxParse = do
+  symbol "unbox"
+  symbol "<"
+  ty <- typeParser
+  symbol ">"
+  return $ Unbox ty
 
 tfunParse = do
   reservedOp "\\"
@@ -159,20 +171,6 @@ tappParse = try $ do
   symbol "]"
   t <- expr
   return $ TApp ty t
-
-boxParse = do
-  symbol "box"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  p <- getPos
-  return $ Box ty p
-
-unboxParse = do
-  symbol "unbox"
-  symbol "<"
-  ty <- typeParser
-  symbol ">"
-  p <- getPos
-  return $ Unbox ty p
 
 succParse = do
   reservedOp "succ"
@@ -258,18 +256,6 @@ appParse = do
 getPos = do
   p <- getPosition
   return (sourceLine p, sourceColumn p, sourceName p)
-
-squash = do
-  symbol "squash"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  p <- getPos
-  return $ (Squash ty p)
-
-split = do
-  symbol "split"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  p <- getPos
-  return $ (Split ty p)
 
 listNParse = do
   symbol "["
