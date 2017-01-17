@@ -28,9 +28,9 @@ all: pdf
 
 pdf : $(PDF)
 
-poly-grady-ott.tex : poly-grady.tex poly-grady/poly-grady.ott
-	@$(OTT) $(OTT_FLAGS) -i poly-grady/poly-grady.ott  -o poly-grady-inc.tex -tex_name_prefix PGrady \
-		-tex_filter poly-grady.tex poly-grady-ott.tex
+core-grady-ott.tex : core-grady.tex core-grady/core-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
+		-tex_filter core-grady.tex core-grady-ott.tex
 
 grady-ott.tex : grady.tex grady.ott
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
@@ -52,7 +52,7 @@ introduction-ott.tex : introduction.tex grady.ott
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter introduction.tex introduction-ott.tex
 
-$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex poly-grady-ott.tex \
+$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
 	categorical-model-ott.tex proofs-ott.tex grady-ott.tex
 	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
 		-tex_filter main.tex main-output.tex
