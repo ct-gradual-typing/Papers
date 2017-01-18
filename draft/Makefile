@@ -28,33 +28,37 @@ all: pdf
 
 pdf : $(PDF)
 
+surface-grady-ott.tex : surface-grady.tex surface-grady/surface-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
+		-tex_filter surface-grady.tex surface-grady-ott.tex
+
 core-grady-ott.tex : core-grady.tex core-grady/core-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
 		-tex_filter core-grady.tex core-grady-ott.tex
 
-grady-ott.tex : grady.tex grady.ott
-	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
-		-tex_filter grady.tex grady-ott.tex
+sl-grady-ott.tex : sl-grady.tex sl-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott -o sl-grady-inc.tex -tex_name_prefix SLGrady \
+		-tex_filter sl-grady.tex sl-grady-ott.tex
 
-proofs-ott.tex : proofs.tex grady.ott
-	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+proofs-ott.tex : proofs.tex sl-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter proofs.tex proofs-ott.tex
 
-categorical-model-ott.tex : categorical-model.tex grady.ott
-	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+categorical-model-ott.tex : categorical-model.tex sl-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter categorical-model.tex categorical-model-ott.tex
 
-gradual-typing-ott.tex : gradual-typing.tex grady.ott
-	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+gradual-typing-ott.tex : gradual-typing.tex sl-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter gradual-typing.tex gradual-typing-ott.tex
 
-introduction-ott.tex : introduction.tex grady.ott
-	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+introduction-ott.tex : introduction.tex sl-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter introduction.tex introduction-ott.tex
 
-$(OTTOutputFile) : grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
-	categorical-model-ott.tex proofs-ott.tex grady-ott.tex
-	@$(OTT) $(OTT_FLAGS) -i grady.ott  -o grady-inc.tex -tex_name_prefix Grady \
+$(OTTOutputFile) : sl-grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
+	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex
+	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter main.tex main-output.tex
 
 # Now this takes the full LaTex translation and compiles it using

@@ -64,26 +64,26 @@
 %% \newtheorem{example}[theorem]{Example}
 
 %% Ott includes:
-\input{grady-inc}
+\input{sl-grady-inc}
 \renewcommand{\RightTirName}{\text}
-\renewcommand{\Gradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\Gradydrulename{#4}}}
-\renewcommand{\Gradydrulename}[1]{#1}
-\renewcommand{\GradydrulesndUName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydrulefstUName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydrulesuccUName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydrulecastName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydruleappCName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydruleappUName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydrulereflName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydruleboxName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydruleunboxName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydrulearrowName}[0]{\Gradydrulename{}}
-\renewcommand{\GradydruleprodName}[0]{\Gradydrulename{}}
+\renewcommand{\SLGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SLGradydrulename{#4}}}
+\renewcommand{\SLGradydrulename}[1]{#1}
+\renewcommand{\SLGradydrulesndUName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydrulefstUName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydrulesuccUName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydrulecastName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydruleappCName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydruleappUName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydrulereflName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydruleboxName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydruleunboxName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydrulearrowName}[0]{\SLGradydrulename{}}
+\renewcommand{\SLGradydruleprodName}[0]{\SLGradydrulename{}}
 
-\input{poly-grady-inc}
+\input{core-grady-inc}
 \renewcommand{\RightTirName}{\text}
-\renewcommand{\PGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\Gradydrulename{#4}}}
-\renewcommand{\PGradydrulename}[1]{#1}
+\renewcommand{\CGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\CGradydrulename{#4}}}
+\renewcommand{\CGradydrulename}[1]{#1}
 
 \makeatletter\if@ACM@journal\makeatother
 %% Journal information (used by PACMPL format)
@@ -227,15 +227,25 @@
 \input{categorical-model-ott}
 % section categorical_perspective (end)
 
-\section{Grady}
-\label{sec:grady}
-\input{grady-ott}
+\section{Simply Typed Core Grady}
+\label{sec:sl-grady}
+\input{sl-grady-ott}
 % section grady (end)
 
-\section{Extending Grady with Impredicative Polymorphism}
-\label{sec:extending_grady_with_impredicative_polymorphism}
-\input{poly-grady-ott}
-% section extending_grady_with_impredicative_polymorphism (end)
+\section{Grady: A Categorical Inspired Gradual Type System}
+\label{sec:grady:_a_categorical_inspired_gradual_type_system}
+
+\subsection{Surface Grady: A Gradual Type System}
+\label{subsec:surface_grady:_a_gradual_type_system}
+\input{surface-grady-ott}
+% subsection surface_grady:_a_gradual_type_system (end)
+
+\subsection{Core Grady: The Casting Calculus}
+\label{subsec:core_grady:_the_casting_calculus}
+\input{core-grady-ott}
+% subsection core_grady:_the_casting_calculus (end)
+
+% section grady:_a_categorically_inspired_gradual_type_system (end)
 
 \nocite{*}
 \bibliography{references}
