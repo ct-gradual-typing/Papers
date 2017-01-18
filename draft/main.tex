@@ -80,6 +80,11 @@
 \renewcommand{\SLGradydrulearrowName}[0]{\SLGradydrulename{}}
 \renewcommand{\SLGradydruleprodName}[0]{\SLGradydrulename{}}
 
+\input{surface-grady-inc}
+\renewcommand{\RightTirName}{\text}
+\renewcommand{\SGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SGradydrulename{#4}}}
+\renewcommand{\SGradydrulename}[1]{#1}
+
 \input{core-grady-inc}
 \renewcommand{\RightTirName}{\text}
 \renewcommand{\CGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\CGradydrulename{#4}}}
