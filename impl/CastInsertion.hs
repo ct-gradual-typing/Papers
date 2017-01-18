@@ -52,6 +52,7 @@ insert_casts Triv = return (CTriv, Unit)
 insert_casts t@(Succ t1) = do
   (t2, ty) <- insert_casts t1
   case ty of
+    U -> return (CSucc (CApp (CUnbox Nat) t2), ty)
     Nat -> return (CSucc t2, ty)
     _ -> throwError $ NotNatType ty
 insert_casts (NCase t t1 b) = do
@@ -96,9 +97,11 @@ insert_casts (Cons t1 t2) = do
   (t'1, ty1) <- insert_casts t1
   (t'2, ty2) <- insert_casts t2
   case ty2 of
-    List ty'1 -> if ty1 `aeq` ty'1
-                 then return (CCons t'1 t'2, List ty1)
-                 else throwError $ ListElemTypeMismatch t1 ty1
+    List ty'1 -> do b <- ty1 `consistent` ty'1
+                    c <- caster ty1 ty'1
+                    if b
+                    then return (CCons (CApp c t'1) t'2, List ty'1)
+                    else throwError $ ListElemTypeMismatch t1 ty1
     _ -> throwError $ NotListType ty2
 insert_casts (LCase t t1 b) = do
   (t', ty) <- insert_casts t

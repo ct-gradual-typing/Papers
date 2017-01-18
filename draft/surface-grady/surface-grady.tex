@@ -454,7 +454,7 @@
 
 \newcommand{\ottdrulesuccName}[0]{\ottdrulename{succ}}
 \newcommand{\ottdrulesucc}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{t}  :   \mathsf{Nat}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t}  :  \ottnt{A}   \quad   \mathsf{nat}( \ottnt{A} ) =   \mathsf{Nat}   }%
 }{
  \Gamma  \vdash  \mathsf{succ} \, \ottnt{t}  :   \mathsf{Nat}  }{%
 {\ottdrulesuccName}{}%
@@ -482,9 +482,9 @@
 
 \newcommand{\ottdruleconsName}[0]{\ottdrulename{cons}}
 \newcommand{\ottdrulecons}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{A}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A}   }%
+\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}      \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \sim  \ottnt{A_{{\mathrm{2}}}}  }%
 }{
- \Gamma  \vdash   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   :   \mathsf{List}\, \ottnt{A}  }{%
+ \Gamma  \vdash   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}  }{%
 {\ottdruleconsName}{}%
 }}
 
@@ -527,7 +527,7 @@
 
 \newcommand{\ottdruleSubName}[0]{\ottdrulename{Sub}}
 \newcommand{\ottdruleSub}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{t}  :  \ottnt{A} }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t}  :  \ottnt{A}   \quad   \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
 }{
  \Gamma  \vdash  \ottnt{t}  :  \ottnt{B} }{%
 {\ottdruleSubName}{}%
@@ -546,10 +546,10 @@
 
 \newcommand{\ottdruleappName}[0]{\ottdrulename{app}}
 \newcommand{\ottdruleapp}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C}   \quad   \mathsf{fun}( \ottnt{C} ) =  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B}  }%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \sim  \ottnt{A_{{\mathrm{2}}}}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C}   \quad   \mathsf{fun}( \ottnt{C} ) =  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}  }%
 }{
- \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B} }{%
+ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B_{{\mathrm{2}}}} }{%
 {\ottdruleappName}{}%
 }}
 
@@ -631,6 +631,15 @@
 }{
  \Gamma  \vdash   \mathsf{triv}   \Rightarrow   \mathsf{triv}   :   \mathsf{Unit}  }{%
 {\ottdruleciXXtrivName}{}%
+}}
+
+
+\newcommand{\ottdruleciXXsuccUName}[0]{\ottdrulename{ci\_succU}}
+\newcommand{\ottdruleciXXsuccU}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :  \ottsym{\mbox{?}} }%
+}{
+ \Gamma  \vdash  \mathsf{succ} \, \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \mathsf{succ} \, \ottsym{(}   \mathsf{unbox}_{  \mathsf{Nat}  }  \, \ottnt{t_{{\mathrm{2}}}}  \ottsym{)}  :   \mathsf{Nat}  }{%
+{\ottdruleciXXsuccUName}{}%
 }}
 
 
@@ -718,9 +727,9 @@
 
 \newcommand{\ottdruleciXXconsName}[0]{\ottdrulename{ci\_cons}}
 \newcommand{\ottdruleciXXcons}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A}   }%
+\ottpremise{      \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}      \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \sim  \ottnt{A_{{\mathrm{2}}}}     \quad   \mathsf{caster}( \ottnt{A_{{\mathrm{1}}}} , \ottnt{A_{{\mathrm{2}}}} ) =  \ottnt{c}  }%
 }{
- \Gamma  \vdash  \ottsym{(}   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   \ottnt{t'_{{\mathrm{1}}}}  ::  \ottnt{t'_{{\mathrm{2}}}}   \ottsym{)}  :   \mathsf{List}\, \ottnt{A}  }{%
+ \Gamma  \vdash  \ottsym{(}   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   \ottsym{(}  \ottnt{c} \, \ottnt{t'_{{\mathrm{1}}}}  \ottsym{)}  ::  \ottnt{t'_{{\mathrm{2}}}}   \ottsym{)}  :   \mathsf{List}\, \ottnt{A}  }{%
 {\ottdruleciXXconsName}{}%
 }}
 
@@ -797,6 +806,7 @@
 \ottusedrule{\ottdruleciXXUnbox{}}
 \ottusedrule{\ottdruleciXXzero{}}
 \ottusedrule{\ottdruleciXXtriv{}}
+\ottusedrule{\ottdruleciXXsuccU{}}
 \ottusedrule{\ottdruleciXXsucc{}}
 \ottusedrule{\ottdruleciXXncaseU{}}
 \ottusedrule{\ottdruleciXXncase{}}
@@ -832,7 +842,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        71 good    0 bad
-Definition rule clauses: 137 good    0 bad
+Definition rules:        72 good    0 bad
+Definition rule clauses: 139 good    0 bad
 \end{verbatim}
 \end{document}

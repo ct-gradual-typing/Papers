@@ -216,9 +216,13 @@ typeCheck_aux t@(Pair _ _) ty = TE.throwError $ TE.NotProdTypeTerm t ty
 typeCheck_aux Empty ty@(List a) = return $ ATEmpty ty
 typeCheck_aux Empty ty = TE.throwError $ TE.EmptyTypeError ty
 typeCheck_aux (Cons h t) ty@(List a) = do
-  ah <- typeCheck_aux h a
-  at <- typeCheck_aux t ty
-  return $ ATCons ty at at
+  ath <- inferType h
+  let ah = getType ath
+  b <- ah `consistent` a
+  if b
+  then do at <- typeCheck_aux t ty
+          return $ ATCons ty ath at
+  else TE.throwError $ TE.InconsistentTypes ah a
 typeCheck_aux (Cons _ _) ty = TE.throwError $ TE.ConsTypeError ty
 typeCheck_aux (Fun ty b) ty'@(Arr ty1 ty2) = 
   lunbind b $ (\(x,t) -> reqSameType ty ty1 >> (extend_ctx x ty1 $ do
@@ -237,8 +241,6 @@ typeCheck_aux (TFun ty b1) ty'@(Forall ty1 b2) =
 typeCheck_aux t@(TFun _ _) ty = TE.throwError $ TE.NotForallTypeTerm t ty
 typeCheck_aux Zero Nat = return $ ATZero
 typeCheck_aux Zero ty = TE.throwError $ TE.ZeroTypeError ty
-typeCheck_aux (Succ t) Nat = typeCheck_aux t Nat >>= (return.ATSucc)
-typeCheck_aux (Succ _) ty = TE.throwError $ TE.SuccTypeError ty
 typeCheck_aux Triv Unit = return $ ATTriv
 typeCheck_aux Triv ty = TE.throwError $ TE.TrivTypeError ty
 typeCheck_aux (Box s) ty@(Arr t U) | s `aeq` t = do
@@ -266,7 +268,6 @@ infer :: Term -> TE.ExceptT TE.TypeError LFreshM ATerm
 infer t = TE.runReaderT (inferType t) (M.empty, M.empty)
 
 inferType :: Term -> TCM ATerm
-
 inferType (Var x) = do
   mty <- lookup_ctx x
   case mty of
@@ -289,11 +290,22 @@ inferType (Unbox ty) = do
 
 inferType Empty = return $ ATEmpty (Forall Top (bind (s2n "X") (List (TVar (s2n "X")))))
 
+inferType (Cons h Empty) = do
+  ah <- inferType h
+  let hty = getType ah
+  return $ ATCons (List hty) ah (ATEmpty (List hty))
+  
 inferType (Cons h t) = do
   ah <- inferType h
   let hty = getType ah
-  at <- typeCheck_aux t (List hty)
-  return $ ATCons (List hty) ah at
+  at <- inferType t
+  let tty = getType at
+  case tty of
+    List ety -> do b <- hty `consistent` ety
+                   if b
+                   then return $ ATCons (List ety) ah at
+                   else TE.throwError $ TE.InconsistentTypes hty ety
+    _ -> TE.throwError $ TE.NotListType tty
 
 inferType (LCase t t1 b) = do    
       at <- inferType t
@@ -307,7 +319,8 @@ inferType (LCase t t1 b) = do
 
 inferType Zero = return ATZero
 inferType (Succ t) = do
-  at <- typeCheck_aux t Nat
+  at <- inferType t
+  requireNat at
   return $ ATSucc at
 
 inferType (NCase t t1 b) =
