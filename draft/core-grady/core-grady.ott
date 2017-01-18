@@ -276,7 +276,7 @@ defn
     G |- Forall (X <: A).B1 <: Forall (X <: A).B2
 
 defn
-    G |- t : A :: :: type :: ''
+    G |- t : A :: :: type :: 'T_'
     {{tex [[G]] \vdash [[t]] : [[A]] }} by
     
     x : A elem G && G Ok
