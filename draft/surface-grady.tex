@@ -158,28 +158,33 @@
 
 \begin{lemma}[Inclusion of Bounded System F]
   \label{lemma:F-inclusion}
-  Suppose $t$ is fully annotated, and $[[A]]$ is static.  Then
+  Suppose $t$ is fully annotated and does not contain any applications
+  of $[[box]]$ or $[[unbox]]$, and $[[A]]$ is static.  Then
   \begin{itemize}
   \item[]
   \item[i.] $[[G |-F t : A]]$ if and only if $\,[[G |- t : A]]$.
-  \item[ii.] $[[t F~> t']]$ if and only if $[[t ~>* t']]$.
+  \item[ii.] $[[t F~>* t']]$ if and only if $[[t ~>* t']]$.
   \end{itemize}
 \end{lemma}
 \begin{proof}
-  The proof of part one holds by straightforward induction on $[[G |-F
-      t : A]]$.  Informally, if we simply remove all rules mentioning
-  the unknown type $[[?]]$ and the type consistency relation, and then
-  remove $[[?]]$ from the syntax of Surface Grady, then what we are
-  left with is bounded system F.  In fact, there is a one-to-one
-  mapping of the syntax of bounded system F to the syntax of Surface
-  Grady.
+  We give proof sketches for both parts.  The interesting cases are
+  the right-to-left directions of each part.  If we simply remove all
+  rules mentioning the unknown type $[[?]]$ and the type consistency
+  relation, and then remove $[[box]]$, $[[unbox]]$, and $[[?]]$ from
+  the syntax of Surface Grady, then what we are left with is bounded
+  system F.  Since $[[t]]$ is fully annotated and $[[A]]$ is static,
+  then $[[G |- t : A]]$ will hold within this fragment.
 
-  Part two holds by induction on $[[t F~> t']]$.  Informally, before
-  evaluation of $[[t]]$ surface Grady will apply the cast insertion
-  algorithm which will at most insert applications of the identity
-  function into $[[t]]$ producing a term $\widehat{[[t]]}$, but then
-  after potentially more than one step of evaluation within Core
-  Grady, those applications of the identity function will be
-  $\beta$-reduced away resulting in $\widehat{[[t]]}
-  \rightsquigarrow^* [[t]] \rightsquigarrow [[t']]$.
+  Moving on to part two, first, we know that $[[t]]$ does not contain
+  any occurrence of $[[box]]$ or $[[unbox]]$ and is fully annotated.
+  This implies that $[[t]]$ lives within the bounded system F fragment
+  of Surface Grady. Thus, before evaluation of $[[t]]$ Surface Grady
+  will apply the cast insertion algorithm which will at most insert
+  applications of the identity function into $[[t]]$ producing a term
+  $\widehat{[[t]]}$, but then after potentially more than one step of
+  evaluation within Core Grady, those applications of the identity
+  function will be $\beta$-reduced away resulting in $\widehat{[[t]]}
+  \rightsquigarrow^* [[t]] \rightsquigarrow^* [[t']]$.  In addition,
+  since $[[t]]$ in Surface Grady is the exact same program as $[[t]]$
+  in bounded system F, then we know $[[t F~>* t']]$ will hold.
 \end{proof}

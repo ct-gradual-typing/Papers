@@ -129,8 +129,8 @@ grammar
     {{tex \mathsf{caster}([[A]],[[B]]) = [[c]] }}
     | G |-F t : A         :: M :: Fj
     {{tex [[G]] \vdash_F [[t]] : [[A]] }}
-    | t F~> t'            :: M :: Fr1
-    {{tex [[t]] \rightsquigarrow_F [[t']] }}
+    | t F~>* t'            :: M :: Fr1
+    {{tex [[t]] \rightsquigarrow^*_F [[t']] }}
     | t ~>* t'            :: M :: Rd
     {{tex [[t]] \rightsquigarrow^* [[t']] }}
     | t \|/ t'           :: M :: Join
