@@ -155,3 +155,31 @@
   \caption{Cast insertion for Surface Grady}
   \label{fig:cast-insert-surface-grady}
 \end{figure}
+
+\begin{lemma}[Inclusion of Bounded System F]
+  \label{lemma:F-inclusion}
+  Suppose $t$ is fully annotated, and $[[A]]$ is static.  Then
+  \begin{itemize}
+  \item[]
+  \item[i.] $[[G |-F t : A]]$ if and only if $\,[[G |- t : A]]$.
+  \item[ii.] $[[t F~> t']]$ if and only if $[[t ~>* t']]$.
+  \end{itemize}
+\end{lemma}
+\begin{proof}
+  The proof of part one holds by straightforward induction on $[[G |-F
+      t : A]]$.  Informally, if we simply remove all rules mentioning
+  the unknown type $[[?]]$ and the type consistency relation, and then
+  remove $[[?]]$ from the syntax of Surface Grady, then what we are
+  left with is bounded system F.  In fact, there is a one-to-one
+  mapping of the syntax of bounded system F to the syntax of Surface
+  Grady.
+
+  Part two holds by induction on $[[t F~> t']]$.  Informally, before
+  evaluation of $[[t]]$ surface Grady will apply the cast insertion
+  algorithm which will at most insert applications of the identity
+  function into $[[t]]$ producing a term $\widehat{[[t]]}$, but then
+  after potentially more than one step of evaluation within Core
+  Grady, those applications of the identity function will be
+  $\beta$-reduced away resulting in $\widehat{[[t]]}
+  \rightsquigarrow^* [[t]] \rightsquigarrow [[t']]$.
+\end{proof}

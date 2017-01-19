@@ -127,6 +127,16 @@ grammar
     {{tex [[A]] \neq [[B]] }}
     | caster( A , B ) = c :: M :: caster
     {{tex \mathsf{caster}([[A]],[[B]]) = [[c]] }}
+    | G |-F t : A         :: M :: Fj
+    {{tex [[G]] \vdash_F [[t]] : [[A]] }}
+    | t F~> t'            :: M :: Fr1
+    {{tex [[t]] \rightsquigarrow_F [[t']] }}
+    | t ~>* t'            :: M :: Rd
+    {{tex [[t]] \rightsquigarrow^* [[t']] }}
+    | t \|/ t'           :: M :: Join
+    {{tex [[t]] \downarrow [[t']] }}
+    | t \|/F t'          :: M :: Join2
+    {{tex [[t]] \downarrow_F [[t']] }}    
   
 defns
   Typing :: '' ::=
