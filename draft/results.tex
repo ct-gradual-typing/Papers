@@ -40,5 +40,19 @@
 \end{lemma}
 \begin{proof}
   In this case DTLC is embedded into the simply typed fragment of
-  Grady, and hence, this proof is the same result proven by \cite{Siek:2006}, and \cite{Siek:2015}.
+  Grady, and hence, this proof is the same result proven by
+  \cite{Siek:2006}, and \cite{Siek:2015}.
 \end{proof}
+
+
+\begin{theorem}[Gradual Guarantee]
+  \label{thm:gradual_guarantee}
+  Suppose $[[. |- t : A]]$ and $[[t <= t']]$.  Then
+  \begin{itemize}
+  \item[i.] $[[. |- t' : B]]$ and $[[A <= B]]$,
+  \item[ii.] if $[[t ~>* v]]$, then $[[t' ~>* v']]$ and $[[v <= v']]$,
+  \item[iii.] if $[[t ^]]$, then $[[t' ^]]$,
+  \item[iv.] if $[[t' ~>* v']]$, then $[[t ~>* v]]$ where $[[v <= v']]$, or $<<t ~>* error>>$, and
+  \item [v.] if $[[t' ^]]$, then $[[t ^]]$ or $<<t ~>* error>>$.
+  \end{itemize}
+\end{theorem}

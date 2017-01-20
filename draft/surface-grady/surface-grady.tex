@@ -408,6 +408,67 @@
 \ottusedrule{\ottdruleCXXForall{}}
 \end{ottdefnblock}}
 
+%% defn typepre
+\newcommand{\ottdrulePXXUName}[0]{\ottdrulename{P\_U}}
+\newcommand{\ottdrulePXXU}[1]{\ottdrule[#1]{%
+}{
+ \ottnt{A}  \sqsubseteq  \ottsym{\mbox{?}} }{%
+{\ottdrulePXXUName}{}%
+}}
+
+
+\newcommand{\ottdrulePXXreflName}[0]{\ottdrulename{P\_refl}}
+\newcommand{\ottdrulePXXrefl}[1]{\ottdrule[#1]{%
+}{
+ \ottnt{A}  \sqsubseteq  \ottnt{A} }{%
+{\ottdrulePXXreflName}{}%
+}}
+
+
+\newcommand{\ottdrulePXXarrowName}[0]{\ottdrulename{P\_arrow}}
+\newcommand{\ottdrulePXXarrow}[1]{\ottdrule[#1]{%
+\ottpremise{  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
+}{
+ \ottsym{(}  \ottnt{A}  \rightarrow  \ottnt{B}  \ottsym{)}  \sqsubseteq  \ottsym{(}  \ottnt{C}  \rightarrow  \ottnt{D}  \ottsym{)} }{%
+{\ottdrulePXXarrowName}{}%
+}}
+
+
+\newcommand{\ottdrulePXXprodName}[0]{\ottdrulename{P\_prod}}
+\newcommand{\ottdrulePXXprod}[1]{\ottdrule[#1]{%
+\ottpremise{  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
+}{
+ \ottsym{(}   \ottnt{A}  \times  \ottnt{B}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \ottnt{C}  \times  \ottnt{D}   \ottsym{)} }{%
+{\ottdrulePXXprodName}{}%
+}}
+
+
+\newcommand{\ottdrulePXXlistName}[0]{\ottdrulename{P\_list}}
+\newcommand{\ottdrulePXXlist}[1]{\ottdrule[#1]{%
+\ottpremise{ \ottnt{A}  \sqsubseteq  \ottnt{B} }%
+}{
+ \ottsym{(}   \mathsf{List}\, \ottnt{A}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \mathsf{List}\, \ottnt{B}   \ottsym{)} }{%
+{\ottdrulePXXlistName}{}%
+}}
+
+
+\newcommand{\ottdrulePXXforallName}[0]{\ottdrulename{P\_forall}}
+\newcommand{\ottdrulePXXforall}[1]{\ottdrule[#1]{%
+\ottpremise{  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
+}{
+ \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{C} ).  \ottnt{D}   \ottsym{)} }{%
+{\ottdrulePXXforallName}{}%
+}}
+
+\newcommand{\ottdefntypepre}[1]{\begin{ottdefnblock}[#1]{$ \ottnt{A}  \sqsubseteq  \ottnt{B} $}{}
+\ottusedrule{\ottdrulePXXU{}}
+\ottusedrule{\ottdrulePXXrefl{}}
+\ottusedrule{\ottdrulePXXarrow{}}
+\ottusedrule{\ottdrulePXXprod{}}
+\ottusedrule{\ottdrulePXXlist{}}
+\ottusedrule{\ottdrulePXXforall{}}
+\end{ottdefnblock}}
+
 %% defn type
 \newcommand{\ottdruleTXXvarPName}[0]{\ottdrulename{T\_varP}}
 \newcommand{\ottdruleTXXvarP}[1]{\ottdrule[#1]{%
@@ -828,7 +889,7 @@
 
 
 \newcommand{\ottdefnsTyping}{
-\ottdefnkind{}\ottdefnctxOk{}\ottdefnsubtype{}\ottdefntypecons{}\ottdefntype{}\ottdefncastIn{}}
+\ottdefnkind{}\ottdefnctxOk{}\ottdefnsubtype{}\ottdefntypecons{}\ottdefntypepre{}\ottdefntype{}\ottdefncastIn{}}
 
 \newcommand{\ottdefnss}{
 \ottdefnsTyping
@@ -842,7 +903,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        72 good    0 bad
-Definition rule clauses: 139 good    0 bad
+Definition rules:        78 good    0 bad
+Definition rule clauses: 149 good    0 bad
 \end{verbatim}
 \end{document}

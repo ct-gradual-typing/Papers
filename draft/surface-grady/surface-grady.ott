@@ -140,7 +140,11 @@ grammar
     | t \|/ t'           :: M :: Join
     {{tex [[t]] \downarrow [[t']] }}
     | t \|/F t'          :: M :: Join2
-    {{tex [[t]] \downarrow_F [[t']] }}    
+    {{tex [[t]] \downarrow_F [[t']] }}
+    | t <= t'            :: M :: TermPre
+    {{tex [[t]] \sqsubseteq [[t']] }}
+    | t ^                :: M :: Div
+    {{tex [[t]] \uparrow }}
   
 defns
   Typing :: '' ::=
@@ -277,6 +281,93 @@ defn
    G, X <: A |- B1 ~ B2
    ------------------------------------------------ :: Forall
    G |- (Forall (X <: A).B1) ~ (Forall (X <: A).B2)
+
+defn
+    A <= B :: :: typepre :: 'P_'
+    {{tex [[A]] \sqsubseteq [[B]] }}
+by
+
+   ----------- :: U
+   A <= ?
+
+   ----------- :: refl
+   A <= A
+
+   A <= C && B <= D
+   -------------------------- :: arrow
+   (A -> B) <= (C -> D)
+
+   A <= C && B <= D
+   -------------------------- :: prod
+   (A x B) <= (C x D)
+
+   A <= B
+   ------------------------- :: list
+   (List A) <= (List B)
+
+   A <= C && B <= D
+   ----------------------------------------------- :: forall
+   (Forall (X <: A).B) <= (Forall (X <: C).D)
+
+% defn
+%     t <= t' :: :: termpre :: 'TP_'
+%     {{tex [[t]] \sqsubseteq [[t']] }}
+% by
+
+%    ------ :: var
+%    x <= x
+
+%    ------ :: zero
+%    0 <= 0
+
+%    t <= t'
+%    --------------------- :: succ
+%    (succ t) <= (succ t')
+
+%    t1 <= t3 && t2 <= t4
+%    --------------------- :: pair
+%    (t1 , t2) <= (t3, t4)
+
+%    t <= t'
+%    ------------------- :: fst
+%    (fst t) <= (fst t')
+
+%    t <= t'
+%    ------------------- :: snd
+%    (snd t) <= (snd t')
+
+%    -------- :: empty
+%    [] <= []
+
+%    t1 <= t3 && t2 <= t4
+%    ------------------------ :: cons
+%    (t1 :: t2) <= (t3 :: t4)
+
+%    A <= B
+%    -------------- :: box
+%    box A <= box B
+
+%    A <= B
+%    ------------------ :: unbox
+%    unbox A <= unbox B
+
+%    A <= B && t <= t'
+%    --------------------------------- :: lam
+%    (\x : A.t) <= (\x : B.t')
+
+%    t1 <= t3 && t2 <= t4
+%    --------------------- :: app
+%    (t1 t2) <= (t3 t4)
+
+%    A <= B && t <= t'
+%    --------------------------------- :: Lam
+%    (Lam X <: A.t) <= (Lam X <: B.t')
+
+%    A <= B && t <= t'
+%    ----------------- :: tapp
+%    [A]t <= [B]t'
+
+   
 
 defn
     G |- t : A :: :: type :: 'T_'

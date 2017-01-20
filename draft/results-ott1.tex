@@ -40,5 +40,19 @@
 \end{lemma}
 \begin{proof}
   In this case DTLC is embedded into the simply typed fragment of
-  Grady, and hence, this proof is the same result proven by \cite{Siek:2006}, and \cite{Siek:2015}.
+  Grady, and hence, this proof is the same result proven by
+  \cite{Siek:2006}, and \cite{Siek:2015}.
 \end{proof}
+
+
+\begin{theorem}[Gradual Guarantee]
+  \label{thm:gradual_guarantee}
+  Suppose $  \cdot   \vdash  \SGradynt{t}  :  \SGradynt{A} $ and $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $.  Then
+  \begin{itemize}
+  \item[i.] $  \cdot   \vdash  \SGradynt{t'}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $,
+  \item[ii.] if $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $, then $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $ and $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $,
+  \item[iii.] if $ \SGradynt{t}  \uparrow $, then $ \SGradynt{t'}  \uparrow $,
+  \item[iv.] if $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $, then $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $ where $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $, or $[[t ~>* error]]$, and
+  \item [v.] if $ \SGradynt{t'}  \uparrow $, then $ \SGradynt{t}  \uparrow $ or $[[t ~>* error]]$.
+  \end{itemize}
+\end{theorem}

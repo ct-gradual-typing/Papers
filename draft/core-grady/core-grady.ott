@@ -151,6 +151,8 @@ grammar
     | t : A               :: M :: TermHasType
     | A != B              :: M :: NotEqual
     {{tex [[A]] \neq [[B]] }}
+    | t ~>* t'            :: M :: Rd
+    {{tex [[t]] \rightsquigarrow^* [[t']] }}
 
 subrules
   v <:: t
