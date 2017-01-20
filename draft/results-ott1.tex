@@ -1,0 +1,44 @@
+\begin{lemma}[Inclusion of Bounded System F]
+  \label{lemma:F-inclusion}
+  Suppose $t$ is fully annotated and does not contain any applications
+  of $ \mathsf{box} $ or $ \mathsf{unbox} $, and $\SGradynt{A}$ is static.  Then
+  \begin{itemize}
+  \item[i.] $ \Gamma  \vdash_F  \SGradynt{t}  :  \SGradynt{A} $ if and only if $\, \Gamma  \vdash  \SGradynt{t}  :  \SGradynt{A} $, and 
+  \item[ii.] $ \SGradynt{t}  \rightsquigarrow^*_F  \SGradynt{t'} $ if and only if $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{t'} $.
+  \end{itemize}
+\end{lemma}
+\begin{proof}
+  We give proof sketches for both parts.  The interesting cases are
+  the right-to-left directions of each part.  If we simply remove all
+  rules mentioning the unknown type $\SGradysym{\mbox{?}}$ and the type consistency
+  relation, and then remove $ \mathsf{box} $, $ \mathsf{unbox} $, and $\SGradysym{\mbox{?}}$ from
+  the syntax of Surface Grady, then what we are left with is bounded
+  system F.  Since $\SGradynt{t}$ is fully annotated and $\SGradynt{A}$ is static,
+  then $ \Gamma  \vdash  \SGradynt{t}  :  \SGradynt{A} $ will hold within this fragment.
+
+  Moving on to part two, first, we know that $\SGradynt{t}$ does not contain
+  any occurrence of $ \mathsf{box} $ or $ \mathsf{unbox} $ and is fully annotated.
+  This implies that $\SGradynt{t}$ lives within the bounded system F fragment
+  of Surface Grady. Thus, before evaluation of $\SGradynt{t}$ Surface Grady
+  will apply the cast insertion algorithm which will at most insert
+  applications of the identity function into $\SGradynt{t}$ producing a term
+  $\widehat{\SGradynt{t}}$, but then after potentially more than one step of
+  evaluation within Core Grady, those applications of the identity
+  function will be $\beta$-reduced away resulting in $\widehat{\SGradynt{t}}
+  \rightsquigarrow^* \SGradynt{t} \rightsquigarrow^* \SGradynt{t'}$.  In addition,
+  since $\SGradynt{t}$ in Surface Grady is the exact same program as $\SGradynt{t}$
+  in bounded system F, then we know $ \SGradynt{t}  \rightsquigarrow^*_F  \SGradynt{t'} $ will hold.
+\end{proof}
+
+\begin{lemma}[Inclusion of DTLC]
+  \label{lemma:inclusion_of_dtlc}
+  Suppose $\SGradynt{t}$ is a closed term of DTLC. Then
+  \begin{itemize}
+  \item[i.] $  \cdot   \vdash   \lceil  \SGradynt{t}  \rceil   :  \SGradysym{\mbox{?}} $, and
+  \item[ii.] $ \SGradynt{t}  \rightsquigarrow^*_{DTLC}  \SGradynt{t'} $ if and only if $  \lceil  \SGradynt{t}  \rceil   \rightsquigarrow^*   \lceil  \SGradynt{t'}  \rceil  $.
+  \end{itemize}
+\end{lemma}
+\begin{proof}
+  In this case DTLC is embedded into the simply typed fragment of
+  Grady, and hence, this proof is the same result proven by \cite{Siek:2006}, and \cite{Siek:2015}.
+\end{proof}

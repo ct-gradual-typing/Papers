@@ -40,7 +40,9 @@ grammar
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
     {{tex [[t]] }}    
-    | [ A / X ] t         :: M :: TypeSub   
+    | [ A / X ] t         :: M :: TypeSub
+    | | t |               :: M :: DEnc
+    {{tex \lceil [[t]] \rceil }}
 
   K :: 'K_' ::=
     | *                   ::   :: TypeOfTypes
@@ -131,6 +133,8 @@ grammar
     {{tex [[G]] \vdash_F [[t]] : [[A]] }}
     | t F~>* t'            :: M :: Fr1
     {{tex [[t]] \rightsquigarrow^*_F [[t']] }}
+    | t D~>* t'            :: M :: Dr
+    {{tex [[t]] \rightsquigarrow^*_{DTLC} [[t']] }}    
     | t ~>* t'            :: M :: Rd
     {{tex [[t]] \rightsquigarrow^* [[t']] }}
     | t \|/ t'           :: M :: Join
