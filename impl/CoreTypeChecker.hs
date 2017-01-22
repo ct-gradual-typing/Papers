@@ -106,7 +106,7 @@ subtype' ty1 ty2 = TE.runReaderT (subtype ty1 ty2) (M.empty, M.empty)
 -- ty1 <: ty2
 subtype :: Type -> Type -> TCM Bool
 subtype t1 t2 | t1 `aeq` t2 = return True
-subtype t1 Top = return True
+subtype t1 U = return True
 subtype Nat Simple = return True
 subtype Unit Simple = return True
 subtype (List s) Simple = s `subtype` Simple
@@ -248,7 +248,7 @@ inferType (CVar x) = do
 
 inferType CTriv = return ATTriv
 
-inferType CEmpty = return $ ATEmpty (Forall Top (bind (s2n "X") (List (TVar (s2n "X")))))
+inferType CEmpty = return $ ATEmpty (Forall U (bind (s2n "X") (List (TVar (s2n "X")))))
 
 inferType (CCons h t) = do
   ah <- inferType h

@@ -139,7 +139,7 @@ ctx_ok = do
 -- ty1 <: ty2
 subtype :: Type -> Type -> TCM Bool
 subtype t1 t2 | t1 `aeq` t2 = ctx_ok >> return True
-subtype t1 Top = ctx_ok >> return True
+subtype t1 U = ctx_ok >> return True
 
 subtype Nat Simple = ctx_ok >> return True
 subtype Unit Simple = ctx_ok >> return True
@@ -288,7 +288,7 @@ inferType (Unbox ty) = do
              then return $ ATUnbox (Arr U ty) ty
              else TE.throwError $ TE.BoxError ty
 
-inferType Empty = return $ ATEmpty (Forall Top (bind (s2n "X") (List (TVar (s2n "X")))))
+inferType Empty = return $ ATEmpty (Forall U (bind (s2n "X") (List (TVar (s2n "X")))))
 
 inferType (Cons h Empty) = do
   ah <- inferType h

@@ -1,7 +1,7 @@
 import Naturals;
 
-tail : forall (X<:*).([X] -> [X])
-tail = \(X<:*) -> \(l:[X]) ->
+tail : forall (X<:?).([X] -> [X])
+tail = \(X<:?) -> \(l:[X]) ->
              case l of [] -> [X][], (h :: t) -> t;
 
 append : forall (A <: Simple).([A] -> [A] -> [A])

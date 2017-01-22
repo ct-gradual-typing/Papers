@@ -54,8 +54,6 @@ grammar
     {{tex \mathsf{List}\,[[A]] }}
     | Forall ( X <: A ) . B   ::   :: Forall
     {{tex \forall ([[X]] <\hspace{-2px}\colon [[A]]). [[B]]}}
-    | Top                 ::   :: top
-    {{tex \top }}
     | SL                  ::   :: Simple
     {{tex \mathsf{SL} }}
     | Unit                ::   :: term    
@@ -214,8 +212,8 @@ defn
     G |- X <: A
 
     G Ok
-    -------------- :: Top
-    G |- A <: Top
+    ----------- :: U
+    G |- A <: ?
 
     G Ok
     ---------------- :: NatS
@@ -283,31 +281,31 @@ defn
    G |- (Forall (X <: A).B1) ~ (Forall (X <: A).B2)
 
 defn
-    A <= B :: :: typepre :: 'P_'
-    {{tex [[A]] \sqsubseteq [[B]] }}
+    G |- A <= B :: :: typepre :: 'P_'
+    {{tex [[G]] \vdash [[A]] \sqsubseteq [[B]] }}
 by
 
    ----------- :: U
-   A <= ?
+   G |- A <= ?
 
    ----------- :: refl
-   A <= A
+   G |- A <= A
 
-   A <= C && B <= D
+   G |- A <= C && G |- B <= D
    -------------------------- :: arrow
-   (A -> B) <= (C -> D)
+   G |- (A -> B) <= (C -> D)
 
-   A <= C && B <= D
+   G |- A <= C && G |- B <= D
    -------------------------- :: prod
-   (A x B) <= (C x D)
+   G |- (A x B) <= (C x D)
 
-   A <= B
+   G |- A <= B
    ------------------------- :: list
-   (List A) <= (List B)
+   G |- (List A) <= (List B)
 
-   A <= C && B <= D
-   ----------------------------------------------- :: forall
-   (Forall (X <: A).B) <= (Forall (X <: C).D)
+   (G |- A <= A' && G |- A <: A') && G, X <: A |- B <= D 
+   ----------------------------------------------------- :: forall
+   G |- (Forall (X <: A).B) <= (Forall (X <: A).D)
 
 % defn
 %     t <= t' :: :: termpre :: 'TP_'
@@ -402,7 +400,7 @@ defn
 
     G Ok && G |- A : *
     -------------------------------- :: empty
-    G |- [] : Forall (X <: Top).List X
+    G |- [] : Forall (X <: ?).List X
 
     
     (G |- t1 : A1 && G |- t2 : List A2) && G |- A1 ~ A2
@@ -528,7 +526,7 @@ by
     G |- snd t1 => snd t2 : B
 
     ---------------------------------------- :: Empty
-    G |- [] => [] : Forall (X <: Top).List X
+    G |- [] => [] : Forall (X <: ?).List X
 
     ((G |- t1 => t'1 : A1 && G |- t2 => t'2 : List A2) && G |- A1 ~ A2) && caster(A1,A2) = c
     ---------------------------------------------------------------------------------------- :: cons

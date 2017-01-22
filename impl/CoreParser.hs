@@ -72,7 +72,6 @@ tvar = ws *> var' typeVarName TVar <* ws
 tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "Unit" Unit         
-tyTop = parseConst "*" Top
 tyCastable = parseConst "Simple" Simple
         
 prod = do
@@ -107,7 +106,7 @@ list = do
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tyCastable
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyCastable
                                       <|> try forall <|> try prod <|> try list <|> tvar
 
 parseType :: String -> Either String Type
