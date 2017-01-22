@@ -6,40 +6,45 @@ import Control.Applicative
 import Control.Monad.Reader
 import Control.Monad.Except  
 
-import Syntax  
+import Syntax
+import CoreSyntax  
 import Pretty
 
 --Error Types
 data TypeError = FreeVarsError Vnm
+               | CoreFreeVarsError CVnm
                | FreeTVarsError TVnm
                | SuccError Term
                | FstError Term
+               | FstTypeError Type
+               | SndTypeError Type
                | SndError Term
                | FunError Term
                | AppError Type Type
                | TAppError Term Type Type
                | NoTypeError Term
-               | UnboxError Type
-               | BoxError Type
                | UnMatchedTypes Type Type
                | SError Type
                | SubtypeError Type Type
                | TypeMismatch Type Type
-               | NotProdType Term Type
+               | NotProdTypeTerm Term Type
+               | CoreNotProdTypeTerm CTerm Type                 
                | NotArrowTypeTerm Term Type
+               | CoreNotArrowTypeTerm CTerm Type                 
                | NotArrowType Type
                | NotForallType Type
-               | NotForallTypeTerm Term Type
-               | TypeVariableNameMismatch TVnm TVnm
-               | SplitTypeError Type
-               | SquashTypeError Type
                | SplitSquashTypeError Type Type
                | UnboxBoxTypeError Type Type
-               | BoxTypeError Type
-               | UnboxTypeError Type
+               | NotNatType Type                 
+               | NotListType Type
+               | NotProdType Type                                  
+               | NotForallTypeTerm Term Type
+               | CoreNotForallTypeTerm CTerm Type                 
+               | TypeVariableNameMismatch TVnm TVnm
                | NCaseBranchesMistype Type Type
                | LCaseBranchesMistype Type Type
                | LCaseScrutinyTypeError Term Type
+               | CoreLCaseScrutinyTypeError CTerm Type
                | NoError
                | CtxNotOk
                | TrivTypeError Type
@@ -47,6 +52,17 @@ data TypeError = FreeVarsError Vnm
                | EmptyTypeError Type
                | ZeroTypeError Type
                | SuccTypeError Type
+               | CastError Type Type
+               | BoxTypeError Type 
+               | UnboxTypeError Type
+               | UnboxError Type
+               | BoxError Type
+               | SquashError Type
+               | SplitError Type
+               | CastInsertionError Type Type
+               | ListElemTypeMismatch Term Type
+               | InconsistentTypes Type Type
+               | NonFunctionType Term Type
   deriving(Show)
 
 instance Monoid TypeError where
@@ -63,7 +79,5 @@ readTypeError (FunError a) = "Type error (function): "++runPrettyTerm a
 readTypeError (AppError a b) = "Type error (application): types don't match " ++runPrettyType a++" !~ "++(runPrettyType b)
 readTypeError (NoTypeError a) = "Type error: No type (" ++runPrettyTerm a++ ") was found"  
 readTypeError (UnMatchedTypes a b) = "Type error: "++ (runPrettyType a) ++" must have the correct type with "++ (runPrettyType b)
-readTypeError (BoxError a) = "Type error: You cannot box "++ (runPrettyType a)++", you can only box types Nat and Unit"
-readTypeError (UnboxError a) = "Type error: You cannot unbox "++ (runPrettyType a)++", you can only unbox types Nat and Unit"
 readTypeError (SError a) = "Type error: "++(runPrettyType a)++" must be of type ? -> ? or (? x ?)"
 readTypeError e = show e

@@ -8,17 +8,15 @@ import System.FilePath
 import Unbound.LocallyNameless.Subst
 
 import Queue
-import Syntax
 import CoreSyntax
-import Parser
-import Pretty
+import TypeSyntax
+import CoreParser
 import CorePretty
-import TypeChecker
+import CoreTypeChecker
 import Eval
 import TypeErrors
-import CastInsertion
 
-type Qelm = (Vnm, Term)
+type Qelm = (CVnm, CTerm)
 type REPLStateIO = StateT (FilePath,Queue Qelm) IO
 
 instance MonadException m => MonadException (StateT s m) where
@@ -29,7 +27,7 @@ instance MonadException m => MonadException (StateT s m) where
 io :: IO a -> REPLStateIO a
 io i = liftIO i
     
-pop :: REPLStateIO (Vnm, Term)
+pop :: REPLStateIO (CVnm, CTerm)
 pop = get >>= return.headQ.snd
 
 push :: Qelm -> REPLStateIO ()
@@ -42,7 +40,7 @@ set_wdir wdir = do
   (_,q) <- get
   put (wdir,q)
          
-unfoldDefsInTerm :: (Queue Qelm) -> Term -> Term
+unfoldDefsInTerm :: (Queue Qelm) -> CTerm -> CTerm
 unfoldDefsInTerm q t =
     let uq = toListQ $ unfoldQueue q
      in substs uq t
@@ -52,10 +50,10 @@ unfoldQueue q = fixQ q emptyQ step
  where
    step e@(x,t) _ r = (mapQ (substDef x t) r) `snoc` e
     where
-      substDef :: Name Term -> Term -> Qelm -> Qelm
+      substDef :: Name CTerm -> CTerm -> Qelm -> Qelm
       substDef x t (y, t') = (y, subst x t t')
       
-containsTerm :: Queue Qelm -> Vnm -> Bool
+containsTerm :: Queue Qelm -> CVnm -> Bool
 containsTerm (Queue f r) vnm = (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f) 
 
 tyCheckQ :: GFile -> REPLStateIO ()
@@ -100,7 +98,7 @@ handleCMD s =
     handleLine :: REPLExpr -> REPLStateIO ()
     handleLine (HelpMenu) = do
       io.putStrLn $ "----------------------------------------------------------"
-      io.putStrLn $ "                  The Grady Help Menu                     "
+      io.putStrLn $ "                  The Core Grady Help Menu                     "
       io.putStrLn $ "----------------------------------------------------------"
       io.putStrLn $ ":h/:help -> Display the help menu"
       io.putStrLn $ ":t/:type <term> -> Typecheck a term"
@@ -112,7 +110,13 @@ handleCMD s =
       io.putStrLn $ "let <Variable name> = <expression> -> Bind an expression to a variable and load it into the context"
       io.putStrLn $ "You may also evaluate expressions directly in the Repl"
       io.putStrLn $ "----------------------------------------------------------"
-
+    handleLine (Eval t) = do
+      (f, defs) <- get
+      let tu = unfoldDefsInTerm defs t
+          r = eval tu
+       in case r of
+            Left m -> io.putStrLn.readTypeError $ m
+            Right e -> io.putStrLn.runPrettyCTerm $ e
     handleLine (Let x t) = do
       (f, defs) <- get
       let tu = unfoldDefsInTerm defs t
@@ -134,7 +138,7 @@ handleCMD s =
       (_,defs) <- get
       io.putStrLn.show $ unfoldDefsInTerm defs t
     handleLine (Unfold t) =
-        get >>= (\(f,defs) -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
+        get >>= (\(f,defs) -> io.putStrLn.runPrettyCTerm $ unfoldDefsInTerm defs t)
     handleLine (LoadFile p) = do
       let wdir = takeDirectory p
       let file = takeFileName p
@@ -145,19 +149,9 @@ handleCMD s =
       else loadFile file
     handleLine DumpState = get >>= io.print.(mapQ prettyDef).snd
      where
-       prettyDef :: (Name a, Term) -> String
-       prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
-    handleLine (Eval t) = do
-      (_, defs) <- get
-      let tu = unfoldDefsInTerm defs t
-      let r = insertCasts tu
-      case r of
-        Left m -> io.putStrLn.readTypeError $ m
-        Right (ct, _) -> let me = eval ct
-                          in case me of
-                               Left m' -> io.putStrLn.readTypeError $ m'
-                               Right e -> io.putStrLn.runPrettyCTerm $ e
-      
+       prettyDef :: (Name a, CTerm) -> String
+       prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyCTerm t)
+
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
   (wdir,_) <- get
@@ -168,11 +162,11 @@ loadFile p = do
     Left l -> io.putStrLn $ l
     Right r -> tyCheckQ r
    
-getFV :: Term -> [Vnm]
-getFV t = fv t :: [Vnm]
+getFV :: CTerm -> [CVnm]
+getFV t = fv t :: [CVnm]
 
 banner :: String
-banner = "Welcome to Grady!\n\n"
+banner = "Welcome to Core Grady!\n\n"
 
 main :: IO ()
 main = do
@@ -181,7 +175,7 @@ main = do
    where 
        loop :: InputT REPLStateIO ()
        loop = do           
-           minput <- getInputLine "Grady> "
+           minput <- getInputLine "Core Grady> "
            case minput of
                Nothing -> return ()
                Just [] -> loop

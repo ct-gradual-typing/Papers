@@ -32,57 +32,57 @@ is that products and natural numbers have been added.  The definition
 of products follows how casting is done for functions. So it allows
 casting projections of products, for example, it is reasonable for
 terms like $[[\x:(? x ?).(succ (fst x))]]$ to type check.
-\renewcommand{\GradydrulevarName}[0]{\text{var}}
-\renewcommand{\GradydruleunitName}[0]{\text{unit}}
-\renewcommand{\GradydrulezeroName}[0]{\text{zero}}
-\renewcommand{\GradydrulesuccName}[0]{\text{succ}}
-\renewcommand{\GradydrulepairName}[0]{\times}
-\renewcommand{\GradydrulefstName}[0]{\times_{e_1}}
-\renewcommand{\GradydrulesndName}[0]{\times_{e_2}}
-\renewcommand{\GradydrulefstCName}[0]{\times_{e_1}}
-\renewcommand{\GradydrulesndCName}[0]{\times_{e_2}}
-\renewcommand{\GradydrulelamName}[0]{\to}
-\renewcommand{\GradydrulesndUName}[0]{\times^?_{e_2}}
-\renewcommand{\GradydrulefstUName}[0]{\times^?_{e_1}}
-\renewcommand{\GradydrulesuccUName}[0]{\text{succ}^?}
-\renewcommand{\GradydruleappCName}[0]{\to_e}
-\renewcommand{\GradydruleappUName}[0]{\to_e^?}
+\renewcommand{\SLGradydrulevarName}[0]{\text{var}}
+\renewcommand{\SLGradydruleunitName}[0]{\text{unit}}
+\renewcommand{\SLGradydrulezeroName}[0]{\text{zero}}
+\renewcommand{\SLGradydrulesuccName}[0]{\text{succ}}
+\renewcommand{\SLGradydrulepairName}[0]{\times}
+\renewcommand{\SLGradydrulefstName}[0]{\times_{e_1}}
+\renewcommand{\SLGradydrulesndName}[0]{\times_{e_2}}
+\renewcommand{\SLGradydrulefstCName}[0]{\times_{e_1}}
+\renewcommand{\SLGradydrulesndCName}[0]{\times_{e_2}}
+\renewcommand{\SLGradydrulelamName}[0]{\to}
+\renewcommand{\SLGradydrulesndUName}[0]{\times^?_{e_2}}
+\renewcommand{\SLGradydrulefstUName}[0]{\times^?_{e_1}}
+\renewcommand{\SLGradydrulesuccUName}[0]{\text{succ}^?}
+\renewcommand{\SLGradydruleappCName}[0]{\to_e}
+\renewcommand{\SLGradydruleappUName}[0]{\to_e^?}
 \begin{figure}  
   \begin{mdframed}
     \small
     \begin{mathpar}
-      \Gradydrulevar{} \and
-      \Gradydruleunit{} \and
-      \Gradydrulezero{} \and
-      \Gradydrulesucc{} \and
-      \Gradydrulepair{} \and
-      \GradydrulefstC{} \and
-      \GradydrulesndC{} \and
-      \Gradydrulelam{} \and
-      \GradydruleappC{} \and      
-      \GradydrulesuccU{} \and
-      \GradydrulefstU{} \and
-      \GradydrulesndU{} \and
-      \GradydruleappU{}       
+      \SLGradydrulevar{} \and
+      \SLGradydruleunit{} \and
+      \SLGradydrulezero{} \and
+      \SLGradydrulesucc{} \and
+      \SLGradydrulepair{} \and
+      \SLGradydrulefstC{} \and
+      \SLGradydrulesndC{} \and
+      \SLGradydrulelam{} \and
+      \SLGradydruleappC{} \and      
+      \SLGradydrulesuccU{} \and
+      \SLGradydrulefstU{} \and
+      \SLGradydrulesndU{} \and
+      \SLGradydruleappU{}       
     \end{mathpar}
   \end{mdframed}
   \caption{Typing rules for $\lambda^?_\to$}
   \label{fig:gradual-typing}
 \end{figure}
 \begin{figure}
-  \renewcommand{\GradydrulereflName}[0]{\text{refl}}
-  \renewcommand{\GradydruleboxName}[0]{\text{box}}
-  \renewcommand{\GradydruleunboxName}[0]{\text{unbox}}
-  \renewcommand{\GradydrulearrowName}[0]{\to}
-  \renewcommand{\GradydruleprodName}[0]{\times}
+  \renewcommand{\SLGradydrulereflName}[0]{\text{refl}}
+  \renewcommand{\SLGradydruleboxName}[0]{\text{box}}
+  \renewcommand{\SLGradydruleunboxName}[0]{\text{unbox}}
+  \renewcommand{\SLGradydrulearrowName}[0]{\to}
+  \renewcommand{\SLGradydruleprodName}[0]{\times}
   \begin{mdframed}
     \small
     \begin{mathpar}
-      \Gradydrulerefl{} \and
-    \Gradydrulebox{} \and
-    \Gradydruleunbox{} \and
-    \Gradydrulearrow{} \and
-    \Gradydruleprod{}    
+      \SLGradydrulerefl{} \and
+    \SLGradydrulebox{} \and
+    \SLGradydruleunbox{} \and
+    \SLGradydrulearrow{} \and
+    \SLGradydruleprod{}    
   \end{mathpar}
   \end{mdframed}
   \caption{Type Consistency for $\lambda^?_\to$}
@@ -113,63 +113,63 @@ types or contexts.
 The typing rules for $\lambda^{\langle [[A]] \rangle}_\to$ can be
 found in Figure~\ref{fig:annotated-typing}, and the reduction rules in
 Figure~\ref{fig:annotated-reduction}.
-\renewcommand{\GradydruleappName}[0]{\to_e}
-\renewcommand{\GradydrulecastName}[0]{\text{cast}}
+\renewcommand{\SLGradydruleappName}[0]{\to_e}
+\renewcommand{\SLGradydrulecastName}[0]{\text{cast}}
 \begin{figure}
     \begin{mdframed}
     \small
     \begin{mathpar}
-      \Gradydrulevar{} \and
-      \Gradydruleunit{} \and
-      \Gradydrulezero{} \and
-      \Gradydrulesucc{} \and
-      \Gradydrulepair{} \and
-      \Gradydrulefst{} \and
-      \Gradydrulesnd{} \and
-      \Gradydrulelam{} \and
-      \Gradydruleapp{} \and      
-      \Gradydrulecast{}
+      \SLGradydrulevar{} \and
+      \SLGradydruleunit{} \and
+      \SLGradydrulezero{} \and
+      \SLGradydrulesucc{} \and
+      \SLGradydrulepair{} \and
+      \SLGradydrulefst{} \and
+      \SLGradydrulesnd{} \and
+      \SLGradydrulelam{} \and
+      \SLGradydruleapp{} \and      
+      \SLGradydrulecast{}
     \end{mathpar}
   \end{mdframed}
   \caption{Typing rules for $\lambda^{\langle [[A]] \rangle}_\to$}
   \label{fig:annotated-typing}
 \end{figure}
-\renewcommand{\GradydrulerdAXXvaluesName}[0]{\text{value}}
-\renewcommand{\GradydrulerdAXXcastAName}[0]{\text{value-cast}}
-\renewcommand{\GradydrulerdAXXcastNatName}[0]{[[Nat]]\text{-cast}}
-\renewcommand{\GradydrulerdAXXcastArrowName}[0]{\to\hspace{-2.5px}\text{-cast}}
-\renewcommand{\GradydrulerdAXXcastPairName}[0]{\times\hspace{-1px}\text{-cast}}
-\renewcommand{\GradydrulerdAXXcastName}[0]{\text{cast}}
-\renewcommand{\GradydrulerdAXXbetaName}[0]{\beta}
-\renewcommand{\GradydrulerdAXXetaName}[0]{\eta}
-\renewcommand{\GradydrulerdAXXlamName}[0]{\to}
-\renewcommand{\GradydrulerdAXXappOneName}[0]{\to_{e_1}}
-\renewcommand{\GradydrulerdAXXappTwoName}[0]{\to_{e_2}}
-\renewcommand{\GradydrulerdAXXfstName}[0]{\times_{e_1}}
-\renewcommand{\GradydrulerdAXXsndName}[0]{\times_{e_2}}
-\renewcommand{\GradydrulerdAXXetaPName}[0]{\times_\eta}
-\renewcommand{\GradydrulerdAXXpairOneName}[0]{\times_1}
-\renewcommand{\GradydrulerdAXXpairTwoName}[0]{\times_2}
+\renewcommand{\SLGradydrulerdAXXvaluesName}[0]{\text{value}}
+\renewcommand{\SLGradydrulerdAXXcastAName}[0]{\text{value-cast}}
+\renewcommand{\SLGradydrulerdAXXcastNatName}[0]{[[Nat]]\text{-cast}}
+\renewcommand{\SLGradydrulerdAXXcastArrowName}[0]{\to\hspace{-2.5px}\text{-cast}}
+\renewcommand{\SLGradydrulerdAXXcastPairName}[0]{\times\hspace{-1px}\text{-cast}}
+\renewcommand{\SLGradydrulerdAXXcastName}[0]{\text{cast}}
+\renewcommand{\SLGradydrulerdAXXbetaName}[0]{\beta}
+\renewcommand{\SLGradydrulerdAXXetaName}[0]{\eta}
+\renewcommand{\SLGradydrulerdAXXlamName}[0]{\to}
+\renewcommand{\SLGradydrulerdAXXappOneName}[0]{\to_{e_1}}
+\renewcommand{\SLGradydrulerdAXXappTwoName}[0]{\to_{e_2}}
+\renewcommand{\SLGradydrulerdAXXfstName}[0]{\times_{e_1}}
+\renewcommand{\SLGradydrulerdAXXsndName}[0]{\times_{e_2}}
+\renewcommand{\SLGradydrulerdAXXetaPName}[0]{\times_\eta}
+\renewcommand{\SLGradydrulerdAXXpairOneName}[0]{\times_1}
+\renewcommand{\SLGradydrulerdAXXpairTwoName}[0]{\times_2}
 \begin{figure}
   \begin{mdframed}
     \small
     \begin{mathpar}
-      \GradydrulerdAXXvalues{} \and
-      \GradydrulerdAXXcastA{} \and
-      \GradydrulerdAXXcastNat{} \and
-      \GradydrulerdAXXcastArrow{} \and
-      \GradydrulerdAXXcastPair{} \and
-      \GradydrulerdAXXcast{} \and
-      \GradydrulerdAXXbeta{} \and
-      \GradydrulerdAXXeta{} \and
-      \GradydrulerdAXXlam{} \and
-      \GradydrulerdAXXappOne{} \and
-      \GradydrulerdAXXappTwo{} \and
-      \GradydrulerdAXXfst{} \and
-      \GradydrulerdAXXsnd{} \and
-      \GradydrulerdAXXetaP{} \and
-      \GradydrulerdAXXpairOne{} \and
-      \GradydrulerdAXXpairTwo{}      
+      \SLGradydrulerdAXXvalues{} \and
+      \SLGradydrulerdAXXcastA{} \and
+      \SLGradydrulerdAXXcastNat{} \and
+      \SLGradydrulerdAXXcastArrow{} \and
+      \SLGradydrulerdAXXcastPair{} \and
+      \SLGradydrulerdAXXcast{} \and
+      \SLGradydrulerdAXXbeta{} \and
+      \SLGradydrulerdAXXeta{} \and
+      \SLGradydrulerdAXXlam{} \and
+      \SLGradydrulerdAXXappOne{} \and
+      \SLGradydrulerdAXXappTwo{} \and
+      \SLGradydrulerdAXXfst{} \and
+      \SLGradydrulerdAXXsnd{} \and
+      \SLGradydrulerdAXXetaP{} \and
+      \SLGradydrulerdAXXpairOne{} \and
+      \SLGradydrulerdAXXpairTwo{}      
     \end{mathpar}
   \end{mdframed}
   \caption{Reduction rules for $\lambda^{\langle [[A]] \rangle}_\to$}
@@ -193,41 +193,41 @@ Since the formalization of both $\lambda^?_\to$ and $\lambda^{\langle
 definition of cast insertion in Figure~\ref{fig:cast-insert}, but this
 is only a slightly modified version from the one given by Siek and
 Taha.
-\renewcommand{\GradydruleciXXvarName}[0]{\text{var}}
-\renewcommand{\GradydruleciXXzeroName}[0]{\text{zero}}
-\renewcommand{\GradydruleciXXtrivName}[0]{\text{unit}}
-\renewcommand{\GradydruleciXXsuccName}[0]{\text{succ}}
-\renewcommand{\GradydruleciXXpairName}[0]{\times}
-\renewcommand{\GradydruleciXXfstOneName}[0]{\times^\sim_{e_1}}
-\renewcommand{\GradydruleciXXfstTwoName}[0]{\times_{e_1}}
-\renewcommand{\GradydruleciXXsndOneName}[0]{\times^\sim_{e_2}}
-\renewcommand{\GradydruleciXXsndTwoName}[0]{\times_{e_2}}
-\renewcommand{\GradydruleciXXlamName}[0]{\to}
-\renewcommand{\GradydruleciXXappOneName}[0]{\to^?_e}
-\renewcommand{\GradydruleciXXappTwoName}[0]{\to^\sim_e}
-\renewcommand{\GradydruleciXXappThreeName}[0]{\to_e}
-\renewcommand{\GradydruleciXXsuccUName}[0]{\text{succ}^?}
-\renewcommand{\GradydruleciXXfstUName}[0]{\times^?_{e_1}}
-\renewcommand{\GradydruleciXXsndUName}[0]{\times^?_{e_2}}
+\renewcommand{\SLGradydruleciXXvarName}[0]{\text{var}}
+\renewcommand{\SLGradydruleciXXzeroName}[0]{\text{zero}}
+\renewcommand{\SLGradydruleciXXtrivName}[0]{\text{unit}}
+\renewcommand{\SLGradydruleciXXsuccName}[0]{\text{succ}}
+\renewcommand{\SLGradydruleciXXpairName}[0]{\times}
+\renewcommand{\SLGradydruleciXXfstOneName}[0]{\times^\sim_{e_1}}
+\renewcommand{\SLGradydruleciXXfstTwoName}[0]{\times_{e_1}}
+\renewcommand{\SLGradydruleciXXsndOneName}[0]{\times^\sim_{e_2}}
+\renewcommand{\SLGradydruleciXXsndTwoName}[0]{\times_{e_2}}
+\renewcommand{\SLGradydruleciXXlamName}[0]{\to}
+\renewcommand{\SLGradydruleciXXappOneName}[0]{\to^?_e}
+\renewcommand{\SLGradydruleciXXappTwoName}[0]{\to^\sim_e}
+\renewcommand{\SLGradydruleciXXappThreeName}[0]{\to_e}
+\renewcommand{\SLGradydruleciXXsuccUName}[0]{\text{succ}^?}
+\renewcommand{\SLGradydruleciXXfstUName}[0]{\times^?_{e_1}}
+\renewcommand{\SLGradydruleciXXsndUName}[0]{\times^?_{e_2}}
 \begin{figure}
   \begin{mdframed}
     \begin{mathpar}
-      \GradydruleciXXvar{} \and
-      \GradydruleciXXzero{} \and
-      \GradydruleciXXtriv{} \and
-      \GradydruleciXXsucc{} \and
-      \GradydruleciXXsuccU{} \and      
-      \GradydruleciXXpair{} \and
-      \GradydruleciXXfstOne{} \and
-      \GradydruleciXXfstTwo{} \and
-      \GradydruleciXXsndOne{} \and
-      \GradydruleciXXsndTwo{} \and
-      \GradydruleciXXfstU{} \and
-      \GradydruleciXXsndU{} \and      
-      \GradydruleciXXlam{} \and
-      \GradydruleciXXappOne{} \and
-      \GradydruleciXXappTwo{} \and
-      \GradydruleciXXappThree{}       
+      \SLGradydruleciXXvar{} \and
+      \SLGradydruleciXXzero{} \and
+      \SLGradydruleciXXtriv{} \and
+      \SLGradydruleciXXsucc{} \and
+      \SLGradydruleciXXsuccU{} \and      
+      \SLGradydruleciXXpair{} \and
+      \SLGradydruleciXXfstOne{} \and
+      \SLGradydruleciXXfstTwo{} \and
+      \SLGradydruleciXXsndOne{} \and
+      \SLGradydruleciXXsndTwo{} \and
+      \SLGradydruleciXXfstU{} \and
+      \SLGradydruleciXXsndU{} \and      
+      \SLGradydruleciXXlam{} \and
+      \SLGradydruleciXXappOne{} \and
+      \SLGradydruleciXXappTwo{} \and
+      \SLGradydruleciXXappThree{}       
     \end{mathpar}
   \end{mdframed}
   \caption{Cast Insertion}

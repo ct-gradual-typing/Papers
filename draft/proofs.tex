@@ -107,25 +107,25 @@ This is a proof by induction on the form of $[[A ~ B]]$.
 \begin{itemize}
 \item[] Case.
   \[
-  \Gradydrulerefl{}
+  \SLGradydrulerefl{}
   \]
   Choose $c_1 = c_2 = \id_A : [[A --> A]]$.
 
 \item[] Case.
   \[
-  \Gradydrulebox{}
+  \SLGradydrulebox{}
   \]
   Choose $c_1 = [[Box A]] : [[A --> ?]]$ and $c_2 = [[Unbox A]] : [[? -> A]]$.
 
 \item[] Case.
   \[
-  \Gradydruleunbox{}
+  \SLGradydruleunbox{}
   \]
   Choose $c_1 = [[Unbox A]] : [[? --> A]]$ and $c_2 = [[Box A]] : [[A -> ?]]$.
   
 \item[] Case.
   \[
-  \Gradydrulearrow{}
+  \SLGradydrulearrow{}
   \]
   By the induction hypothesis there exists four casting morphisms
   $c'_1 : [[A1 --> A2]]$, $c'_2 : [[A2 --> A1]]$, $c'_3 : [[B1 --> B2]]$,
@@ -136,7 +136,7 @@ This is a proof by induction on the form of $[[A ~ B]]$.
 
 \item[] Case.
   \[
-  \Gradydruleprod{}
+  \SLGradydruleprod{}
   \]
   By the induction hypothesis there exists four casting morphisms
   $c'_1 : [[A1 --> A2]]$, $c'_2 : [[A2 --> A1]]$, $c'_3 : [[B1 --> B2]]$,
@@ -157,7 +157,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 \begin{itemize} 
 \item[] Case.
   \[
-  \Gradydrulevar{}
+  \SLGradydrulevar{}
   \]
   Suppose with out loss of generality that $[[ [| G |] ]] = [[A1]]
   \times \cdots \times [[Ai]] \times \cdots \times [[Aj]]$ where
@@ -167,7 +167,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \Gradydruleunit{}
+  \SLGradydruleunit{}
   \]
 
   Take $[[ [| triv |] ]] = \diamond_{[[ [| G |] ]]} : [[ [| G |] -->
@@ -176,7 +176,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
   
 \item[] Case.
   \[
-  \Gradydrulezero{}
+  \SLGradydrulezero{}
   \]
 
   Take $[[ [| 0 |] ]] = \diamond_{[[ [| G |] ]]};\z : [[ [| G |] --> Nat]]$
@@ -185,7 +185,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \Gradydrulesucc{}
+  \SLGradydrulesucc{}
   \]
   By the induction hypothesis there is a morphism \\ $[[ [| t |] ]] : [[ [| G |] --> Nat]]$.  Then
   take $[[ [| succ t |] ]] = [[ [| t |] ]];[[succ]] : [[ [| G |] --> Nat ]]$, where
@@ -193,7 +193,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
   
 \item[] Case.
   \[
-  \Gradydrulepair{}
+  \SLGradydrulepair{}
   \]
   By two applications of the induction hypothesis there are two morphisms
   $[[ [| t1 |] ]] : [[ [| G |] --> A]]$ and $[[ [| t2 |] ]] : [[ [| G |] --> B]]$.
@@ -202,7 +202,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \GradydrulefstC{}
+  \SLGradydrulefstC{}
   \]
   By the induction hypothesis there is a morphism \\ $[[ [| t |] ]] :
   [[ [| G |] --> H(A1 x B) ]]$, and by type consistency in the model
@@ -212,7 +212,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \GradydrulesndC{}
+  \SLGradydrulesndC{}
   \]
   By the induction hypothesis there is a morphism \\ $[[ [| t |] ]] :
   [[ [| G |] --> H(A x B1) ]]$, and by type consistency in the model
@@ -222,7 +222,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \Gradydrulelam{}
+  \SLGradydrulelam{}
   \] 
   By the induction hypothesis there is a morphism $[[ [| t |] ]] :
   [[ H([| G |] x A) --> B]]$.  Then take $[[ [| \x : A.t |] ]] =
@@ -232,7 +232,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \GradydruleappC{}
+  \SLGradydruleappC{}
   \]
   By two applications of the induction hypothesis there are
   morphisms $[[ [| t1 |] ]] : [[ [| G |] --> (A1 -> B)]]$ and $[[ [|
@@ -244,7 +244,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
   
 \item[] Case.
   \[
-  \GradydrulesuccU{}
+  \SLGradydrulesuccU{}
   \]
   By the induction hypothesis there is a morphism $[[ [| t |] ]] :
   [[ [| G |] --> ?]]$.  In addition, we know that $[[? ~ Nat]]$
@@ -254,7 +254,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \GradydrulefstU{}
+  \SLGradydrulefstU{}
   \]
   By the induction hypothesis there is a morphism $[[ [| t |] ]] :
   [[ [| G |] --> ?]]$.  In addition, we know that $[[? ~ ? x ?]]$, and its casting morphisms are
@@ -263,7 +263,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
   
 \item[] Case.
   \[
-  \GradydrulesndU{}
+  \SLGradydrulesndU{}
   \]
   By the induction hypothesis there is a morphism $[[ [| t |] ]] :
   [[ [| G |] --> ?]]$.  In addition, we know that $[[? ~ ? x ?]]$, and its casting morphisms are
@@ -272,7 +272,7 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
   
 \item[] Case.
   \[
-  \GradydruleappU{}
+  \SLGradydruleappU{}
   \]
   By the induction hypothesis there are morphisms $[[ [| t1 |] ]] : [[ [| G |] --> ?]]$
   and $[[ [| t2 |] ]] : [[ [| G |] --> A]]$.  In addition, we know that $[[? ~ ? -> ?]]$ and $[[? ~ A]]$, and the
@@ -290,7 +290,7 @@ show the case for the cast rule.
 \begin{itemize}
 \item[] Case.
   \[
-  \Gradydrulecast{}
+  \SLGradydrulecast{}
   \]
   By the induction hypothesis there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A]]$,
   and by type consistency in the model (Lemma~\ref{lemma:type_consistency_in_the_model})
@@ -312,13 +312,13 @@ without mention.
 \begin{itemize}  
 \item[] Case.
   \[
-  \GradydrulerdAXXvalues{} 
+  \SLGradydrulerdAXXvalues{} 
   \]
   This case is trivial.
 
 \item[] Case.
   \[
-  \GradydrulerdAXXcastA{} 
+  \SLGradydrulerdAXXcastA{} 
   \]
 
   Either $[[drop-cast v]] = v$ which implies that $v$ is a simple
@@ -370,7 +370,7 @@ without mention.
 
 \item[] Case.
   \[
-  \GradydrulerdAXXcastNat{} 
+  \SLGradydrulerdAXXcastNat{} 
   \]
 
   It must be the case that the typing derivation of $[[ <Nat>(succ
@@ -429,7 +429,7 @@ without mention.
     \small
     \begin{math}
       $$\mprset{flushleft}
-      \inferrule* [right=$\GradydrulerdAXXcastArrowName{}$] {
+      \inferrule* [right=$\SLGradydrulerdAXXcastArrowName{}$] {
         [[G |- t : A1 -> B1 && (A1 -> B1) ~ (A2 -> B2)]]
       }{[[G |- <A2 -> B2>t ~> \y : A2.<B2> (t <A1>y) : A2 -> B2]]}
     \end{math}
@@ -475,12 +475,12 @@ without mention.
   \end{array}
   \]
 
-\item[] Case.    %% \GradydrulerdAXXcastPair{}    
+\item[] Case.    %% \SLGradydrulerdAXXcastPair{}    
   \begin{center}
     \small
     \begin{math}
       $$\mprset{flushleft}
-      \inferrule* [right=$\GradydrulerdAXXcastPairName{}$] {
+      \inferrule* [right=$\SLGradydrulerdAXXcastPairName{}$] {
         [[G |- t : A1 x B1 && (A1 x B1) ~ (A2 x B2)]]
       }{[[G |- <A2 x B2>t ~> (<A2>(fst t),<B2>(snd t)) : A2 x B2]]}
     \end{math}
@@ -508,7 +508,7 @@ without mention.
 
 \item[] Case.
   \[
-  \GradydrulerdAXXcast{} 
+  \SLGradydrulerdAXXcast{} 
   \]
   By the induction hypothesis we know that
   $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$, and by

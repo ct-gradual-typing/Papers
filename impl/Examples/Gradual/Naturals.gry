@@ -1,0 +1,24 @@
+import Fix;
+
+pred : Nat -> Nat
+pred = \(n:Nat) -> case n of 0 -> 0, (succ n') -> n';
+
+sub : Nat -> Nat -> Nat
+sub = \(m:Nat) -> ([Nat -> Nat]fix)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));
+
+add : Nat -> Nat -> Nat
+add = \(m:Nat) -> ([Nat -> Nat]fix)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
+
+mult : Nat -> Nat -> Nat
+mult = \(m:Nat) -> ([Nat -> Nat]fix)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 0, (succ n') -> add m (r n'));
+
+exp : Nat -> Nat -> Nat
+exp = \(m:Nat) -> ([Nat -> Nat]fix)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 1, (succ n') -> mult m (r n'));

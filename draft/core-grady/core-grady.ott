@@ -3,22 +3,24 @@ metavar typevar, X, Y , Z ::=
 indexvar index, i , j, k ::=
 
 grammar
-  t, c, v, s, n :: 't_' ::=                    
+  t, c, s :: 't_' ::=                    
     | x                   ::   :: var          
     | triv                ::   :: unit         
     {{tex \mathsf{triv} }}
-    | squash S            ::   :: inj          
-    {{tex \mathsf{squash}_{[[S]]} }}
-    | split S             ::   :: surj         
-    {{tex \mathsf{split}_{[[S]]} }}    
+    | squash U            :: M :: inj          
+    {{tex \mathsf{squash}_{[[U]]} }}
+    | split U             :: M :: surj         
+    {{tex \mathsf{split}_{[[U]]} }}    
     | box                 ::   :: gen          
     {{tex \mathsf{box} }}
-    | box A               ::   :: genA
+    | box A               :: M :: genA
     {{tex \mathsf{box}_{[[A]]} }}        
-    | unbox A             ::   :: specA         
+    | unbox A             :: M :: specA         
     {{tex \mathsf{unbox}_{[[A]]} }}
     | unbox               ::   :: spec
-    {{tex \mathsf{unbox} }}    
+    {{tex \mathsf{unbox} }}
+    | error               ::    :: blame
+    {{tex \mathsf{error} }}
     | Lam X <: A . t      ::    :: TypeLam
     {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
     | [ A ] t             ::   :: TypeApp
@@ -40,16 +42,40 @@ grammar
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
     {{tex [[t]] }}
-    | squash              :: M  :: injU   
+    | squash              ::    :: injU   
     {{tex \mathsf{squash} }}
-    | split               :: M :: surjU
+    | split               ::   :: surjU
     {{tex \mathsf{split} }}    
-    | [ A / X ] t         :: M :: TypeSub   
+    | [ A / X ] t         :: M :: TypeSub
+    | n                   :: M :: num
+
+  n, m :: 'n_' ::=
+    | 0 :: :: zero
+    | succ n :: :: succ
+
+  v :: 'v_' ::=                    
+    | triv                ::   :: unit         
+    {{tex \mathsf{triv} }}
+    | []                ::   :: Empty
+    | squash S          ::   :: inj          
+    {{tex \mathsf{squash}_{[[S]]} }}
+    | split S           ::   :: surj         
+    {{tex \mathsf{split}_{[[S]]} }}    
+    | box A             ::   :: genA
+    {{tex \mathsf{box}_{[[A]]} }}        
+    | unbox A           ::   :: specA         
+    {{tex \mathsf{unbox}_{[[A]]} }}
+    | Lam X <: A . t      ::    :: TypeLam
+    {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
+    | \ x : A . t         ::   :: abs          
+    {{tex \lambda ([[x]] : [[A]]) . [[t]] }}
+    | n                   ::   :: num
 
   K :: 'K_' ::=
     | *                   ::   :: TypeOfTypes
     {{tex \star }}
 
+  % U ::= ? -> ? | ? x ? | List ?
   A, B, C, D, E, S, U :: 'A_' ::=   
     | X                   ::   :: Var
     | List A              ::   :: List
@@ -60,6 +86,8 @@ grammar
     {{tex \top }}
     | SL                  ::   :: Simple
     {{tex \mathbb{S} }}
+    | K                   ::   :: Skel
+    {{tex \mathbb{K} }}    
     | Unit                ::   :: term    
     {{tex \mathsf{Unit} }}
     | Nat                 ::   :: nat     
@@ -121,6 +149,14 @@ grammar
     | ( formula )         :: S :: parens
     {{tex [[formula]] }}    
     | t : A               :: M :: TermHasType
+    | A != B              :: M :: NotEqual
+    {{tex [[A]] \neq [[B]] }}
+    | t ~>* t'            :: M :: Rd
+    {{tex [[t]] \rightsquigarrow^* [[t']] }}
+
+subrules
+  v <:: t
+  n <:: t
   
 defns
   Typing :: '' ::=
@@ -190,6 +226,18 @@ defn
     G |- A <: Top
 
     G Ok
+    ------------------ :: ArrowK
+    G |- (? -> ?) <: K
+
+    G Ok
+    ------------------ :: ProdK
+    G |- (? x ?) <: K
+
+    G Ok
+    ------------------ :: ListK
+    G |- (List ?) <: K
+
+    G Ok
     -------------- :: Nat
     G |- Nat <: SL
 
@@ -230,26 +278,28 @@ defn
     G |- Forall (X <: A).B1 <: Forall (X <: A).B2
 
 defn
-    G |- t : A :: :: type :: ''
+    G |- t : A :: :: type :: 'T_'
     {{tex [[G]] \vdash [[t]] : [[A]] }} by
     
     x : A elem G && G Ok
     -------------------- :: varP
     G |- x : A
 
+    G Ok
     ------------------------------------ :: Box
     G |- box : Forall (X <: SL).(X -> ?)
-    
-    --------------------------------------- :: Unbox
+
+    G Ok    
+    -------------------------------------- :: Unbox
     G |- unbox : Forall (X <: SL).(? -> X)
 
     G Ok
-    ---------------------- :: squashP
-    G |- squash U : U -> ?
+    -------------------------------------- :: squash
+    G |- squash : Forall (X <: K).(X -> ?)
 
     G Ok
-    --------------------- :: splitP
-    G |- split U : ? -> U
+    ------------------------------------- :: split
+    G |- split : Forall (X <: K).(? -> X)
 
     G Ok
     ---------------- :: unitP
@@ -313,20 +363,29 @@ defn
     ------------------------- :: Sub
     G |- t : B
 
+   -------------- :: error
+   G |- error : A
+
 defns
   Reduction :: '' ::=
 
 defn
-    t1 ~> t2 :: :: red :: rd_    
+    t1 ~> t2 :: :: red :: rd_    {{com call by name }}
 by
 
-    . |- t : A
-    ------------------------- :: retracT
-    unbox A (box B t) ~> t
+    ---------------------------- :: retracT
+    unbox A (box A t) ~> t
 
-    . |- t : U
+    A != B    
+    -------------------------- :: retracTE
+    unbox A (box B t) ~> error
+
     ------------------------- :: retractU
     split U (squash U t) ~> t
+
+    U1 != U2
+    ------------------------------- :: retractUE
+    split U1 (squash U2 t) ~> error
 
     t ~> t'
     ----------------- :: succ
@@ -393,10 +452,6 @@ by
     ------------------- :: etaP
     (fst t, snd t) ~> t
 
-    t ~> t'
-    ----------------- :: lam
-    \x:A.t ~> \x:A.t'
-
     t1 ~> t'1
     --------------- :: app1
     t1 t2 ~> t'1 t2
@@ -427,7 +482,3 @@ by
     t1 ~> t2
     -------------- :: typeApp
     [A]t1 ~> [A]t2
-
-    t1 ~> t2
-    ------------------------------ :: Lam
-    Lam X <: A.t1 ~> Lam X <: A.t2
