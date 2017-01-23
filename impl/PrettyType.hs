@@ -7,7 +7,6 @@ parenType ty@(TVar _) f = f ty
 parenType ty@Nat f = f ty
 parenType ty@Unit f = f ty
 parenType ty@Simple f = f ty
-parenType ty@Top f = f ty
 parenType ty@U f = f ty
 parenType ty@(Arr t1 t2) f = f ty
 parenType ty@(Prod t1 t2) f = f ty
@@ -19,7 +18,6 @@ prettyType (TVar x) = return.n2s $ x
 prettyType Nat = return "Nat"
 prettyType Unit = return "Unit"
 prettyType Simple = return "Simple"
-prettyType Top = return "*"  
 prettyType U = return "?"
 prettyType (Arr t1 t2) =
     prettyType t1 >>= (\s1 -> prettyType t2 >>= (\s2 ->
