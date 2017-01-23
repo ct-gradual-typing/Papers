@@ -19,6 +19,11 @@ import TypeErrors
 data QDefName = Var CVnm | DefName CVnm
 data QDefDef  = VarType Type | DefTerm CTerm
 
+getQDef :: (QDefName, QDefDef) -> REPLStateIO (Either (CVnm, Type) (CVnm, CTerm))
+getQDef e@(Var x, VarType ty) = return $ Left (x , ty)
+getQDef e@(DefName x, DefTerm t) = return $ Right (x , t)
+getQDef _ = error "..."
+
 type Qelm = (CVnm, CTerm)
 type REPLStateIO = StateT (FilePath,Queue Qelm) IO
 
