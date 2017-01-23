@@ -16,6 +16,9 @@ import CoreTypeChecker
 import Eval
 import TypeErrors
 
+data QDefName = Var CVnm | DefName CVnm
+data QDefDef  = VarType Type | DefTerm CTerm
+
 type Qelm = (CVnm, CTerm)
 type REPLStateIO = StateT (FilePath,Queue Qelm) IO
 
