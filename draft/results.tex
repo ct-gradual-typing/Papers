@@ -65,12 +65,215 @@
   \label{fig:type-pre}
 \end{figure}
 
+\begin{lemma}[Subtyping and Precision]
+  \label{lemma:subtyping_and_precision}
+  Suppose $[[G |- A <: B]]$. Then
+  \begin{itemize}
+  \item[i.] if $[[A <= A']]$, then $[[G |- A' <: B']]$ for $[[B <= B']]$, and
+  \item[i.] if $[[B <= B']]$, then $[[G |- A' <: B']]$ for $[[A <= A']]$.
+  \end{itemize}
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[G |- A <: B]]$.
+  \begin{itemize}
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXReflName{}$] {
+          [[G Ok]]
+        }{[[G |- A <: A]]}
+      \end{math}
+    \end{center}        
+    \textbf{Proof of part i.} Choose $[[B']] = [[A']]$.
+    
+    \noindent
+    \textbf{Proof of Part ii.} Choose $[[A']] = [[B']]$.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXTransName{}$] {
+          [[G |- A <: B && G |- B <: C]]
+        }{[[G |- A <: C]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.} Suppose $[[A <= A']]$.  Then by part one of applying
+    the induction hypothesis to $[[G |- A <: B]]$ we know that $[[G |- A' <: B']]$ for
+    $[[B <= B']]$, and by part one of applying the induction hypothesis to $[[G |- B <: C]]$ and $[[B <= B']]$
+    we know $[[G |- B' <: C']]$ for $[[C <= C']]$.  Thus, by transitivity of subtyping 
+    we know $[[G |- A' <: C']]$ and $[[C <= C']]$.
+    \noindent
+    \textbf{Proof of Part ii.}  Suppose $[[B <= B']]$.  Then by applying part two of 
+    the induction hypothesis to $[[G |- A <: B]]$ we know that $[[G |- A' <: B']]$ for
+    $[[A <= A']]$, and by applying part one of the induction hypothesis to $[[G |- B <: C]]$ and $[[B <= B']]$
+    we know $[[G |- B' <: C']]$ for $[[C <= C']]$.  Thus, by transitivity of subtyping 
+    we know $[[G |- A' <: C']]$ and $[[C <= C']]$.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXVarName{}$] {
+          [[X <: B elem G && G Ok]]
+        }{[[G |- X <: B]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  We know that $[[A]] = [[X]]$ and $[[A <= A']]$.  But, this implies that
+    $[[A']] = [[X]]$ or $[[A']] = [[?]]$.  Choose $[[B']] = [[B]]$ in the former case, and $[[B']] = [[?]]$ in the latter.
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXUName{}$] {
+          [[G Ok]]
+        }{[[G |- A <: ?]]}
+      \end{math}
+    \end{center}    
+    \textbf{Proof of part i.}
+    
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXNatSName{}$] {
+          [[G Ok]]
+        }{[[G |- Nat <: SL]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXUnitSName{}$] {
+          [[G Ok]]
+        }{[[G |- Unit <: SL]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXListSName{}$] {
+          [[G |- A <: SL]]
+        }{[[G |- List A <: SL]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXArrowSName{}$] {
+          [[G |- A <: SL && G |- B <: SL]]
+        }{[[G |- (A -> B) <: SL]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXProdSName{}$] {
+          [[G |- A <: SL && G |- B <: SL]]
+        }{[[G |- (A x B) <: SL]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXListName{}$] {
+          [[G |- A <: B]]
+        }{[[G |- (List A) <: (List B)]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXProdName{}$] {
+          [[G |- A1 <: A2 && G |- B1 <: B2]]
+        }{[[G |- (A1 x B1) <: (A2 x B2)]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXArrowName{}$] {
+          [[G |- A2 <: A1 && G |- B1 <: B2]]
+        }{[[G |- (A1 -> B1) <: (A2 -> B2)]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleSXXForallName{}$] {
+          [[G, X <: A |- B1 <: B2]]
+        }{[[G |- (Forall (X <: A).B1) <: (Forall (X <: A).B2)]]}
+      \end{math}
+    \end{center}
+    \textbf{Proof of part i.}  
+
+    \noindent
+    \textbf{Proof of Part ii.}
+
+  \end{itemize}
+\end{proof}
 
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
   Suppose $[[. |- t : A]]$ and $[[t <= t']]$.  Then
   \begin{itemize}
-  \item[i.] $[[. |- t' : B]]$ and $[[. |- A <= B]]$,
+  \item[i.] $[[. |- t' : B]]$ and $[[A <= B]]$,
   \item[ii.] if $[[t ~>* v]]$, then $[[t' ~>* v']]$ and $[[v <= v']]$,
   \item[iii.] if $[[t ^]]$, then $[[t' ^]]$,
   \item[iv.] if $[[t' ~>* v']]$, then $[[t ~>* v]]$ where $[[v <= v']]$, or $<<t ~>* error>>$, and
