@@ -20,7 +20,10 @@ cterm2int t | isCInt t = Just $ cterm2int' t
 parenCTerm :: CTerm -> (CTerm -> LFreshM String) -> LFreshM String
 parenCTerm t@(CVar _) f = f t
 parenCTerm t@(CSplit ty) f = f t
-parenCTerm t@(CSquash ty) f = f t                                  
+parenCTerm t@(CSquash ty) f = f t
+parenCTerm t@(CBox ty) f = f t
+parenCTerm t@(CUnbox ty) f = f t
+parenCTerm t@(CSucc ty) f = f t                                  
 parenCTerm t@CTriv f = f t
 parenCTerm t@CZero f = f t             
 parenCTerm t f = f t >>= (\r -> return $ "("++r++")")

@@ -29,6 +29,12 @@ prettyUnaryArg t f c = parenTerm t f >>= (\r -> return $ c++" "++r)
 prettyTerm :: Term -> LFreshM String
 prettyTerm Triv = return "triv"
 prettyTerm Zero = return "0"
+prettyTerm (Unbox ty) = do
+    pTy <- prettyType ty
+    return $ "unbox <"++pTy++">"
+prettyTerm (Box ty) = do
+    pTy <- prettyType ty
+    return $ "box <"++pTy++">"
 prettyTerm (Succ t) =
     case (term2int t) of
       Just n -> return.show $ n+1
