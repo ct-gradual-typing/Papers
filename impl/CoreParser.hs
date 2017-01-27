@@ -419,14 +419,15 @@ runFileParser' path = do
 ------------------------------------------------------------------------        
 
 data REPLExpr =
-   Let CVnm CTerm                 -- Toplevel let-expression: for the REPL
+   Let CVnm CTerm                -- Toplevel let-expression: for the REPL
  | TypeCheck CTerm               -- Typecheck a term
  | ShowAST CTerm                 -- Show a terms AST
- | DumpState                    -- Trigger to dump the state for debugging.
+ | DumpState                     -- Trigger to dump the state for debugging.
  | Unfold CTerm                  -- Unfold the definitions in a term for debugging.
- | LoadFile String              -- Loading an external file into the context
+ | LoadFile String               -- Loading an external file into the context
  | Eval CTerm                    -- The defualt is to evaluate.
- | HelpMenu                     -- To display help menu
+ | HelpMenu                      -- To display help menu
+ | DecVar CTerm CTerm            -- Allows variables to be types for evaluating in CoreRepl
  deriving Show
                     
 letParser = do
@@ -462,6 +463,18 @@ replTermCmdParser short long c p = do
   if (cmd == long || cmd == short)
   then return $ c t
   else fail $ "Command \":"++cmd++"\" is unrecognized."
+  
+repl2TermCmdParser short long c p = do
+  symbol ":"
+  cmd <- many lower
+  ws
+  varname <- p
+  ws
+  ty <- p
+  eof
+  if (cmd == long || cmd == short)
+  then return $ c varname ty
+  else fail $ "Command \":"++cmd++"\" is unrecognized."
 
 replIntCmdParser short long c = do
   symbol ":"
@@ -486,8 +499,10 @@ dumpStateParser = replIntCmdParser "d" "dump" DumpState
 loadFileParser = replFileCmdParser "l" "load" LoadFile
 
 helpParser = replIntCmdParser "h" "help" HelpMenu
+
+decvarParser = repl2TermCmdParser "dv" "decvar" DecVar expr
                
-lineParser = try letParser <|> try loadFileParser <|> try helpParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
+lineParser = try letParser <|> try loadFileParser <|> try helpParser <|> try decvarParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of
