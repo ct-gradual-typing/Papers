@@ -109,7 +109,6 @@ readTypeError (LCaseBranchesMistype a b) = "Type error: Case error, "++runPretty
 readTypeError (LCaseScrutinyTypeError t ty) = "Type error: The scrutiny: "++runPrettyTerm t++ " cannot be cast to type: "++runPrettyType ty
 readTypeError (CoreLCaseScrutinyTypeError t ty) = "Type error: The scrutiny: "++runPrettyCTerm t++ " cannot be cast to type: "++runPrettyType ty
 readTypeError (NoError) = "No monoid error"
-readTypeError (CtxNotOk) = "Type error: The context is off somehow" -- Not used
 readTypeError (TrivTypeError a) = "Type error: "++runPrettyType a++" must be of type Unit."
 readTypeError (ConsTypeError a) = "Type error: You cannot use cons with the type: "++runPrettyType a
 readTypeError (EmptyTypeError a) = "Type error: "++runPrettyType a++" must be of type List."
