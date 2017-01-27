@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>How To Use Grady</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="grady.css">
+	</head>
+	<body>
+	<div id="wrapper">
+		<header>
+            <h1><img  src="logo_redBackground.png" alt="Grady Logo" width="250" height="57"></h1>
+		</header>
+		<nav>
+			<ul>
+				<li>
+					<a href="Index.html">Home</a>
+				</li>
+				<li>
+					<a href="HowToUse.html">How To Use Grady</a>
+				</li>
+				<li>
+					<a href="Examples.html">Examples</a>
+				</li>
+			</ul>
+		</nav>
+		<main>
+            <div id="Intro">
+            <h2>Introduction to Grady</h2>
+                <p>
+                   Grady includes a Repl allowing users to experience the language.  The Repl provides typechecking
+                   of terms with helpful error messages, helping new users become accustomed to the language syntax.
+                   Additionally, Grady is a highly expressive language allowing everything from programming in 
+                   untyped lambda-calculus to polymorphism.  
+                </p>
+            </div>
+			<div id="Replcmds">
+                <h2>Commands</h2>
+                <div class="command">
+                    <h3>:help/:h</h3>
+                    <p>
+                       At any time in the Repl use this command to enter into the help menu.  From here you 
+                       will see a list of all commands available.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:type/:t &lt;term&gt;</h3>
+                    <p>
+                       This command allows you to typecheck a term.  If the term typechecks, the term's type is 
+                       returned.  If the term does not typecheck, then the appropriate error message is returned.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:show/:s &lt;term&gt;</h3>
+                    <p>
+                       The show command will display the abstract syntax type of the provided term.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:unfold/:u &lt;term&gt;</h3>
+                    <p>
+                       Unfold displays your term and where appropriate substitutes terms from 
+                       the context into your term.  In this way a function that is composed of several
+                       other functions can be seen in it entirety.  
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:dump/:d</h3>
+                    <p>
+                       The dump command will display the terms in the context.  These will be displayed in the form
+                       "let &lt;variable&gt; = &lt;term&gt;"
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>:load/:l &lt;filename&gt;</h3>
+                    <p>
+                       You may load an external file of definitions using this command.  These files are
+                       requred to have the extention .gry.  The terms are all typedchecked and then add to the context 
+                       where they are usable in the Repl.  The loading  s done lazily, so if you have several 
+                       definitions in your external file and the third one does not typecheck, the first two 
+                       will still be loaded into the context.
+                    </p>
+                </div>
+            </div>
+            <div id="syntax">
+                <h2>Syntactic Types</h2>
+                <div class="command">
+                    <h3>Variable binding</h3>
+                    <p>
+                       Binding a variable to a term is done with a "let" statement.  If you wanted to have a variable
+                       named <strong>true</strong> bound to a term it would look like <strong>let true = \(p:?) -> \(q:?) -> p</strong>.
+                       This means that the variable takes it two parameters of type <strong>?</strong>, which
+                       is the untyped type, and returns an element of the same type.
+                       
+                       All bindings must typecheck.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Simple Type</h3>
+                    <p>
+                       ?????
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Natural Number Type</h3>
+                    <p>
+                       Any natural number.  The type is notated as <strong>Nat</strong>.<br>
+                       An example: <strong>\(m:Nat)</strong><br>
+                       This indicates that <strong>m</strong> has the Natural Number type.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Unit Type</h3>
+                    <p>
+                       ?????
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Untyped</h3>
+                    <p>
+                       This type represents the an element in the untyped universe.  Its notation is 
+                       <strong>?</strong>.<br>
+                       An example: <strong>\(m:?)</strong><br>
+                       This indicates that <strong>m</strong> has the untyped type.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Function Type</h3>
+                    <p>
+                       This type allows Grady to represent functions using an arrow, <strong>-></strong>.<br>
+                       An example: <strong>\(m:? -> ?)</strong><br>
+                       In the example, <strong>m</strong> is a function that takes in an element of type
+                       <strong>?</strong> and returns something of the same type.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Product Type</h3>
+                    <p>
+                       The product type, notated as <strong>(,)</strong> takes two elements and maintains them
+                       as a tuple.<br>
+                       An example: <strong>\(m:(?,Nat))</strong><br>
+                       Here you can see that <strong>m</strong> is a tuple of two elements.  The first
+                       projection is of type <strong>?</strong> and the second projection is of type
+                       <strong>Nat</strong>.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>List Type</h3>
+                    <p>
+                       In Grady you may use lists using the List type.  It is denoted, <strong>[]</strong> with
+                       items in the list separated by commas.  All items in the list must have the same type.<br>
+                       For example: <strong>[1,2,3]</strong><br>
+                       This is simply a list containing the natural numbers 1,2, and 3.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Universal Quantification</h3>
+                    <p>
+                       ?????
+                    </p>
+                </div>
+            </div>
+        </main>
+        <footer>
+                Copyright &copy; 2017, Dr. Harley Eades, Michael Townsend
+                <br>
+        </footer>
+	</div>
+</body>
+</html>
+/*
+Top                     -- Top type
+ | Simple                  -- Castable type
+ | Nat                     -- Natural number type
+ | Unit                    -- Unit type
+ | U                       -- Untyped universe
+ | Arr Type Type           -- Function type
+ | Prod Type Type          -- Product type
+ | List Type               -- List type
+ | Forall Type (Bind TVnm Type) -- Universal quantification
+ */
+ 

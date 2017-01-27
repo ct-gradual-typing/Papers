@@ -16,6 +16,17 @@ import CoreTypeChecker
 import Eval
 import TypeErrors
 
+data QDefName = Var CVnm | DefName CVnm
+    deriving Show
+data QDefDef  = VarType Type | DefTerm CTerm
+    deriving Show
+
+getQDef :: (QDefName, QDefDef) -> REPLStateIO (Either (CVnm, Type) (CVnm, CTerm))
+getQDef e@(Var x, VarType ty) = return $ Left (x , ty)
+getQDef e@(DefName x, DefTerm t) = return $ Right (x , t)
+getQDef e = fail $ "Failed to get definition from context. Mismatched variable and type or variable type and term in: "++(show e)
+
+
 type Qelm = (CVnm, CTerm)
 type REPLStateIO = StateT (FilePath,Queue Qelm) IO
 
@@ -117,6 +128,7 @@ handleCMD s =
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right e -> io.putStrLn.runPrettyCTerm $ e
+    handleLine (DecVar vnam ty) = io.putStrLn $ "working"
     handleLine (Let x t) = do
       (f, defs) <- get
       let tu = unfoldDefsInTerm defs t
