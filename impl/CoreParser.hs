@@ -426,7 +426,7 @@ data REPLExpr =
  | LoadFile String               -- Loading an external file into the context
  | Eval CTerm                    -- The defualt is to evaluate.
  | HelpMenu                      -- To display help menu
- | DecVar CTerm CTerm            -- Allows variables to be types for evaluating in CoreRepl
+ | DecVar CVnm Type            -- Allows variables to be types for evaluating in CoreRepl
  deriving Show
                     
 letParser = do
@@ -466,13 +466,17 @@ replTermCmdParser short long c p = do
 repl2TermCmdParser short long c p = do
   symbol ":"
   cmd <- many lower
+  ws 
+  reservedOp "let"
   ws
-  varname <- p
+  vname <- varName
+  ws
+  symbol "="
   ws
   ty <- p
   eof
   if (cmd == long || cmd == short)
-  then return $ c varname ty
+  then return $ c vname ty
   else fail $ "Command \":"++cmd++"\" is unrecognized."
 
 replIntCmdParser short long c = do
@@ -499,7 +503,7 @@ loadFileParser = replFileCmdParser "l" "load" LoadFile
 
 helpParser = replIntCmdParser "h" "help" HelpMenu
 
-decvarParser = repl2TermCmdParser "dv" "decvar" DecVar expr
+decvarParser = repl2TermCmdParser "dv" "decvar" DecVar typeParser
                
 lineParser = try letParser <|> try loadFileParser <|> try helpParser <|> try decvarParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
