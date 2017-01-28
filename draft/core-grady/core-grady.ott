@@ -71,13 +71,15 @@ grammar
     {{tex \lambda ([[x]] : [[A]]) . [[t]] }}
     | n                   ::   :: num
 
-  K :: 'K_' ::=
+  Ki :: 'Ki_' ::=
     | *                   ::   :: TypeOfTypes
     {{tex \star }}
 
   % U ::= ? -> ? | ? x ? | List ?
   A, B, C, D, E, S, U :: 'A_' ::=   
     | X                   ::   :: Var
+    | Top                 ::   :: Top
+    {{tex \top }}
     | List A              ::   :: List
     {{tex \mathsf{List}\,[[A]] }}
     | Forall ( X <: A ) . B   ::   :: Forall
@@ -211,29 +213,17 @@ defn
     G |- A <: B :: :: subtype :: 'S_'
     {{tex [[G]] \vdash [[A]] <\hspace{-2px}\colon [[B]] }} by
 
-    G Ok
+    G |- A : *
     ----------- :: Refl
     G |- A <: A
 
-    G |- A <: B && G |- B <: C
-    -------------------------- :: Trans
-    G |- A <: C
+    G |- A : *
+    ------------- :: Top
+    G |- A <: Top
 
-    G Ok
-    ----------- :: U
-    G |- A <: ?
-
-    G Ok
-    ------------------ :: ArrowK
-    G |- (? -> ?) <: K
-
-    G Ok
-    ------------------ :: ProdK
-    G |- (? x ?) <: K
-
-    G Ok
-    ------------------ :: ListK
-    G |- (List ?) <: K
+    X <: A elem G && G Ok
+    ---------------------:: Var
+    G |- X <: A
 
     G Ok
     -------------- :: Nat
@@ -247,14 +237,6 @@ defn
     ----------------- :: ListSL
     G |- List A <: SL
 
-    X <: A elem G && G Ok
-    ---------------------:: Var
-    G |- X <: A
-
-    G |- A <: B
-    --------------------- :: List
-    G |- List A <: List B
-
     G |- A <: SL && G |- B <: SL
     ---------------------------- :: ArrowSL
     G |- A -> B <: SL
@@ -262,6 +244,10 @@ defn
     G |- A <: SL && G |- B <: SL
     ---------------------------- :: ProdSL
     G |- A x B <: SL
+
+    G |- A <: B
+    --------------------- :: List
+    G |- List A <: List B
 
     G |- A1 <: A2 && G |- B1 <: B2
     ------------------------------ :: Prod

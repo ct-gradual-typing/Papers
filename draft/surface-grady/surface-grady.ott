@@ -48,14 +48,16 @@ grammar
     | *                   ::   :: TypeOfTypes
     {{tex \star }}
 
-  A, B, C, D, E, S, U :: 'A_' ::=   
+  A, B, C, D, E, S, U :: 'A_' ::=
+    | Top                 ::   :: Top
+    {{tex \top }}
+    | SL                  ::   :: SL
+    {{tex \mathbb{S} }}
     | X                   ::   :: Var
     | List A              ::   :: List
     {{tex \mathsf{List}\,[[A]] }}
     | Forall ( X <: A ) . B   ::   :: Forall
     {{tex \forall ([[X]] <\hspace{-2px}\colon [[A]]). [[B]]}}
-    | SL                  ::   :: Simple
-    {{tex \mathsf{SL} }}
     | Unit                ::   :: term    
     {{tex \mathsf{Unit} }}
     | Nat                 ::   :: nat     
@@ -68,6 +70,7 @@ grammar
     | H( A )              :: M :: hparen
     {{tex [[A]] }}
     | [ A / X ] B         :: M :: TypeSub
+    | i( A )              :: M :: CTToST
 
   G {{ tex \Gamma }} :: G_ ::=            
     | .                   ::   :: emptyCtx
@@ -155,6 +158,12 @@ defn
    ----------------------- :: var
    G1, X <: A,G2 |- X : *
 
+   ------------- :: top
+   G |- Top : *
+
+   ------------- :: sl
+   G |- SL : *
+
    ------------- :: unit
    G |- Unit : *
 
@@ -177,7 +186,7 @@ defn
    G |- A x B : *
 
    G, X <: A |-  B : *
-   -------------------------- :: forall
+   ---------------------------- :: forall
    G |- Forall (X <: A) . B : *
 
 defn
@@ -199,12 +208,15 @@ defn
     G |- A ~ B :: :: typecons :: 'C_'
     {{tex [[G]] \vdash [[A]] \sim [[B]] }} by
 
+   G |- A : *
    ---------- :: Refl
    G |- A ~ A
    
+   G |- A : *
    ---------- :: Box
    G |- A ~ ?
 
+   G |- A : *
    ---------- :: Unbox
    G |- ? ~ A
 
@@ -225,87 +237,93 @@ defn
    G |- (Forall (X <: A).B1) ~ (Forall (X <: A).B2)
 
 defn
-    A <= B :: :: typepre :: 'P_'
-    {{tex [[A]] \sqsubseteq [[B]] }}
+    G |- A <= B :: :: typepre :: 'P_'
+    {{tex G \vdash [[A]] \sqsubseteq [[B]] }}
 by
 
+   G |- A : *
    ----------- :: U
-   A <= ?
+   G |- A <= ?
 
+   G |- A : *
    ----------- :: refl
-   A <= A
+   G |- A <= A
 
-   A <= C && B <= D
+   G |- A <= C && G |- B <= D
    -------------------------- :: arrow
-   (A -> B) <= (C -> D)
+   G |- (A -> B) <= (C -> D)
 
-   A <= C && B <= D
+   G |- A <= C && G |- B <= D
    -------------------------- :: prod
-   (A x B) <= (C x D)
+   G |- (A x B) <= (C x D)
 
-   A <= B
+   G |- A <= B
    ------------------------- :: list
-   (List A) <= (List B)
+   G |- (List A) <= (List B)
 
-   B <= D 
-   ----------------------------------------------------- :: forall
-   (Forall (X <: A).B) <= (Forall (X <: A).D)
+   G |- B <= D 
+   ----------------------------------------------- :: forall
+   G |- (Forall (X <: A).B) <= (Forall (X <: A).D)
 
 defn
-    G |- A <: B :: :: subtype :: 'S_'
-    {{tex [[G]] \vdash [[A]] <\hspace{-2px}\colon [[B]] }} by
+    G |- A <~ B :: :: subtype :: 'S_'
+    {{tex [[G]] \vdash [[A]] \lesssim [[B]] }} by
 
-    G Ok
+    G |- A : *
     ----------- :: Refl
-    G |- A <: A
+    G |- A <~ A
 
-    G |- A <: B && G |- B <: C
-    -------------------------- :: Trans
-    G |- A <: C
+    X <: A' elem G && G |- A' ~ A
+    ----------------------------- :: Var
+    G |- X <~ A
 
-    X <: A elem G && G Ok
-    --------------------- :: Var
-    G |- X <: A
+    G |- A : *
+    ------------- :: Top
+    G |- A <~ Top
+
+    G |- A : *
+    ----------- :: Box
+    G |- A <~ ?
+
+    G |- A : *
+    ----------- :: Unbox
+    G |- ? <~ A
 
     G Ok
-    ----------- :: U
-    G |- A <: ?
+    -------------- :: NatSL
+    G |- Nat <~ SL
 
     G Ok
-    ---------------- :: NatS
-    G |- Nat <: SL
+    --------------- :: UnitSL
+    G |- Unit <~ SL
 
-    G Ok
-    ----------------- :: UnitS
-    G |- Unit <: SL
+    G |- A <~ SL
+    ----------------- :: ListSL
+    G |- List A <~ SL
 
-    G |- A <: SL
-    ------------------- :: ListS
-    G |- List A <: SL
+    G |- A <~ SL && G |- B <~ SL
+    ---------------------------- :: ArrowSL
+    G |- A -> B <~ SL
 
-    G |- A <: SL && G |- B <: SL
-    -------------------------------- :: ArrowS
-    G |- (A -> B) <: SL
+    G |- A <~ SL && G |- B <~ SL
+    ---------------------------- :: ProdSL
+    G |- A x B <~ SL
 
-    G |- A <: SL && G |- B <: SL
-    -------------------------------- :: ProdS
-    G |- (A x B) <: SL 
-
-    G |- A <: B
+    G |- A <~ B
     --------------------- :: List
-    G |- (List A) <: (List B)
+    G |- (List A) <~ (List B)
 
-    G |- A1 <: A2 && G |- B1 <: B2
+    G |- A1 <~ A2 && G |- B1 <~ B2
     ------------------------------ :: Prod
-    G |- (A1 x B1) <: (A2 x B2)
+    G |- (A1 x B1) <~ (A2 x B2)
 
-    G |- A2 <: A1 && G |- B1 <: B2
+    G |- A2 <~ A1 && G |- B1 <~ B2
     ------------------------------ :: Arrow
-    G |- (A1 -> B1) <: (A2 -> B2)
+    G |- (A1 -> B1) <~ (A2 -> B2)
 
-    G, X <: A |- B1 <: B2
+    G, X <: A |- B1 <~ B2
     ------------------------------------------------- :: Forall
-    G |- (Forall (X <: A).B1) <: (Forall (X <: A).B2)
+    G |- (Forall (X <: A).B1) <~ (Forall (X <: A).B2)
 
 defn
     G |- t : A :: :: type :: 'T_'
@@ -315,9 +333,11 @@ defn
     -------------------- :: varP
     G |- x : A
 
+    G Ok
     ------------------------------------ :: Box
     G |- box : Forall (X <: SL).(X -> ?)
-    
+
+    G Ok    
     -------------------------------------- :: Unbox
     G |- unbox : Forall (X <: SL).(? -> X)
 
@@ -341,46 +361,28 @@ defn
     G Ok && G |- A : *
     -------------------------------- :: empty
     G |- [] : Forall (X <: ?).List X
-
     
-    (G |- t1 : A1 && G |- t2 : List A2) && G |- A1 ~ A2
-    --------------------------------------------------- :: cons
+    (G |- t1 : A1 && G |- t2 : List A2) && G |- A1 <~ A2
+    ---------------------------------------------------- :: cons
     G |- t1 :: t2 : List A2
-
-    % G |- t : List A
-    % G |- t1 : B && G, x : A, y : List A |- t2 : B
-    % --------------------------------------------- :: lcase
-    % G |- case t of [] -> t1, (x :: y) -> t2 : B
-
+   
     G |- t1 : A1 && G |- t2 : A2
     ---------------------------- :: pair
     G |- (t1,t2) : A1 x A2
-
-    % G |- t : A1 x A2
-    % ---------------- :: fst
-    % G |- fst t : A1
-
-    % G |- t : A1 x A2
-    % ---------------- :: snd
-    % G |- snd t : A2
 
     G, x : A |- t : B
     -------------------- :: lam
     G |- \x:A.t : A -> B
 
-    % G |- t1 : A -> B && G |- t2 : A
-    % ---------------------------------- :: app
-    % G |- t1 t2 : B
-
     G, X <: A |- t : B
     ------------------------------------ :: Lam
     G |- Lam X <: A. t : Forall (X <: A).B
 
-    G |- t : Forall (X<:B).C && G |- A <: B
+    G |- t : Forall (X<:B).C && G |- A <~ B
     --------------------------------------- :: typeApp
     G |- [A]t : [A/X]C
 
-    G |- t : A && G |- A <: B
+    G |- t : A && G |- A <~ B
     ------------------------- :: Sub
     G |- t : B
 
@@ -388,13 +390,9 @@ defn
     G |- t1 : B && G, x : A, y : List A |- t2 : B
     --------------------------------------------- :: lcase
     G |- case t of [] -> t1, (x :: y) -> t2 : B       
-
-    % G |- t1 : ? && G |- t2 : A
-    % -------------------------- :: appU
-    % G |- t1 t2 : ?
     
     G |- t1 : C && fun(C) = A1 -> B1
-    G |-t2 : A2 && G |- A2 ~ A1
+    G |-t2 : A2 && G |- A2 <~ A1
     -------------------------------- :: app
     G |- t1 t2 : B2
 
@@ -415,11 +413,11 @@ by
     --------------- :: var
     G |- x => x : A
 
-    ------------------------------------------- :: Box
-    G |- box => box : Forall (X <: SL).(X -> ?)
+    ------------------------ :: Box
+    G |- box => box : S -> ?
 
-    ----------------------------------------------- :: Unbox
-    G |- unbox => unbox : Forall (X <: SL).(? -> X)
+    ---------------------------- :: Unbox
+    G |- unbox => unbox : ? -> S
 
     ----------------- :: zero
     G |- 0 => 0 : Nat
@@ -468,7 +466,7 @@ by
     ---------------------------------------- :: Empty
     G |- [] => [] : Forall (X <: ?).List X
 
-    ((G |- t1 => t'1 : A1 && G |- t2 => t'2 : List A2) && G |- A1 ~ A2) && caster(A1,A2) = c
+    ((G |- t1 => t'1 : A1 && G |- t2 => t'2 : List A2) && G |- A1 <~ A2) && caster(A1,A2) = c
     ---------------------------------------------------------------------------------------- :: cons
     G |- (t1 :: t2) => ((c t'1) :: t'2) : List A
 
@@ -492,7 +490,7 @@ by
     G |- t1 t2 => (split (? -> ?) t'1) (c t'2) : ?
 
      G |- t2 => t'2 : A2    
-    (G |- t1 => t'1 : A1 -> B && G |- A2 ~ A1) && caster(A2,A1) = c
+    (G |- t1 => t'1 : A1 -> B && G |- A2 <~ A1) && caster(A2,A1) = c
     ---------------------------------------------------------------- :: app
     G |- t1 t2 => t'1 (c t'2) : B
 
@@ -500,6 +498,6 @@ by
     ------------------------------------------------------------- :: Lam
     G |- (Lam X <: A. t1) => (Lam X <: A. t2) : Forall (X <: A).B
 
-    G |- t1 => t2 : Forall (X <: B).C && G |- A <: B
+    G |- t1 => t2 : Forall (X <: B).C && G |- A <~ B
     ------------------------------------------------ :: typeApp
     G |- ([A]t1) => ([A]t2) : [A/X]C

@@ -26,6 +26,15 @@ all: pdf
 	@$(SKIM) $(PDF) &>/dev/null
   endif
 
+quick: quick-pdf
+  # This is for my private machine.  It forces my PDF reader to reload.
+  # It should not run unless "skim_revert.sh" is in your PATH.
+  ifdef SKIMRevinPath
+	@$(SKIM) $(PDF) &>/dev/null
+	@$(SKIM) $(PDF) &>/dev/null
+	@$(SKIM) $(PDF) &>/dev/null
+  endif
+
 pdf : $(PDF)
 
 results-ott.tex : results.tex surface-grady/surface-grady.ott core-grady/core-grady.ott 
@@ -74,6 +83,9 @@ $(PDF) :  $(OTTOutputFile) Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
+	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
+
+quick-pdf : $(OTTOutputFile) Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 
 clean :

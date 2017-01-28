@@ -65,236 +65,124 @@
   \label{fig:type-pre}
 \end{figure}
 
-\begin{lemma}[Subtyping and Precision]
-  \label{lemma:subtyping_and_precision}
-  Suppose $ \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{B} $. Then
-  \begin{itemize}
-  \item[i.] if $ \SGradynt{A}  \sqsubseteq  \SGradynt{A'} $, then $ \Gamma  \vdash  \SGradynt{A'}  <\hspace{-2px}\colon  \SGradynt{B'} $ for $ \SGradynt{B}  \sqsubseteq  \SGradynt{B'} $, and
-  \item[i.] if $ \SGradynt{B}  \sqsubseteq  \SGradynt{B'} $, then $ \Gamma  \vdash  \SGradynt{A'}  <\hspace{-2px}\colon  \SGradynt{B'} $ for $ \SGradynt{A}  \sqsubseteq  \SGradynt{A'} $.
-  \end{itemize}
+\begin{lemma}
+  \label{lemma:consistent-subtyping-1}
+  Suppose $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $.
+  \begin{enumerate}[label=\roman*., align=left]
+  \item $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{A'} $ and $[[G |- A' <: B]]$ for some $\SGradynt{A'}$.
+  \item $ \Gamma  \vdash  \SGradynt{B'}  \sim  \SGradynt{B} $ and $[[G |- A <: B']]$ for some $\SGradynt{B'}$.
+  \end{enumerate}
 \end{lemma}
 \begin{proof}
-  This proof holds by induction on $ \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{B} $.
+  This is a proof by induction on $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $.  We only show a
+  few of the most interesting cases.
   \begin{itemize}
   \item[] Case.\ \\ 
     \begin{center}
       \begin{math}
         $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXReflName{}$] {
-           \Gamma \,\text{Ok} 
-        }{ \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{A} }
-      \end{math}
-    \end{center}        
-    \textbf{Proof of part i.} Choose $\SGradynt{B'} = \SGradynt{A'}$.
-    
-    \noindent
-    \textbf{Proof of Part ii.} Choose $\SGradynt{A'} = \SGradynt{B'}$.
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXTransName{}$] {
-            \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{B}   \quad   \Gamma  \vdash  \SGradynt{B}  <\hspace{-2px}\colon  \SGradynt{C}  
-        }{ \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{C} }
+        \inferrule* [right=$\SGradydruleSXXBoxName{}$] {
+           \Gamma  \vdash  \SGradynt{A}  : \star 
+        }{ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradysym{\mbox{?}} }
       \end{math}
     \end{center}
-    \textbf{Proof of part i.} Suppose $ \SGradynt{A}  \sqsubseteq  \SGradynt{A'} $.  Then by part one of applying
-    the induction hypothesis to $ \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{B} $ we know that $ \Gamma  \vdash  \SGradynt{A'}  <\hspace{-2px}\colon  \SGradynt{B'} $ for
-    $ \SGradynt{B}  \sqsubseteq  \SGradynt{B'} $, and by part one of applying the induction hypothesis to $ \Gamma  \vdash  \SGradynt{B}  <\hspace{-2px}\colon  \SGradynt{C} $ and $ \SGradynt{B}  \sqsubseteq  \SGradynt{B'} $
-    we know $ \Gamma  \vdash  \SGradynt{B'}  <\hspace{-2px}\colon  \SGradynt{C'} $ for $ \SGradynt{C}  \sqsubseteq  \SGradynt{C'} $.  Thus, by transitivity of subtyping 
-    we know $ \Gamma  \vdash  \SGradynt{A'}  <\hspace{-2px}\colon  \SGradynt{C'} $ and $ \SGradynt{C}  \sqsubseteq  \SGradynt{C'} $.
+    In this case $\SGradynt{B} = \SGradysym{\mbox{?}}$.
+
     \noindent
-    \textbf{Proof of Part ii.}  Suppose $ \SGradynt{B}  \sqsubseteq  \SGradynt{B'} $.  Then by applying part two of 
-    the induction hypothesis to $ \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{B} $ we know that $ \Gamma  \vdash  \SGradynt{A'}  <\hspace{-2px}\colon  \SGradynt{B'} $ for
-    $ \SGradynt{A}  \sqsubseteq  \SGradynt{A'} $, and by applying part one of the induction hypothesis to $ \Gamma  \vdash  \SGradynt{B}  <\hspace{-2px}\colon  \SGradynt{C} $ and $ \SGradynt{B}  \sqsubseteq  \SGradynt{B'} $
-    we know $ \Gamma  \vdash  \SGradynt{B'}  <\hspace{-2px}\colon  \SGradynt{C'} $ for $ \SGradynt{C}  \sqsubseteq  \SGradynt{C'} $.  Thus, by transitivity of subtyping 
-    we know $ \Gamma  \vdash  \SGradynt{A'}  <\hspace{-2px}\colon  \SGradynt{C'} $ and $ \SGradynt{C}  \sqsubseteq  \SGradynt{C'} $.
+    \textbf{Part i.} Choose $\SGradynt{A'} = \SGradysym{\mbox{?}}$.
+
+    \noindent
+    \textbf{Part ii.} Choose $\SGradynt{B'} = \SGradynt{A}$.
 
   \item[] Case.\ \\ 
     \begin{center}
       \begin{math}
         $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXVarName{}$] {
-            \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B}  \in  \Gamma   \quad   \Gamma \,\text{Ok}  
-        }{ \Gamma  \vdash  \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B} }
+        \inferrule* [right=$\SGradydruleSXXUnboxName{}$] {
+           \Gamma  \vdash  \SGradynt{B}  : \star 
+        }{ \Gamma  \vdash  \SGradysym{\mbox{?}}  \lesssim  \SGradynt{B} }
       \end{math}
     \end{center}
-    \textbf{Proof of part i.}  We know that $\SGradynt{A} = \SGradymv{X}$ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{A'} $.  But, this implies that
-    $\SGradynt{A'} = \SGradymv{X}$ or $\SGradynt{A'} = \SGradysym{\mbox{?}}$.  Choose $\SGradynt{B'} = \SGradynt{B}$ in the former case, and $\SGradynt{B'} = \SGradysym{\mbox{?}}$ in the latter.
+    In this case $\SGradynt{A} = \SGradysym{\mbox{?}}$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXUName{}$] {
-           \Gamma \,\text{Ok} 
-        }{ \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradysym{\mbox{?}} }
-      \end{math}
-    \end{center}    
-    \textbf{Proof of part i.}
-    
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXNatSName{}$] {
-           \Gamma \,\text{Ok} 
-        }{ \Gamma  \vdash   \mathsf{Nat}   <\hspace{-2px}\colon   \mathsf{SL}  }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
+    \textbf{Part i.} Choose $\SGradynt{A'} = \SGradynt{B}$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXUnitSName{}$] {
-           \Gamma \,\text{Ok} 
-        }{ \Gamma  \vdash   \mathsf{Unit}   <\hspace{-2px}\colon   \mathsf{SL}  }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXListSName{}$] {
-           \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon   \mathsf{SL}  
-        }{ \Gamma  \vdash   \mathsf{List}\, \SGradynt{A}   <\hspace{-2px}\colon   \mathsf{SL}  }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXArrowSName{}$] {
-            \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon   \mathsf{SL}    \quad   \Gamma  \vdash  \SGradynt{B}  <\hspace{-2px}\colon   \mathsf{SL}   
-        }{ \Gamma  \vdash  \SGradysym{(}  \SGradynt{A}  \rightarrow  \SGradynt{B}  \SGradysym{)}  <\hspace{-2px}\colon   \mathsf{SL}  }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXProdSName{}$] {
-            \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon   \mathsf{SL}    \quad   \Gamma  \vdash  \SGradynt{B}  <\hspace{-2px}\colon   \mathsf{SL}   
-        }{ \Gamma  \vdash  \SGradysym{(}   \SGradynt{A}  \times  \SGradynt{B}   \SGradysym{)}  <\hspace{-2px}\colon   \mathsf{SL}  }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXListName{}$] {
-           \Gamma  \vdash  \SGradynt{A}  <\hspace{-2px}\colon  \SGradynt{B} 
-        }{ \Gamma  \vdash  \SGradysym{(}   \mathsf{List}\, \SGradynt{A}   \SGradysym{)}  <\hspace{-2px}\colon  \SGradysym{(}   \mathsf{List}\, \SGradynt{B}   \SGradysym{)} }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXProdName{}$] {
-            \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{2}}}}  
-        }{ \Gamma  \vdash  \SGradysym{(}   \SGradynt{A_{{\mathrm{1}}}}  \times  \SGradynt{B_{{\mathrm{1}}}}   \SGradysym{)}  <\hspace{-2px}\colon  \SGradysym{(}   \SGradynt{A_{{\mathrm{2}}}}  \times  \SGradynt{B_{{\mathrm{2}}}}   \SGradysym{)} }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
+    \textbf{Part ii.} Choose $\SGradynt{B'} = \SGradysym{\mbox{?}}$.
 
   \item[] Case.\ \\ 
     \begin{center}
       \begin{math}
         $$\mprset{flushleft}
         \inferrule* [right=$\SGradydruleSXXArrowName{}$] {
-            \Gamma  \vdash  \SGradynt{A_{{\mathrm{2}}}}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{2}}}}  
-        }{ \Gamma  \vdash  \SGradysym{(}  \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}  \SGradysym{)}  <\hspace{-2px}\colon  \SGradysym{(}  \SGradynt{A_{{\mathrm{2}}}}  \rightarrow  \SGradynt{B_{{\mathrm{2}}}}  \SGradysym{)} }
+            \Gamma  \vdash  \SGradynt{A_{{\mathrm{2}}}}  \lesssim  \SGradynt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim  \SGradynt{B_{{\mathrm{2}}}}  
+        }{ \Gamma  \vdash  \SGradysym{(}  \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}  \SGradysym{)}  \lesssim  \SGradysym{(}  \SGradynt{A_{{\mathrm{2}}}}  \rightarrow  \SGradynt{B_{{\mathrm{2}}}}  \SGradysym{)} }
       \end{math}
     \end{center}
-    \textbf{Proof of part i.}  
+
+    In this case $\SGradynt{A} = \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}$ and $\SGradynt{B} = \SGradynt{A_{{\mathrm{2}}}}  \rightarrow  \SGradynt{B_{{\mathrm{2}}}}$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXForallName{}$] {
-            \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A}   \vdash  \SGradynt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{2}}}} 
-        }{ \Gamma  \vdash  \SGradysym{(}   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A} ).  \SGradynt{B_{{\mathrm{1}}}}   \SGradysym{)}  <\hspace{-2px}\colon  \SGradysym{(}   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A} ).  \SGradynt{B_{{\mathrm{2}}}}   \SGradysym{)} }
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
+    \textbf{Part i.} By part two of the induction hypothesis we know
+    that $ \Gamma  \vdash  \SGradynt{A'_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{1}}}} $ and $[[G |- A2 <: A1']]$, and by part one of the induction hypothesis
+    $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \sim  \SGradynt{B'_{{\mathrm{1}}}} $ and $[[G |- B1' <: B2]]$.  By symmetry of type consistency
+    we may conclude that $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A'_{{\mathrm{1}}}} $ which along with $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \sim  \SGradynt{B'_{{\mathrm{1}}}} $
+    implies that $ \Gamma  \vdash  \SGradysym{(}  \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}  \SGradysym{)}  \sim  \SGradysym{(}  \SGradynt{A'_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B'_{{\mathrm{1}}}}  \SGradysym{)} $, and by reapplying the rule
+    we may conclude that $[[G |- (A1' -> B1') <: (A2 -> B2)]]$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
+    \textbf{Part ii.} Similar to part one, except that we first
+    applying part one of the induction hypothesis to the first
+    premise, and then the second part to the second premise.
+    
   \end{itemize}
+
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:consistent-subtyping-2}
+  If $[[G |- A <: B]]$, then $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $[[G |- A <: B]]$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:consistent-subtyping-3}
+  if $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $, then $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $.
+\end{lemma}
+\begin{proof}
+  By straightforward induction on $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $.
+\end{proof}
+
+\begin{corollary}[Consistent Subtyping]
+  \label{corollary:consistent_subtyping}
+  \begin{enumerate}[label=\roman*.,align=left]
+  \item[]
+  \item $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $ if and only if $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{A'} $ and $[[G |- A' <: B]]$ for some $\SGradynt{A'}$.
+  \item $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $ if and only if $ \Gamma  \vdash  \SGradynt{B'}  \sim  \SGradynt{B} $ and $[[G |- A <: B']]$ for some $\SGradynt{B'}$.
+  \end{enumerate}
+\end{corollary}
+\begin{proof}
+  The left-to-right direction of both cases easily follows from
+  Lemma~\ref{lemma:consistent-subtyping-1}, and the right-to-left
+  direction of both cases follows from induction on the type
+  consistency derivation with a case split on the subtyping derivation,
+  and Lemma~\ref{lemma:consistent-subtyping-2} and Lemma~\ref{lemma:consistent-subtyping-3}.
 \end{proof}
 
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
   Suppose $  \cdot   \vdash  \SGradynt{t}  :  \SGradynt{A} $ and $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $.  Then
-  \begin{itemize}
-  \item[i.] $  \cdot   \vdash  \SGradynt{t'}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $,
-  \item[ii.] if $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $, then $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $ and $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $,
-  \item[iii.] if $ \SGradynt{t}  \uparrow $, then $ \SGradynt{t'}  \uparrow $,
-  \item[iv.] if $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $, then $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $ where $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $, or $[[t ~>* error]]$, and
-  \item [v.] if $ \SGradynt{t'}  \uparrow $, then $ \SGradynt{t}  \uparrow $ or $[[t ~>* error]]$.
-  \end{itemize}
+  \begin{enumerate}[label=\roman*., align=left]     
+  \item $  \cdot   \vdash  \SGradynt{t'}  :  \SGradynt{B} $ and $ G \vdash  \SGradynt{A}  \sqsubseteq  \SGradynt{B} $,
+  \item if $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $, then $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $ and $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $,
+  \item if $ \SGradynt{t}  \uparrow $, then $ \SGradynt{t'}  \uparrow $,
+  \item if $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $, then $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $ where $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $, or $[[t ~>* error]]$, and
+  \item if $ \SGradynt{t'}  \uparrow $, then $ \SGradynt{t}  \uparrow $ or $[[t ~>* error]]$.
+  \end{enumerate}
 \end{theorem}
 \begin{proof}
-  \textbf{Part i}. This case holds by induction on $  \cdot   \vdash  \SGradynt{t}  :  \SGradynt{A} $,
-  and is fairly straightforward.  We only consider the two non-trivial
-  cases.
-  \begin{itemize}
-  \item[] Case.
-    \[
-    \SGradydruleTXXapp{}
-    \]
-    
-  \item[] Case.
-    \[
-    \SGradydruleTXXSub{}
-    \]
-    
-  \end{itemize}
-
+  
 \end{proof}

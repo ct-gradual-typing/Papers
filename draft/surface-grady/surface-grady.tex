@@ -66,10 +66,11 @@
 
 \newcommand{\ottA}{
 \ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}}{::=}{}\ottprodnewline
-\ottfirstprodline{|}{\ottmv{X}}{}{}{}{}\ottprodnewline
+\ottfirstprodline{|}{ \top }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathbb{S} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottmv{X}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{List}\, \ottnt{A} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{SL} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
@@ -99,6 +100,22 @@
 }{
   \Gamma_{{\mathrm{1}}} , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \ottsym{,}  \Gamma_{{\mathrm{2}}}  \vdash  \ottmv{X}  : \star }{%
 {\ottdruleKXXvarName}{}%
+}}
+
+
+\newcommand{\ottdruleKXXtopName}[0]{\ottdrulename{K\_top}}
+\newcommand{\ottdruleKXXtop}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash   \top   : \star }{%
+{\ottdruleKXXtopName}{}%
+}}
+
+
+\newcommand{\ottdruleKXXslName}[0]{\ottdrulename{K\_sl}}
+\newcommand{\ottdruleKXXsl}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash   \mathbb{S}   : \star }{%
+{\ottdruleKXXslName}{}%
 }}
 
 
@@ -163,6 +180,8 @@
 
 \newcommand{\ottdefnkind}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{A}  : \star $}{}
 \ottusedrule{\ottdruleKXXvar{}}
+\ottusedrule{\ottdruleKXXtop{}}
+\ottusedrule{\ottdruleKXXsl{}}
 \ottusedrule{\ottdruleKXXunit{}}
 \ottusedrule{\ottdruleKXXnat{}}
 \ottusedrule{\ottdruleKXXunitype{}}
@@ -204,142 +223,10 @@
 \ottusedrule{\ottdruleOkXXvar{}}
 \end{ottdefnblock}}
 
-%% defn subtype
-\newcommand{\ottdruleSXXReflName}[0]{\ottdrulename{S\_Refl}}
-\newcommand{\ottdruleSXXRefl}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{A} }{%
-{\ottdruleSXXReflName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXTransName}[0]{\ottdrulename{S\_Trans}}
-\newcommand{\ottdruleSXXTrans}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}   \quad   \Gamma  \vdash  \ottnt{B}  <\hspace{-2px}\colon  \ottnt{C}  }%
-}{
- \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{C} }{%
-{\ottdruleSXXTransName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXVarName}[0]{\ottdrulename{S\_Var}}
-\newcommand{\ottdruleSXXVar}[1]{\ottdrule[#1]{%
-\ottpremise{  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}  \in  \Gamma   \quad   \Gamma \,\text{Ok}  }%
-}{
- \Gamma  \vdash  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} }{%
-{\ottdruleSXXVarName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXUName}[0]{\ottdrulename{S\_U}}
-\newcommand{\ottdruleSXXU}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottsym{\mbox{?}} }{%
-{\ottdruleSXXUName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXNatSName}[0]{\ottdrulename{S\_NatS}}
-\newcommand{\ottdruleSXXNatS}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash   \mathsf{Nat}   <\hspace{-2px}\colon   \mathsf{SL}  }{%
-{\ottdruleSXXNatSName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXUnitSName}[0]{\ottdrulename{S\_UnitS}}
-\newcommand{\ottdruleSXXUnitS}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash   \mathsf{Unit}   <\hspace{-2px}\colon   \mathsf{SL}  }{%
-{\ottdruleSXXUnitSName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXListSName}[0]{\ottdrulename{S\_ListS}}
-\newcommand{\ottdruleSXXListS}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathsf{SL}  }%
-}{
- \Gamma  \vdash   \mathsf{List}\, \ottnt{A}   <\hspace{-2px}\colon   \mathsf{SL}  }{%
-{\ottdruleSXXListSName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXArrowSName}[0]{\ottdrulename{S\_ArrowS}}
-\newcommand{\ottdruleSXXArrowS}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathsf{SL}    \quad   \Gamma  \vdash  \ottnt{B}  <\hspace{-2px}\colon   \mathsf{SL}   }%
-}{
- \Gamma  \vdash  \ottsym{(}  \ottnt{A}  \rightarrow  \ottnt{B}  \ottsym{)}  <\hspace{-2px}\colon   \mathsf{SL}  }{%
-{\ottdruleSXXArrowSName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXProdSName}[0]{\ottdrulename{S\_ProdS}}
-\newcommand{\ottdruleSXXProdS}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathsf{SL}    \quad   \Gamma  \vdash  \ottnt{B}  <\hspace{-2px}\colon   \mathsf{SL}   }%
-}{
- \Gamma  \vdash  \ottsym{(}   \ottnt{A}  \times  \ottnt{B}   \ottsym{)}  <\hspace{-2px}\colon   \mathsf{SL}  }{%
-{\ottdruleSXXProdSName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXListName}[0]{\ottdrulename{S\_List}}
-\newcommand{\ottdruleSXXList}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B} }%
-}{
- \Gamma  \vdash  \ottsym{(}   \mathsf{List}\, \ottnt{A}   \ottsym{)}  <\hspace{-2px}\colon  \ottsym{(}   \mathsf{List}\, \ottnt{B}   \ottsym{)} }{%
-{\ottdruleSXXListName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXProdName}[0]{\ottdrulename{S\_Prod}}
-\newcommand{\ottdruleSXXProd}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \ottnt{B_{{\mathrm{2}}}}  }%
-}{
- \Gamma  \vdash  \ottsym{(}   \ottnt{A_{{\mathrm{1}}}}  \times  \ottnt{B_{{\mathrm{1}}}}   \ottsym{)}  <\hspace{-2px}\colon  \ottsym{(}   \ottnt{A_{{\mathrm{2}}}}  \times  \ottnt{B_{{\mathrm{2}}}}   \ottsym{)} }{%
-{\ottdruleSXXProdName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXArrowName}[0]{\ottdrulename{S\_Arrow}}
-\newcommand{\ottdruleSXXArrow}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  <\hspace{-2px}\colon  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \ottnt{B_{{\mathrm{2}}}}  }%
-}{
- \Gamma  \vdash  \ottsym{(}  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  \ottsym{)}  <\hspace{-2px}\colon  \ottsym{(}  \ottnt{A_{{\mathrm{2}}}}  \rightarrow  \ottnt{B_{{\mathrm{2}}}}  \ottsym{)} }{%
-{\ottdruleSXXArrowName}{}%
-}}
-
-
-\newcommand{\ottdruleSXXForallName}[0]{\ottdrulename{S\_Forall}}
-\newcommand{\ottdruleSXXForall}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \vdash  \ottnt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \ottnt{B_{{\mathrm{2}}}} }%
-}{
- \Gamma  \vdash  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{1}}}}   \ottsym{)}  <\hspace{-2px}\colon  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{2}}}}   \ottsym{)} }{%
-{\ottdruleSXXForallName}{}%
-}}
-
-\newcommand{\ottdefnsubtype}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B} $}{}
-\ottusedrule{\ottdruleSXXRefl{}}
-\ottusedrule{\ottdruleSXXTrans{}}
-\ottusedrule{\ottdruleSXXVar{}}
-\ottusedrule{\ottdruleSXXU{}}
-\ottusedrule{\ottdruleSXXNatS{}}
-\ottusedrule{\ottdruleSXXUnitS{}}
-\ottusedrule{\ottdruleSXXListS{}}
-\ottusedrule{\ottdruleSXXArrowS{}}
-\ottusedrule{\ottdruleSXXProdS{}}
-\ottusedrule{\ottdruleSXXList{}}
-\ottusedrule{\ottdruleSXXProd{}}
-\ottusedrule{\ottdruleSXXArrow{}}
-\ottusedrule{\ottdruleSXXForall{}}
-\end{ottdefnblock}}
-
 %% defn typecons
 \newcommand{\ottdruleCXXReflName}[0]{\ottdrulename{C\_Refl}}
 \newcommand{\ottdruleCXXRefl}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
 }{
  \Gamma  \vdash  \ottnt{A}  \sim  \ottnt{A} }{%
 {\ottdruleCXXReflName}{}%
@@ -348,6 +235,7 @@
 
 \newcommand{\ottdruleCXXBoxName}[0]{\ottdrulename{C\_Box}}
 \newcommand{\ottdruleCXXBox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
 }{
  \Gamma  \vdash  \ottnt{A}  \sim  \ottsym{\mbox{?}} }{%
 {\ottdruleCXXBoxName}{}%
@@ -356,6 +244,7 @@
 
 \newcommand{\ottdruleCXXUnboxName}[0]{\ottdrulename{C\_Unbox}}
 \newcommand{\ottdruleCXXUnbox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
 }{
  \Gamma  \vdash  \ottsym{\mbox{?}}  \sim  \ottnt{A} }{%
 {\ottdruleCXXUnboxName}{}%
@@ -410,62 +299,207 @@
 %% defn typepre
 \newcommand{\ottdrulePXXUName}[0]{\ottdrulename{P\_U}}
 \newcommand{\ottdrulePXXU}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
 }{
- \ottnt{A}  \sqsubseteq  \ottsym{\mbox{?}} }{%
+ G \vdash  \ottnt{A}  \sqsubseteq  \ottsym{\mbox{?}} }{%
 {\ottdrulePXXUName}{}%
 }}
 
 
 \newcommand{\ottdrulePXXreflName}[0]{\ottdrulename{P\_refl}}
 \newcommand{\ottdrulePXXrefl}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
 }{
- \ottnt{A}  \sqsubseteq  \ottnt{A} }{%
+ G \vdash  \ottnt{A}  \sqsubseteq  \ottnt{A} }{%
 {\ottdrulePXXreflName}{}%
 }}
 
 
 \newcommand{\ottdrulePXXarrowName}[0]{\ottdrulename{P\_arrow}}
 \newcommand{\ottdrulePXXarrow}[1]{\ottdrule[#1]{%
-\ottpremise{  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
+\ottpremise{  G \vdash  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   G \vdash  \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
 }{
- \ottsym{(}  \ottnt{A}  \rightarrow  \ottnt{B}  \ottsym{)}  \sqsubseteq  \ottsym{(}  \ottnt{C}  \rightarrow  \ottnt{D}  \ottsym{)} }{%
+ G \vdash  \ottsym{(}  \ottnt{A}  \rightarrow  \ottnt{B}  \ottsym{)}  \sqsubseteq  \ottsym{(}  \ottnt{C}  \rightarrow  \ottnt{D}  \ottsym{)} }{%
 {\ottdrulePXXarrowName}{}%
 }}
 
 
 \newcommand{\ottdrulePXXprodName}[0]{\ottdrulename{P\_prod}}
 \newcommand{\ottdrulePXXprod}[1]{\ottdrule[#1]{%
-\ottpremise{  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
+\ottpremise{  G \vdash  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   G \vdash  \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
 }{
- \ottsym{(}   \ottnt{A}  \times  \ottnt{B}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \ottnt{C}  \times  \ottnt{D}   \ottsym{)} }{%
+ G \vdash  \ottsym{(}   \ottnt{A}  \times  \ottnt{B}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \ottnt{C}  \times  \ottnt{D}   \ottsym{)} }{%
 {\ottdrulePXXprodName}{}%
 }}
 
 
 \newcommand{\ottdrulePXXlistName}[0]{\ottdrulename{P\_list}}
 \newcommand{\ottdrulePXXlist}[1]{\ottdrule[#1]{%
-\ottpremise{ \ottnt{A}  \sqsubseteq  \ottnt{B} }%
+\ottpremise{ G \vdash  \ottnt{A}  \sqsubseteq  \ottnt{B} }%
 }{
- \ottsym{(}   \mathsf{List}\, \ottnt{A}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \mathsf{List}\, \ottnt{B}   \ottsym{)} }{%
+ G \vdash  \ottsym{(}   \mathsf{List}\, \ottnt{A}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \mathsf{List}\, \ottnt{B}   \ottsym{)} }{%
 {\ottdrulePXXlistName}{}%
 }}
 
 
 \newcommand{\ottdrulePXXforallName}[0]{\ottdrulename{P\_forall}}
 \newcommand{\ottdrulePXXforall}[1]{\ottdrule[#1]{%
-\ottpremise{ \ottnt{B}  \sqsubseteq  \ottnt{D} }%
+\ottpremise{ G \vdash  \ottnt{B}  \sqsubseteq  \ottnt{D} }%
 }{
- \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{D}   \ottsym{)} }{%
+ G \vdash  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{D}   \ottsym{)} }{%
 {\ottdrulePXXforallName}{}%
 }}
 
-\newcommand{\ottdefntypepre}[1]{\begin{ottdefnblock}[#1]{$ \ottnt{A}  \sqsubseteq  \ottnt{B} $}{}
+\newcommand{\ottdefntypepre}[1]{\begin{ottdefnblock}[#1]{$ G \vdash  \ottnt{A}  \sqsubseteq  \ottnt{B} $}{}
 \ottusedrule{\ottdrulePXXU{}}
 \ottusedrule{\ottdrulePXXrefl{}}
 \ottusedrule{\ottdrulePXXarrow{}}
 \ottusedrule{\ottdrulePXXprod{}}
 \ottusedrule{\ottdrulePXXlist{}}
 \ottusedrule{\ottdrulePXXforall{}}
+\end{ottdefnblock}}
+
+%% defn subtype
+\newcommand{\ottdruleSXXReflName}[0]{\ottdrulename{S\_Refl}}
+\newcommand{\ottdruleSXXRefl}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
+}{
+ \Gamma  \vdash  \ottnt{A}  \lesssim  \ottnt{A} }{%
+{\ottdruleSXXReflName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXVarName}[0]{\ottdrulename{S\_Var}}
+\newcommand{\ottdruleSXXVar}[1]{\ottdrule[#1]{%
+\ottpremise{  \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A'}  \in  \Gamma   \quad   \Gamma  \vdash  \ottnt{A'}  \sim  \ottnt{A}  }%
+}{
+ \Gamma  \vdash  \ottmv{X}  \lesssim  \ottnt{A} }{%
+{\ottdruleSXXVarName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXTopName}[0]{\ottdrulename{S\_Top}}
+\newcommand{\ottdruleSXXTop}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
+}{
+ \Gamma  \vdash  \ottnt{A}  \lesssim   \top  }{%
+{\ottdruleSXXTopName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXBoxName}[0]{\ottdrulename{S\_Box}}
+\newcommand{\ottdruleSXXBox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
+}{
+ \Gamma  \vdash  \ottnt{A}  \lesssim  \ottsym{\mbox{?}} }{%
+{\ottdruleSXXBoxName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXUnboxName}[0]{\ottdrulename{S\_Unbox}}
+\newcommand{\ottdruleSXXUnbox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  : \star }%
+}{
+ \Gamma  \vdash  \ottsym{\mbox{?}}  \lesssim  \ottnt{A} }{%
+{\ottdruleSXXUnboxName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXNatSLName}[0]{\ottdrulename{S\_NatSL}}
+\newcommand{\ottdruleSXXNatSL}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
+}{
+ \Gamma  \vdash   \mathsf{Nat}   \lesssim   \mathbb{S}  }{%
+{\ottdruleSXXNatSLName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXUnitSLName}[0]{\ottdrulename{S\_UnitSL}}
+\newcommand{\ottdruleSXXUnitSL}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
+}{
+ \Gamma  \vdash   \mathsf{Unit}   \lesssim   \mathbb{S}  }{%
+{\ottdruleSXXUnitSLName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXListSLName}[0]{\ottdrulename{S\_ListSL}}
+\newcommand{\ottdruleSXXListSL}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  \lesssim   \mathbb{S}  }%
+}{
+ \Gamma  \vdash   \mathsf{List}\, \ottnt{A}   \lesssim   \mathbb{S}  }{%
+{\ottdruleSXXListSLName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXArrowSLName}[0]{\ottdrulename{S\_ArrowSL}}
+\newcommand{\ottdruleSXXArrowSL}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A}  \lesssim   \mathbb{S}    \quad   \Gamma  \vdash  \ottnt{B}  \lesssim   \mathbb{S}   }%
+}{
+ \Gamma  \vdash  \ottnt{A}  \rightarrow  \ottnt{B}  \lesssim   \mathbb{S}  }{%
+{\ottdruleSXXArrowSLName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXProdSLName}[0]{\ottdrulename{S\_ProdSL}}
+\newcommand{\ottdruleSXXProdSL}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A}  \lesssim   \mathbb{S}    \quad   \Gamma  \vdash  \ottnt{B}  \lesssim   \mathbb{S}   }%
+}{
+ \Gamma  \vdash   \ottnt{A}  \times  \ottnt{B}   \lesssim   \mathbb{S}  }{%
+{\ottdruleSXXProdSLName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXListName}[0]{\ottdrulename{S\_List}}
+\newcommand{\ottdruleSXXList}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{A}  \lesssim  \ottnt{B} }%
+}{
+ \Gamma  \vdash  \ottsym{(}   \mathsf{List}\, \ottnt{A}   \ottsym{)}  \lesssim  \ottsym{(}   \mathsf{List}\, \ottnt{B}   \ottsym{)} }{%
+{\ottdruleSXXListName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXProdName}[0]{\ottdrulename{S\_Prod}}
+\newcommand{\ottdruleSXXProd}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \lesssim  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{B_{{\mathrm{1}}}}  \lesssim  \ottnt{B_{{\mathrm{2}}}}  }%
+}{
+ \Gamma  \vdash  \ottsym{(}   \ottnt{A_{{\mathrm{1}}}}  \times  \ottnt{B_{{\mathrm{1}}}}   \ottsym{)}  \lesssim  \ottsym{(}   \ottnt{A_{{\mathrm{2}}}}  \times  \ottnt{B_{{\mathrm{2}}}}   \ottsym{)} }{%
+{\ottdruleSXXProdName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXArrowName}[0]{\ottdrulename{S\_Arrow}}
+\newcommand{\ottdruleSXXArrow}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \lesssim  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{B_{{\mathrm{1}}}}  \lesssim  \ottnt{B_{{\mathrm{2}}}}  }%
+}{
+ \Gamma  \vdash  \ottsym{(}  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  \ottsym{)}  \lesssim  \ottsym{(}  \ottnt{A_{{\mathrm{2}}}}  \rightarrow  \ottnt{B_{{\mathrm{2}}}}  \ottsym{)} }{%
+{\ottdruleSXXArrowName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXForallName}[0]{\ottdrulename{S\_Forall}}
+\newcommand{\ottdruleSXXForall}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma , \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A}   \vdash  \ottnt{B_{{\mathrm{1}}}}  \lesssim  \ottnt{B_{{\mathrm{2}}}} }%
+}{
+ \Gamma  \vdash  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{1}}}}   \ottsym{)}  \lesssim  \ottsym{(}   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{A} ).  \ottnt{B_{{\mathrm{2}}}}   \ottsym{)} }{%
+{\ottdruleSXXForallName}{}%
+}}
+
+\newcommand{\ottdefnsubtype}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{A}  \lesssim  \ottnt{B} $}{}
+\ottusedrule{\ottdruleSXXRefl{}}
+\ottusedrule{\ottdruleSXXVar{}}
+\ottusedrule{\ottdruleSXXTop{}}
+\ottusedrule{\ottdruleSXXBox{}}
+\ottusedrule{\ottdruleSXXUnbox{}}
+\ottusedrule{\ottdruleSXXNatSL{}}
+\ottusedrule{\ottdruleSXXUnitSL{}}
+\ottusedrule{\ottdruleSXXListSL{}}
+\ottusedrule{\ottdruleSXXArrowSL{}}
+\ottusedrule{\ottdruleSXXProdSL{}}
+\ottusedrule{\ottdruleSXXList{}}
+\ottusedrule{\ottdruleSXXProd{}}
+\ottusedrule{\ottdruleSXXArrow{}}
+\ottusedrule{\ottdruleSXXForall{}}
 \end{ottdefnblock}}
 
 %% defn type
@@ -480,16 +514,18 @@
 
 \newcommand{\ottdruleTXXBoxName}[0]{\ottdrulename{T\_Box}}
 \newcommand{\ottdruleTXXBox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
 }{
- \Gamma  \vdash   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathsf{SL}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
+ \Gamma  \vdash   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
 {\ottdruleTXXBoxName}{}%
 }}
 
 
 \newcommand{\ottdruleTXXUnboxName}[0]{\ottdrulename{T\_Unbox}}
 \newcommand{\ottdruleTXXUnbox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
 }{
- \Gamma  \vdash   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathsf{SL}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
+ \Gamma  \vdash   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
 {\ottdruleTXXUnboxName}{}%
 }}
 
@@ -542,7 +578,7 @@
 
 \newcommand{\ottdruleTXXconsName}[0]{\ottdrulename{T\_cons}}
 \newcommand{\ottdruleTXXcons}[1]{\ottdrule[#1]{%
-\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}      \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \sim  \ottnt{A_{{\mathrm{2}}}}  }%
+\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}      \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \lesssim  \ottnt{A_{{\mathrm{2}}}}  }%
 }{
  \Gamma  \vdash   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}  }{%
 {\ottdruleTXXconsName}{}%
@@ -578,7 +614,7 @@
 
 \newcommand{\ottdruleTXXtypeAppName}[0]{\ottdrulename{T\_typeApp}}
 \newcommand{\ottdruleTXXtypeApp}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ).  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ).  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  \lesssim  \ottnt{B}  }%
 }{
  \Gamma  \vdash   [  \ottnt{A}  ]  \ottnt{t}   :  \ottsym{[}  \ottnt{A}  \ottsym{/}  \ottmv{X}  \ottsym{]}  \ottnt{C} }{%
 {\ottdruleTXXtypeAppName}{}%
@@ -587,7 +623,7 @@
 
 \newcommand{\ottdruleTXXSubName}[0]{\ottdrulename{T\_Sub}}
 \newcommand{\ottdruleTXXSub}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t}  :  \ottnt{A}   \quad   \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t}  :  \ottnt{A}   \quad   \Gamma  \vdash  \ottnt{A}  \lesssim  \ottnt{B}  }%
 }{
  \Gamma  \vdash  \ottnt{t}  :  \ottnt{B} }{%
 {\ottdruleTXXSubName}{}%
@@ -607,7 +643,7 @@
 \newcommand{\ottdruleTXXappName}[0]{\ottdrulename{T\_app}}
 \newcommand{\ottdruleTXXapp}[1]{\ottdrule[#1]{%
 \ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C}   \quad   \mathsf{fun}( \ottnt{C} ) =  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  }%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \lesssim  \ottnt{A_{{\mathrm{1}}}}  }%
 }{
  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B_{{\mathrm{2}}}} }{%
 {\ottdruleTXXappName}{}%
@@ -665,7 +701,7 @@
 \newcommand{\ottdruleciXXBoxName}[0]{\ottdrulename{ci\_Box}}
 \newcommand{\ottdruleciXXBox}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{box}   \Rightarrow   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathsf{SL}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
+ \Gamma  \vdash   \mathsf{box}   \Rightarrow   \mathsf{box}   :  \ottnt{S}  \rightarrow  \ottsym{\mbox{?}} }{%
 {\ottdruleciXXBoxName}{}%
 }}
 
@@ -673,7 +709,7 @@
 \newcommand{\ottdruleciXXUnboxName}[0]{\ottdrulename{ci\_Unbox}}
 \newcommand{\ottdruleciXXUnbox}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{unbox}   \Rightarrow   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathsf{SL}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
+ \Gamma  \vdash   \mathsf{unbox}   \Rightarrow   \mathsf{unbox}   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{S} }{%
 {\ottdruleciXXUnboxName}{}%
 }}
 
@@ -787,7 +823,7 @@
 
 \newcommand{\ottdruleciXXconsName}[0]{\ottdrulename{ci\_cons}}
 \newcommand{\ottdruleciXXcons}[1]{\ottdrule[#1]{%
-\ottpremise{      \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}      \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \sim  \ottnt{A_{{\mathrm{2}}}}     \quad   \mathsf{caster}( \ottnt{A_{{\mathrm{1}}}} , \ottnt{A_{{\mathrm{2}}}} ) =  \ottnt{c}  }%
+\ottpremise{      \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :   \mathsf{List}\, \ottnt{A_{{\mathrm{2}}}}      \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  \lesssim  \ottnt{A_{{\mathrm{2}}}}     \quad   \mathsf{caster}( \ottnt{A_{{\mathrm{1}}}} , \ottnt{A_{{\mathrm{2}}}} ) =  \ottnt{c}  }%
 }{
  \Gamma  \vdash  \ottsym{(}   \ottnt{t_{{\mathrm{1}}}}  ::  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   \ottsym{(}  \ottnt{c} \, \ottnt{t'_{{\mathrm{1}}}}  \ottsym{)}  ::  \ottnt{t'_{{\mathrm{2}}}}   \ottsym{)}  :   \mathsf{List}\, \ottnt{A}  }{%
 {\ottdruleciXXconsName}{}%
@@ -836,7 +872,7 @@
 \newcommand{\ottdruleciXXappName}[0]{\ottdrulename{ci\_app}}
 \newcommand{\ottdruleciXXapp}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}} }%
-\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}     \quad   \mathsf{caster}( \ottnt{A_{{\mathrm{2}}}} , \ottnt{A_{{\mathrm{1}}}} ) =  \ottnt{c}  }%
+\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \lesssim  \ottnt{A_{{\mathrm{1}}}}     \quad   \mathsf{caster}( \ottnt{A_{{\mathrm{2}}}} , \ottnt{A_{{\mathrm{1}}}} ) =  \ottnt{c}  }%
 }{
  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}} \, \ottsym{(}  \ottnt{c} \, \ottnt{t'_{{\mathrm{2}}}}  \ottsym{)}  :  \ottnt{B} }{%
 {\ottdruleciXXappName}{}%
@@ -854,7 +890,7 @@
 
 \newcommand{\ottdruleciXXtypeAppName}[0]{\ottdrulename{ci\_typeApp}}
 \newcommand{\ottdruleciXXtypeApp}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ).  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ).  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  \lesssim  \ottnt{B}  }%
 }{
  \Gamma  \vdash  \ottsym{(}   [  \ottnt{A}  ]  \ottnt{t_{{\mathrm{1}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   [  \ottnt{A}  ]  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  :  \ottsym{[}  \ottnt{A}  \ottsym{/}  \ottmv{X}  \ottsym{]}  \ottnt{C} }{%
 {\ottdruleciXXtypeAppName}{}%
@@ -888,7 +924,7 @@
 
 
 \newcommand{\ottdefnsTyping}{
-\ottdefnkind{}\ottdefnctxOk{}\ottdefnsubtype{}\ottdefntypecons{}\ottdefntypepre{}\ottdefntype{}\ottdefncastIn{}}
+\ottdefnkind{}\ottdefnctxOk{}\ottdefntypecons{}\ottdefntypepre{}\ottdefnsubtype{}\ottdefntype{}\ottdefncastIn{}}
 
 \newcommand{\ottdefnss}{
 \ottdefnsTyping
@@ -902,7 +938,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        78 good    0 bad
-Definition rule clauses: 149 good    0 bad
+Definition rules:        81 good    0 bad
+Definition rule clauses: 160 good    0 bad
 \end{verbatim}
 \end{document}

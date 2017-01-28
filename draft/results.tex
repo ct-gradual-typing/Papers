@@ -65,236 +65,132 @@
   \label{fig:type-pre}
 \end{figure}
 
-\begin{lemma}[Subtyping and Precision]
-  \label{lemma:subtyping_and_precision}
-  Suppose $[[G |- A <: B]]$. Then
-  \begin{itemize}
-  \item[i.] if $[[A <= A']]$, then $[[G |- A' <: B']]$ for $[[B <= B']]$, and
-  \item[i.] if $[[B <= B']]$, then $[[G |- A' <: B']]$ for $[[A <= A']]$.
-  \end{itemize}
+\begin{lemma}
+  \label{lemma:consistent-subtyping-1}
+  Suppose $[[G |- A <~ B]]$.
+  \begin{enumerate}[label=\roman*., align=left]
+  \item $[[G |- A ~ A']]$ and $<<G |- A' <: B>>$ for some $[[A']]$.
+  \item $[[G |- B' ~ B]]$ and $<<G |- A <: B'>>$ for some $[[B']]$.
+  \end{enumerate}
 \end{lemma}
 \begin{proof}
-  This proof holds by induction on $[[G |- A <: B]]$.
+  This is a proof by induction on $[[G |- A <~ B]]$.  We only show a
+  few of the most interesting cases.
   \begin{itemize}
   \item[] Case.\ \\ 
     \begin{center}
       \begin{math}
         $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXReflName{}$] {
-          [[G Ok]]
-        }{[[G |- A <: A]]}
-      \end{math}
-    \end{center}        
-    \textbf{Proof of part i.} Choose $[[B']] = [[A']]$.
-    
-    \noindent
-    \textbf{Proof of Part ii.} Choose $[[A']] = [[B']]$.
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXTransName{}$] {
-          [[G |- A <: B && G |- B <: C]]
-        }{[[G |- A <: C]]}
+        \inferrule* [right=$\SGradydruleSXXBoxName{}$] {
+          [[G |- A : *]]
+        }{[[G |- A <~ ?]]}
       \end{math}
     \end{center}
-    \textbf{Proof of part i.} Suppose $[[A <= A']]$.  Then by part one of applying
-    the induction hypothesis to $[[G |- A <: B]]$ we know that $[[G |- A' <: B']]$ for
-    $[[B <= B']]$, and by part one of applying the induction hypothesis to $[[G |- B <: C]]$ and $[[B <= B']]$
-    we know $[[G |- B' <: C']]$ for $[[C <= C']]$.  Thus, by transitivity of subtyping 
-    we know $[[G |- A' <: C']]$ and $[[C <= C']]$.
+    In this case $[[B]] = [[?]]$.
+
     \noindent
-    \textbf{Proof of Part ii.}  Suppose $[[B <= B']]$.  Then by applying part two of 
-    the induction hypothesis to $[[G |- A <: B]]$ we know that $[[G |- A' <: B']]$ for
-    $[[A <= A']]$, and by applying part one of the induction hypothesis to $[[G |- B <: C]]$ and $[[B <= B']]$
-    we know $[[G |- B' <: C']]$ for $[[C <= C']]$.  Thus, by transitivity of subtyping 
-    we know $[[G |- A' <: C']]$ and $[[C <= C']]$.
+    \textbf{Part i.} Choose $[[A']] = [[?]]$.
+
+    \noindent
+    \textbf{Part ii.} Choose $[[B']] = [[A]]$.
 
   \item[] Case.\ \\ 
     \begin{center}
       \begin{math}
         $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXVarName{}$] {
-          [[X <: B elem G && G Ok]]
-        }{[[G |- X <: B]]}
+        \inferrule* [right=$\SGradydruleSXXUnboxName{}$] {
+          [[G |- B : *]]
+        }{[[G |- ? <~ B]]}
       \end{math}
     \end{center}
-    \textbf{Proof of part i.}  We know that $[[A]] = [[X]]$ and $[[A <= A']]$.  But, this implies that
-    $[[A']] = [[X]]$ or $[[A']] = [[?]]$.  Choose $[[B']] = [[B]]$ in the former case, and $[[B']] = [[?]]$ in the latter.
+    In this case $[[A]] = [[?]]$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXUName{}$] {
-          [[G Ok]]
-        }{[[G |- A <: ?]]}
-      \end{math}
-    \end{center}    
-    \textbf{Proof of part i.}
-    
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXNatSName{}$] {
-          [[G Ok]]
-        }{[[G |- Nat <: SL]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
+    \textbf{Part i.} Choose $[[A']] = [[B]]$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXUnitSName{}$] {
-          [[G Ok]]
-        }{[[G |- Unit <: SL]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXListSName{}$] {
-          [[G |- A <: SL]]
-        }{[[G |- List A <: SL]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXArrowSName{}$] {
-          [[G |- A <: SL && G |- B <: SL]]
-        }{[[G |- (A -> B) <: SL]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXProdSName{}$] {
-          [[G |- A <: SL && G |- B <: SL]]
-        }{[[G |- (A x B) <: SL]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXListName{}$] {
-          [[G |- A <: B]]
-        }{[[G |- (List A) <: (List B)]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXProdName{}$] {
-          [[G |- A1 <: A2 && G |- B1 <: B2]]
-        }{[[G |- (A1 x B1) <: (A2 x B2)]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
-
-    \noindent
-    \textbf{Proof of Part ii.}
+    \textbf{Part ii.} Choose $[[B']] = [[?]]$.
 
   \item[] Case.\ \\ 
     \begin{center}
       \begin{math}
         $$\mprset{flushleft}
         \inferrule* [right=$\SGradydruleSXXArrowName{}$] {
-          [[G |- A2 <: A1 && G |- B1 <: B2]]
-        }{[[G |- (A1 -> B1) <: (A2 -> B2)]]}
+          [[G |- A2 <~ A1 && G |- B1 <~ B2]]
+        }{[[G |- (A1 -> B1) <~ (A2 -> B2)]]}
       \end{math}
     \end{center}
-    \textbf{Proof of part i.}  
+
+    In this case $[[A]] = [[A1 -> B1]]$ and $[[B]] = [[A2 -> B2]]$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
-  \item[] Case.\ \\ 
-    \begin{center}
-      \begin{math}
-        $$\mprset{flushleft}
-        \inferrule* [right=$\SGradydruleSXXForallName{}$] {
-          [[G, X <: A |- B1 <: B2]]
-        }{[[G |- (Forall (X <: A).B1) <: (Forall (X <: A).B2)]]}
-      \end{math}
-    \end{center}
-    \textbf{Proof of part i.}  
+    \textbf{Part i.} By part two of the induction hypothesis we know
+    that $[[G |- A1' ~ A1]]$ and $<<G |- A2 <: A1'>>$, and by part one of the induction hypothesis
+    $[[G |- B1 ~ B1']]$ and $<<G |- B1' <: B2>>$.  By symmetry of type consistency
+    we may conclude that $[[G |- A1 ~ A1']]$ which along with $[[G |- B1 ~ B1']]$
+    implies that $[[G |- (A1 -> B1) ~ (A1' -> B1')]]$, and by reapplying the rule
+    we may conclude that $<<G |- (A1' -> B1') <: (A2 -> B2)>>$.
 
     \noindent
-    \textbf{Proof of Part ii.}
-
+    \textbf{Part ii.} Similar to part one, except that we first
+    applying part one of the induction hypothesis to the first
+    premise, and then the second part to the second premise.
+    
   \end{itemize}
+
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:consistent-subtyping-2}
+  If $<<G |- A <: B>>$, then $[[G |- A <~ B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $<<G |- A <: B>>$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:consistent-subtyping-3}
+  if $[[G |- A ~ B]]$, then $[[G |- A <~ B]]$.
+\end{lemma}
+\begin{proof}
+  By straightforward induction on $[[G |- A ~ B]]$.
+\end{proof}
+
+\begin{corollary}[Consistent Subtyping]
+  \label{corollary:consistent_subtyping}
+  \begin{enumerate}[label=\roman*.,align=left]
+  \item[]
+  \item $[[G |- A <~ B]]$ if and only if $[[G |- A ~ A']]$ and $<<G |- A' <: B>>$ for some $[[A']]$.
+  \item $[[G |- A <~ B]]$ if and only if $[[G |- B' ~ B]]$ and $<<G |- A <: B'>>$ for some $[[B']]$.
+  \end{enumerate}
+\end{corollary}
+\begin{proof}
+  The left-to-right direction of both cases easily follows from
+  Lemma~\ref{lemma:consistent-subtyping-1}, and the right-to-left
+  direction of both cases follows from induction on the type
+  consistency derivation with a case split on the subtyping derivation,
+  and Lemma~\ref{lemma:consistent-subtyping-2} and Lemma~\ref{lemma:consistent-subtyping-3}.
+\end{proof}
+
+\begin{lemma}[Gradual Guarantee Part One]
+  \label{lemma:gradual_guarantee_part_one}
+  If $[[G |- t : A]]$ and $[[t <= t']]$, then $[[G |- t' : B]]$ and $[[G |- A <= B]]$.
+\end{lemma}
+\begin{proof}
+  
 \end{proof}
 
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
   Suppose $[[. |- t : A]]$ and $[[t <= t']]$.  Then
-  \begin{itemize}
-  \item[i.] $[[. |- t' : B]]$ and $[[A <= B]]$,
-  \item[ii.] if $[[t ~>* v]]$, then $[[t' ~>* v']]$ and $[[v <= v']]$,
-  \item[iii.] if $[[t ^]]$, then $[[t' ^]]$,
-  \item[iv.] if $[[t' ~>* v']]$, then $[[t ~>* v]]$ where $[[v <= v']]$, or $<<t ~>* error>>$, and
-  \item [v.] if $[[t' ^]]$, then $[[t ^]]$ or $<<t ~>* error>>$.
-  \end{itemize}
+  \begin{enumerate}[label=\roman*., align=left]     
+  \item $[[. |- t' : B]]$ and $[[. |- A <= B]]$,
+  \item if $[[t ~>* v]]$, then $[[t' ~>* v']]$ and $[[v <= v']]$,
+  \item if $[[t ^]]$, then $[[t' ^]]$,
+  \item if $[[t' ~>* v']]$, then $[[t ~>* v]]$ where $[[v <= v']]$, or $<<t ~>* error>>$, and
+  \item if $[[t' ^]]$, then $[[t ^]]$ or $<<t ~>* error>>$.
+  \end{enumerate}
 \end{theorem}
 \begin{proof}
-  \textbf{Part i}. This case holds by induction on $[[. |- t : A]]$,
-  and is fairly straightforward.  We only consider the two non-trivial
-  cases.
-  \begin{itemize}
-  \item[] Case.
-    \[
-    \SGradydruleTXXapp{}
-    \]
-    
-  \item[] Case.
-    \[
-    \SGradydruleTXXSub{}
-    \]
-    
-  \end{itemize}
-
+  
 \end{proof}
