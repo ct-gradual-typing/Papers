@@ -1,4 +1,6 @@
+{-# LANGUAGE LambdaCase #-}
 module Repl where
+
 
 import Control.Monad.State
 import System.Console.Haskeline
@@ -25,24 +27,30 @@ data QDefName = Var CVnm | DefName CVnm
 data QDefDef  = DefTerm CTerm | VarType Type
     deriving Show
 
+getQDefM :: (QDefName, QDefDef) -> REPLStateIO (Either (CVnm, Type) (CVnm, CTerm))
+getQDefM e@(Var x, DefTerm t) = return $ Right (x , t)
+getQDefM e@(DefName x, VarType ty) = return $ Left (x , ty)
+getQDefM e@(x,y) = error $ "Failed to get definition from context. Mismatched variable and type or term in: "++(prettyDef e)
+
 getQDef :: (QDefName, QDefDef) -> Either (CVnm, Type) (CVnm, CTerm)
 getQDef e@(Var x, DefTerm t) = Right (x , t)
 getQDef e@(DefName x, VarType ty) = Left (x , ty)
 getQDef e@(x,y) = error $ "Failed to get definition from context. Mismatched variable and type or term in: "++(prettyDef e)
 
+
 -- Extract only free variables that are defined from queue
-getQFV :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> Queue (CVnm,Type)
-getQFV (Queue [] []) qFV = qFV
-getQFV q qFV = case getQDef (headQ q) of 
+getQFV :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> REPLStateIO (Queue (CVnm,Type))
+getQFV (Queue [] []) qFV = return $ qFV
+getQFV q qFV = getQDefM (headQ q) >>= (\x -> case x of
                  (Left fv) -> getQFV (tailQ q) (enqueue fv qFV)
-                 (Right cv) -> getQFV (tailQ q) qFV
+                 (Right cv) -> getQFV (tailQ q) qFV)
 
 -- Extract only closed terms from queue
-getQCT :: Queue (QDefName,QDefDef) -> Queue Qelm -> Queue Qelm
-getQCT (Queue [] []) qCV = qCV
-getQCT q qCV = case getQDef (headQ q) of 
+getQCT :: Queue (QDefName,QDefDef) -> Queue Qelm -> REPLStateIO (Queue Qelm)
+getQCT (Queue [] []) qCV = return $ qCV
+getQCT q qCV = getQDefM (headQ q) >>= (\x -> case x of 
                  (Left fv) -> getQCT (tailQ q) qCV
-                 (Right cv) -> getQCT (tailQ q) (enqueue cv qCV)
+                 (Right cv) -> getQCT (tailQ q) (enqueue cv qCV))
 
 instance MonadException m => MonadException (StateT s m) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
@@ -86,7 +94,7 @@ tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
 tyCheckQ q = do
   (f, defs') <- get
-  let defs = getQCT defs' emptyQ
+  defs <- getQCT defs' emptyQ
   let term'@(Def v ty t) = headQ q
   -- Case split here as well before unfolding t
   -- Unfold each term from queue and see if free variables exist
@@ -140,7 +148,7 @@ handleCMD s =
       io.putStrLn $ "----------------------------------------------------------"
     handleLine (Eval t) = do
       (f, defs') <- get
-      let defs = getQCT defs' emptyQ
+      defs <- getQCT defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = eval tu
        in case r of
@@ -149,7 +157,7 @@ handleCMD s =
     handleLine (DecVar vnam ty) = io.putStrLn $ "working"
     handleLine (Let x t) = do
       (f, defs') <- get
-      let defs = getQCT defs' emptyQ
+      defs <- getQCT defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = runIR tu
        in case r of
@@ -160,7 +168,7 @@ handleCMD s =
                 else push (Var x,DefTerm t)
     handleLine (TypeCheck t) = do
       (_, defs') <- get
-      let defs = getQCT defs' emptyQ
+      defs <- getQCT defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = runIR tu
        in case r of
@@ -168,11 +176,11 @@ handleCMD s =
             Right ty ->  io.putStrLn.runPrettyType $ ty
     handleLine (ShowAST t) = do
       (_,defs') <- get
-      let defs = getQCT defs' emptyQ
+      defs <- getQCT defs' emptyQ
       io.putStrLn.show $ unfoldDefsInTerm defs t
     handleLine (Unfold t) = do
       (f,defs') <- get
-      let defs = getQCT defs' emptyQ
+      defs <- getQCT defs' emptyQ
       io.putStrLn.runPrettyCTerm $ unfoldDefsInTerm defs t
     handleLine (LoadFile p) = do
       let wdir = takeDirectory p
@@ -186,8 +194,8 @@ handleCMD s =
      
 prettyDef :: (QDefName, QDefDef) -> String
 prettyDef elem = case getQDef elem of
-                  Right (a, t) -> "let "++(n2s a)++" = "++(runPrettyCTerm t)
-                  Left (a, ty ) -> "let "++(n2s a)++" = "++(runPrettyType ty)
+                   Right (a, t) -> "let "++(n2s a)++" = "++(runPrettyCTerm t)
+                   Left (a, ty ) -> "let "++(n2s a)++" = "++(runPrettyType ty)
 
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
