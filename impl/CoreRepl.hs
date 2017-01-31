@@ -16,19 +16,33 @@ import CoreTypeChecker
 import Eval
 import TypeErrors
 
+
+type Qelm = (CVnm, CTerm)
+type REPLStateIO = StateT (FilePath,Queue (QDefName, QDefDef)) IO
+
 data QDefName = Var CVnm | DefName CVnm
     deriving Show
 data QDefDef  = VarType Type | DefTerm CTerm
     deriving Show
 
-getQDef :: (QDefName, QDefDef) -> REPLStateIO (Either (CVnm, Type) (CVnm, CTerm))
-getQDef e@(Var x, VarType ty) = return $ Left (x , ty)
-getQDef e@(DefName x, DefTerm t) = return $ Right (x , t)
-getQDef e = fail $ "Failed to get definition from context. Mismatched variable and type or variable type and term in: "++(show e)
+getQDef :: (QDefName, QDefDef) -> Either (CVnm, Type) Qelm
+getQDef e@(Var x, VarType ty) = Left (x , ty)
+getQDef e@(DefName x, DefTerm t) = Right (x , t)
+getQDef e = error $ "Failed to get definition from context. Mismatched variable and type or variable type and term in: "++(show e)
 
+-- Extract only free variables that are defined from queue
+getQFV :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> Queue (CVnm,Type)
+getQFV (Queue [] []) qFV = qFV
+getQFV q qFV = case getQDef (headQ q) of 
+                 (Left fv) -> getQFV (tailQ q) (enqueue fv qFV)
+                 (Right cv) -> getQFV (tailQ q) qFV
 
-type Qelm = (CVnm, CTerm)
-type REPLStateIO = StateT (FilePath,Queue Qelm) IO
+-- Extract only closed terms from queue
+getQCT :: Queue (QDefName,QDefDef) -> Queue Qelm -> Queue Qelm
+getQCT (Queue [] []) qCV = qCV
+getQCT q qCV = case getQDef (headQ q) of 
+                 (Left fv) -> getQCT (tailQ q) qCV
+                 (Right cv) -> getQCT (tailQ q) (enqueue cv qCV)
 
 instance MonadException m => MonadException (StateT s m) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
@@ -38,10 +52,10 @@ instance MonadException m => MonadException (StateT s m) where
 io :: IO a -> REPLStateIO a
 io i = liftIO i
     
-pop :: REPLStateIO (CVnm, CTerm)
+pop :: REPLStateIO (QDefName, QDefDef)
 pop = get >>= return.headQ.snd
 
-push :: Qelm -> REPLStateIO ()
+push :: (QDefName, QDefDef) -> REPLStateIO ()
 push t = do
   (f,q) <- get
   put (f,(q `snoc` t))
@@ -59,10 +73,11 @@ unfoldDefsInTerm q t =
 unfoldQueue :: (Queue Qelm) -> (Queue Qelm)
 unfoldQueue q = fixQ q emptyQ step
  where
-   step e@(x,t) _ r = (mapQ (substDef x t) r) `snoc` e
+   step e@(x,t) _ r = (mapQ (substDef x t) r) `snoc` e -- case split over types of e
     where
       substDef :: Name CTerm -> CTerm -> Qelm -> Qelm
       substDef x t (y, t') = (y, subst x t t')
+ 
       
 containsTerm :: Queue Qelm -> CVnm -> Bool
 containsTerm (Queue f r) vnm = (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f) 
@@ -70,34 +85,36 @@ containsTerm (Queue f r) vnm = (foldl (\b (defName, defTerm)-> b || (vnm == defN
 tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
 tyCheckQ q = do
-  (f, defs) <- get
-  let term@(Def v ty t) = headQ q
-  do 
-    -- Unfold each term from queue and see if free variables exist
-    let tu = unfoldDefsInTerm defs t
-    let numFV = length (getFV tu)
-    if (numFV == 0)
-    -- TypeCheck term from Prog
-    then let r = runIR tu            
-          in case r of
-               Left err -> io.putStrLn.readTypeError $ err
-                    -- Verify type from TypeChecker matches expected type from file
-                    -- If it does, add to context (i.e. definition queue)
-               Right ity ->
-                   do
-                      case ity `isSubtype` ty of
-                        Left er -> io.putStrLn.readTypeError $ er
-                        Right b -> 
-                            if b
-                            then do
-                              -- Determine if definition already in queue
-                              if(containsTerm defs v)
-                              then  io.putStrLn $ "Error: The variable "++(show v)++" is already in the context."
-                              else  do
-                                push (v,tu)
-                                tyCheckQ $ tailQ q
-                            else io.putStrLn $ "Error: "++(runPrettyType ity)++" is not a subtype of "++(runPrettyType ty)
-    else io.putStrLn $ "Error: free variables found in "++(show v)
+  (f, defs') <- get
+  let defs = getQCT defs' emptyQ
+  let term'@(Def v ty t) = headQ q
+  -- Case split here as well before unfolding t
+  -- Unfold each term from queue and see if free variables exist
+  let tu = unfoldDefsInTerm defs t
+  let numFV = length (getFV tu)
+  if (numFV == 0)
+-- TypeCheck term from Prog
+  then let r = runIR tu            
+      in case r of
+           Left err -> io.putStrLn.readTypeError $ err
+                -- Verify type from TypeChecker matches expected type from file
+                -- If it does, add to context (i.e. definition queue)
+           Right ity ->
+               do
+                  case ity `isSubtype` ty of
+                    Left er -> io.putStrLn.readTypeError $ er
+                    Right b -> 
+                        if b
+                        then do
+                          -- Determine if definition already in queue
+                          if(containsTerm defs v)
+                          then  io.putStrLn $ "Error: The variable "++(show v)++" is already in the context."
+                          else  do
+                            push (Var v,DefTerm tu)
+                            tyCheckQ $ tailQ q
+                        else io.putStrLn $ "Error: "++(runPrettyType ity)++" is not a subtype of "++(runPrettyType ty)
+  else io.putStrLn $ "Error: free variables found in "++(show v)
+
 
 handleCMD :: String -> REPLStateIO ()
 handleCMD "" = return ()
@@ -122,7 +139,8 @@ handleCMD s =
       io.putStrLn $ "You may also evaluate expressions directly in the Repl"
       io.putStrLn $ "----------------------------------------------------------"
     handleLine (Eval t) = do
-      (f, defs) <- get
+      (f, defs') <- get
+      let defs = getQCT defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = eval tu
        in case r of
@@ -130,7 +148,8 @@ handleCMD s =
             Right e -> io.putStrLn.runPrettyCTerm $ e
     handleLine (DecVar vnam ty) = io.putStrLn $ "working"
     handleLine (Let x t) = do
-      (f, defs) <- get
+      (f, defs') <- get
+      let defs = getQCT defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = runIR tu
        in case r of
@@ -138,19 +157,23 @@ handleCMD s =
             Right ty ->  do
                 if(containsTerm defs x)
                 then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
-                else push (x , t)
+                else io.putStrLn $ "got here" --push (Var x,DefTerm t)
     handleLine (TypeCheck t) = do
-      (_, defs) <- get
+      (_, defs') <- get
+      let defs = getQCT defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = runIR tu
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  io.putStrLn.runPrettyType $ ty
     handleLine (ShowAST t) = do
-      (_,defs) <- get
+      (_,defs') <- get
+      let defs = getQCT defs' emptyQ
       io.putStrLn.show $ unfoldDefsInTerm defs t
-    handleLine (Unfold t) =
-        get >>= (\(f,defs) -> io.putStrLn.runPrettyCTerm $ unfoldDefsInTerm defs t)
+    handleLine (Unfold t) = do
+      (f,defs') <- get
+      let defs = getQCT defs' emptyQ
+      io.putStrLn.runPrettyCTerm $ unfoldDefsInTerm defs t
     handleLine (LoadFile p) = do
       let wdir = takeDirectory p
       let file = takeFileName p
@@ -161,8 +184,10 @@ handleCMD s =
       else loadFile file
     handleLine DumpState = get >>= io.print.(mapQ prettyDef).snd
      where
-       prettyDef :: (Name a, CTerm) -> String
-       prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyCTerm t)
+       prettyDef :: (QDefName, QDefDef) -> String
+       prettyDef elem = case getQDef elem of
+                          Right (a, t) -> "let "++(n2s a)++" = "++(runPrettyCTerm t)
+                          Left (a, ty ) -> "let "++(n2s a)++" = "++(runPrettyType ty)
 
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
