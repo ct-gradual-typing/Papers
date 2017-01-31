@@ -22,13 +22,13 @@ type REPLStateIO = StateT (FilePath,Queue (QDefName, QDefDef)) IO
 
 data QDefName = Var CVnm | DefName CVnm
     deriving Show
-data QDefDef  = VarType Type | DefTerm CTerm
+data QDefDef  = DefTerm CTerm | VarType Type
     deriving Show
 
-getQDef :: (QDefName, QDefDef) -> Either (CVnm, Type) Qelm
-getQDef e@(Var x, VarType ty) = Left (x , ty)
-getQDef e@(DefName x, DefTerm t) = Right (x , t)
-getQDef e = error $ "Failed to get definition from context. Mismatched variable and type or variable type and term in: "++(show e)
+getQDef :: (QDefName, QDefDef) -> Either (CVnm, Type) (CVnm, CTerm)
+getQDef e@(Var x, DefTerm t) = Right (x , t)
+getQDef e@(DefName x, VarType ty) = Left (x , ty)
+getQDef e@(x,y) = error $ "Failed to get definition from context. Mismatched variable and type or term in: "++(prettyDef e)
 
 -- Extract only free variables that are defined from queue
 getQFV :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> Queue (CVnm,Type)
@@ -157,7 +157,7 @@ handleCMD s =
             Right ty ->  do
                 if(containsTerm defs x)
                 then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
-                else io.putStrLn $ "got here" --push (Var x,DefTerm t)
+                else push (Var x,DefTerm t)
     handleLine (TypeCheck t) = do
       (_, defs') <- get
       let defs = getQCT defs' emptyQ
@@ -183,11 +183,11 @@ handleCMD s =
         loadFile file
       else loadFile file
     handleLine DumpState = get >>= io.print.(mapQ prettyDef).snd
-     where
-       prettyDef :: (QDefName, QDefDef) -> String
-       prettyDef elem = case getQDef elem of
-                          Right (a, t) -> "let "++(n2s a)++" = "++(runPrettyCTerm t)
-                          Left (a, ty ) -> "let "++(n2s a)++" = "++(runPrettyType ty)
+     
+prettyDef :: (QDefName, QDefDef) -> String
+prettyDef elem = case getQDef elem of
+                  Right (a, t) -> "let "++(n2s a)++" = "++(runPrettyCTerm t)
+                  Left (a, ty ) -> "let "++(n2s a)++" = "++(runPrettyType ty)
 
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
