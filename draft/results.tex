@@ -1,3 +1,19 @@
+\begin{lemma}[Kinding for Typing]
+  \label{lemma:kinding_for_typing}
+  If $[[G |- t : A]]$, then $[[G |- A : *]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction the on form of $[[G |- t : A]]$.
+\end{proof}
+
+\begin{lemma}[Strengthening for Kinding]
+  \label{lemma:strengthening_for_kinding}
+  If $[[G, x : A |- B : *]]$, then $[[G |- B : *]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on the form of $[[G, x : A |- B : *]]$.
+\end{proof}
+
 \begin{lemma}[Inclusion of Bounded System F]
   \label{lemma:F-inclusion}
   Suppose $t$ is fully annotated and does not contain any applications
@@ -82,7 +98,7 @@
       \begin{math}
         $$\mprset{flushleft}
         \inferrule* [right=$\SGradydruleSXXBoxName{}$] {
-          [[G |- A : *]]
+          [[G |- A <~ SL]]
         }{[[G |- A <~ ?]]}
       \end{math}
     \end{center}
@@ -99,7 +115,7 @@
       \begin{math}
         $$\mprset{flushleft}
         \inferrule* [right=$\SGradydruleSXXUnboxName{}$] {
-          [[G |- B : *]]
+          [[G |- B <~ SL]]
         }{[[G |- ? <~ B]]}
       \end{math}
     \end{center}
@@ -156,6 +172,25 @@
   By straightforward induction on $[[G |- A ~ B]]$.
 \end{proof}
 
+\begin{lemma}[Type Precision and Consistency]
+  \label{lemma:type_precision_and_consistency}
+  Suppose $[[G |- A : *]]$ and $[[G |- B : *]]$.  Then
+  if $[[A <= B]]$, then $[[G |- A ~ B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $[[A <= B]]$.
+\end{proof}
+
+\begin{corollary}[Type Precision and Subtyping]
+  \label{corollary:type_precision_and_subtyping}
+  Suppose $[[G |- A : *]]$ and $[[G |- B : *]]$.  Then
+  if $[[A <= B]]$, then $[[G |- A <~ B]]$.
+\end{corollary}
+\begin{proof}
+  This easily follows from the previous two lemmas.
+\end{proof}
+
+
 \begin{corollary}[Consistent Subtyping]
   \label{corollary:consistent_subtyping}
   \begin{enumerate}[label=\roman*.,align=left]
@@ -172,19 +207,442 @@
   and Lemma~\ref{lemma:consistent-subtyping-2} and Lemma~\ref{lemma:consistent-subtyping-3}.
 \end{proof}
 
-\begin{lemma}[Gradual Guarantee Part One]
-  \label{lemma:gradual_guarantee_part_one}
-  If $[[G |- t : A]]$ and $[[t <= t']]$, then $[[G |- t' : B]]$ and $[[G |- A <= B]]$.
+\begin{lemma}
+  \label{lemma:type_precision_triangle_consistenty}
+  Suppose $[[G |- A : *]]$, $[[G |- B : *]]$, and $[[G |- C : *]]$.
+  If $[[A <= B]]$ and $[[A <= C]]$, then $[[G |- B ~ C]]$.
 \end{lemma}
 \begin{proof}
+  It must be the case that either $[[B <= C]]$ or $[[C <= B]]$, but in both cases
+  we know $[[G |- B ~ C]]$ by Lemma~\ref{lemma:type_precision_and_consistency}.
+\end{proof}
+
+\begin{lemma}[Transitivity for Type Precision]
+  \label{lemma:transitivity_for_type_precision}
+  If $[[A <= B]]$ and $[[B <= C]]$, then $[[A <= C]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $[[A <= B]]$ with
+  a case analysis over $[[B <= C]]$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:type_consistency_to_type_precision}
+  If $[[G |- A ~ B]]$, then $[[A <= B]]$ or $[[B <= A]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction over $[[G |- A ~ B]]$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:cons_subtype_to_type_pre}
+  If $[[G |- A <~ B]]$ and $[[A <= A']]$, then $[[B <= A']]$ or $[[A' <= B]]$.
+\end{lemma}
+\begin{proof}
+  Suppose $[[G |- A <~ B]]$ and $[[A <= A']]$.  The former implies
+  that $[[A <= B]]$ or $[[B <= A]]$ by
+  Lemma~\ref{lemma:consistent-subtyping-1} and
+  Lemma~\ref{lemma:type_consistency_to_type_precision}.  At this
+  point the result easily follows.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:fun_type_pre}
+  Suppose $[[A <= B]]$.  Then
+  \begin{enumerate}[label=\roman*.,align=left]    
+  \item If $[[nat(A) = Nat]]$, then $[[nat(B) = Nat]]$.    
+  \item If $[[list(A) = List C]]$, then $[[list(B) = List C']]$ and $[[C <= C']]$.
+  \item If $[[fun(A) = A1 -> A2]]$, then $[[fun(B) = A1' -> A2']]$, $[[A1 <= A1']]$, and $[[A2 <= A2']]$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $[[A <= B]]$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:type_cons_type_pre_2}
+  If $[[G |- A ~ B]]$, $[[G |- C : *]]$, and $[[A <= C]]$, then $[[G |- C ~ B]]$.
+\end{lemma}
+\begin{proof}
+  Suppose $[[G |- A ~ B]]$ and $[[A <= C]]$.  Then we know
+  that $[[A <= B]]$ or $[[B <= A]]$.  If the former, then
+  we know that $[[G |- C ~ B]]$.  If the latter, then
+  we obtain $[[B <= C]]$ by transitivity, and $[[G |- B ~ C]]$
+  which implies that $[[G |- C ~ B]]$ by symmetry.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:type_cons_ctx_pre}
+  If $[[G' Ok]]$, $[[G <= G']]$ and $[[G |- A ~ B]]$, then $[[G' |- A ~ B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $[[G |- A ~ B]]$. 
+\end{proof}
+
+\begin{lemma}[Subtyping Context Precision]
+  \label{lemma:subtyping_context_precision}
+  If $[[G |- A <~ B]]$ and $[[G <= G']]$, then $[[G' |- A <~ B]]$.
+\end{lemma}
+\begin{proof}
+  Context precision does not manipulate the bounds on type variables, and thus,
+  with respect to subtyping $[[G]]$ and $[[G']]$ are essentially equivalent.
+\end{proof}
+
+\begin{lemma}[Simply Typed Consistent Types are Subtypes of $[[SL]]$]
+  \label{lemma:simply_typed_consistent_types_are_subtypes}
+  If $[[G |- A <~ SL]]$ and $[[G |- A ~ B]]$, then $[[G |- B <~ SL]]$.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $[[G |- A <~ SL]]$.
+\end{proof}
+
+\begin{lemma}[Type Precision Preserves $[[SL]]$]
+  \label{lemma:type_precision_preserves_SL}
+  \begin{enumerate}
+  \item[]
+  \item If $[[G |- B : *]]$, $[[G |- A <~ SL]]$ and $[[A <= B]]$, then $[[G |- B <~ SL]]$.
+  \item If $[[G |- A : *]]$, $[[G |- B <~ SL]]$ and $[[A <= B]]$, then $[[G |- A <~ SL]]$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  Both cases follow by induction on the assumed consistent subtyping
+  derivation.
+\end{proof}
+
+\begin{lemma}[Congruence of Type Consistency Along Type Precision]
+  \label{lemma:congruence_of_type_consistency_along_type_precision}
+  \begin{enumerate}[label=\roman*.,align=left]
+  \item[] 
+  \item If $[[A1 <= A1']]$ and $[[G |- A1 ~ A2]]$ then
+    $[[G |- A1' ~ A2]]$.
+    
+  \item If $[[A2 <= A2']]$ and $[[G |- A1 ~ A2]]$ then
+    $[[G |- A1 ~ A2']]$.  
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  The proofs of both parts are similar, and so we only show a few
+  cases of the first part, but the omitted cases follow similarly.
+
+  \noindent
+  \textbf{Proof of part one.} This is a proof by induction on the form
+  of $[[A1 <= A1']]$.
+  \begin{itemize}
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydrulePXXUName{}$] {
+          [[G |- A1 <~ SL]]
+        }{[[A1 <= ?]]}
+      \end{math}
+    \end{center}
+    In this case $[[A1']] = [[?]]$.  Suppose $[[G |- A1 ~ A2]]$.  Then
+    it suffices to show that $[[G |- ? ~ A2]]$, and hence, we must show
+    that $[[G |- A2 <~ SL]]$, but this follows by Lemma~\ref{lemma:simply_typed_consistent_types_are_subtypes}.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydrulePXXarrowName{}$] {
+          [[A <= C && B <= D]]
+        }{[[(A -> B) <= (C -> D)]]}
+      \end{math}
+    \end{center}
+    In this case $[[A1]] = [[A -> B]]$ and $[[A1']] = [[C -> D]]$.  Suppose
+    $[[G |- A1 ~ A2]]$.  Then by inversion for type consistency it must
+    be the case that either $[[A2]] = [[?]]$ and $[[G |- A1 <~ SL]]$, or
+    $[[A2]] = [[A' -> B']]$, $[[G |- A ~ A']]$, and $[[G |- B ~ B']]$.
+   
+    Consider the former.  Then it suffices to show that $[[G |- A1' ~ ?]]$,
+    and hence we must show that $[[G |- A1' <~ SL]]$, but this follows
+    from Lemma~\ref{lemma:type_precision_preserves_SL}.
+
+    Consider the case when $[[A2]] = [[A' -> B']]$, $[[G |- A ~ A']]$, and $[[G |- B ~ B']]$.
+    It suffices to show that $[[G |- (C -> D) ~ (A' -> B')]]$ which follows from
+    $[[G |- A' ~ C]]$ and $[[G |- D ~ B']]$.  Thus, it suffices to show that latter.
+    By assumption we know the following:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[A <= C]]$ and $[[G |- A ~ A']]$\\
+        $[[B <= D]]$ and $[[G |- B ~ B']]$
+      \end{tabular}
+    \end{center}
+    Now by two applications of the induction hypothesis we obtain $[[G |- C ~ A']]$
+    and $[[G |- D ~ B']]$. By symmetry the former implies $[[G |- A ~ C]]$ and
+    we obtain our result.
+  \end{itemize}  
+\end{proof}
+
+\begin{corollary}[Congruence of Type Consistency Along Type Precision Condensed]
+  \label{corollary:congruence_of_type_consistency_along_type_precision}
+  If $[[A1 <= A1']]$, $[[A2 <= A2']]$, and $[[G |- A1 ~ A2]]$ then
+  $[[G |- A1' ~ A2']]$.  
+\end{corollary}
+
+\begin{lemma}[Congruence of Subtyping Along Type Precision]
+  \label{lemma:congruence_of_subtyping_along_type_precision}
+  Suppose $[[G |- B : *]]$ and $[[A <= B]]$.
+  \begin{enumerate}[label=\roman*.,align=left]
+  \item If $[[G |- A <~ C]]$ then $[[G |- B <~ C]]$.
+
+  \item If $[[G |- C <~ A]]$ then $[[G |- C <~ B]]$.  
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  This is a proof by induction on the form of $[[A <= B]]$.  The proof
+  of part two follows similarly to part one.
   
+  \noindent
+  \textbf{Proof of part one.}  We only show the most interesting case,
+  because all others are similar.
+  \begin{itemize}    
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydrulePXXarrowName{}$] {
+          [[A1 <= A2 && B1 <= B2]]
+        }{[[(A1 -> B1) <= (A2 -> B2)]]}
+      \end{math}
+    \end{center}
+    In this case $[[A]] = [[A1 -> B1]]$ and $[[B]] = [[A2 -> B2]]$.
+    Suppose $[[G |- A <~ C]]$.  Thus, by inversion for consistency subtyping
+    it must be the case that $[[C]] = [[?]]$ and $[[G |- A <~ SL]]$, or
+    $[[C]] = [[A1' -> B1']]$, $[[G |- A1' <~ A1]]$, and $[[G |- B1 <~ B1']]$.  The former case follows
+    similarly to the proof of Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision}.
+
+    Consider the case when $[[C]] = [[A1' -> B1']]$, $[[G |- A1' <~ A1]]$, and $[[G |- B1 <~ B1']]$.
+    By assumption we know the following:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[A1 <= A2]]$ and $[[G |- A1' <~ A1]]$\\
+        $[[B1 <= B2]]$ and $[[G |- B1 <~ B1']]$
+      \end{tabular}
+    \end{center}
+    So by part two and one, respectively, of the induction hypothesis we know
+    that $[[G |- A1' <~ A2]]$ and $[[G |- B2 <~ B1']]$.  Thus, by reapplying the rule above
+    we may now conclude that $[[G |- (A2 -> B2) <~ (A1' -> B2')]]$ to obtain our result.
+  \end{itemize}
+\end{proof}
+
+\begin{corollary}[Congruence of Subtyping Along Type Precision]
+  \label{corollary:congruence_of_subtyping_along_type_precision}
+  If $[[A1 <= A2]]$, $[[B1 <= B2]]$, and $[[G |- A1 <~ B1]]$, then $[[G |- A2 <~ B2]]$.
+\end{corollary}
+
+\begin{lemma}[Gradual Guarantee Part One]
+  \label{lemma:gradual_guarantee_part_one}
+  If $[[G |- t : A]]$, $[[t <= t']]$, and $[[G <= G']]$ then $[[G' |- t' : B]]$ and $[[A <= B]]$.
+\end{lemma}
+\begin{proof}
+  This is a proof by induction on $[[G |- t : A]]$.
+
+  \begin{itemize}
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXvarPName{}$] {
+          [[x : A elem G && G Ok]]
+        }{[[G |- x : A]]}
+      \end{math}
+    \end{center}
+    In this case $[[t]] = [[x]]$.  Suppose $[[t <= t']]$.  Then
+    it must be the case that $[[t']] = [[x]]$.  If $[[x : A elem G]]$,
+    then there is a type $[[A']]$ such that $[[x : A' elem G']]$ and
+    $[[A <= A']]$.  Thus, choose $[[B]] = [[A']]$ and the result follows.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXsuccName{}$] {
+          [[G |- t1 : A' && nat(A') = Nat]]
+        }{[[G |- succ t1 : Nat]]}
+      \end{math}
+    \end{center}
+    In this case $[[A]] = [[Nat]]$ and $[[t]] = [[succ t1]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+    Then by definition it must be the case that $[[t']] = [[succ t2]]$ where $[[t1 <= t2]]$.
+    By the induction hypothesis $[[G' |- t2 : B']]$ where $[[A' <= B']]$.  Since $[[nat(A') = Nat]]$
+    and $[[A' <= B']]$, then it must be the case that $[[nat(B') = Nat]]$ by Lemma~\ref{lemma:fun_type_pre}.
+    At this point we obtain our result by choosing $[[B]] = [[Nat]]$, and reapplying the rule above.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXncaseName{}$] {
+          [[(G |- t1 : C  && nat(C) = Nat) && G |- A1 ~ A]]
+          \\\\
+          [[(G |- t2 : A1 && G, x : Nat |- t3 : A2) && G |- A2 ~ A]]
+        }{[[G |- case t1 of 0 -> t2, (succ x) -> t3 : A]]}
+      \end{math}
+    \end{center}
+    In this case $[[t]] = [[case t1 of 0 -> t2, (succ x) -> t3]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.  This
+    implies that $[[t']] = [[case t1' of 0 -> t2', (succ x) -> t3']]$ such that
+    $[[t1 <= t1']]$, $[[t2 <= t2']]$, and $[[t3 <= t3']]$.  Since $[[G <= G']]$ then $[[(G,x:Nat) <= (G',x:Nat)]]$.
+    By the induction hypothesis we know the following:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[G' |- t1' : C']]$ for $[[C <= C']]$\\
+        $[[G' |- t2 : A1']]$ for $[[A1 <= A1']]$\\
+        $[[G', x : Nat |- t3 : A2']]$ for $[[A2 <= A2']]$
+      \end{tabular}
+    \end{center}
+    By assumption we know that $[[G |- A1 ~ A]]$, $[[G |- A2 ~ A]]$, and $[[G <= G']]$,
+    hence, by Lemma~\ref{lemma:type_cons_ctx_pre} we know $[[G' |- A1 ~ A]]$ and $[[G' |- A2 ~ A]]$.  
+    By the induction hypothesis we know that $[[A1 <= A1']]$ and $[[A2 <= A2']]$, so
+    by using Lemma~\ref{lemma:type_cons_type_pre_2} we may obtain that
+    $[[G' |- A1' ~ A]]$ and $[[G' |- A2' ~ A]]$.  At this point choose $[[B]] = [[A]]$
+    and we obtain our result by reapplying the rule.
+    
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXconsName{}$] {
+          [[((G |- t1 : A1 && G |- t2 : A2) && list(A2) = List A3) && G |- A1 ~ A3]]
+        }{[[G |- t1 :: t2 : List A3]]}
+      \end{math}
+    \end{center}
+    In this case $[[A]] = [[List A3]]$ and $[[t]] = [[t1 :: t2]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+    Then it must be the case that $[[t']] = [[t1' :: t2']]$ where $[[t1 <= t1']]$ and
+    $[[t2 <= t2']]$.  Then by the induction hypothesis we know the following:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[G' |- t1' : A1']]$ where $[[A1 <= A1']]$\\
+        $[[G' |- t2' : A2']]$ where $[[A2 <= A2']]$\\
+      \end{tabular}
+    \end{center}
+    By Lemma~\ref{lemma:fun_type_pre} $[[list(A2') = List A3']]$ where $[[A3 <= A3']]$.
+    Now by Lemma~\ref{lemma:type_cons_ctx_pre} and Lemma~\ref{lemma:type_cons_type_pre_2} we know that
+    $[[G' |- A1' ~ A3]]$, and by using the same lemma again, $[[G' |- A1' ~ A3']]$
+    because $[[G' |- A3 ~ A1']]$ holds by symmetry.  Choose $[[B]] = [[List A3']]$
+    and the result follows.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXpairName{}$] {
+          [[G |- t1 : A1 && G |- t2 : A2]]
+        }{[[G |- (t1,t2) : A1 x A2]]}
+      \end{math}
+    \end{center}
+    In this case $[[A]] = [[A1 x A2]]$ and $[[t]] = [[(t1,t2)]]$. Suppose
+    $[[t <= t']]$ and $[[G <= G']]$.  This implies that $[[t']] = [[(t1',t2')]]$ where
+    $[[t1 <= t1']]$ and $[[t2 <= t2']]$.
+    
+    By the induction hypothesis we know:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[G' |- t1' : A1']]$ and $[[A1 <= A1']]$\\
+        $[[G' |- t2' : A2']]$ and $[[A2 <= A2']]$\\
+      \end{tabular}
+    \end{center}
+    Then choose $[[B]] = [[A1' x A2']]$ and the result follows by reapplying
+    the rule above and the fact that $[[(A1 x A2) <= (A1' x A2')]]$.  
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXlamName{}$] {
+          [[G, x : A1 |- t1 : B1]]
+        }{[[G |- \x:A1.t1 : A1 -> B1]]}
+      \end{math}
+    \end{center}
+    In this case $[[A1 -> B2]]$ and $[[t]] = [[\x:A1.t1]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+    Then it must be the case that $[[t']] = [[\x:A2.t2]]$, $[[t1 <= t2]]$, and $[[A1 <= A2]]$.
+    Since $[[G <= G']]$ and $[[A1 <= A2]]$, then $[[(G, x : A1) <= (G', x : A2)]]$ by definition.
+    Thus, by the induction hypothesis we know the following:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[G', x : A2 |- t1' : B2]]$ and $[[B1 <= B2]]$
+      \end{tabular}
+    \end{center} 
+    Choose $[[B]] = [[A2 -> B2]]$ and the result follows by reapplying the rule above
+    and the fact that $[[(A1 -> B1) <= (A2 -> B2)]]$.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXtypeAppName{}$] {
+          [[G |- t1 : Forall (X<:C0).C2 && G |- C1 <~ C0]]
+        }{[[G |- [C1]t1 : [C1/X]C2]]}
+      \end{math}
+    \end{center}
+    In this case $[[t]] = [[ [C1]t1]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+    Then it must be the case that $[[t']] = [[ [C1']t2]]$ such that $[[t1 <= t2]]$
+    and $[[C1 <= C1']]$.  By the induction hypothesis:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[G' |- t2 : C]]$ where $[[Forall (X<:C0).C2 <= C]]$
+      \end{tabular}
+    \end{center}
+    Thus, it must be the case that $[[C]] = [[Forall (X <: C0).C2']]$ such that $[[C2 <= C2']]$.
+    By assumption we know that $[[G |- C1 <~ C0]]$ and $[[C1 <= C1']]$, and thus,
+    by Corollary~\ref{corollary:congruence_of_subtyping_along_type_precision} and Lemma~\ref{lemma:subtyping_context_precision}
+    we know $[[G' |- C1' <~ C0]]$.  Thus, choose $[[B]] = [[C]]$, and the result follows by reapplying
+    the rule above, and the fact that $[[A <= C]]$, because $[[C2 <= C2']]$.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXSubName{}$] {
+          [[G |- t : A' && G |- A' <~ A]]
+        }{[[G |- t : A]]}
+      \end{math}
+    \end{center}
+    Suppose $[[t <= t']]$ and $[[G <= G']]$.
+    By the induction hypothesis we know that $[[G' |- t' : A'']]$ for $[[A' <= A'']]$.
+    We know $[[A'' <= A]]$ or $[[A <= A'']]$, because we know that $[[G |- A' <~ A]]$
+    and $[[A' <= A'']]$.   Suppose $[[A'' <= A]]$, then by Corollary~\ref{corollary:type_precision_and_subtyping}
+    $[[G' |- A'' <~ A]]$, and then by subsumption $[[G' |- t' : A]]$, hence, choose $[[B]] = [[A]]$
+    and the result follows.  If $[[A <= A'']]$, then choose $[[B]] = [[A'']]$ and the result follows.
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\SGradydruleTXXappName{}$] {
+          [[G |- t1 : C && fun(C) = A1 -> B1]]
+          \\\\
+         [[G |-t2 : A2 && G |- A2 ~ A1]]
+        }{[[G |- t1 t2 : B1]]}
+      \end{math}
+    \end{center}
+    In this case $[[A]] = [[B1]]$ and $[[t]] = [[t1 t2]]$.  Suppose $[[t <= t']]$
+    and $[[G <= G']]$.  The former implies that $[[t']] = [[t1' t2']]$ such that
+    $[[t1 <= t1']]$ and $[[t2 <= t2']]$.  By the induction hypothesis we know the
+    following:
+    \begin{center}
+      \begin{tabular}{lll}
+        $[[G' |- t1' : C']]$ for $[[C <= C']]$\\
+        $[[G' |- t2' : A2']]$ for $[[A2 <= A2']]$\\
+      \end{tabular}
+    \end{center}
+    We know by assumption that $[[G |- A2 ~ A1]]$ and hence $[[G' |- A2 ~ A1]]$
+    because bounds on type variables are left unchanged by context precision.
+    Since $[[C <= C']]$ and $[[fun(C) = A1 -> B1]]$, then $[[fun(C') = A1' -> B1']]$
+    where $[[A1 <= A1']]$ and $[[B1 <= B1']]$ by Lemma~\ref{lemma:fun_type_pre}.
+    Furthermore, we know $[[G' |- A2 ~ A1]]$ and $[[A2 <= A2']]$ and $[[A1 <= A1']]$, then
+    we know $[[G' |- A2' ~ A1']]$ by Corollary~\ref{corollary:congruence_of_type_consistency_along_type_precision}.
+    So choose $[[B]] = [[B1']]$. Then reapply the rule above and the result follows, because
+    $[[B1 <= B1']]$.
+  \end{itemize}
 \end{proof}
 
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
   Suppose $[[. |- t : A]]$ and $[[t <= t']]$.  Then
   \begin{enumerate}[label=\roman*., align=left]     
-  \item $[[. |- t' : B]]$ and $[[. |- A <= B]]$,
+  \item $[[. |- t' : B]]$ and $[[A <= B]]$,
   \item if $[[t ~>* v]]$, then $[[t' ~>* v']]$ and $[[v <= v']]$,
   \item if $[[t ^]]$, then $[[t' ^]]$,
   \item if $[[t' ~>* v']]$, then $[[t ~>* v]]$ where $[[v <= v']]$, or $<<t ~>* error>>$, and
@@ -194,3 +652,8 @@
 \begin{proof}
   
 \end{proof}
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

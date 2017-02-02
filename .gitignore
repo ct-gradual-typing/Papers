@@ -13,3 +13,8 @@
 /impl/.#Pair.gry
 *.backup
 /draft/subtyping_rules.tex
+/draft/gradual-proof-old.tex
+/draft/proof-old.tex
+/draft/termpre_rules.tex
+/draft/typepre_rules.tex
+/draft/typing_rules.tex
