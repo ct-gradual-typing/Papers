@@ -81,13 +81,113 @@
   \label{fig:type-pre}
 \end{figure}
 
+\begin{lemma}[Symmetry for Type Consistency]
+  \label{lemma:symmetry_for_type_consistency}
+  If $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $, then $ \Gamma  \vdash  \SGradynt{B}  \sim  \SGradynt{A} $.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $.
+\end{proof}
+
+\begin{lemma}[Inversion for Type Precision]
+  \label{lemma:inversion_of_type_precision}
+  Suppose $ \Gamma  \vdash  \SGradynt{A}  : \star $, $ \Gamma  \vdash  \SGradynt{B}  : \star $, and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.  Then:
+  \begin{enumR}
+  \item if $\SGradynt{A} = \SGradysym{\mbox{?}}$, then $ \Gamma  \vdash  \SGradynt{B}  \lesssim   \mathbb{S}  $.
+  \item if $\SGradynt{A} = \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}$, then
+    $\SGradynt{B} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or $\SGradynt{B} = \SGradynt{A_{{\mathrm{2}}}}  \rightarrow  \SGradynt{B_{{\mathrm{2}}}}$, $ \SGradynt{A_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{A_{{\mathrm{2}}}} $, and $ \SGradynt{B_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{B_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{A} =  \SGradynt{A_{{\mathrm{1}}}}  \times  \SGradynt{B_{{\mathrm{1}}}} $, then
+    $\SGradynt{B} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or $\SGradynt{B} =  \SGradynt{A_{{\mathrm{2}}}}  \times  \SGradynt{B_{{\mathrm{2}}}} $, $ \SGradynt{A_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{A_{{\mathrm{2}}}} $, and $ \SGradynt{B_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{B_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{A} =  \mathsf{List}\, \SGradynt{A_{{\mathrm{1}}}} $, then
+    $\SGradynt{B} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or $\SGradynt{B} =  \mathsf{List}\, \SGradynt{A_{{\mathrm{2}}}} $ and $ \SGradynt{A_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{A_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{A} =  \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{1}}}} $, then
+    $\SGradynt{B} =  \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{1}}}} $ and $ \SGradynt{B_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{B_{{\mathrm{2}}}} $.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on the form of $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.
+\end{proof}
+
+\begin{lemma}[Inversion for Term Precision]
+  \label{lemma:inversion_of_term_precision}
+  Suppose $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $. Then:
+  \begin{enumR}
+  \item if $\SGradynt{t} = \mathsf{succ} \, \SGradynt{t_{{\mathrm{1}}}}$, then $\SGradynt{t'} = \mathsf{succ} \, \SGradynt{t_{{\mathrm{2}}}}$ and $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{t} = \SGradysym{(}   \mathsf{case}\, \SGradynt{t_{{\mathrm{1}}}} \,\mathsf{of}\, \SGradysym{0}  \to  \SGradynt{t_{{\mathrm{2}}}} ,  \SGradysym{(}  \mathsf{succ} \, \SGradymv{x}  \SGradysym{)}  \to  \SGradynt{t_{{\mathrm{3}}}}   \SGradysym{)}$, then
+    $\SGradynt{t'} = \SGradysym{(}   \mathsf{case}\, \SGradynt{t'_{{\mathrm{1}}}} \,\mathsf{of}\, \SGradysym{0}  \to  \SGradynt{t'_{{\mathrm{2}}}} ,  \SGradysym{(}  \mathsf{succ} \, \SGradymv{x}  \SGradysym{)}  \to  \SGradynt{t'_{{\mathrm{3}}}}   \SGradysym{)}$, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $, $ \SGradynt{t_{{\mathrm{2}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{2}}}} $, and $ \SGradynt{t_{{\mathrm{3}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{3}}}} $.
+  \item if $\SGradynt{t} = \SGradysym{(}  \SGradynt{t_{{\mathrm{1}}}}  \SGradysym{,}  \SGradynt{t_{{\mathrm{2}}}}  \SGradysym{)}$, then $\SGradynt{t'} = \SGradysym{(}  \SGradynt{t'_{{\mathrm{1}}}}  \SGradysym{,}  \SGradynt{t'_{{\mathrm{2}}}}  \SGradysym{)}$, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $, and $ \SGradynt{t_{{\mathrm{2}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{t} = \mathsf{fst} \, \SGradynt{t_{{\mathrm{1}}}}$, then $\SGradynt{t'} = \mathsf{fst} \, \SGradynt{t'_{{\mathrm{1}}}}$ and $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $.
+  \item if $\SGradynt{t} = \mathsf{snd} \, \SGradynt{t_{{\mathrm{1}}}}$, then $\SGradynt{t'} = \mathsf{snd} \, \SGradynt{t'_{{\mathrm{1}}}}$ and $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $.
+  \item if $\SGradynt{t} =  \SGradynt{t_{{\mathrm{1}}}}  ::  \SGradynt{t_{{\mathrm{2}}}} $, then $\SGradynt{t'} =  \SGradynt{t'_{{\mathrm{1}}}}  ::  \SGradynt{t'_{{\mathrm{2}}}} $, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $, and $ \SGradynt{t_{{\mathrm{2}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{t} = \SGradysym{(}   \mathsf{case}\, \SGradynt{t_{{\mathrm{1}}}} \,\mathsf{of}\, \SGradysym{[]}  \to  \SGradynt{t_{{\mathrm{2}}}} ,  \SGradysym{(}   \SGradymv{x}  ::  \SGradymv{y}   \SGradysym{)}  \to  \SGradynt{t_{{\mathrm{3}}}}   \SGradysym{)}$, then
+    $\SGradynt{t'} = \SGradysym{(}   \mathsf{case}\, \SGradynt{t'_{{\mathrm{1}}}} \,\mathsf{of}\, \SGradysym{[]}  \to  \SGradynt{t'_{{\mathrm{2}}}} ,  \SGradysym{(}   \SGradymv{x}  ::  \SGradymv{y}   \SGradysym{)}  \to  \SGradynt{t'_{{\mathrm{3}}}}   \SGradysym{)}$, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $, $ \SGradynt{t_{{\mathrm{2}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{2}}}} $, and $ \SGradynt{t_{{\mathrm{3}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{3}}}} $.
+  \item if $\SGradynt{t} =  \lambda ( \SGradymv{x}  :  \SGradynt{A_{{\mathrm{1}}}} ) .  \SGradynt{t_{{\mathrm{1}}}} $, then $\SGradynt{t'} =  \lambda ( \SGradymv{x}  :  \SGradynt{A_{{\mathrm{1}}}} ) .  \SGradynt{t'_{{\mathrm{1}}}} $ and $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $.
+  \item if $\SGradynt{t} = \SGradysym{(}  \SGradynt{t_{{\mathrm{1}}}} \, \SGradynt{t_{{\mathrm{2}}}}  \SGradysym{)}$, then $\SGradynt{t'} = \SGradysym{(}  \SGradynt{t'_{{\mathrm{1}}}} \, \SGradynt{t'_{{\mathrm{2}}}}  \SGradysym{)}$, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $, and $ \SGradynt{t_{{\mathrm{2}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{t} =  \Lambda ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ) . \SGradynt{t_{{\mathrm{1}}}} $, then $\SGradynt{t'} =  \Lambda ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ) . \SGradynt{t'_{{\mathrm{1}}}} $ and $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $.
+  \item if $\SGradynt{t} =  [  \SGradynt{A}  ]  \SGradynt{t_{{\mathrm{1}}}} $, then $\SGradynt{t'} =  [  \SGradynt{A}  ]  \SGradynt{t'_{{\mathrm{1}}}} $ and $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t'_{{\mathrm{1}}}} $.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on the form of $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $.
+\end{proof}
+
+\begin{lemma}[Inversion for Type Consistency]
+  \label{lemma:inversion_of_type_consistency}
+  Suppose $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $. Then:
+  \begin{enumR}
+  \item if $\SGradynt{A} = \SGradysym{\mbox{?}}$, then $ \Gamma  \vdash  \SGradynt{B}  \lesssim   \mathbb{S}  $.
+  \item if $\SGradynt{A} =  \mathsf{List}\, \SGradynt{A'} $, then $\SGradynt{B} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or
+    $\SGradynt{B} =  \mathsf{List}\, \SGradynt{B'} $ and $ \Gamma  \vdash  \SGradynt{A'}  \sim  \SGradynt{B'} $.
+  \item if $\SGradynt{A} = \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}$, then $\SGradynt{B} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or
+    $\SGradynt{B} = \SGradynt{A_{{\mathrm{2}}}}  \rightarrow  \SGradynt{B_{{\mathrm{2}}}}$, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{2}}}}  \sim  \SGradynt{A_{{\mathrm{1}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \sim  \SGradynt{B_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{A} = \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}$, then $\SGradynt{B} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or
+    $\SGradynt{B} = \SGradynt{A_{{\mathrm{2}}}}  \rightarrow  \SGradynt{B_{{\mathrm{2}}}}$, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{2}}}}  \sim  \SGradynt{A_{{\mathrm{1}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \sim  \SGradynt{B_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{A} =  \SGradynt{A_{{\mathrm{1}}}}  \times  \SGradynt{B_{{\mathrm{1}}}} $, then $\SGradynt{B} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or
+    $\SGradynt{B} =  \SGradynt{A_{{\mathrm{2}}}}  \times  \SGradynt{B_{{\mathrm{2}}}} $, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \sim  \SGradynt{B_{{\mathrm{2}}}} $.
+  \item if $\SGradynt{A} =  \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{1}}}} $, then $\SGradynt{B} =  \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{2}}}} $ and $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{1}}}}  \sim  \SGradynt{B_{{\mathrm{2}}}} $.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on the the form of $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $.
+\end{proof}
+
+\begin{lemma}[Inversion for Consistent Subtyping]
+  \label{lemma:inversion_of_consistent_subtyping}
+  Suppose $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $. Then:
+  \begin{enumR}
+  \item if $\SGradynt{A} = \SGradysym{\mbox{?}}$, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ or $ \Gamma  \vdash  \SGradynt{B}  \lesssim   \mathbb{S}  $.
+  \item if $\SGradynt{A} = \SGradymv{X}$, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, or $ \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B'}  \in  \Gamma $ and $ \Gamma  \vdash  \SGradynt{B'}  \sim  \SGradynt{B} $.
+  \item if $\SGradynt{A} =  \mathsf{Nat} $, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, or $\SGradynt{B} =  \mathbb{S} $.
+  \item if $\SGradynt{A} =  \mathsf{Unit} $, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, or $\SGradynt{B} =  \mathbb{S} $.
+  \item if $\SGradynt{A} =  \mathsf{List}\, \SGradynt{A_{{\mathrm{1}}}} $, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \mathbb{S} $ and $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \lesssim   \mathbb{S}  $,
+    or $\SGradynt{B} =  \mathsf{List}\, \SGradynt{A'_{{\mathrm{1}}}} $ and $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \lesssim  \SGradynt{A'_{{\mathrm{1}}}} $.
+  \item if $\SGradynt{A} = \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}$, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \mathbb{S} $, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \lesssim   \mathbb{S}  $ and
+    $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim   \mathbb{S}  $, or $\SGradynt{B} = \SGradynt{A'_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B'_{{\mathrm{1}}}}$, $ \Gamma  \vdash  \SGradynt{A'_{{\mathrm{1}}}}  \lesssim  \SGradynt{A_{{\mathrm{1}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim  \SGradynt{B'_{{\mathrm{1}}}} $.
+  \item if $\SGradynt{A} =  \SGradynt{A_{{\mathrm{1}}}}  \times  \SGradynt{B_{{\mathrm{1}}}} $, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \mathbb{S} $, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \lesssim   \mathbb{S}  $ and
+    $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim   \mathbb{S}  $, or $\SGradynt{B} =  \SGradynt{A'_{{\mathrm{1}}}}  \times  \SGradynt{B'_{{\mathrm{1}}}} $, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \lesssim  \SGradynt{A'_{{\mathrm{1}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim  \SGradynt{B'_{{\mathrm{1}}}} $.
+  \item if $\SGradynt{A} =  \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{1}}}} $, then
+    $\SGradynt{B} = \SGradynt{A}$ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{B} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $,
+    or $\SGradynt{B} =  \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}} ).  \SGradynt{B'_{{\mathrm{1}}}} $ and $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{A_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim  \SGradynt{B'_{{\mathrm{1}}}} $.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on the the form of $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $.
+\end{proof}
+
 \begin{lemma}
   \label{lemma:consistent-subtyping-1}
   Suppose $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $.
-  \begin{enumerate}[label=\roman*., align=left]
-  \item $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{A'} $ and $[[G |- A' <: B]]$ for some $\SGradynt{A'}$.
-  \item $ \Gamma  \vdash  \SGradynt{B'}  \sim  \SGradynt{B} $ and $[[G |- A <: B']]$ for some $\SGradynt{B'}$.
-  \end{enumerate}
+  \begin{enumR}
+    \item $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{A'} $ and $[[G |- A' <: B]]$ for some $\SGradynt{A'}$.
+    \item $ \Gamma  \vdash  \SGradynt{B'}  \sim  \SGradynt{B} $ and $[[G |- A <: B']]$ for some $\SGradynt{B'}$.
+  \end{enumR}   
 \end{lemma}
 \begin{proof}
   This is a proof by induction on $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $.  We only show a
@@ -190,21 +290,19 @@
   This easily follows from the previous two lemmas.
 \end{proof}
 
-
 \begin{corollary}[Consistent Subtyping]
   \label{corollary:consistent_subtyping}
-  \begin{enumerate}[label=\roman*.,align=left]
+  \begin{enumR}
   \item[]
   \item $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $ if and only if $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{A'} $ and $[[G |- A' <: B]]$ for some $\SGradynt{A'}$.
   \item $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{B} $ if and only if $ \Gamma  \vdash  \SGradynt{B'}  \sim  \SGradynt{B} $ and $[[G |- A <: B']]$ for some $\SGradynt{B'}$.
-  \end{enumerate}
+  \end{enumR}
 \end{corollary}
 \begin{proof}
   The left-to-right direction of both cases easily follows from
   Lemma~\ref{lemma:consistent-subtyping-1}, and the right-to-left
-  direction of both cases follows from induction on the type
-  consistency derivation with a case split on the subtyping derivation,
-  and Lemma~\ref{lemma:consistent-subtyping-2} and Lemma~\ref{lemma:consistent-subtyping-3}.
+  direction of both cases follows from induction on the subtyping
+  derivation and Lemma~\ref{lemma:simply_typed_consistent_types_are_subtypes}.
 \end{proof}
 
 \begin{lemma}
@@ -249,11 +347,11 @@
 \begin{lemma}
   \label{lemma:fun_type_pre}
   Suppose $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.  Then
-  \begin{enumerate}[label=\roman*.,align=left]    
+  \begin{enumR}
   \item If $ \mathsf{nat}( \SGradynt{A} ) =   \mathsf{Nat}  $, then $ \mathsf{nat}( \SGradynt{B} ) =   \mathsf{Nat}  $.    
   \item If $ \mathsf{list}( \SGradynt{A} ) =   \mathsf{List}\, \SGradynt{C}  $, then $ \mathsf{list}( \SGradynt{B} ) =   \mathsf{List}\, \SGradynt{C'}  $ and $ \SGradynt{C}  \sqsubseteq  \SGradynt{C'} $.
   \item If $ \mathsf{fun}( \SGradynt{A} ) =  \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{A_{{\mathrm{2}}}} $, then $ \mathsf{fun}( \SGradynt{B} ) =  \SGradynt{A'_{{\mathrm{1}}}}  \rightarrow  \SGradynt{A'_{{\mathrm{2}}}} $, $ \SGradynt{A_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{A'_{{\mathrm{1}}}} $, and $ \SGradynt{A_{{\mathrm{2}}}}  \sqsubseteq  \SGradynt{A'_{{\mathrm{2}}}} $.
-  \end{enumerate}
+  \end{enumR}
 \end{lemma}
 \begin{proof}
   This proof holds by straightforward induction on $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.
@@ -298,11 +396,11 @@
 
 \begin{lemma}[Type Precision Preserves $ \mathbb{S} $]
   \label{lemma:type_precision_preserves_SL}
-  \begin{enumerate}
+  \begin{enumR}
   \item[]
   \item If $ \Gamma  \vdash  \SGradynt{B}  : \star $, $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $, then $ \Gamma  \vdash  \SGradynt{B}  \lesssim   \mathbb{S}  $.
   \item If $ \Gamma  \vdash  \SGradynt{A}  : \star $, $ \Gamma  \vdash  \SGradynt{B}  \lesssim   \mathbb{S}  $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $, then $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $.
-  \end{enumerate}
+  \end{enumR}
 \end{lemma}
 \begin{proof}
   Both cases follow by induction on the assumed consistent subtyping
@@ -311,14 +409,14 @@
 
 \begin{lemma}[Congruence of Type Consistency Along Type Precision]
   \label{lemma:congruence_of_type_consistency_along_type_precision}
-  \begin{enumerate}[label=\roman*.,align=left]
+  \begin{enumR}
   \item[] 
   \item If $ \SGradynt{A_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{A'_{{\mathrm{1}}}} $ and $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}} $ then
     $ \Gamma  \vdash  \SGradynt{A'_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}} $.
     
   \item If $ \SGradynt{A_{{\mathrm{2}}}}  \sqsubseteq  \SGradynt{A'_{{\mathrm{2}}}} $ and $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}} $ then
     $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A'_{{\mathrm{2}}}} $.  
-  \end{enumerate}
+  \end{enumR}
 \end{lemma}
 \begin{proof}
   The proofs of both parts are similar, and so we only show a few
@@ -384,11 +482,11 @@
 \begin{lemma}[Congruence of Subtyping Along Type Precision]
   \label{lemma:congruence_of_subtyping_along_type_precision}
   Suppose $ \Gamma  \vdash  \SGradynt{B}  : \star $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.
-  \begin{enumerate}[label=\roman*.,align=left]
+  \begin{enumR}
   \item If $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{C} $ then $ \Gamma  \vdash  \SGradynt{B}  \lesssim  \SGradynt{C} $.
 
   \item If $ \Gamma  \vdash  \SGradynt{C}  \lesssim  \SGradynt{A} $ then $ \Gamma  \vdash  \SGradynt{C}  \lesssim  \SGradynt{B} $.  
-  \end{enumerate}
+  \end{enumR}
 \end{lemma}
 \begin{proof}
   This is a proof by induction on the form of $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.  The proof
@@ -410,9 +508,10 @@
     \end{center}
     In this case $\SGradynt{A} = \SGradynt{A_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B_{{\mathrm{1}}}}$ and $\SGradynt{B} = \SGradynt{A_{{\mathrm{2}}}}  \rightarrow  \SGradynt{B_{{\mathrm{2}}}}$.
     Suppose $ \Gamma  \vdash  \SGradynt{A}  \lesssim  \SGradynt{C} $.  Thus, by inversion for consistency subtyping
-    it must be the case that $\SGradynt{C} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or
-    $\SGradynt{C} = \SGradynt{A'_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B'_{{\mathrm{1}}}}$, $ \Gamma  \vdash  \SGradynt{A'_{{\mathrm{1}}}}  \lesssim  \SGradynt{A_{{\mathrm{1}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim  \SGradynt{B'_{{\mathrm{1}}}} $.  The former case follows
-    similarly to the proof of Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision}.
+    it must be the case that $\SGradynt{C} =  \top $ and $ \Gamma  \vdash  \SGradynt{A}  : \star $, $\SGradynt{C} = \SGradysym{\mbox{?}}$ and $ \Gamma  \vdash  \SGradynt{A}  \lesssim   \mathbb{S}  $, or
+    $\SGradynt{C} = \SGradynt{A'_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B'_{{\mathrm{1}}}}$, $ \Gamma  \vdash  \SGradynt{A'_{{\mathrm{1}}}}  \lesssim  \SGradynt{A_{{\mathrm{1}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim  \SGradynt{B'_{{\mathrm{1}}}} $.  The case when $\SGradynt{C} =  \top $
+    is trivial, and the case when $\SGradynt{C} = \SGradysym{\mbox{?}}$ is similarly to the proof of
+    Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision}.
 
     Consider the case when $\SGradynt{C} = \SGradynt{A'_{{\mathrm{1}}}}  \rightarrow  \SGradynt{B'_{{\mathrm{1}}}}$, $ \Gamma  \vdash  \SGradynt{A'_{{\mathrm{1}}}}  \lesssim  \SGradynt{A_{{\mathrm{1}}}} $, and $ \Gamma  \vdash  \SGradynt{B_{{\mathrm{1}}}}  \lesssim  \SGradynt{B'_{{\mathrm{1}}}} $.
     By assumption we know the following:
@@ -641,13 +740,13 @@
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
   Suppose $  \cdot   \vdash  \SGradynt{t}  :  \SGradynt{A} $ and $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $.  Then
-  \begin{enumerate}[label=\roman*., align=left]     
+  \begin{enumR}
   \item $  \cdot   \vdash  \SGradynt{t'}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $,
   \item if $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $, then $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $ and $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $,
   \item if $ \SGradynt{t}  \uparrow $, then $ \SGradynt{t'}  \uparrow $,
   \item if $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $, then $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $ where $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $, or $[[t ~>* error]]$, and
   \item if $ \SGradynt{t'}  \uparrow $, then $ \SGradynt{t}  \uparrow $ or $[[t ~>* error]]$.
-  \end{enumerate}
+  \end{enumR}
 \end{theorem}
 \begin{proof}
   

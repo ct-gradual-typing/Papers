@@ -226,11 +226,15 @@ defn
     G |- X <: A
 
     G Ok
-    -------------- :: Nat
+    ------------ :: USL
+    G |- U <: SL
+    
+    G Ok
+    -------------- :: NatSL
     G |- Nat <: SL
 
     G Ok
-    --------------- :: Unit
+    --------------- :: UnitSL
     G |- Unit <: SL
 
     G |- A <: SL
