@@ -148,6 +148,19 @@
   for the complete proof.
 \end{proof}
 
+\begin{lemma}[Type Preservation for Cast Insertion]
+  \label{lemma:type_preservation_for_cast_insertion}
+  If $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $ and $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t_{{\mathrm{2}}}}  :  \SGradynt{A} $, then $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{2}}}}  :  \SGradynt{A} $.
+\end{lemma}
+
+
+\begin{lemma}[Gradual Guarantee Part Two]
+  \label{lemma:gradual_guarantee_part_two}
+  If $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t_{{\mathrm{2}}}} $, $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t'_{{\mathrm{1}}}}  :  \SGradynt{A} $, $ \Gamma  \vdash  \SGradynt{v_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{v'_{{\mathrm{1}}}}  :  \SGradynt{A} $, and $ \SGradynt{t'_{{\mathrm{1}}}}  \rightsquigarrow^*  \SGradynt{v'_{{\mathrm{1}}}} $, then
+  $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{2}}}}  \Rightarrow  \SGradynt{t'_{{\mathrm{2}}}}  :  \SGradynt{A} $, $ \Gamma  \vdash  \SGradynt{v_{{\mathrm{2}}}}  \Rightarrow  \SGradynt{v'_{{\mathrm{2}}}}  :  \SGradynt{A} $, $ \SGradynt{t'_{{\mathrm{2}}}}  \rightsquigarrow^*  \SGradynt{v'_{{\mathrm{2}}}} $, and $ \SGradynt{v_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{v_{{\mathrm{2}}}} $.
+\end{lemma}
+
+
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
   Suppose $  \cdot   \vdash  \SGradynt{t}  :  \SGradynt{A} $ and $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $.  Then
@@ -160,7 +173,7 @@
   \end{enumR}
 \end{theorem}
 \begin{proof}
-  
+  Part one holds by Lemma~\ref{lemma:gradual_guarantee_part_one}.
 \end{proof}
 
 %%% Local Variables: ***

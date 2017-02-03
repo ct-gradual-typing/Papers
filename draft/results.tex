@@ -148,6 +148,19 @@
   for the complete proof.
 \end{proof}
 
+\begin{lemma}[Type Preservation for Cast Insertion]
+  \label{lemma:type_preservation_for_cast_insertion}
+  If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : A]]$, then $[[G |- t2 : A]]$.
+\end{lemma}
+
+
+\begin{lemma}[Gradual Guarantee Part Two]
+  \label{lemma:gradual_guarantee_part_two}
+  If $[[G |- t1 : A]]$, $[[t1 <= t2]]$, $[[G |- t1 => t1' : A]]$, $[[G |- v1 => v1' : A]]$, and $[[t1' ~>* v1']]$, then
+  $[[G |- t2 => t2' : A]]$, $[[G |- v2 => v2' : A]]$, $[[t2' ~>* v2']]$, and $[[v1 <= v2]]$.
+\end{lemma}
+
+
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
   Suppose $[[. |- t : A]]$ and $[[t <= t']]$.  Then
@@ -160,7 +173,7 @@
   \end{enumR}
 \end{theorem}
 \begin{proof}
-  
+  Part one holds by Lemma~\ref{lemma:gradual_guarantee_part_one}.
 \end{proof}
 
 %%% Local Variables: ***
