@@ -44,6 +44,13 @@ results-ott.tex : results.tex surface-grady/surface-grady.ott core-grady/core-gr
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
 		-tex_filter results-ott1.tex results-ott.tex
 
+proofs-gradual-guarantee-part-one-ott.tex : proofs-gradual-guarantee-part-one.tex surface-grady/surface-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
+		-tex_filter proofs-gradual-guarantee-part-one.tex proofs-gradual-guarantee-part-one-ott1.tex
+	scripts/prepr_double_ott.sh proofs-gradual-guarantee-part-one-ott1.tex
+		@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
+		-tex_filter proofs-gradual-guarantee-part-one-ott1.tex proofs-gradual-guarantee-part-one-ott.tex
+
 surface-grady-ott.tex : surface-grady.tex surface-grady/surface-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
 		-tex_filter surface-grady.tex surface-grady-ott.tex
@@ -60,6 +67,10 @@ proofs-ott.tex : proofs.tex sl-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter proofs.tex proofs-ott.tex
 
+aux-results-proofs-ott.tex : aux-results-proofs.tex surface-grady/surface-grady.ott
+	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
+		-tex_filter aux-results-proofs.tex aux-results-proofs-ott.tex
+
 categorical-model-ott.tex : categorical-model.tex sl-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter categorical-model.tex categorical-model-ott.tex
@@ -73,7 +84,8 @@ introduction-ott.tex : introduction.tex sl-grady.ott
 		-tex_filter introduction.tex introduction-ott.tex
 
 $(OTTOutputFile) : sl-grady.ott main.tex introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
-	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex results-ott.tex
+	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex results-ott.tex \
+	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex
 	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter main.tex main-output.tex
 
