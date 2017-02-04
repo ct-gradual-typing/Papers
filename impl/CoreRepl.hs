@@ -8,6 +8,7 @@ import System.Console.Haskeline.MonadException
 import System.Exit
 import System.FilePath
 import Unbound.LocallyNameless.Subst
+import qualified Data.Map.Strict as M
 
 import Queue
 import CoreSyntax
@@ -51,6 +52,10 @@ getQCT (Queue [] []) qCV = return $ qCV
 getQCT q qCV = getQDefM (headQ q) >>= (\x -> case x of 
                  (Left fv) -> getQCT (tailQ q) qCV
                  (Right cv) -> getQCT (tailQ q) (enqueue cv qCV))
+                 
+qToMap :: Queue (CVnm,Type) -> (M.Map CVnm Type)
+qToMap q = foldl (\m (a,b) -> M.insert a b m) M.empty (toListQ q)
+ 
 
 instance MonadException m => MonadException (StateT s m) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
@@ -73,6 +78,7 @@ set_wdir wdir = do
   (_,q) <- get
   put (wdir,q)
          
+     
 unfoldDefsInTerm :: (Queue Qelm) -> CTerm -> CTerm
 unfoldDefsInTerm q t =
     let uq = toListQ $ unfoldQueue q
@@ -81,7 +87,8 @@ unfoldDefsInTerm q t =
 unfoldQueue :: (Queue Qelm) -> (Queue Qelm)
 unfoldQueue q = fixQ q emptyQ step
  where
-   step e@(x,t) _ r = (mapQ (substDef x t) r) `snoc` e -- case split over types of e
+   step :: (Name CTerm, CTerm) -> t -> Queue Qelm -> Queue Qelm
+   step e@(x,t) _ r = (mapQ (substDef x t) r) `snoc` e
     where
       substDef :: Name CTerm -> CTerm -> Qelm -> Qelm
       substDef x t (y, t') = (y, subst x t t')
@@ -95,6 +102,7 @@ tyCheckQ (Queue [] []) = return ()
 tyCheckQ q = do
   (f, defs') <- get
   defs <- getQCT defs' emptyQ
+  qfv <- getQFV defs' emptyQ
   let term'@(Def v ty t) = headQ q
   -- Case split here as well before unfolding t
   -- Unfold each term from queue and see if free variables exist
@@ -102,7 +110,7 @@ tyCheckQ q = do
   let numFV = length (getFV tu)
   if (numFV == 0)
 -- TypeCheck term from Prog
-  then let r = runIR tu            
+  then let r = runIR tu $ qToMap qfv   
       in case r of
            Left err -> io.putStrLn.readTypeError $ err
                 -- Verify type from TypeChecker matches expected type from file
@@ -154,12 +162,13 @@ handleCMD s =
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right e -> io.putStrLn.runPrettyCTerm $ e
-    handleLine (DecVar vnam ty) = io.putStrLn $ "working"
+    handleLine (DecVar vnam ty) = push (DefName vnam,VarType ty)
     handleLine (Let x t) = do
       (f, defs') <- get
       defs <- getQCT defs' emptyQ
+      qfv <- getQFV defs' emptyQ
       let tu = unfoldDefsInTerm defs t
-          r = runIR tu
+          r = runIR tu $ qToMap qfv
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  do
@@ -169,8 +178,9 @@ handleCMD s =
     handleLine (TypeCheck t) = do
       (_, defs') <- get
       defs <- getQCT defs' emptyQ
+      qfv <- getQFV defs' emptyQ
       let tu = unfoldDefsInTerm defs t
-          r = runIR tu
+          r = runIR tu $ qToMap qfv
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  io.putStrLn.runPrettyType $ ty

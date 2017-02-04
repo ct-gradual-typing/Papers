@@ -230,13 +230,13 @@ typeCheck_aux t ty = do
   a <- inferType t
   return $ ATSub ty a
 
-runIR :: CTerm -> Either TE.TypeError Type
-runIR t = r >>= return.getType
+runIR :: CTerm -> (M.Map CVnm Type) -> Either TE.TypeError Type
+runIR t m = r >>= return.getType
  where
-   r = runLFreshM $ TE.runExceptT $ infer t
+   r = runLFreshM $ TE.runExceptT $ infer t m
 
-infer :: CTerm -> TE.ExceptT TE.TypeError LFreshM ACTerm
-infer t = TE.runReaderT (inferType t) (M.empty, M.empty)
+infer :: CTerm -> (M.Map CVnm Type) -> TE.ExceptT TE.TypeError LFreshM ACTerm
+infer t m = TE.runReaderT (inferType t) (M.empty, m)
 
 inferType :: CTerm -> TCM ACTerm
 
