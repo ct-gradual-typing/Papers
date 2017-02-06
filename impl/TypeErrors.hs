@@ -42,6 +42,7 @@ data TypeError = FreeVarsError Vnm
                | CoreNotForallTypeTerm CTerm Type                 
                | TypeVariableNameMismatch TVnm TVnm
                | NCaseBranchesMistype Type Type
+               | AppTypeError Type Type                 
                | LCaseBranchesMistype Type Type
                | LCaseScrutinyTypeError Term Type
                | CoreLCaseScrutinyTypeError CTerm Type

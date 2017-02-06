@@ -214,6 +214,16 @@ typeCheck_aux (CSplit _) ty = TE.throwError $ TE.SplitError ty
 typeCheck_aux (CSquash s@(Arr U U)) ty@(Arr (Arr U U) U) = return $ ATSquash (Arr s U) ty
 typeCheck_aux (CSquash s@(Prod U U)) ty@(Arr (Prod U U) U) = return $ ATSquash (Arr s U) ty
 typeCheck_aux (CSquash _) ty = TE.throwError $ TE.SquashError ty
+typeCheck_aux (CApp t1 t2) ty = do
+  at1 <- inferType t1
+  (ty1,ty2) <- requireArrow at1
+  if ty2 `aeq` ty
+  then do
+    at2 <- typeCheck_aux t2 ty1
+    return $ ATApp ty2 at1 at2
+  else
+    TE.throwError $ TE.AppTypeError ty ty2
+  
 typeCheck_aux (CBox s) ty@(Arr t U) | s `aeq` t = do
   b <- s `subtype` Simple
   if b
@@ -226,7 +236,7 @@ typeCheck_aux (CUnbox s) ty@(Arr U t) | s `aeq` t = do
   then return $ ATUnbox (Arr U s) s
   else TE.throwError $ TE.UnboxTypeError ty
 typeCheck_aux (CUnbox _) ty = TE.throwError $ TE.UnboxTypeError ty
-typeCheck_aux t ty = do
+typeCheck_aux t ty = do  
   a <- inferType t
   return $ ATSub ty a
 
