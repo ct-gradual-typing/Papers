@@ -108,14 +108,15 @@ unfoldQueue q = fixQ q emptyQ step
       substDef x t (y, t') = (y, subst x t t')
       
 containsTerm :: Queue (QDefName,QDefDef) -> QDefName -> Bool
-containsTerm (Queue [] []) _ = True
-containsTerm q v@(Var vnm) = containsTerm_Qelm (getQCT q emptyQ) v
-containsTerm q v@(DefName dnm) = containsTerm_QFV (getQFV q emptyQ) v
+containsTerm (Queue [] []) _ = False
+containsTerm q v = (containsTerm_Qelm (getQCT q emptyQ) v) || (containsTerm_QFV (getQFV q emptyQ) v)
 
 containsTerm_Qelm :: Queue Qelm -> QDefName -> Bool
 containsTerm_Qelm (Queue f r) v@(Var vnm) = ((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
+containsTerm_Qelm (Queue f r) v@(DefName vnm) = ((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
 
 containsTerm_QFV :: Queue (CVnm, Type) -> QDefName -> Bool
+containsTerm_QFV (Queue f r) v@(Var vnm) = ((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
 containsTerm_QFV (Queue f r) v@(DefName vnm) = ((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
  
 tyCheckQ :: GFile -> REPLStateIO ()
@@ -183,7 +184,11 @@ handleCMD s =
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right e -> io.putStrLn.runPrettyCTerm $ e
-    handleLine (DecVar vnam ty) = push (DefName vnam,VarType ty)
+    handleLine (DecVar vnam ty) = do
+      (f, defs) <- get
+      if(containsTerm defs (DefName vnam))
+        then io.putStrLn $ "error: The name "++(show vnam)++" is already in the context."
+        else push (DefName vnam,VarType ty)
     handleLine (Let x t) = do
       (f, defs') <- get
       defs <- getQCTM defs' emptyQ
