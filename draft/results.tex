@@ -238,27 +238,42 @@
 
 \begin{lemma}[Substitution for Term Precision]
   \label{lemma:substitution_for_term_precision}
-  If $<<G, x : A |- t1 <= t2>>$ and $<<G |- t'1 <= t'2>>$, then $<<G |- [t'1/x]t1 <= [t'2/x]t2>>$.
+  \begin{enumR}
+  \item[] 
+  \item If $<<G, x : A |- t1 <= t2>>$ and $<<G |- t'1 <= t'2>>$, then $<<G |- [t'1/x]t1 <= [t'2/x]t2>>$.
+  \item If $<<G, X <: A2 |- t1 <= t2>>$ and $<<A1 <= A'1>>$, then $<<G |- [A1/X]t1 <= [A'1/X]t2>>$.
+  \end{enumR}
 \end{lemma}
 \begin{proof}
-  This proof holds by straightforward induction on $<<G, x : A |- t1 <= t2>>$.
+  This proof of part one holds by straightforward induction on $<<G, x : A |- t1 <= t2>>$, and the
+  proof of part two holds by straightforward induction on $<<G, X <: A2 |- t1 <= t2>>$.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}[Typeability Inversion]
   \label{lemma:typeability_inversion}
   \begin{enumR}
   \item[] 
   \item If $<<G |- succ t : A>>$, then $<<G |- t : A'>>$ for some $<<A'>>$.
-  \item If $<<G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$, and $<<G |- t2 : A3>>$
-    for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
+  \item If $<<G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$,
+    and $<<G,x : Nat |- t2 : A3>>$ for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
   \item If $<<G |- (t1, t2) : A>>$, then $<<G |- t1 : A1>>$ and  $<<G |- t2 : A2>>$ for types $[[A1]]$ and $[[A2]]$.
+  \item If $<<G |- Lam X <: B . t : A>>$, then $<<G, X <: B |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- [B]t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- \ x : B . t : A>>$, then $<<G, x : B |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- t1 t2 : A>>$, then $<<G |- t1 : A1>>$ and  $<<G |- t2 : A2>>$ for types $[[A1]]$ and $[[A2]]$.
+  \item If $<<G |- fst t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- snd t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- t1 :: t2 : A>>$, then $<<G |- t1 : A1>>$ and $<<G |- t2 : A2>>$ for some types $[[A1]]$ and $[[A2]]$.
+  \item If $<<G |- case t : List B of [] -> t1, (x::y) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$,
+    and $<<G,x : A, y : List A |- t2 : A3>>$ for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
+    
   \end{enumR}
 \end{lemma}
 
 \begin{lemma}[Simulation of More Precise Programs]
   \label{lemma:simulation_of_more_precise_programs}
   Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, and $<<G |- t1' : A'>>$.\\
-  Then if $<<t1 ~> t2>>$, then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
+  Then if $<<t1 ~> t2>>$, then $<<t1' ~> t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
 \end{lemma}
 \begin{proof}
   This is a proof by induction on $<<G |- t1 : A1>>$.
@@ -278,7 +293,7 @@
     $<<G |- t' : A''>>$ for some type $<<A''>>$.
 
     Suppose $<<t1 ~> t2>>$. Then $<<t2>> = <<succ t''>>$ and $<<t ~> t''>>$.  Then by the induction hypothesis
-    we know that there is some $<<t'''>>$ such that $<<t' ~>* t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
+    we know that there is some $<<t'''>>$ such that $<<t' ~> t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
     $<<t2'>> = <<succ t'''>>$ and the result follows.    
 
   \item[] Case.\ \\ 
@@ -296,15 +311,14 @@
     that $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$.  In addition,
     since $[[G |- t1' : A']]$ it must be the case that
     there are types $[[A1']]$, $[[A2']]$, and $[[A3']]$ such that
-    $<<G |- t' : A1'>>$, $<<G |- t3' : A2'>>$, and $<<G |- t4' : A3'>>$.  Furthermore,
+    $<<t'>>$, $<<t3'>>$, and $<<t4'>>$ are typable in the appropriate context.  Furthermore,
     suppose $<<G |- t1 <= t1'>>$.  Then by inversion of term precision we know that
     $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$, and $<<G, x : Nat |- t4 <= t4'>>$.  
 
     We case split over $<<t1 ~> t2>>$.
     \begin{itemize}
     \item[] Case.  Suppose $<<t>> = <<0>>$ and $<<t2>> = <<t3>>$.  Since $<<G |- t1 <= t1'>>$ we know that
-      it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$, and hence,
-      $<<t1' ~>* t3'>>$.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
+      it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
       
     \item[] Case.  Suppose $<<t>> = <<succ t''>>$ and $<<t2>> = << [t''/x]t4>>$.  Since $<<G |- t1 <= t1'>>$
       we know that $<<t'>> = <<succ t'''>>$ and $<<G |- t'' <= t'''>>$ by inversion of term precision. In addition,
@@ -335,7 +349,7 @@
       that $<<t'>> = <<(t'4,t''4)>>$ because $<<G |- t1 <= t'1>>$ by assumption.  In addition,
       by inversion for term precision we know $<<G |- t'3 <= t'4>>$ and $<<G |- t''3 <= t''4>>$.
       By Lemma~\ref{lemma:typeability_inversion} we know that $<<t'3>>$, $<<t'4>>$, $<<t''3>>$, and
-      $<<t''4>>$ are all typable.  Thus, $<<t'1 ~> t'4>>$, and hence, $<<t'1 ~>* t'4>>$. Thus, choose
+      $<<t''4>>$ are all typable.  Thus, $<<t'1 ~> t'4>>$. Thus, choose
       $<<t2'>> = <<t'4>>$ and the result follows.
 
     \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<fst t''>>$.
@@ -407,11 +421,27 @@
       \begin{math}
         $$\mprset{flushleft}
         \inferrule* [right=$\CGradydruleTXXtypeAppName{}$] {
-          <<G |- t : Forall (X<:B).C && G |- A <: B>>
-        }{<<G |- [A]t : [A/X]C>>}
+          <<G |- t : Forall (X<:A2).A3 && G |- A1 <: A2>>
+        }{<<G |- [A1]t : [A1/X]A3>>}
       \end{math}
     \end{center}
-    
+    In this case $<<t1>> = << [A1]t>>$ and $<<A>> = << [A1/X]A3>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+    This implies that $<<t'1>> = << [A1']t'>>$, $<<G |- t <= t'>>$, and $<<A1 <= A1'>>$
+    by inversion for term precision.  In addition, by Lemma~\ref{lemma:typeability_inversion}
+    the term $<<t'>>$ is typable.
+
+    We case split over the form of $<<t1 ~> t2>>$.
+    \begin{itemize}
+    \item[] Case. Suppose $<<t>> = <<Lam X <: A2.t3>>$ and $<<t2>> = << [A1/X]t3>>$.  Then we know
+      that $<<t'>> = <<Lam X <: A2.t'3>>$ and by inversion for term precision that
+      $<<G, X <: A2 |- t3 <= t3'>>$, because we know $<<G |- t <= t'>>$, and by substitution for term precision
+      we know that $<<G |- [A1/X]t3 <= [A1'/X]t3'>>$ by substitution for term precision
+      (Lemma~\ref{lemma:substitution_for_term_precision}), because we know that $<<A1 <= A1'>>$.  Choose
+      $<<t'2>> = << [A1'/X]t3'>>$ and the result follows, because $<<t'1 ~> t'2>>$.
+
+    \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = << [A1]t''>>$.
+      This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+    \end{itemize}
 
   \item[] Case.\ \\ 
     \begin{center}
