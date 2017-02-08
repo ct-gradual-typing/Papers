@@ -362,11 +362,21 @@
       \begin{math}
         $$\mprset{flushleft}
         \inferrule* [right=$\CGradydruleTXXappName{}$] {
-          <<G |- t1 : A -> B && G |- t2 : A>>
-        }{<<G |- t1 t2 : B>>}
+          <<G |- t3 : A1 -> A2 && G |- t4 : A1>>
+        }{<<G |- t3 t4 : A2>>}
       \end{math}
     \end{center}
-    
+    In this case $<<t1>> = <<t3 t4>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+    This implies that $<<t'1>> = <<t'3, t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
+    by inversion for term precision.  In addition, by Lemma~\ref{lemma:typeability_inversion}
+    the terms $<<t'3>>$ and $<<t'4>>$ are typable.
+
+    We case split on the from of $<<t1 ~> t2>>$.
+    \begin{itemize}
+    \item[] Case.  Suppose $<<t3>> = <<\x:A1.t5>>$.  Then $<<t'3>> = <<\x:A1'.t'5>>$ because
+      $<<G |- t3 <= t'3>>$.  Thus, $<<G, x : A1' |- t5 <= t'5>>$.  
+    \end{itemize}
+
 
   \item[] Case.\ \\ 
     \begin{center}
