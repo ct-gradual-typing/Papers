@@ -24,7 +24,7 @@ type Qelm = (CVnm, CTerm)
 type REPLStateIO = StateT (FilePath,Queue (QDefName, QDefDef)) IO
 
 data QDefName = Var CVnm | DefName CVnm
-    deriving Show
+    deriving (Show, Eq)
 data QDefDef  = DefTerm CTerm | VarType Type
     deriving Show
 
@@ -53,14 +53,14 @@ getQCTM q qCV = getQDefM (headQ q) >>= (\x -> case x of
                  (Left fv) -> getQCTM (tailQ q) qCV
                  (Right cv) -> getQCTM (tailQ q) (enqueue cv qCV))
                  
--- Extract only free variables that are defined from queue
+-- Extract only free variables that are defined from queue, non-monadic version
 getQFV :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> (Queue (CVnm,Type))
 getQFV (Queue [] []) qFV = qFV
 getQFV q qFV = case getQDef (headQ q) of
                  (Left fv) -> getQFV (tailQ q) (enqueue fv qFV)
                  (Right cv) -> getQFV (tailQ q) qFV
 
--- Extract only closed terms from queue
+-- Extract only closed terms from queue, non-monadic version
 getQCT :: Queue (QDefName,QDefDef) -> Queue Qelm -> (Queue Qelm)
 getQCT (Queue [] []) qCV = qCV
 getQCT q qCV = case getQDef (headQ q) of 
@@ -106,17 +106,18 @@ unfoldQueue q = fixQ q emptyQ step
     where
       substDef :: Name CTerm -> CTerm -> Qelm -> Qelm
       substDef x t (y, t') = (y, subst x t t')
- 
       
-containsTerm :: Queue Qelm -> CVnm -> Bool
-containsTerm (Queue f r) vnm = (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f) 
+containsTerm :: Queue (QDefName,QDefDef) -> QDefName -> Bool
+containsTerm (Queue [] []) _ = True
+containsTerm q v@(Var vnm) = containsTerm_Qelm (getQCT q emptyQ) v
+containsTerm q v@(DefName dnm) = containsTerm_QFV (getQFV q emptyQ) v
 
--- containsTerm :: Queue (QDefName,QDefDef) -> QDefName -> Bool
--- containsTerm (Queue [] []) _ = True
--- containsTerm q (Var vnm) = (\((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
-        
--- containsTerm (Queue f r) (DefName vnm) = undefined --(foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False (getQFV f)) 
+containsTerm_Qelm :: Queue Qelm -> QDefName -> Bool
+containsTerm_Qelm (Queue f r) v@(Var vnm) = ((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
 
+containsTerm_QFV :: Queue (CVnm, Type) -> QDefName -> Bool
+containsTerm_QFV (Queue f r) v@(DefName vnm) = ((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
+ 
 tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
 tyCheckQ q = do
@@ -143,7 +144,7 @@ tyCheckQ q = do
                         if b
                         then do
                           -- Determine if definition already in queue
-                          if(containsTerm defs (v))
+                          if(containsTerm defs' (Var v))
                           then  io.putStrLn $ "Error: The variable "++(show v)++" is already in the context."
                           else  do
                             push (Var v,DefTerm tu)
@@ -192,7 +193,7 @@ handleCMD s =
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  do
-                if(containsTerm defs (x))
+                if(containsTerm defs' (Var x))
                 then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
                 else push (Var x,DefTerm t)
     handleLine (TypeCheck t) = do

@@ -187,7 +187,7 @@ typeCheck_aux (CFst t) ty = do
   aty <- inferType t
   (aty1, aty2) <- requireProd aty
   if(aty1 `aeq` ty)
-   then do
+   then 
     return $ ATFst aty1 aty 
    else
     TE.throwError $ TE.FstTypeError ty
