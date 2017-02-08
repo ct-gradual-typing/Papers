@@ -367,14 +367,38 @@
       \end{math}
     \end{center}
     In this case $<<t1>> = <<t3 t4>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
-    This implies that $<<t'1>> = <<t'3, t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
+    This implies that $<<t'1>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
     by inversion for term precision.  In addition, by Lemma~\ref{lemma:typeability_inversion}
     the terms $<<t'3>>$ and $<<t'4>>$ are typable.
 
     We case split on the from of $<<t1 ~> t2>>$.
     \begin{itemize}
-    \item[] Case.  Suppose $<<t3>> = <<\x:A1.t5>>$.  Then $<<t'3>> = <<\x:A1'.t'5>>$ because
-      $<<G |- t3 <= t'3>>$.  Thus, $<<G, x : A1' |- t5 <= t'5>>$.  
+    \item[] Case.  Suppose $<<t3>> = <<\x:A1.t5>>$ and $<<t2>> = << [t4/x]t5>>$.
+      Then $<<t'3>> = <<\x:A1'.t'5>>$, because $<<G |- t3 <= t'3>>$. Choose $<<t'2>> = << [t'4/x]t'5>>$
+      and it is easy to see that $<<t'1 ~> [t'4/x]t'4>>$.
+      We know that $<<G, x : A2' |- t5 <= t'5>>$ (by inversion for term precision) and $<<G |- t4 <= t'4>>$, and hence,
+      by Lemma~\ref{lemma:substitution_for_term_precision} we know that
+      $<<G |- [t4/x]t5 <= [t'4/x]t'5>>$, and we obtain our result.
+
+    \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box A t5>>$, and $<<t2>> = <<t5>>$.
+      Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box A t'5>>$.  Choose $<<t'2>> = <<t'5>>$ and
+      it is easy to see that $<<t'1 ~> t'5>>$.
+      By inversion for term precision we know that $<<G |- t5 <= t'5>>$ because we know
+      that $<<G |- t4 <= t'4>>$, and we obtain our result.
+
+    \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box B t5>>$, $<<A != B>>$,
+      and $<<t2>> = <<error B>>$.  Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box B t'5>>$.
+      Choose $<<t'2>> = <<error B>>$ and it is easy to see that $<<t'1 ~> t'5>>$.  Finally,
+      we can see that $<<G |- t2 <= t'2>>$ by reflexivity.
+      
+    \item[] Case.  Suppose $<<t3>> = <<split U>>$, $<<t4>> = <<squash U t5>>$, and $<<t2>> = <<t5>>$.
+      Similar to the case for boxing and unboxing.
+      
+    \item[] Case.  Suppose $<<t3>> = <<split U1>>$, $<<t4>> = <<squash U2 t5>>$, $<<U1 != U2>>$, and $<<t2>> = <<t5>>$.
+      Similar to the case for boxing and unboxing.
+
+    \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<t'5 t'6>>$.
+      This case will follow straightforwardly by induction and a case split over which congruence rule was used.
     \end{itemize}
 
 
