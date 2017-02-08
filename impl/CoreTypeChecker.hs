@@ -93,6 +93,10 @@ requireArrow :: ACTerm -> TCM (Type,Type)
 requireArrow (getType -> Arr t1 t2) = return (t1, t2)
 requireArrow (getType -> ty) = TE.throwError $ TE.NotArrowType ty
 
+requireProd :: ACTerm -> TCM (Type,Type)
+requireProd (getType -> Prod ty1 ty2) = return (ty1, ty2)
+requireProd (getType -> ty) = TE.throwError $ TE.NotProdType ty
+
 requireForall :: ACTerm -> TCM (Name Type, Type, Type)
 requireForall (getType -> Forall t1 b) = lunbind b $ (\(x,t2) -> return (x,t1,t2))
 requireForall (getType -> ty) = TE.throwError $ TE.NotForallType ty
@@ -179,6 +183,14 @@ typeCheck_aux (CPair t1 t2) ty@(Prod ty1 ty2) = do
   a1 <- typeCheck_aux t1 ty1
   a2 <- typeCheck_aux t2 ty2
   return $ ATPair ty a1 a2
+typeCheck_aux (CFst t) ty = do
+  aty <- inferType t
+  (aty1, aty2) <- requireProd aty
+  if(aty1 `aeq` ty)
+   then do
+    return $ ATFst aty1 aty 
+   else
+    TE.throwError $ TE.FstTypeError ty
 typeCheck_aux t@(CPair _ _) ty = TE.throwError $ TE.CoreNotProdTypeTerm t ty
 typeCheck_aux CEmpty ty@(List a) = return $ ATEmpty ty
 typeCheck_aux CEmpty ty = TE.throwError $ TE.EmptyTypeError ty
