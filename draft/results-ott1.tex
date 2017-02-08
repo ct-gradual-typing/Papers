@@ -3,7 +3,7 @@
   Suppose $t$ is fully annotated and does not contain any applications
   of $ \mathsf{box} $ or $ \mathsf{unbox} $, and $\SGradynt{A}$ is static.  Then
   \begin{itemize}
-  \item[i.] $ \Gamma  \vdash_F  \SGradynt{t}  :  \SGradynt{A} $ if and only if $\, \Gamma  \vdash  \SGradynt{t}  :  \SGradynt{A} $, and 
+  \item[i.] $ \Gamma  \vdash_F  \SGradynt{t}  :  \SGradynt{A} $ if and only if $\, \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t}  :  \SGradynt{A} $, and 
   \item[ii.] $ \SGradynt{t}  \rightsquigarrow^*_F  \SGradynt{t'} $ if and only if $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{t'} $.
   \end{itemize}
 \end{lemma}
@@ -14,7 +14,7 @@
   relation, and then remove $ \mathsf{box} $, $ \mathsf{unbox} $, and $\SGradysym{\mbox{?}}$ from
   the syntax of Surface Grady, then what we are left with is bounded
   system F.  Since $\SGradynt{t}$ is fully annotated and $\SGradynt{A}$ is static,
-  then $ \Gamma  \vdash  \SGradynt{t}  :  \SGradynt{A} $ will hold within this fragment.
+  then $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t}  :  \SGradynt{A} $ will hold within this fragment.
 
   Moving on to part two, first, we know that $\SGradynt{t}$ does not contain
   any occurrence of $ \mathsf{box} $ or $ \mathsf{unbox} $ and is fully annotated.
@@ -34,7 +34,7 @@
   \label{lemma:inclusion_of_dtlc}
   Suppose $\SGradynt{t}$ is a closed term of DTLC. Then
   \begin{itemize}
-  \item[i.] $  \cdot   \vdash   \lceil  \SGradynt{t}  \rceil   :  \SGradysym{\mbox{?}} $, and
+  \item[i.] $  \cdot   \vdash_{\mathsf{SG} }   \lceil  \SGradynt{t}  \rceil   :  \SGradysym{\mbox{?}} $, and
   \item[ii.] $ \SGradynt{t}  \rightsquigarrow^*_{DTLC}  \SGradynt{t'} $ if and only if $  \lceil  \SGradynt{t}  \rceil   \rightsquigarrow^*   \lceil  \SGradynt{t'}  \rceil  $.
   \end{itemize}
 \end{lemma}
@@ -140,36 +140,270 @@
 
 \begin{lemma}[Gradual Guarantee Part One]
   \label{lemma:gradual_guarantee_part_one}
-  If $ \Gamma  \vdash  \SGradynt{t}  :  \SGradynt{A} $, $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $, and $ \Gamma  \sqsubseteq  \Gamma' $ then $ \Gamma'  \vdash  \SGradynt{t'}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.
+  If $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t}  :  \SGradynt{A} $, $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $, and $ \Gamma  \sqsubseteq  \Gamma' $ then $ \Gamma'  \vdash_{\mathsf{SG} }  \SGradynt{t'}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.
 \end{lemma}
 \begin{proof}
-  This is a proof by induction on $ \Gamma  \vdash  \SGradynt{t}  :  \SGradynt{A} $; see
+  This is a proof by induction on $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t}  :  \SGradynt{A} $; see
   Appendix~\ref{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
   for the complete proof.
 \end{proof}
 
+\begin{lemma}[Typing Casting Morphisms]
+  \label{lemma:typing_casting_morphisms}
+  If $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $ and $ \mathsf{caster}( \SGradynt{A} , \SGradynt{B} ) =  \SGradynt{c} $, then $[[G |- c : A -> B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds similarly to how we constructed casting morphisms in the categorical
+  model.  See Lemma~\ref{lemma:casting_morphisms}.
+\end{proof}
+
+\begin{lemma}[Substitution for Consistent Subtyping]
+  \label{lemma:substitution_for_consistent_subtyping}
+  If $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{2}}}}  \lesssim  \SGradynt{B_{{\mathrm{3}}}} $ and $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \lesssim  \SGradynt{B_{{\mathrm{1}}}} $, then $ \Gamma  \vdash  \SGradysym{[}  \SGradynt{A_{{\mathrm{1}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B_{{\mathrm{2}}}}  \lesssim  \SGradysym{[}  \SGradynt{A_{{\mathrm{1}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B_{{\mathrm{3}}}} $.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{2}}}}  \lesssim  \SGradynt{B_{{\mathrm{3}}}} $.
+\end{proof}
+
+\begin{lemma}[Substitution for Reflexive Type Consistency]
+  \label{lemma:substitution_for_refl_type_consistency}
+  If $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}   \vdash  \SGradynt{B}  \sim  \SGradynt{B} $, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}} $, and $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{2}}}}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} $, then $ \Gamma  \vdash  \SGradysym{[}  \SGradynt{A_{{\mathrm{1}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B}  \sim  \SGradysym{[}  \SGradynt{A_{{\mathrm{2}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B} $.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $\SGradynt{B}$.
+\end{proof}
+
+\begin{lemma}[Substitution for Type Consistency]
+  \label{lemma:substitution_for_type_consistency}
+  If $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{2}}}}  \sim  \SGradynt{B_{{\mathrm{3}}}} $, $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}} $, and $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} $, then $ \Gamma  \vdash  \SGradysym{[}  \SGradynt{A_{{\mathrm{1}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B_{{\mathrm{2}}}}  \sim  \SGradysym{[}  \SGradynt{A_{{\mathrm{2}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B_{{\mathrm{3}}}} $.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{2}}}}  \sim  \SGradynt{B_{{\mathrm{3}}}} $ using both substitution for consistent subtyping
+  (Lemma~\ref{lemma:substitution_for_consistent_subtyping}) and
+  substitution for reflexive type consistent
+  (Lemma~\ref{lemma:substitution_for_refl_type_consistency}).
+  
+\end{proof}
+
 \begin{lemma}[Type Preservation for Cast Insertion]
   \label{lemma:type_preservation_for_cast_insertion}
-  If $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $ and $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t_{{\mathrm{2}}}}  :  \SGradynt{A} $, then $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{2}}}}  :  \SGradynt{A} $.
+  If $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $ and $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t_{{\mathrm{2}}}}  :  \SGradynt{B} $, then $[[G |- t2 : B]]$ and $ \Gamma  \vdash  \SGradynt{A}  \sim  \SGradynt{B} $.
+\end{lemma}
+\begin{proof}
+  The cast insertion algorithm is type directed and with respect to every term $\SGradynt{t_{{\mathrm{1}}}}$
+  it will produce a term $\SGradynt{t_{{\mathrm{2}}}}$ of the core language with the type $\SGradynt{A}$ --
+  this is straightforward to show by induction on the form of $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $ making
+  use of typing for casting morphisms Lemma~\ref{lemma:typing_casting_morphisms} -- except in
+  the case of type application.  We only consider this case here.
+
+  This is a proof by induction on the form of $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $.
+  Suppose the form of $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $ is as follows:
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydruleTXXtypeAppName{}$] {
+          \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t'_{{\mathrm{1}}}}  :   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{2}}}}    \quad   \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \lesssim  \SGradynt{B_{{\mathrm{1}}}}  
+      }{ \Gamma  \vdash_{\mathsf{SG} }   [  \SGradynt{A_{{\mathrm{1}}}}  ]  \SGradynt{t'_{{\mathrm{1}}}}   :  \SGradysym{[}  \SGradynt{A_{{\mathrm{1}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B_{{\mathrm{2}}}} }
+    \end{math}
+  \end{center}
+  In this case $\SGradynt{t_{{\mathrm{1}}}} =  [  \SGradynt{A_{{\mathrm{1}}}}  ]  \SGradynt{t'_{{\mathrm{1}}}} $ and $\SGradynt{A} = \SGradysym{[}  \SGradynt{A_{{\mathrm{1}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B_{{\mathrm{2}}}}$.
+  Cast insertion is syntax directed, and hence, inversion for it holds
+  trivially.  Thus, it must be the case that the form of $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t_{{\mathrm{2}}}}  :  \SGradynt{B} $
+  is as follows:
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydruleciXXtypeAppName{}$] {
+            \Gamma  \vdash  \SGradynt{t'_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t'_{{\mathrm{2}}}}  :   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} ).  \SGradynt{B'_{{\mathrm{2}}}}    \quad   \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}}     \quad   \Gamma  \vdash  \SGradynt{A_{{\mathrm{2}}}}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}  
+      }{ \Gamma  \vdash  \SGradysym{(}   [  \SGradynt{A_{{\mathrm{1}}}}  ]  \SGradynt{t'_{{\mathrm{1}}}}   \SGradysym{)}  \Rightarrow  \SGradysym{(}   [  \SGradynt{A_{{\mathrm{2}}}}  ]  \SGradynt{t'_{{\mathrm{2}}}}   \SGradysym{)}  :  \SGradysym{[}  \SGradynt{A_{{\mathrm{2}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B'_{{\mathrm{2}}}} }
+    \end{math}
+  \end{center}
+  So $\SGradynt{t_{{\mathrm{2}}}} =  [  \SGradynt{A_{{\mathrm{2}}}}  ]  \SGradynt{t'_{{\mathrm{2}}}} $ and $\SGradynt{B} = \SGradysym{[}  \SGradynt{A_{{\mathrm{2}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B'_{{\mathrm{2}}}}$.  Since we know
+  $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t'_{{\mathrm{1}}}}  :   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{2}}}}  $ and $ \Gamma  \vdash  \SGradynt{t'_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t'_{{\mathrm{2}}}}  :   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} ).  \SGradynt{B'_{{\mathrm{2}}}}  $ we can apply the induction hypothesis
+  to obtain $[[G |- t2' : Forall (X <: B1).B2']]$ and $ \Gamma  \vdash  \SGradysym{(}   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} ).  \SGradynt{B_{{\mathrm{2}}}}   \SGradysym{)}  \sim  \SGradysym{(}   \forall ( \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}} ).  \SGradynt{B'_{{\mathrm{2}}}}   \SGradysym{)} $, and thus,
+  $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{2}}}}  \sim  \SGradynt{B'_{{\mathrm{2}}}} $ by inversion for type consistency.  If $  \Gamma , \SGradymv{X}  <\hspace{-2px}\colon  \SGradynt{B_{{\mathrm{1}}}}   \vdash  \SGradynt{B_{{\mathrm{2}}}}  \sim  \SGradynt{B'_{{\mathrm{2}}}} $ holds, then
+  $ \Gamma  \vdash  \SGradysym{[}  \SGradynt{A_{{\mathrm{1}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B_{{\mathrm{2}}}}  \sim  \SGradysym{[}  \SGradynt{A_{{\mathrm{2}}}}  \SGradysym{/}  \SGradymv{X}  \SGradysym{]}  \SGradynt{B'_{{\mathrm{2}}}} $ when $ \Gamma  \vdash  \SGradynt{A_{{\mathrm{1}}}}  \sim  \SGradynt{A_{{\mathrm{2}}}} $ by substitution for type consistency (Lemma~\ref{lemma:substitution_for_type_consistency}).
+  Since we know $[[G |- t2' : Forall (X <: B1).B2']]$ by the induction hypothesis and $[[G |- A2 <: B1]]$ by assumption,
+  then we know $[[G |- [A2]t2' : [A2/X]B2']]$ by applying the Core Grady typing rule $\CGradydruleTXXtypeAppName{}$.
+\end{proof}
+
+\begin{lemma}[Typing for Type Precision]
+  \label{lemma:typing_for_type_precision}
+  If $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t_{{\mathrm{2}}}} $, and $ \Gamma  \sqsubseteq  \Gamma' $, then $ \Gamma'  \vdash_{\mathsf{SG} }  \SGradynt{t_{{\mathrm{2}}}}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $ with a case analysis over $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t_{{\mathrm{2}}}} $.
+\end{proof}
+
+\begin{lemma}[Substitution for Term Precision]
+  \label{lemma:substitution_for_term_precision}
+  If $[[G, x : A |- t1 <= t2]]$ and $[[G |- t'1 <= t'2]]$, then $[[G |- [t'1/x]t1 <= [t'2/x]t2]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $[[G, x : A |- t1 <= t2]]$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:typeability_inversion}
+  \begin{enumR}
+  \item[] 
+  \item If $[[G |- succ t : A]]$, then $[[G |- t : A']]$ for some $[[A']]$.
+  \item If $[[G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A]]$, then $[[G |- t : A1]]$, $[[G |- t1 : A2]]$, and $[[G |- t2 : A3]]$
+    for types $\SGradynt{A_{{\mathrm{1}}}}$, $\SGradynt{A_{{\mathrm{2}}}}$, $\SGradynt{A_{{\mathrm{3}}}}$.
+  \item If $[[G |- (t1, t2) : A]]$, then $[[G |- t1 : A1]]$ and  $[[G |- t2 : A2]]$ for types $\SGradynt{A_{{\mathrm{1}}}}$ and $\SGradynt{A_{{\mathrm{2}}}}$.
+  \end{enumR}
 \end{lemma}
 
-
-\begin{lemma}[Gradual Guarantee Part Two]
-  \label{lemma:gradual_guarantee_part_two}
-  If $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  :  \SGradynt{A} $, $ \SGradynt{t_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{t_{{\mathrm{2}}}} $, $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{t'_{{\mathrm{1}}}}  :  \SGradynt{A} $, $ \Gamma  \vdash  \SGradynt{v_{{\mathrm{1}}}}  \Rightarrow  \SGradynt{v'_{{\mathrm{1}}}}  :  \SGradynt{A} $, and $ \SGradynt{t'_{{\mathrm{1}}}}  \rightsquigarrow^*  \SGradynt{v'_{{\mathrm{1}}}} $, then
-  $ \Gamma  \vdash  \SGradynt{t_{{\mathrm{2}}}}  \Rightarrow  \SGradynt{t'_{{\mathrm{2}}}}  :  \SGradynt{A} $, $ \Gamma  \vdash  \SGradynt{v_{{\mathrm{2}}}}  \Rightarrow  \SGradynt{v'_{{\mathrm{2}}}}  :  \SGradynt{A} $, $ \SGradynt{t'_{{\mathrm{2}}}}  \rightsquigarrow^*  \SGradynt{v'_{{\mathrm{2}}}} $, and $ \SGradynt{v_{{\mathrm{1}}}}  \sqsubseteq  \SGradynt{v_{{\mathrm{2}}}} $.
+\begin{lemma}[Simulation of More Precise Programs]
+  \label{lemma:simulation_of_more_precise_programs}
+  Suppose $[[G |- t1 : A]]$, $[[G |- t1 <= t1']]$, and $[[G |- t1' : A']]$.\\
+  Then if $[[t1 ~> t2]]$, then $[[t1' ~>* t2']]$ and $[[G |- t2 <= t2']]$ for some $[[t2']]$.
 \end{lemma}
+\begin{proof}
+  This is a proof by induction on $[[G |- t1 : A1]]$.
+  
+  \begin{itemize}
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXsuccName{}$] {
+          [[G |- t : Nat]]
+        }{[[G |- succ t : Nat]]}
+      \end{math}
+    \end{center}
+    In this case $[[t1]] = [[succ t]]$ and $[[A]] = [[Nat]]$.  Thus, $[[t1']] = [[succ t']]$ where $[[G |- t <= t']]$
+    by inversion of term precision, and since $[[G |- t1' : A']]$ then it must be the case that
+    $[[G |- t' : A'']]$ for some type $[[A'']]$.
 
+    Suppose $[[t1 ~> t2]]$. Then $[[t2]] = [[succ t'']]$ and $[[t ~> t'']]$.  Then by the induction hypothesis
+    we know that there is some $[[t''']]$ such that $[[t' ~>* t''']]$ and $[[G |- t'' <= t''']]$.  Choose
+    $[[t2']] = [[succ t''']]$ and the result follows.    
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXncaseName{}$] {
+          [[G |- t : Nat]]
+          \\\\
+          [[G |- t3 : A && G, x : Nat |- t4 : A]]
+        }{[[G |- case t : Nat of 0 -> t3, (succ x) -> t4 : A]]}
+      \end{math}
+    \end{center}
+    In this case $[[t1]] = [[case t : Nat of 0 -> t3, (succ x) -> t4]]$.  This implies
+    that $[[t1']] = [[case t' : Nat of 0 -> t3', (succ x) -> t4']]$.  In addition,
+    since $ \Gamma  \vdash_{\mathsf{SG} }  \SGradynt{t'_{{\mathrm{1}}}}  :  \SGradynt{A'} $ it must be the case that
+    there are types $\SGradynt{A'_{{\mathrm{1}}}}$, $\SGradynt{A'_{{\mathrm{2}}}}$, and $\SGradynt{A'_{{\mathrm{3}}}}$ such that
+    $[[G |- t' : A1']]$, $[[G |- t3' : A2']]$, and $[[G |- t4' : A3']]$.  Furthermore,
+    suppose $[[G |- t1 <= t1']]$.  Then by inversion of term precision we know that
+    $[[G |- t <= t']]$, $[[G |- t3 <= t3']]$, and $[[G, x : Nat |- t4 <= t4']]$.  
+
+    We case split over $[[t1 ~> t2]]$.
+    \begin{itemize}
+    \item[] Case.  Suppose $[[t]] = [[0]]$ and $[[t2]] = [[t3]]$.  Since $[[G |- t1 <= t1']]$ we know that
+      it must be the case that $[[t']] = [[0]]$ and $[[t1' ~> t3']]$, and hence,
+      $[[t1' ~>* t3']]$.  Thus, choose $[[t2']] = [[t3']]$ and the result follows.
+      
+    \item[] Case.  Suppose $[[t]] = [[succ t'']]$ and $[[t2]] = [[ [t''/x]t4]]$.  Since $[[G |- t1 <= t1']]$
+      we know that $[[t']] = [[succ t''']]$ and $[[G |- t'' <= t''']]$ by inversion of term precision. In addition,
+      $[[t'1 ~> [t'''/x]t'4]]$. Choose $[[t2]] = [[ [t'''/x]t'4]]$.  Then it suffices to show that
+      $[[G |- [t''/x]t4 <= [t'''/x]t'4]]$ by substitution for term precision (Lemma~\ref{lemma:substitution_for_term_precision}).            
+      
+    \item[] Case.  Suppose a congruence rule was used.  Then $[[t2]] = [[case t'' : Nat of 0 -> t3'', (succ x) -> t4'']]$.
+      This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+      
+    \end{itemize}   
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXfstName{}$] {
+          [[G |- t : A x B]]
+        }{[[G |- fst t : A]]}
+      \end{math}
+    \end{center}
+    In this case $[[t1]] = [[fst t]]$.  Suppose $[[G |- t1 <= t1']]$ and $[[G |- t1' : A']]$.  Then
+    it must be the case that $[[t'1]] = [[fst t']]$, $[[G |- t <= t']]$ by inversion for term
+    precision.
+
+    We case split over $[[t1 ~> t2]]$.
+    \begin{itemize}
+    \item[] Case. Suppose $[[t]] = [[(t'3,t''3)]]$ and $[[t2]] = [[t'3]]$.  The former implies
+      that $[[t']] = [[(t'4,t''4)]]$ because $[[G |- t1 <= t'1]]$ by assumption.  In addition,
+      by inversion for term precision we know $[[G |- t'3 <= t'4]]$ and $[[G |- t''3 <= t''4]]$.
+      By Lemma~\ref{lemma:typeability_inversion} we know that $[[t'3]]$, $[[t'4]]$, $[[t''3]]$, and
+      $[[t''4]]$ are all typable.  Thus, $[[t'1 ~> t'4]]$, and hence, $[[t'1 ~>* t'4]]$. Thus, choose
+      $[[t2']] = [[t'4]]$ and the result follows.
+
+    \item[] Case. Suppose a congruence rule was used.  Then $[[t2]] = [[fst t'']]$.
+      This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+    \end{itemize}
+    
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXlamName{}$] {
+          [[G, x : A1 |- t : A2]]
+        }{[[G |- \x:A1.t : A1 -> A2]]}
+      \end{math}
+    \end{center}
+    In this case $[[t1]] = [[\x:A1.t]]$. Suppose $[[G |- t1 <= t1']]$ and $[[G |- t1' : A']]$.
+    This implies that $[[t'1]] = [[\x:A'1.t']]$.  The reduction relation does not reduce under
+    $\lambda$-expressions.  Hence, $[[t2]] = [[t1]]$, and thus, choose $[[t'2]] = [[t'1]]$, and
+    the case trivially follows.
+    
+    
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXappName{}$] {
+          [[G |- t1 : A -> B && G |- t2 : A]]
+        }{[[G |- t1 t2 : B]]}
+      \end{math}
+    \end{center}
+    
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXtypeAppName{}$] {
+          [[G |- t : Forall (X<:B).C && G |- A <: B]]
+        }{[[G |- [A]t : [A/X]C]]}
+      \end{math}
+    \end{center}
+    
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXSubName{}$] {
+          [[G |- t : A1 && G |- A1 <: A2]]
+        }{[[G |- t : A2]]}
+      \end{math}
+    \end{center}
+    In this case $[[t1]] = [[t]]$ and $[[A]] = [[A2]]$.  Suppose $[[G |- t1 <= t1']]$ and $[[G |- t1' : A']]$.
+    Assume $[[t1 ~> t2]]$.  Then by the induction hypothesis there is a $[[t2']]$ such that
+    $[[t1' ~>* t2']]$ and $[[G |- t2 <= t2']]$, thus, we obtain our result.
+
+  \end{itemize}
+
+\end{proof}
 
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
-  Suppose $  \cdot   \vdash  \SGradynt{t}  :  \SGradynt{A} $ and $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $.  Then
+  Suppose $  \cdot   \vdash_{\mathsf{SG} }  \SGradynt{t}  :  \SGradynt{A} $ and $ \SGradynt{t}  \sqsubseteq  \SGradynt{t'} $.  Then
   \begin{enumR}
-  \item $  \cdot   \vdash  \SGradynt{t'}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $,
+  \item $  \cdot   \vdash_{\mathsf{SG} }  \SGradynt{t'}  :  \SGradynt{B} $ and $ \SGradynt{A}  \sqsubseteq  \SGradynt{B} $,
   \item if $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $, then $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $ and $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $,
   \item if $ \SGradynt{t}  \uparrow $, then $ \SGradynt{t'}  \uparrow $,
-  \item if $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $, then $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $ where $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $, or $[[t ~>* error]]$, and
-  \item if $ \SGradynt{t'}  \uparrow $, then $ \SGradynt{t}  \uparrow $ or $[[t ~>* error]]$.
+  \item if $ \SGradynt{t'}  \rightsquigarrow^*  \SGradynt{v'} $, then $ \SGradynt{t}  \rightsquigarrow^*  \SGradynt{v} $ where $ \SGradynt{v}  \sqsubseteq  \SGradynt{v'} $, or $[[t ~>* error A]]$, and
+  \item if $ \SGradynt{t'}  \uparrow $, then $ \SGradynt{t}  \uparrow $ or $[[t ~>* error A]]$.
   \end{enumR}
 \end{theorem}
 \begin{proof}

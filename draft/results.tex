@@ -148,18 +148,253 @@
   for the complete proof.
 \end{proof}
 
+\begin{lemma}[Typing Casting Morphisms]
+  \label{lemma:typing_casting_morphisms}
+  If $[[G |- A ~ B]]$ and $[[caster(A,B) = c]]$, then $<<G |- c : A -> B>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds similarly to how we constructed casting morphisms in the categorical
+  model.  See Lemma~\ref{lemma:casting_morphisms}.
+\end{proof}
+
+\begin{lemma}[Substitution for Consistent Subtyping]
+  \label{lemma:substitution_for_consistent_subtyping}
+  If $[[G, X <: B1 |- B2 <~ B3]]$ and $[[G |- A1 <~ B1]]$, then $[[G |- [A1/X]B2 <~ [A1/X]B3]]$.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $[[G, X <: B1 |- B2 <~ B3]]$.
+\end{proof}
+
+\begin{lemma}[Substitution for Reflexive Type Consistency]
+  \label{lemma:substitution_for_refl_type_consistency}
+  If $[[G, X <: B1 |- B ~ B]]$, $[[G |- A1 ~ A2]]$, and $[[G |- A2 <: B1]]$, then $[[G |- [A1/X]B ~ [A2/X]B]]$.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $[[B]]$.
+\end{proof}
+
+\begin{lemma}[Substitution for Type Consistency]
+  \label{lemma:substitution_for_type_consistency}
+  If $[[G, X <: B1 |- B2 ~ B3]]$, $[[G |- A1 ~ A2]]$, and $[[G |- A1 <: B1]]$, then $[[G |- [A1/X]B2 ~ [A2/X]B3]]$.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on $[[G, X <: B1 |- B2 ~
+      B3]]$ using both substitution for consistent subtyping
+  (Lemma~\ref{lemma:substitution_for_consistent_subtyping}) and
+  substitution for reflexive type consistent
+  (Lemma~\ref{lemma:substitution_for_refl_type_consistency}).
+  
+\end{proof}
+
 \begin{lemma}[Type Preservation for Cast Insertion]
   \label{lemma:type_preservation_for_cast_insertion}
-  If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : A]]$, then $[[G |- t2 : A]]$.
+  If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : B]]$, then $<<G |- t2 : B>>$ and $[[G |- A ~ B]]$.
+\end{lemma}
+\begin{proof}
+  The cast insertion algorithm is type directed and with respect to every term $[[t1]]$
+  it will produce a term $[[t2]]$ of the core language with the type $[[A]]$ --
+  this is straightforward to show by induction on the form of $[[G |- t1 : A]]$ making
+  use of typing for casting morphisms Lemma~\ref{lemma:typing_casting_morphisms} -- except in
+  the case of type application.  We only consider this case here.
+
+  This is a proof by induction on the form of $[[G |- t1 : A]]$.
+  Suppose the form of $[[G |- t1 : A]]$ is as follows:
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydruleTXXtypeAppName{}$] {
+        [[G |- t1' : Forall (X<:B1).B2 && G |- A1 <~ B1]]
+      }{[[G |- [A1]t1' : [A1/X]B2]]}
+    \end{math}
+  \end{center}
+  In this case $[[t1]] = [[ [A1]t1']]$ and $[[A]] = [[ [A1/X]B2]]$.
+  Cast insertion is syntax directed, and hence, inversion for it holds
+  trivially.  Thus, it must be the case that the form of $[[G |- t1 => t2 : B]]$
+  is as follows:
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydruleciXXtypeAppName{}$] {
+        [[(G |- t1' => t2' : Forall (X <: B1).B2' && G |- A1 ~ A2) && G |- A2 <: B1]]
+      }{[[G |- ([A1]t1') => ([A2]t2') : [A2/X]B2']]}
+    \end{math}
+  \end{center}
+  So $[[t2]] = [[ [A2]t2']]$ and $[[B]] = [[ [A2/X]B2']]$.  Since we know
+  $[[G |- t1' : Forall (X<:B1).B2]]$ and $[[G |- t1' => t2' : Forall (X <: B1).B2']]$ we can apply the induction hypothesis
+  to obtain $<<G |- t2' : Forall (X <: B1).B2'>>$ and $[[G |- (Forall (X <: B1).B2) ~ (Forall (X <: B1).B2')]]$, and thus,
+  $[[G, X <: B1 |- B2 ~ B2']]$ by inversion for type consistency.  If $[[G, X <: B1 |- B2 ~ B2']]$ holds, then
+  $[[G |- [A1/X]B2 ~ [A2/X]B2']]$ when $[[G |- A1 ~ A2]]$ by substitution for type consistency (Lemma~\ref{lemma:substitution_for_type_consistency}).
+  Since we know $<<G |- t2' : Forall (X <: B1).B2'>>$ by the induction hypothesis and $<<G |- A2 <: B1>>$ by assumption,
+  then we know $<<G |- [A2]t2' : [A2/X]B2'>>$ by applying the Core Grady typing rule $\CGradydruleTXXtypeAppName{}$.
+\end{proof}
+
+\begin{lemma}[Typing for Type Precision]
+  \label{lemma:typing_for_type_precision}
+  If $[[G |- t1 : A]]$, $[[t1 <= t2]]$, and $[[G <= G']]$, then $[[G' |- t2 : B]]$ and $[[A <= B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[G |- t1 : A]]$ with a case analysis over $[[t1 <= t2]]$.
+\end{proof}
+
+\begin{lemma}[Substitution for Term Precision]
+  \label{lemma:substitution_for_term_precision}
+  If $<<G, x : A |- t1 <= t2>>$ and $<<G |- t'1 <= t'2>>$, then $<<G |- [t'1/x]t1 <= [t'2/x]t2>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by straightforward induction on $<<G, x : A |- t1 <= t2>>$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:typeability_inversion}
+  \begin{enumR}
+  \item[] 
+  \item If $<<G |- succ t : A>>$, then $<<G |- t : A'>>$ for some $<<A'>>$.
+  \item If $<<G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$, and $<<G |- t2 : A3>>$
+    for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
+  \item If $<<G |- (t1, t2) : A>>$, then $<<G |- t1 : A1>>$ and  $<<G |- t2 : A2>>$ for types $[[A1]]$ and $[[A2]]$.
+  \end{enumR}
 \end{lemma}
 
-
-\begin{lemma}[Gradual Guarantee Part Two]
-  \label{lemma:gradual_guarantee_part_two}
-  If $[[G |- t1 : A]]$, $[[t1 <= t2]]$, $[[G |- t1 => t1' : A]]$, $[[G |- v1 => v1' : A]]$, and $[[t1' ~>* v1']]$, then
-  $[[G |- t2 => t2' : A]]$, $[[G |- v2 => v2' : A]]$, $[[t2' ~>* v2']]$, and $[[v1 <= v2]]$.
+\begin{lemma}[Simulation of More Precise Programs]
+  \label{lemma:simulation_of_more_precise_programs}
+  Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, and $<<G |- t1' : A'>>$.\\
+  Then if $<<t1 ~> t2>>$, then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
 \end{lemma}
+\begin{proof}
+  This is a proof by induction on $<<G |- t1 : A1>>$.
+  
+  \begin{itemize}
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXsuccName{}$] {
+          <<G |- t : Nat>>
+        }{<<G |- succ t : Nat>>}
+      \end{math}
+    \end{center}
+    In this case $<<t1>> = <<succ t>>$ and $<<A>> = <<Nat>>$.  Thus, $<<t1'>> = <<succ t'>>$ where $<<G |- t <= t'>>$
+    by inversion of term precision, and since $<<G |- t1' : A'>>$ then it must be the case that
+    $<<G |- t' : A''>>$ for some type $<<A''>>$.
 
+    Suppose $<<t1 ~> t2>>$. Then $<<t2>> = <<succ t''>>$ and $<<t ~> t''>>$.  Then by the induction hypothesis
+    we know that there is some $<<t'''>>$ such that $<<t' ~>* t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
+    $<<t2'>> = <<succ t'''>>$ and the result follows.    
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXncaseName{}$] {
+          <<G |- t : Nat>>
+          \\\\
+          <<G |- t3 : A && G, x : Nat |- t4 : A>>
+        }{<<G |- case t : Nat of 0 -> t3, (succ x) -> t4 : A>>}
+      \end{math}
+    \end{center}
+    In this case $<<t1>> = <<case t : Nat of 0 -> t3, (succ x) -> t4>>$.  This implies
+    that $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$.  In addition,
+    since $[[G |- t1' : A']]$ it must be the case that
+    there are types $[[A1']]$, $[[A2']]$, and $[[A3']]$ such that
+    $<<G |- t' : A1'>>$, $<<G |- t3' : A2'>>$, and $<<G |- t4' : A3'>>$.  Furthermore,
+    suppose $<<G |- t1 <= t1'>>$.  Then by inversion of term precision we know that
+    $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$, and $<<G, x : Nat |- t4 <= t4'>>$.  
+
+    We case split over $<<t1 ~> t2>>$.
+    \begin{itemize}
+    \item[] Case.  Suppose $<<t>> = <<0>>$ and $<<t2>> = <<t3>>$.  Since $<<G |- t1 <= t1'>>$ we know that
+      it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$, and hence,
+      $<<t1' ~>* t3'>>$.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
+      
+    \item[] Case.  Suppose $<<t>> = <<succ t''>>$ and $<<t2>> = << [t''/x]t4>>$.  Since $<<G |- t1 <= t1'>>$
+      we know that $<<t'>> = <<succ t'''>>$ and $<<G |- t'' <= t'''>>$ by inversion of term precision. In addition,
+      $<<t'1 ~> [t'''/x]t'4>>$. Choose $<<t2>> = << [t'''/x]t'4>>$.  Then it suffices to show that
+      $<<G |- [t''/x]t4 <= [t'''/x]t'4>>$ by substitution for term precision (Lemma~\ref{lemma:substitution_for_term_precision}).            
+      
+    \item[] Case.  Suppose a congruence rule was used.  Then $<<t2>> = <<case t'' : Nat of 0 -> t3'', (succ x) -> t4''>>$.
+      This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+      
+    \end{itemize}   
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXfstName{}$] {
+          <<G |- t : A x B>>
+        }{<<G |- fst t : A>>}
+      \end{math}
+    \end{center}
+    In this case $<<t1>> = <<fst t>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.  Then
+    it must be the case that $<<t'1>> = <<fst t'>>$, $<<G |- t <= t'>>$ by inversion for term
+    precision.
+
+    We case split over $<<t1 ~> t2>>$.
+    \begin{itemize}
+    \item[] Case. Suppose $<<t>> = <<(t'3,t''3)>>$ and $<<t2>> = <<t'3>>$.  The former implies
+      that $<<t'>> = <<(t'4,t''4)>>$ because $<<G |- t1 <= t'1>>$ by assumption.  In addition,
+      by inversion for term precision we know $<<G |- t'3 <= t'4>>$ and $<<G |- t''3 <= t''4>>$.
+      By Lemma~\ref{lemma:typeability_inversion} we know that $<<t'3>>$, $<<t'4>>$, $<<t''3>>$, and
+      $<<t''4>>$ are all typable.  Thus, $<<t'1 ~> t'4>>$, and hence, $<<t'1 ~>* t'4>>$. Thus, choose
+      $<<t2'>> = <<t'4>>$ and the result follows.
+
+    \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<fst t''>>$.
+      This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+    \end{itemize}
+    
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXlamName{}$] {
+          <<G, x : A1 |- t : A2>>
+        }{<<G |- \x:A1.t : A1 -> A2>>}
+      \end{math}
+    \end{center}
+    In this case $<<t1>> = <<\x:A1.t>>$. Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+    This implies that $<<t'1>> = <<\x:A'1.t'>>$.  The reduction relation does not reduce under
+    $\lambda$-expressions.  Hence, $<<t2>> = <<t1>>$, and thus, choose $<<t'2>> = <<t'1>>$, and
+    the case trivially follows.
+    
+    
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXappName{}$] {
+          <<G |- t1 : A -> B && G |- t2 : A>>
+        }{<<G |- t1 t2 : B>>}
+      \end{math}
+    \end{center}
+    
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXtypeAppName{}$] {
+          <<G |- t : Forall (X<:B).C && G |- A <: B>>
+        }{<<G |- [A]t : [A/X]C>>}
+      \end{math}
+    \end{center}
+    
+
+  \item[] Case.\ \\ 
+    \begin{center}
+      \begin{math}
+        $$\mprset{flushleft}
+        \inferrule* [right=$\CGradydruleTXXSubName{}$] {
+          <<G |- t : A1 && G |- A1 <: A2>>
+        }{<<G |- t : A2>>}
+      \end{math}
+    \end{center}
+    In this case $<<t1>> = <<t>>$ and $<<A>> = <<A2>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+    Assume $<<t1 ~> t2>>$.  Then by the induction hypothesis there is a $<<t2'>>$ such that
+    $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$, thus, we obtain our result.
+
+  \end{itemize}
+
+\end{proof}
 
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee}
@@ -168,8 +403,8 @@
   \item $[[. |- t' : B]]$ and $[[A <= B]]$,
   \item if $[[t ~>* v]]$, then $[[t' ~>* v']]$ and $[[v <= v']]$,
   \item if $[[t ^]]$, then $[[t' ^]]$,
-  \item if $[[t' ~>* v']]$, then $[[t ~>* v]]$ where $[[v <= v']]$, or $<<t ~>* error>>$, and
-  \item if $[[t' ^]]$, then $[[t ^]]$ or $<<t ~>* error>>$.
+  \item if $[[t' ~>* v']]$, then $[[t ~>* v]]$ where $[[v <= v']]$, or $<<t ~>* error A>>$, and
+  \item if $[[t' ^]]$, then $[[t ^]]$ or $<<t ~>* error A>>$.
   \end{enumR}
 \end{theorem}
 \begin{proof}

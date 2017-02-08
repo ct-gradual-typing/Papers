@@ -146,6 +146,8 @@ grammar
     {{tex [[t]] \uparrow }}
     | G <= G'            :: M :: CtxPre
     {{tex [[G]] \sqsubseteq [[G']] }}
+    | G |- A <: B        :: M :: CST
+    {{tex [[G]] \vdash [[A]] <\hspace{-2px}\colon [[B]] }}
   
 defns
   Typing :: '' ::=
@@ -308,9 +310,9 @@ by
   -------------------- :: app
   (t1 t2) <= (t3 t4)
 
-  t1 <= t2 && A1 <= A2
-  ------------------------------------ :: tfun
-  (Lam X <: A1.t1) <= (Lam X <: A2.t2)
+  t1 <= t2 
+  ---------------------------------- :: tfun
+  (Lam X <: A.t1) <= (Lam X <: A.t2)
 
   t1 <= t2 && A <= B
   ------------------ :: tapp
@@ -382,7 +384,7 @@ defn
 
 defn
     G |- t : A :: :: type :: 'T_'
-    {{tex [[G]] \vdash [[t]] : [[A]] }} by
+    {{tex [[G]] \vdash_{\mathsf{SG} } [[t]] : [[A]] }} by
     
     x : A elem G && G Ok
     -------------------- :: varP
@@ -433,10 +435,6 @@ defn
     ------------------------------------ :: Lam
     G |- Lam X <: A. t : Forall (X <: A).B
 
-    G |- t : Forall (X<:B).C && G |- ? <~ B && B != ?
-    ------------------------------------------------- :: typeApp
-    G |- [A]t : [A/X]C
-
     G |- t : Forall (X<:B).C && G |- A <~ B
     --------------------------------------- :: typeApp
     G |- [A]t : [A/X]C
@@ -464,14 +462,13 @@ defn
     G |- snd t : A2
 
 defn
-     G |- t1 => t2 : A :: :: castIn :: ci_ {{com Cast insertion}}
+     G |- t1 => t2 : A :: :: castIn :: ci_
     {{tex [[G]] \vdash [[t1]] \Rightarrow [[t2]] : [[A]] }}
 by
 
     x : A elem G && G Ok
     -------------------- :: var
     G |- x => x : A
-
 
     G Ok
     ------------------------------------------- :: Box

@@ -987,10 +987,10 @@
 
 \newcommand{\ottdruleciXXlcaseName}[0]{\ottdrulename{ci\_lcase}}
 \newcommand{\ottdruleciXXlcase}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{t}  \Rightarrow  \ottnt{t}  :   \mathsf{List}\, \ottnt{A}  }%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{B}   \quad   \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A}  \ottsym{,}  \ottmv{y}  \ottsym{:}   \mathsf{List}\, \ottnt{A}   \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :  \ottnt{B}  }%
+\ottpremise{    \Gamma  \vdash  \ottnt{t}  \Rightarrow  \ottnt{t}  :   \mathsf{List}\, \ottnt{A}    \quad   \mathsf{caster}( \ottnt{B_{{\mathrm{1}}}} , \ottnt{B} ) =  \ottnt{c_{{\mathrm{1}}}}     \quad   \mathsf{caster}( \ottnt{B_{{\mathrm{2}}}} , \ottnt{B} ) =  \ottnt{c_{{\mathrm{2}}}}  }%
+\ottpremise{      \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{B_{{\mathrm{1}}}}   \quad   \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A}  \ottsym{,}  \ottmv{y}  \ottsym{:}   \mathsf{List}\, \ottnt{A}   \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :  \ottnt{B_{{\mathrm{2}}}}     \quad   \Gamma  \vdash  \ottnt{B_{{\mathrm{1}}}}  \sim  \ottnt{B}     \quad   \Gamma  \vdash  \ottnt{B_{{\mathrm{2}}}}  \sim  \ottnt{B}  }%
 }{
- \Gamma  \vdash  \ottsym{(}   \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottsym{[]}  \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   \mathsf{case}\, \ottnt{t'} \,\mathsf{of}\, \ottsym{[]}  \to  \ottnt{t'_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t'_{{\mathrm{2}}}}   \ottsym{)}  :  \ottnt{B} }{%
+ \Gamma  \vdash  \ottsym{(}   \mathsf{case}\, \ottnt{t} \,\mathsf{of}\, \ottsym{[]}  \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   \mathsf{case}\, \ottnt{t'} \,\mathsf{of}\, \ottsym{[]}  \to  \ottsym{(}  \ottnt{c_{{\mathrm{1}}}} \, \ottnt{t'_{{\mathrm{1}}}}  \ottsym{)} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottsym{(}  \ottnt{c_{{\mathrm{2}}}} \, \ottnt{t'_{{\mathrm{2}}}}  \ottsym{)}   \ottsym{)}  :  \ottnt{B} }{%
 {\ottdruleciXXlcaseName}{}%
 }}
 
@@ -1017,7 +1017,7 @@
 \newcommand{\ottdruleciXXappName}[0]{\ottdrulename{ci\_app}}
 \newcommand{\ottdruleciXXapp}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}} }%
-\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \lesssim  \ottnt{A_{{\mathrm{1}}}}     \quad   \mathsf{caster}( \ottnt{A_{{\mathrm{2}}}} , \ottnt{A_{{\mathrm{1}}}} ) =  \ottnt{c}  }%
+\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}     \quad   \mathsf{caster}( \ottnt{A_{{\mathrm{2}}}} , \ottnt{A_{{\mathrm{1}}}} ) =  \ottnt{c}  }%
 }{
  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  \Rightarrow  \ottnt{t'_{{\mathrm{1}}}} \, \ottsym{(}  \ottnt{c} \, \ottnt{t'_{{\mathrm{2}}}}  \ottsym{)}  :  \ottnt{B} }{%
 {\ottdruleciXXappName}{}%
@@ -1035,9 +1035,9 @@
 
 \newcommand{\ottdruleciXXtypeAppName}[0]{\ottdrulename{ci\_typeApp}}
 \newcommand{\ottdruleciXXtypeApp}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ).  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  \lesssim  \ottnt{B}  }%
+\ottpremise{    \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottnt{B} ).  \ottnt{C}    \quad   \Gamma  \vdash  \ottnt{A}  \sim  \ottnt{A'}     \quad   \Gamma  \vdash  \ottnt{A'}  <\hspace{-2px}\colon  \ottnt{B}  }%
 }{
- \Gamma  \vdash  \ottsym{(}   [  \ottnt{A}  ]  \ottnt{t_{{\mathrm{1}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   [  \ottnt{A}  ]  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  :  \ottsym{[}  \ottnt{A}  \ottsym{/}  \ottmv{X}  \ottsym{]}  \ottnt{C} }{%
+ \Gamma  \vdash  \ottsym{(}   [  \ottnt{A}  ]  \ottnt{t_{{\mathrm{1}}}}   \ottsym{)}  \Rightarrow  \ottsym{(}   [  \ottnt{A'}  ]  \ottnt{t_{{\mathrm{2}}}}   \ottsym{)}  :  \ottsym{[}  \ottnt{A'}  \ottsym{/}  \ottmv{X}  \ottsym{]}  \ottnt{C} }{%
 {\ottdruleciXXtypeAppName}{}%
 }}
 
