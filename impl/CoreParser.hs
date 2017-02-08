@@ -467,11 +467,9 @@ repl2TermCmdParser short long c p = do
   symbol ":"
   cmd <- many lower
   ws 
-  reservedOp "let"
-  ws
   vname <- varName
   ws
-  symbol "="
+  symbol ":"
   ws
   ty <- p
   eof

@@ -40,18 +40,32 @@ getQDef e@(x,y) = error $ "Failed to get definition from context. Mismatched var
 
 
 -- Extract only free variables that are defined from queue
-getQFV :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> REPLStateIO (Queue (CVnm,Type))
-getQFV (Queue [] []) qFV = return $ qFV
-getQFV q qFV = getQDefM (headQ q) >>= (\x -> case x of
-                 (Left fv) -> getQFV (tailQ q) (enqueue fv qFV)
-                 (Right cv) -> getQFV (tailQ q) qFV)
+getQFVM :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> REPLStateIO (Queue (CVnm,Type))
+getQFVM (Queue [] []) qFV = return $ qFV
+getQFVM q qFV = getQDefM (headQ q) >>= (\x -> case x of
+                 (Left fv) -> getQFVM (tailQ q) (enqueue fv qFV)
+                 (Right cv) -> getQFVM (tailQ q) qFV)
 
 -- Extract only closed terms from queue
-getQCT :: Queue (QDefName,QDefDef) -> Queue Qelm -> REPLStateIO (Queue Qelm)
-getQCT (Queue [] []) qCV = return $ qCV
-getQCT q qCV = getQDefM (headQ q) >>= (\x -> case x of 
+getQCTM :: Queue (QDefName,QDefDef) -> Queue Qelm -> REPLStateIO (Queue Qelm)
+getQCTM (Queue [] []) qCV = return $ qCV
+getQCTM q qCV = getQDefM (headQ q) >>= (\x -> case x of 
+                 (Left fv) -> getQCTM (tailQ q) qCV
+                 (Right cv) -> getQCTM (tailQ q) (enqueue cv qCV))
+                 
+-- Extract only free variables that are defined from queue
+getQFV :: Queue (QDefName,QDefDef) -> Queue (CVnm,Type) -> (Queue (CVnm,Type))
+getQFV (Queue [] []) qFV = qFV
+getQFV q qFV = case getQDef (headQ q) of
+                 (Left fv) -> getQFV (tailQ q) (enqueue fv qFV)
+                 (Right cv) -> getQFV (tailQ q) qFV
+
+-- Extract only closed terms from queue
+getQCT :: Queue (QDefName,QDefDef) -> Queue Qelm -> (Queue Qelm)
+getQCT (Queue [] []) qCV = qCV
+getQCT q qCV = case getQDef (headQ q) of 
                  (Left fv) -> getQCT (tailQ q) qCV
-                 (Right cv) -> getQCT (tailQ q) (enqueue cv qCV))
+                 (Right cv) -> getQCT (tailQ q) (enqueue cv qCV)
                  
 qToMap :: Queue (CVnm,Type) -> (M.Map CVnm Type)
 qToMap q = foldl (\m (a,b) -> M.insert a b m) M.empty (toListQ q)
@@ -97,12 +111,18 @@ unfoldQueue q = fixQ q emptyQ step
 containsTerm :: Queue Qelm -> CVnm -> Bool
 containsTerm (Queue f r) vnm = (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f) 
 
+-- containsTerm :: Queue (QDefName,QDefDef) -> QDefName -> Bool
+-- containsTerm (Queue [] []) _ = True
+-- containsTerm q (Var vnm) = (\((foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False  f ))
+        
+-- containsTerm (Queue f r) (DefName vnm) = undefined --(foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False (getQFV f)) 
+
 tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
 tyCheckQ q = do
   (f, defs') <- get
-  defs <- getQCT defs' emptyQ
-  qfv <- getQFV defs' emptyQ
+  defs <- getQCTM defs' emptyQ
+  qfv <- getQFVM defs' emptyQ
   let term'@(Def v ty t) = headQ q
   -- Case split here as well before unfolding t
   -- Unfold each term from queue and see if free variables exist
@@ -123,7 +143,7 @@ tyCheckQ q = do
                         if b
                         then do
                           -- Determine if definition already in queue
-                          if(containsTerm defs v)
+                          if(containsTerm defs (v))
                           then  io.putStrLn $ "Error: The variable "++(show v)++" is already in the context."
                           else  do
                             push (Var v,DefTerm tu)
@@ -156,7 +176,7 @@ handleCMD s =
       io.putStrLn $ "----------------------------------------------------------"
     handleLine (Eval t) = do
       (f, defs') <- get
-      defs <- getQCT defs' emptyQ
+      defs <- getQCTM defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = eval tu
        in case r of
@@ -165,20 +185,20 @@ handleCMD s =
     handleLine (DecVar vnam ty) = push (DefName vnam,VarType ty)
     handleLine (Let x t) = do
       (f, defs') <- get
-      defs <- getQCT defs' emptyQ
-      qfv <- getQFV defs' emptyQ
+      defs <- getQCTM defs' emptyQ
+      qfv <- getQFVM defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = runIR tu $ qToMap qfv
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  do
-                if(containsTerm defs x)
+                if(containsTerm defs (x))
                 then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
                 else push (Var x,DefTerm t)
     handleLine (TypeCheck t) = do
       (_, defs') <- get
-      defs <- getQCT defs' emptyQ
-      qfv <- getQFV defs' emptyQ
+      defs <- getQCTM defs' emptyQ
+      qfv <- getQFVM defs' emptyQ
       let tu = unfoldDefsInTerm defs t
           r = runIR tu $ qToMap qfv
        in case r of
@@ -186,11 +206,11 @@ handleCMD s =
             Right ty ->  io.putStrLn.runPrettyType $ ty
     handleLine (ShowAST t) = do
       (_,defs') <- get
-      defs <- getQCT defs' emptyQ
+      defs <- getQCTM defs' emptyQ
       io.putStrLn.show $ unfoldDefsInTerm defs t
     handleLine (Unfold t) = do
       (f,defs') <- get
-      defs <- getQCT defs' emptyQ
+      defs <- getQCTM defs' emptyQ
       io.putStrLn.runPrettyCTerm $ unfoldDefsInTerm defs t
     handleLine (LoadFile p) = do
       let wdir = takeDirectory p
@@ -205,7 +225,7 @@ handleCMD s =
 prettyDef :: (QDefName, QDefDef) -> String
 prettyDef elem = case getQDef elem of
                    Right (a, t) -> "let "++(n2s a)++" = "++(runPrettyCTerm t)
-                   Left (a, ty ) -> "let "++(n2s a)++" = "++(runPrettyType ty)
+                   Left (a, ty ) -> (n2s a)++" : "++(runPrettyType ty)
 
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
