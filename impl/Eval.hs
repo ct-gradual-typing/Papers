@@ -79,6 +79,7 @@ evalCTerm' (CApp t1 t2) = do
     CVar ty -> do
       e2 <- evalCTerm' t2
       return $ CApp e1 e2
+    (CApp (CSplit _) (CVar x)) -> evalCTerm' t2 >>= (\e2 -> return $ CApp e1 e2)
     _ -> return $ CApp e1 t2
 evalCTerm' (CTApp ty t) = do
   e <- evalCTerm' t
