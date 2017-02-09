@@ -70,6 +70,8 @@ grammar
     | \ x : A . t         ::   :: abs          
     {{tex \lambda ([[x]] : [[A]]) . [[t]] }}
     | n                   ::   :: num
+    | case t : A of t3 -> t1 , t4 -> t2 :: :: natElim
+    {{tex \mathsf{case}\,[[t]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}    
 
   Kd :: 'Kd_' ::=
     | *                   ::   :: TypeOfTypes
@@ -153,6 +155,8 @@ grammar
     {{tex [[t]] \rightsquigarrow^* [[t']] }}
     | G <= G'             :: M :: CtxPre
     {{tex [[G]] \sqsubseteq [[G']] }}
+    | t ^                :: M :: Div
+    {{tex [[t]] \uparrow }}    
 
 subrules
   v <:: t
@@ -301,6 +305,14 @@ by
     x : A elem G && G Ok
     -------------------- :: var
     G |- x <= x
+
+    K1 <= K2
+    ------------------------- :: split
+    G |- split K1 <= split K2
+
+    K1 <= K2
+    --------------------------- :: squash
+    G |- squash K1 <= squash K2
 
     G Ok
     ----------- :: nat

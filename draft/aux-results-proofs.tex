@@ -41,7 +41,7 @@
   This proof holds by straightforward induction on the form of $[[A <= B]]$.
 \end{proof}
 
-\begin{lemma}[Inversion for Term Precision]
+\begin{lemma}[Surface Grady Inversion for Term Precision]
   \label{lemma:inversion_of_term_precision}
   Suppose $[[t <= t']]$. Then:
   \begin{enumR}
@@ -257,4 +257,132 @@
   Both cases follow by induction on the assumed consistent subtyping
   derivation.
 \end{proof}
+
+
+\begin{lemma}[Congruence of Type Consistency Along Type Precision]
+  \label{lemma:congruence_of_type_consistency_along_type_precision}
+  \begin{enumR}
+  \item[] 
+  \item If $[[A1 <= A1']]$ and $[[G |- A1 ~ A2]]$ then
+    $[[G |- A1' ~ A2]]$.
+    
+  \item If $[[A2 <= A2']]$ and $[[G |- A1 ~ A2]]$ then
+    $[[G |- A1 ~ A2']]$.  
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  Both parts hold by induction on the assumed type consistency
+  judgment.  See
+  Appendix~\ref{subsec:proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision}
+  for the complete proof.
+\end{proof}
+
+\begin{corollary}[Congruence of Type Consistency Along Type Precision Condensed]
+  \label{corollary:congruence_of_type_consistency_along_type_precision}
+  If $[[A1 <= A1']]$, $[[A2 <= A2']]$, and $[[G |- A1 ~ A2]]$ then
+  $[[G |- A1' ~ A2']]$.  
+\end{corollary}
+
+\begin{lemma}[Congruence of Subtyping Along Type Precision]
+  \label{lemma:congruence_of_subtyping_along_type_precision}
+  Suppose $[[G |- B : *]]$ and $[[A <= B]]$.
+  \begin{enumR}
+  \item If $[[G |- A <~ C]]$ then $[[G |- B <~ C]]$.
+
+  \item If $[[G |- C <~ A]]$ then $[[G |- C <~ B]]$.  
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This is a proof by induction on the form of $[[A <= B]]$; see
+  Appendix~\ref{subsec:proof_of_congruence_of_subtyping_along_type_precision_lemma:congruence_of_subtyping_along_type_precision}
+  for the complete proof.
+\end{proof}
+
+\begin{corollary}[Congruence of Subtyping Along Type Precision]
+  \label{corollary:congruence_of_subtyping_along_type_precision}
+  If $[[A1 <= A2]]$, $[[B1 <= B2]]$, and $[[G |- A1 <~ B1]]$, then $[[G |- A2 <~ B2]]$.
+\end{corollary}
+
+
+\begin{lemma}[Typing Casting Morphisms]
+  \label{lemma:typing_casting_morphisms}
+  If $[[G |- A ~ B]]$ and $[[caster(A,B) = c]]$, then $<<G |- c : A -> B>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds similarly to how we constructed casting morphisms in the categorical
+  model.  See Lemma~\ref{lemma:casting_morphisms}.
+\end{proof}
+
+\begin{lemma}[Substitution for Consistent Subtyping]
+  \label{lemma:substitution_for_consistent_subtyping}
+  If $[[G, X <: B1 |- B2 <~ B3]]$ and $[[G |- A1 <~ B1]]$, then $[[G |- [A1/X]B2 <~ [A1/X]B3]]$.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $[[G, X <: B1 |- B2 <~ B3]]$.
+\end{proof}
+
+\begin{lemma}[Substitution for Reflexive Type Consistency]
+  \label{lemma:substitution_for_refl_type_consistency}
+  If $[[G, X <: B1 |- B ~ B]]$, $[[G |- A1 ~ A2]]$, and $[[G |- A2 <: B1]]$, then $[[G |- [A1/X]B ~ [A2/X]B]]$.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on the form of $[[B]]$.
+\end{proof}
+
+\begin{lemma}[Substitution for Type Consistency]
+  \label{lemma:substitution_for_type_consistency}
+  If $[[G, X <: B1 |- B2 ~ B3]]$, $[[G |- A1 ~ A2]]$, and $[[G |- A1 <: B1]]$, then $[[G |- [A1/X]B2 ~ [A2/X]B3]]$.
+\end{lemma}
+\begin{proof}
+  This holds by straightforward induction on $[[G, X <: B1 |- B2 ~
+      B3]]$ using both substitution for consistent subtyping
+  (Lemma~\ref{lemma:substitution_for_consistent_subtyping}) and
+  substitution for reflexive type consistent
+  (Lemma~\ref{lemma:substitution_for_refl_type_consistency}).
+  
+\end{proof}
+
+\begin{lemma}[Typing for Type Precision]
+  \label{lemma:typing_for_type_precision}
+  If $[[G |- t1 : A]]$, $[[t1 <= t2]]$, and $[[G <= G']]$, then $[[G' |- t2 : B]]$ and $[[A <= B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[G |- t1 : A]]$ with a case analysis over $[[t1 <= t2]]$.
+\end{proof}
+
+\begin{lemma}[Substitution for Term Precision]
+  \label{lemma:substitution_for_term_precision}
+  \begin{enumR}
+  \item[] 
+  \item If $<<G, x : A |- t1 <= t2>>$ and $<<G |- t'1 <= t'2>>$, then $<<G |- [t'1/x]t1 <= [t'2/x]t2>>$.
+  \item If $<<G, X <: A2 |- t1 <= t2>>$ and $<<A1 <= A'1>>$, then $<<G |- [A1/X]t1 <= [A'1/X]t2>>$.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof of part one holds by straightforward induction on $<<G, x : A |- t1 <= t2>>$, and the
+  proof of part two holds by straightforward induction on $<<G, X <: A2 |- t1 <= t2>>$.
+\end{proof}
+
+\begin{lemma}[Typeability Inversion]
+  \label{lemma:typeability_inversion}
+  \begin{enumR}
+  \item[] 
+  \item If $<<G |- succ t : A>>$, then $<<G |- t : A'>>$ for some $<<A'>>$.
+  \item If $<<G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$,
+    and $<<G,x : Nat |- t2 : A3>>$ for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
+  \item If $<<G |- (t1, t2) : A>>$, then $<<G |- t1 : A1>>$ and  $<<G |- t2 : A2>>$ for types $[[A1]]$ and $[[A2]]$.
+  \item If $<<G |- Lam X <: B . t : A>>$, then $<<G, X <: B |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- [B]t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- \ x : B . t : A>>$, then $<<G, x : B |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- t1 t2 : A>>$, then $<<G |- t1 : A1>>$ and  $<<G |- t2 : A2>>$ for types $[[A1]]$ and $[[A2]]$.
+  \item If $<<G |- fst t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- snd t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- t1 :: t2 : A>>$, then $<<G |- t1 : A1>>$ and $<<G |- t2 : A2>>$ for some types $[[A1]]$ and $[[A2]]$.
+  \item If $<<G |- case t : List B of [] -> t1, (x::y) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$,
+    and $<<G,x : A, y : List A |- t2 : A3>>$ for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
+    
+  \end{enumR}
+\end{lemma}
+
+
 % subsection auxiliary_results_with_proofs (end)

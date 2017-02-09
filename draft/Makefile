@@ -68,8 +68,11 @@ proofs-ott.tex : proofs.tex sl-grady.ott
 		-tex_filter proofs.tex proofs-ott.tex
 
 aux-results-proofs-ott.tex : aux-results-proofs.tex surface-grady/surface-grady.ott
-	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
-		-tex_filter aux-results-proofs.tex aux-results-proofs-ott.tex
+	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
+		-tex_filter aux-results-proofs.tex aux-results-proofs-ott1.tex
+	scripts/prepr_double_ott.sh aux-results-proofs-ott1.tex
+		@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
+		-tex_filter aux-results-proofs-ott1.tex aux-results-proofs-ott.tex
 
 categorical-model-ott.tex : categorical-model.tex sl-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \

@@ -125,7 +125,7 @@ of $[[A1 <= A1']]$.
 \subsection{Proof of Congruence of Subtyping Along Type Precision (Lemma~\ref{lemma:congruence_of_subtyping_along_type_precision})}
 \label{subsec:proof_of_congruence_of_subtyping_along_type_precision_lemma:congruence_of_subtyping_along_type_precision}
 This is a proof by induction on the form of $[[A <= B]]$.  The proof
-of part two follows similarly to part one.
+of part two follows similarly to part one.  We only give the most interesting cases.  All others follow similarly.
 
 \noindent
 \textbf{Proof of part one.}  We only show the most interesting case,
@@ -364,3 +364,219 @@ most interesting cases, because the others follow similarly.
   $[[B1 <= B1']]$.
 \end{itemize}
 % subsection proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one (end)
+
+\subsection{Proof of Type Preservation for Cast Insertion (Lemma~\ref{lemma:type_preservation_for_cast_insertion})}
+\label{subsec:proof_of_type_preservation_for_cast_insertion}
+The cast insertion algorithm is type directed and with respect to every term $[[t1]]$
+it will produce a term $[[t2]]$ of the core language with the type $[[A]]$ --
+this is straightforward to show by induction on the form of $[[G |- t1 : A]]$ making
+use of typing for casting morphisms Lemma~\ref{lemma:typing_casting_morphisms} -- except in
+the case of type application.  We only consider this case here.
+
+This is a proof by induction on the form of $[[G |- t1 : A]]$.
+Suppose the form of $[[G |- t1 : A]]$ is as follows:
+\begin{center}
+  \begin{math}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXtypeAppName{}$] {
+      [[G |- t1' : Forall (X<:B1).B2 && G |- A1 <~ B1]]
+    }{[[G |- [A1]t1' : [A1/X]B2]]}
+  \end{math}
+\end{center}
+In this case $[[t1]] = [[ [A1]t1']]$ and $[[A]] = [[ [A1/X]B2]]$.
+Cast insertion is syntax directed, and hence, inversion for it holds
+trivially.  Thus, it must be the case that the form of $[[G |- t1 => t2 : B]]$
+is as follows:
+\begin{center}
+  \begin{math}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleciXXtypeAppName{}$] {
+      [[(G |- t1' => t2' : Forall (X <: B1).B2' && G |- A1 ~ A2) && G |- A2 <: B1]]
+    }{[[G |- ([A1]t1') => ([A2]t2') : [A2/X]B2']]}
+  \end{math}
+\end{center}
+So $[[t2]] = [[ [A2]t2']]$ and $[[B]] = [[ [A2/X]B2']]$.  Since we know
+$[[G |- t1' : Forall (X<:B1).B2]]$ and $[[G |- t1' => t2' : Forall (X <: B1).B2']]$ we can apply the induction hypothesis
+to obtain $<<G |- t2' : Forall (X <: B1).B2'>>$ and $[[G |- (Forall (X <: B1).B2) ~ (Forall (X <: B1).B2')]]$, and thus,
+$[[G, X <: B1 |- B2 ~ B2']]$ by inversion for type consistency.  If $[[G, X <: B1 |- B2 ~ B2']]$ holds, then
+$[[G |- [A1/X]B2 ~ [A2/X]B2']]$ when $[[G |- A1 ~ A2]]$ by substitution for type consistency (Lemma~\ref{lemma:substitution_for_type_consistency}).
+Since we know $<<G |- t2' : Forall (X <: B1).B2'>>$ by the induction hypothesis and $<<G |- A2 <: B1>>$ by assumption,
+then we know $<<G |- [A2]t2' : [A2/X]B2'>>$ by applying the Core Grady typing rule $\CGradydruleTXXtypeAppName{}$.
+% subsection proof_of_type_preservation_for_cast_insertion (end)
+
+\subsection{Proof of Simulation of More Precise Programs (Lemma~\ref{lemma:simulation_of_more_precise_programs})}
+\label{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
+This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most interesting cases.  All others follow similarly.
+
+\begin{itemize}
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXsuccName{}$] {
+        <<G |- t : Nat>>
+      }{<<G |- succ t : Nat>>}
+    \end{math}
+  \end{center}
+  In this case $<<t1>> = <<succ t>>$ and $<<A>> = <<Nat>>$.  Thus, $<<t1'>> = <<succ t'>>$ where $<<G |- t <= t'>>$
+  by inversion of term precision.
+
+  Suppose $<<t1 ~> t2>>$. Then $<<t2>> = <<succ t''>>$ and $<<t ~> t''>>$.  Then by the induction hypothesis
+  we know that there is some $<<t'''>>$ such that $<<t' ~> t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
+  $<<t2'>> = <<succ t'''>>$ and the result follows.    
+
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXncaseName{}$] {
+        <<G |- t : Nat>>
+        \\\\
+        <<G |- t3 : A && G, x : Nat |- t4 : A>>
+      }{<<G |- case t : Nat of 0 -> t3, (succ x) -> t4 : A>>}
+    \end{math}
+  \end{center}
+  In this case $<<t1>> = <<case t : Nat of 0 -> t3, (succ x) -> t4>>$.  This implies
+  that $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$.  Furthermore,
+  suppose $<<G |- t1 <= t1'>>$.  Then by inversion of term precision we know that
+  $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$, and $<<G, x : Nat |- t4 <= t4'>>$.  
+
+  We case split over $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case.  Suppose $<<t>> = <<0>>$ and $<<t2>> = <<t3>>$.  Since $<<G |- t1 <= t1'>>$ we know that
+    it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
+    
+  \item[] Case.  Suppose $<<t>> = <<succ t''>>$ and $<<t2>> = << [t''/x]t4>>$.  Since $<<G |- t1 <= t1'>>$
+    we know that $<<t'>> = <<succ t'''>>$ and $<<G |- t'' <= t'''>>$ by inversion of term precision. In addition,
+    $<<t'1 ~> [t'''/x]t'4>>$. Choose $<<t2>> = << [t'''/x]t'4>>$.  Then it suffices to show that
+    $<<G |- [t''/x]t4 <= [t'''/x]t'4>>$ by substitution for term precision (Lemma~\ref{lemma:substitution_for_term_precision}).            
+    
+  \item[] Case.  Suppose a congruence rule was used.  Then $<<t2>> = <<case t'' : Nat of 0 -> t3'', (succ x) -> t4''>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+    
+  \end{itemize}   
+
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXfstName{}$] {
+        <<G |- t : A x B>>
+      }{<<G |- fst t : A>>}
+    \end{math}
+  \end{center}
+  In this case $<<t1>> = <<fst t>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.  Then
+  it must be the case that $<<t'1>> = <<fst t'>>$, $<<G |- t <= t'>>$ by inversion for term
+  precision.
+
+  We case split over $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case. Suppose $<<t>> = <<(t'3,t''3)>>$ and $<<t2>> = <<t'3>>$.  The former implies
+    that $<<t'>> = <<(t'4,t''4)>>$ because $<<G |- t1 <= t'1>>$ by assumption.  In addition,
+    by inversion for term precision we know $<<G |- t'3 <= t'4>>$ and $<<G |- t''3 <= t''4>>$.
+    Thus, $<<t'1 ~> t'4>>$. Thus, choose$<<t2'>> = <<t'4>>$ and the result follows.
+
+  \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<fst t''>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+  \end{itemize}
+  
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXlamName{}$] {
+        <<G, x : A1 |- t : A2>>
+      }{<<G |- \x:A1.t : A1 -> A2>>}
+    \end{math}
+  \end{center}
+  In this case $<<t1>> = <<\x:A1.t>>$. Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  This implies that $<<t'1>> = <<\x:A'1.t'>>$.  The reduction relation does not reduce under
+  $\lambda$-expressions.  Hence, $<<t2>> = <<t1>>$, and thus, choose $<<t'2>> = <<t'1>>$, and
+  the case trivially follows.
+  
+  
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXappName{}$] {
+        <<G |- t3 : A1 -> A2 && G |- t4 : A1>>
+      }{<<G |- t3 t4 : A2>>}
+    \end{math}
+  \end{center}
+  In this case $<<t1>> = <<t3 t4>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  This implies that $<<t'1>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
+  by inversion for term precision.
+
+  We case split on the from of $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case.  Suppose $<<t3>> = <<\x:A1.t5>>$ and $<<t2>> = << [t4/x]t5>>$.
+    Then $<<t'3>> = <<\x:A1'.t'5>>$, because $<<G |- t3 <= t'3>>$. Choose $<<t'2>> = << [t'4/x]t'5>>$
+    and it is easy to see that $<<t'1 ~> [t'4/x]t'4>>$.
+    We know that $<<G, x : A2' |- t5 <= t'5>>$ (by inversion for term precision) and $<<G |- t4 <= t'4>>$, and hence,
+    by Lemma~\ref{lemma:substitution_for_term_precision} we know that
+    $<<G |- [t4/x]t5 <= [t'4/x]t'5>>$, and we obtain our result.
+
+  \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box A t5>>$, and $<<t2>> = <<t5>>$.
+    Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box A t'5>>$.  Choose $<<t'2>> = <<t'5>>$ and
+    it is easy to see that $<<t'1 ~> t'5>>$.
+    By inversion for term precision we know that $<<G |- t5 <= t'5>>$ because we know
+    that $<<G |- t4 <= t'4>>$, and we obtain our result.
+
+  \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box B t5>>$, $<<A != B>>$,
+    and $<<t2>> = <<error B>>$.  Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box B t'5>>$.
+    Choose $<<t'2>> = <<error B>>$ and it is easy to see that $<<t'1 ~> t'5>>$.  Finally,
+    we can see that $<<G |- t2 <= t'2>>$ by reflexivity.
+    
+  \item[] Case.  Suppose $<<t3>> = <<split U>>$, $<<t4>> = <<squash U t5>>$, and $<<t2>> = <<t5>>$.
+    Similar to the case for boxing and unboxing.
+    
+  \item[] Case.  Suppose $<<t3>> = <<split U1>>$, $<<t4>> = <<squash U2 t5>>$, $<<U1 != U2>>$, and $<<t2>> = <<t5>>$.
+    Similar to the case for boxing and unboxing.
+
+  \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<t'5 t'6>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+  \end{itemize}
+
+
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXtypeAppName{}$] {
+        <<G |- t : Forall (X<:A2).A3 && G |- A1 <: A2>>
+      }{<<G |- [A1]t : [A1/X]A3>>}
+    \end{math}
+  \end{center}
+  In this case $<<t1>> = << [A1]t>>$ and $<<A>> = << [A1/X]A3>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  This implies that $<<t'1>> = << [A1']t'>>$, $<<G |- t <= t'>>$, and $<<A1 <= A1'>>$
+  by inversion for term precision.  
+
+  We case split over the form of $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case. Suppose $<<t>> = <<Lam X <: A2.t3>>$ and $<<t2>> = << [A1/X]t3>>$.  Then we know
+    that $<<t'>> = <<Lam X <: A2.t'3>>$ and by inversion for term precision that
+    $<<G, X <: A2 |- t3 <= t3'>>$, because we know $<<G |- t <= t'>>$, and by substitution for term precision
+    we know that $<<G |- [A1/X]t3 <= [A1'/X]t3'>>$ by substitution for term precision
+    (Lemma~\ref{lemma:substitution_for_term_precision}), because we know that $<<A1 <= A1'>>$.  Choose
+    $<<t'2>> = << [A1'/X]t3'>>$ and the result follows, because $<<t'1 ~> t'2>>$.
+
+  \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = << [A1]t''>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+  \end{itemize}
+
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXSubName{}$] {
+        <<G |- t : A1 && G |- A1 <: A2>>
+      }{<<G |- t : A2>>}
+    \end{math}
+  \end{center}
+  In this case $<<t1>> = <<t>>$ and $<<A>> = <<A2>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Assume $<<t1 ~> t2>>$.  Then by the induction hypothesis there is a $<<t2'>>$ such that
+  $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$, thus, we obtain our result.
+
+\end{itemize}
+% subsection proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs (end)
