@@ -406,7 +406,11 @@ then we know $<<G |- [A2]t2' : [A2/X]B2'>>$ by applying the Core Grady typing ru
 
 \subsection{Proof of Simulation of More Precise Programs (Lemma~\ref{lemma:simulation_of_more_precise_programs})}
 \label{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
-This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most interesting cases.  All others follow similarly.
+This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the
+most interesting cases.  All others follow similarly.  Throughout the
+proof we implicitly make use of typability inversion
+(Lemma~\ref{lemma:typeability_inversion}) when applying the induction
+hypothesis.
 
 \begin{itemize}
 \item[] Case.\ \\ 
@@ -418,12 +422,25 @@ This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most inter
       }{<<G |- succ t : Nat>>}
     \end{math}
   \end{center}
-  In this case $<<t1>> = <<succ t>>$ and $<<A>> = <<Nat>>$.  Thus, $<<t1'>> = <<succ t'>>$ where $<<G |- t <= t'>>$
-  by inversion of term precision.
+  In this case $<<t1>> = <<succ t>>$ and $<<A>> = <<Nat>>$.  Suppose $<<G |- t1' : A'>>$.
+  By inversion for term precision we must consider the following cases:
+  \begin{enumR}
+  \item $<<t1'>> = <<succ t'>>$ and $<<G |- t <= t'>>$
+  \item $<<t1'>> = <<box Nat t1>>$ and $<<G |- t1 : Nat>>$    
+  \end{enumR}
 
-  Suppose $<<t1 ~> t2>>$. Then $<<t2>> = <<succ t''>>$ and $<<t ~> t''>>$.  Then by the induction hypothesis
-  we know that there is some $<<t'''>>$ such that $<<t' ~> t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
-  $<<t2'>> = <<succ t'''>>$ and the result follows.    
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<succ t'>>$, $<<G |- t <= t'>>$, and $<<t1 ~> t2>>$.
+  Then $<<t2>> = <<succ t''>>$ and $<<t ~> t''>>$.  Then by the induction hypothesis
+  we know that there is some $<<t'''>>$ such that $<<t' ~>* t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
+  $<<t2'>> = <<succ t'''>>$ and the result follows.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.} Suppose $<<t1'>> = <<box Nat t1>>$, $<<G |- t1 : Nat>>$, and $<<t1 ~> t2>>$.
+  Then choose $<<t'2>> = <<box Nat t2>>$, and the result follows, because we know by type preservation
+  that $<<G |- t2 : Nat>>$, and hence, $<<G |- t2 <= t2'>>$.
 
 \item[] Case.\ \\ 
   \begin{center}
@@ -436,25 +453,48 @@ This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most inter
       }{<<G |- case t : Nat of 0 -> t3, (succ x) -> t4 : A>>}
     \end{math}
   \end{center}
-  In this case $<<t1>> = <<case t : Nat of 0 -> t3, (succ x) -> t4>>$.  This implies
-  that $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$.  Furthermore,
-  suppose $<<G |- t1 <= t1'>>$.  Then by inversion of term precision we know that
-  $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$, and $<<G, x : Nat |- t4 <= t4'>>$.  
+  In this case $<<t1>> = <<case t : Nat of 0 -> t3, (succ x) -> t4>>$.  Suppose
+  $<<G |- t1' : A'>>$. 
+  Then inversion of term precision implies that one of the following must hold:
+  \begin{itemize}
+  \item $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$, $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$,
+    and $<<G, x : Nat |- t4 <= t4'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \item $<<t1'>> = <<squash K t1>>$, $<<G |- t1 : K>>$, and $<<A>> = <<K>>$
+  \end{itemize}
 
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$,
+  $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$, and $<<G, x : Nat |- t4 <= t4'>>$.
+
+  \ \\
+  \noindent
   We case split over $<<t1 ~> t2>>$.
   \begin{itemize}
   \item[] Case.  Suppose $<<t>> = <<0>>$ and $<<t2>> = <<t3>>$.  Since $<<G |- t1 <= t1'>>$ we know that
-    it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
+    it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$ by inversion for term precision
+    or $<<t1'>>$ would not be typable which is a contradiction.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
     
   \item[] Case.  Suppose $<<t>> = <<succ t''>>$ and $<<t2>> = << [t''/x]t4>>$.  Since $<<G |- t1 <= t1'>>$
-    we know that $<<t'>> = <<succ t'''>>$ and $<<G |- t'' <= t'''>>$ by inversion of term precision. In addition,
+    we know that $<<t'>> = <<succ t'''>>$, or $<<t1'>>$ would not be typable,
+    and $<<G |- t'' <= t'''>>$ by inversion for term precision. In addition,
     $<<t'1 ~> [t'''/x]t'4>>$. Choose $<<t2>> = << [t'''/x]t'4>>$.  Then it suffices to show that
-    $<<G |- [t''/x]t4 <= [t'''/x]t'4>>$ by substitution for term precision (Lemma~\ref{lemma:substitution_for_term_precision}).            
+    $<<G |- [t''/x]t4 <= [t'''/x]t'4>>$ by substitution for term precision (Lemma~\ref{lemma:substitution_for_term_precision}).    
     
   \item[] Case.  Suppose a congruence rule was used.  Then $<<t2>> = <<case t'' : Nat of 0 -> t3'', (succ x) -> t4''>>$.
-    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
-    
-  \end{itemize}   
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.    
+  \end{itemize}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.}  Suppose $<<t1'>> = <<box A t1>>$, $<<G |- t1 : A>>$, and $<<t1 ~> t2>>$.
+  Then choose $<<t'2>> = <<box A t2>>$, and the result follows, because we know by type preservation
+  that $<<G |- t2 : A>>$, and hence, $<<G |- t2 <= t2'>>$.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part iii.}  Similar to the previous case.  
 
 \item[] Case.\ \\ 
   \begin{center}
@@ -465,16 +505,21 @@ This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most inter
       }{<<G |- fst t : A>>}
     \end{math}
   \end{center}
-  In this case $<<t1>> = <<fst t>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.  Then
-  it must be the case that $<<t'1>> = <<fst t'>>$, $<<G |- t <= t'>>$ by inversion for term
-  precision.
-
-  We case split over $<<t1 ~> t2>>$.
+  In this case $<<t1>> = <<fst t>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then inversion for term precision implies that one of the following must hold:
   \begin{itemize}
-  \item[] Case. Suppose $<<t>> = <<(t'3,t''3)>>$ and $<<t2>> = <<t'3>>$.  The former implies
-    that $<<t'>> = <<(t'4,t''4)>>$ because $<<G |- t1 <= t'1>>$ by assumption.  In addition,
-    by inversion for term precision we know $<<G |- t'3 <= t'4>>$ and $<<G |- t''3 <= t''4>>$.
-    Thus, $<<t'1 ~> t'4>>$. Thus, choose$<<t2'>> = <<t'4>>$ and the result follows.
+  \item $<<t'1>> = <<fst t'>>$ and $<<G |- t <= t'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \item $<<t1'>> = <<squash K t1>>$, $<<G |- t1 : K>>$, and $<<A>> = <<K>>$
+  \end{itemize}
+
+  We only consider the proof of part i, because the others follow similarly to
+  the previous case. Case split over $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case. Suppose $<<t>> = <<(t'3,t''3)>>$ and $<<t2>> = <<t'3>>$.  By inversion for term precision it must be the case
+    that $<<t'>> = <<(t'4,t''4)>>$ because $<<G |- t1 <= t'1>>$ or else $<<t1'>>$ would not be typable.  In addition,
+    this implies that $<<G |- t'3 <= t'4>>$ and $<<G |- t''3 <= t''4>>$.
+    Thus, $<<t'1 ~> t'4>>$. Thus, choose $<<t2'>> = <<t'4>>$ and the result follows.
 
   \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<fst t''>>$.
     This case will follow straightforwardly by induction and a case split over which congruence rule was used.
@@ -489,11 +534,18 @@ This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most inter
       }{<<G |- \x:A1.t : A1 -> A2>>}
     \end{math}
   \end{center}
-  In this case $<<t1>> = <<\x:A1.t>>$. Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
-  This implies that $<<t'1>> = <<\x:A'1.t'>>$.  The reduction relation does not reduce under
+  In this case $<<t1>> = <<\x:A1.t>>$ and $<<A>> = <<A1 -> A2>>$.
+  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then inversion of term precision implies that one of the following must hold:
+  \begin{itemize}
+  \item $<<t'1>> = <<\x:A'1.t'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \item $<<t1'>> = <<squash K t1>>$, $<<G |- t1 : K>>$, and $<<A>> = <<K>>$
+  \end{itemize}
+
+  We only consider the proof of part i. The reduction relation does not reduce under
   $\lambda$-expressions.  Hence, $<<t2>> = <<t1>>$, and thus, choose $<<t'2>> = <<t'1>>$, and
-  the case trivially follows.
-  
+  the case trivially follows.  
   
 \item[] Case.\ \\ 
   \begin{center}
@@ -505,23 +557,35 @@ This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most inter
     \end{math}
   \end{center}
   In this case $<<t1>> = <<t3 t4>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
-  This implies that $<<t'1>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
-  by inversion for term precision.
+  Then by inversion for term prevision we know one of the following is true:
+  \begin{enumR}
+  \item $<<t1'>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
+  \item $<<t'1>> = <<box A2 t1>>$ and $<<G |- t1 : A>>$
+  \item $<<t3>> = <<unbox A2>>$, $<<t'1>> = <<t4>>$, and $<<G |- t4 : ?>>$
+  \item $<<t3>> = <<split K2>>$, $<<t'1>> = <<t4>>$, and $<<G |- t4 : ?>>$
+  \item $<<t'1>> = <<squash K2 t1>>$ and $<<G |- t1 : K2>>$
+  \end{enumR}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$.
 
   We case split on the from of $<<t1 ~> t2>>$.
   \begin{itemize}
   \item[] Case.  Suppose $<<t3>> = <<\x:A1.t5>>$ and $<<t2>> = << [t4/x]t5>>$.
-    Then $<<t'3>> = <<\x:A1'.t'5>>$, because $<<G |- t3 <= t'3>>$. Choose $<<t'2>> = << [t'4/x]t'5>>$
+    Then by inversion for term precision we know that
+    $<<t'3>> = <<\x:A1'.t'5>>$ and $<<G, x : A2' |- t5 <= t'5>>$,
+    because $<<G |- t3 <= t'3>>$ and the requirement that $<<t1'>>$ is typable. Choose $<<t'2>> = << [t'4/x]t'5>>$
     and it is easy to see that $<<t'1 ~> [t'4/x]t'4>>$.
-    We know that $<<G, x : A2' |- t5 <= t'5>>$ (by inversion for term precision) and $<<G |- t4 <= t'4>>$, and hence,
+    We know that $<<G, x : A2' |- t5 <= t'5>>$ and $<<G |- t4 <= t'4>>$, and hence,
     by Lemma~\ref{lemma:substitution_for_term_precision} we know that
     $<<G |- [t4/x]t5 <= [t'4/x]t'5>>$, and we obtain our result.
-
+    
   \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box A t5>>$, and $<<t2>> = <<t5>>$.
-    Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box A t'5>>$.  Choose $<<t'2>> = <<t'5>>$ and
-    it is easy to see that $<<t'1 ~> t'5>>$.
-    By inversion for term precision we know that $<<G |- t5 <= t'5>>$ because we know
-    that $<<G |- t4 <= t'4>>$, and we obtain our result.
+    Then by inversion for term prevision $<<t'3>> = <<unbox A>>$, $<<t'4>> = <<box A t'5>>$, and $<<G |- t5 <= t'5>>$.
+    Note that $<<t'4>> = <<box A t'5>>$ and $<<G |- t5 <= t'5>>$ hold even though there are two potential rules
+    that could have been used to construct $<<G |- t4 <= t4'>>$. 
+    Choose $<<t'2>> = <<t'5>>$ and it is easy to see that $<<t'1 ~> t'5>>$.  Thus, we obtain our result.    
 
   \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box B t5>>$, $<<A != B>>$,
     and $<<t2>> = <<error B>>$.  Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box B t'5>>$.
@@ -538,6 +602,38 @@ This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most inter
     This case will follow straightforwardly by induction and a case split over which congruence rule was used.
   \end{itemize}
 
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.} We know that $<<t1>> = <<t3 t4>>$.  Suppose $<<t'1>> = <<box A2 t1>>$ and $<<G |- t1 : A>>$.
+  If $<<t1 ~> t2>>$, then $<<t'1>> = <<(box A2 t1) ~> (box A2 t2)>>$.  Thus, choose $<<t2'>> = <<box A2 t2>>$.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part iii.} We know that $<<t1>> = <<t3 t4>>$. Suppose
+  $<<t3>> = <<unbox A2>>$, $<<t'1>> = <<t4>>$, and $<<G |- t4 : ?>>$.  Then $<<t1>> = <<unbox A2 t4>>$.  We
+  case split over $<<t1 ~> t2>>$.  We have three cases to consider.
+
+  \ \\
+  \noindent
+  Suppose $<<t4>> = <<box A2 t5>>$ and $<<t2>> = <<t5>>$.  Then choose $<<t2'>> = <<t4>> = <<t'1>>$, and we
+  obtain our result.
+
+  \ \\
+  \noindent
+  Suppose $<<t4>> = <<box A3 t5>>$, $<<A2>> \neq <<A3>>$, and $<<t2>> = <<error A2>>$. Then choose $<<t2'>> = <<t4>> = <<t'1>>$,
+  and we obtain our result.
+
+  \ \\
+  \noindent
+  Suppose a congruence rule was used.  Then $<<t2>> = <<t3 t'4>>$. This case will follow straightforwardly by induction.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part iv.} Similar to part iii.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part v.} Similar to part ii.
 
 \item[] Case.\ \\ 
   \begin{center}
@@ -549,14 +645,19 @@ This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the most inter
     \end{math}
   \end{center}
   In this case $<<t1>> = << [A1]t>>$ and $<<A>> = << [A1/X]A3>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
-  This implies that $<<t'1>> = << [A1']t'>>$, $<<G |- t <= t'>>$, and $<<A1 <= A1'>>$
-  by inversion for term precision.  
-
-  We case split over the form of $<<t1 ~> t2>>$.
   \begin{itemize}
-  \item[] Case. Suppose $<<t>> = <<Lam X <: A2.t3>>$ and $<<t2>> = << [A1/X]t3>>$.  Then we know
-    that $<<t'>> = <<Lam X <: A2.t'3>>$ and by inversion for term precision that
-    $<<G, X <: A2 |- t3 <= t3'>>$, because we know $<<G |- t <= t'>>$, and by substitution for term precision
+  \item $<<t'1>> = << [A1']t'>>$, $<<G |- t <= t'>>$, and $<<A1 <= A1'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \item $<<t1'>> = <<squash K t1>>$, $<<G |- t1 : K>>$, and $<<A>> = <<K>>$
+  \end{itemize}  
+  
+  We only consider the proof of part i.  We case split over the form of $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case. Suppose $<<t>> = <<Lam X <: A2.t3>>$ and $<<t2>> = << [A1/X]t3>>$.
+    Then inversion for term precision on $<<G |- t <= t'>>$ and the fact that $<<G |- t : Forall (X<:A2).A3>>$
+    and $<<t1'>> = << [A1']t'>>$ then it can only be the case that 
+    $<<t'>> = <<Lam X <: A2.t'3>>$ and $<<G, X <: A2 |- t3 <= t3'>>$, or $<<t1'>>$ would not be typable
+    which is a contradiction.  Then by substitution for term precision
     we know that $<<G |- [A1/X]t3 <= [A1'/X]t3'>>$ by substitution for term precision
     (Lemma~\ref{lemma:substitution_for_term_precision}), because we know that $<<A1 <= A1'>>$.  Choose
     $<<t'2>> = << [A1'/X]t3'>>$ and the result follows, because $<<t'1 ~> t'2>>$.

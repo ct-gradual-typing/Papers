@@ -44,6 +44,7 @@
   \cite{Siek:2006}, and \cite{Siek:2015}.
 \end{proof}
 
+
 \renewcommand{\SGradydrulePXXUName}{[[?]]}
 \renewcommand{\SGradydrulePXXreflName}{\text{refl}}
 \renewcommand{\SGradydrulePXXarrowName}{\to}
@@ -120,10 +121,19 @@
   for the complete proof.
 \end{proof}
 
+\begin{lemma}[Type Preservation]
+  \label{lemma:type_preservation}
+  If $<<G |- t1 : A>>$ and $<<t1 ~> t2>>$, then $<<G |- t2 : A>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $<<G |- t1 : A>>$ with further case
+  analysis on the structure the derivation $<<t1 ~> t2>>$.
+\end{proof}
+
 \begin{lemma}[Simulation of More Precise Programs]
   \label{lemma:simulation_of_more_precise_programs}
-  Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, and $<<t1 ~> t2>>$.
-  Then $<<t1' ~> t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
+  Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, $<<G |- t'1 : A'>>$, and $<<t1 ~> t2>>$.
+  Then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
 \end{lemma}
 \begin{proof}
   This proof holds by induction on $<<G |- t1 : A1>>$.  See
@@ -136,17 +146,33 @@
   \begin{enumR}
   \item[] 
   \item If $[[. |- t : A]]$ and $[[t <= t']]$, then $[[. |- t' : B]]$ and $[[A <= B]]$.
-  \item Suppose $<<. |- t : A>>$ and $<<G |- t <= t'>>$. Then
-  \begin{enumerate}[label=\alph*.]
-  \item if $<<t ~>* v>>$, then $<<t' ~>* v'>>$ and $<<G |- v <= v'>>$,
-  \item if $<<t ^>>$, then $<<t' ^>>$,
-  \item if $<<t' ~>* v'>>$, then $<<t ~>* v>>$ where $<<G |- v <= v'>>$, or $<<t ~>* error A>>$, and
-  \item if $<<t' ^>>$, then $<<t ^>>$ or $<<t ~>* error A>>$.
-  \end{enumerate}
+  \item Suppose $<<. |- t : A>>$ and $<<. |- t <= t'>>$. Then
+    \begin{enumA}
+    \item if $<<t ~>* v>>$, then $<<t' ~>* v'>>$ and $<<. |- v <= v'>>$,
+    \item if $<<t ^>>$, then $<<t' ^>>$,
+    \item if $<<t' ~>* v'>>$, then $<<t ~>* v>>$ where $<<. |- v <= v'>>$, or $<<t ~>* error A>>$, and
+    \item if $<<t' ^>>$, then $<<t ^>>$ or $<<t ~>* error A>>$.
+    \end{enumA}
   \end{enumR}
 \end{theorem}
 \begin{proof}
-  Part one holds by Lemma~\ref{lemma:gradual_guarantee_part_one}.
+  Part i. holds by Lemma~\ref{lemma:gradual_guarantee_part_one}.
+
+ \ \\
+ \noindent
+ Part i.a. follows from simulation for more precise programs
+ (Lemma~\ref{lemma:simulation_of_more_precise_programs}), because this
+ result shows that the evaluation of $<<t>>$ and $<<t'>>$ are in lock
+ step, and hence, if $<<t>>$ hits a value, then we know that $<<t'>>$
+ terminates, but it will also terminate at a value instead of
+ $<<error>>$ by the definition of term precision.
+ 
+ \ \\
+ \noindent
+ Part i.b. follows from simulation for more precise programs
+ (Lemma~\ref{lemma:simulation_of_more_precise_programs}), because
+ this result shows that the evaluation of $<<t>>$ and $<<t'>>$ are in
+ lock step, and hence, if $<<t>>$ diverges, then so does $<<t'>>$.
 \end{proof}
 
 %%% Local Variables: ***
