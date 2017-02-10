@@ -156,23 +156,11 @@
   \end{enumR}
 \end{theorem}
 \begin{proof}
-  Part i. holds by Lemma~\ref{lemma:gradual_guarantee_part_one}.
-
- \ \\
- \noindent
- Part i.a. follows from simulation for more precise programs
- (Lemma~\ref{lemma:simulation_of_more_precise_programs}), because this
- result shows that the evaluation of $<<t>>$ and $<<t'>>$ are in lock
- step, and hence, if $<<t>>$ hits a value, then we know that $<<t'>>$
- terminates, but it will also terminate at a value instead of
- $<<error>>$ by the definition of term precision.
- 
- \ \\
- \noindent
- Part i.b. follows from simulation for more precise programs
- (Lemma~\ref{lemma:simulation_of_more_precise_programs}), because
- this result shows that the evaluation of $<<t>>$ and $<<t'>>$ are in
- lock step, and hence, if $<<t>>$ diverges, then so does $<<t'>>$.
+  This result follows from the same proof as \cite{Siek:2015}, and so,
+  we only give a brief summary.  Part i. holds by
+  Lemma~\ref{lemma:gradual_guarantee_part_one}, and Part ii. follows
+  from simulation of more precise programs
+  (Lemma~\ref{lemma:simulation_of_more_precise_programs}).
 \end{proof}
 
 %%% Local Variables: ***

@@ -385,4 +385,181 @@
 \end{lemma}
 
 
+\begin{lemma}[Inversion for Term Precision for Core Grady]
+  \label{lemma:inversion_for_term_precision_for_core_grady}
+  Suppose $<<G |- t1 <= t2>>$.
+  \begin{enumR}
+  \item[]
+  \item If $<<t1>> = <<x>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<x>>$, $<<x : A elem G>>$, and $<<G Ok>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<split K1>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<split K2>>$ and $<<K1 <= K2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<squash K1>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<squash K2>>$ and $<<K1 <= K2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<box>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<box>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<unbox>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<unbox>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<0>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<0>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<triv>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<triv>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<[]>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<[]>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<succ t1'>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<succ t2'>>$ and $<<G |- t1' <= t'2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<case t1' : Nat of 0 -> t'2, (succ x) -> t'3>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<case t'4 : Nat of 0 -> t'5, (succ x) -> t'6>>$,
+      $<<G |- t'1 <= t'4>>$, $<<G |- t'2 <= t'5>>$, and $<<G, x : Nat |- t'3 <= t'6>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<(t'1,t'2)>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<(t'3,t'4)>>$, $<<G |- t'1 <= t'3>>$, and $<<G |- t'2 <= t'4>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<fst t1'>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<fst t2'>>$ and $<<G |- t'1 <= t'2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<snd t'1>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<snd t'2>>$ and $<<G |- t'1 <= t'2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<t'1 :: t'2>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<t'3 :: t'4>>$, $<<G |- t'1 <= t'3>>$, and $<<G |- t'2 <= t'4>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<case t'1 : List A1 of [] -> t'2, (x::y) -> t'3>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<case t'4 : List A2 of [] -> t'5, (x::y) -> t'6>>$,
+      $<<G |- t'1 <= t'4>>$, $<<G |- t'2 <= t'5>>$, and $<<G, x : A2, y : List A2 |- t'3 <= t'6>>$,
+      and $<<A1 <= A2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<\x:A1.t1>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<\x:A2.t2>>$ and $<<G, x : A2 |- t1 <= t2>>$ and $<<A1 <= A2>>$      
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<t1' t'2>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<t3' t4'>>$, $<<G |- t3 <= t3'>>$, and $<<G |- t4 <= t4'>>$
+    \item $<<t1'>> = <<unbox A>>$ and $<<t2>> = <<t'2>>$
+    \item $<<t1'>> = <<split K>>$ and $<<t2>> = <<t'2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+    
+  \item If $<<t1>> = <<unbox A t1'>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<t1'>>$ and $<<G |- t1' : ?>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<split K t1'>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<t1'>>$ and $<<G |- t1' : K>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<Lam X <:A . t1'>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<Lam X <: A.t2'>>$ and $<<G, X <: A2 |- t'1 <= t'2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = << [A1]t1'>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = << [A2]t2'>>$, $<<G |- t1' <= t'2>>$, and $<<A1 <= A2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+
+  \item If $<<t1>> = <<error A1>>$,
+    then one of the following is true:
+    \begin{enumA}
+    \item $<<G |- t2 : A2>>$ and $<<A1 <= A2>>$
+    \item $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+    \item $<<t2>> = <<squash K t1>>$ and $<<G |- t1 : K>>$
+    \end{enumA}
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  The proof of this result holds by straightforward induction
+  on $<<G |- t1 <= t2>>$.
+\end{proof}
 % subsection auxiliary_results_with_proofs (end)
