@@ -191,6 +191,24 @@ typeCheck_aux (CFst t) ty = do
     return $ ATFst aty1 aty 
    else
     TE.throwError $ TE.FstTypeError ty
+typeCheck_aux (CSnd t) ty = do
+  aty <- inferType t
+  (aty1, aty2) <- requireProd aty
+  if(aty2 `aeq` ty)
+   then 
+    return $ ATFst aty2 aty 
+   else
+    TE.throwError $ TE.SndTypeError ty
+typeCheck_aux (CNCase t1 t2 b) ty= do
+  at1 <- typeCheck_aux t1 ty
+  at2 <- inferType t2
+  lunbind b $ (\(x,t) -> do
+    at <- inferType t
+    if(at2 `aeq` at)
+     then if(t1 `aeq` CZero)
+            then return $ ATNCase ty at1 at2 $ bind x at
+            else TE.throwError $ TE.NCaseBranchesMistype (getType at1) Nat
+     else TE.throwError $ TE.NCaseBranchesMistype (getType at2) (getType at))
 typeCheck_aux t@(CPair _ _) ty = TE.throwError $ TE.CoreNotProdTypeTerm t ty
 typeCheck_aux CEmpty ty@(List a) = return $ ATEmpty ty
 typeCheck_aux CEmpty ty = TE.throwError $ TE.EmptyTypeError ty
