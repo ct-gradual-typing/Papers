@@ -179,10 +179,6 @@ typeCheck_aux (CVar x) ty = do
              reqSameType found ty
              return $ ATVar found (translate x)
     Nothing -> TE.throwError $ TE.CoreFreeVarsError x
-typeCheck_aux (CPair t1 t2) ty@(Prod ty1 ty2) = do
-  a1 <- typeCheck_aux t1 ty1
-  a2 <- typeCheck_aux t2 ty2
-  return $ ATPair ty a1 a2
 typeCheck_aux (CFst t) ty = do
   aty <- inferType t
   (aty1, aty2) <- requireProd aty
@@ -209,6 +205,10 @@ typeCheck_aux (CNCase t1 t2 b) ty= do
             then return $ ATNCase ty at1 at2 $ bind x at
             else TE.throwError $ TE.NCaseBranchesMistype (getType at1) Nat
      else TE.throwError $ TE.NCaseBranchesMistype (getType at2) (getType at))
+typeCheck_aux (CPair t1 t2) ty@(Prod ty1 ty2) = do
+  a1 <- typeCheck_aux t1 ty1
+  a2 <- typeCheck_aux t2 ty2
+  return $ ATPair ty a1 a2
 typeCheck_aux t@(CPair _ _) ty = TE.throwError $ TE.CoreNotProdTypeTerm t ty
 typeCheck_aux CEmpty ty@(List a) = return $ ATEmpty ty
 typeCheck_aux CEmpty ty = TE.throwError $ TE.EmptyTypeError ty
@@ -253,7 +253,10 @@ typeCheck_aux (CApp t1 t2) ty = do
     return $ ATApp ty2 at1 at2
   else
     TE.throwError $ TE.AppTypeError ty ty2
-  
+typeCheck_aux (CTApp ty t) ty'@(Forall ty1 b) = do             -- TODO: Not sure how????
+  _                       
+  undefined
+typeCheck_aux (CTApp _ t) ty = TE.throwError $ TE.CoreNotForallTypeTerm t ty   
 typeCheck_aux (CBox s) ty@(Arr t U) | s `aeq` t = do
   b <- s `subtype` Simple
   if b
