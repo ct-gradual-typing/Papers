@@ -37,14 +37,14 @@ evalCTerm' (CNCase t t1 b) = lunbind b $ (\(x,t2) ->
         CSucc e' -> evalCTerm' $ subst x e' t2
         _ -> return $ CNCase e t1 (bind x t2))
 
-evalCTerm' (CLCase t t1 b) =    
+evalCTerm' (CLCase t ty t1 b) =    
            do e <- evalCTerm' t
               case e of
                 CEmpty -> evalCTerm' t1
                 CCons e' et ->
                     lunbind b  $ (\(x,b') ->
                     lunbind b' $ (\(y,t2) -> evalCTerm' $ subst x e' $ subst y et t2))
-                _ -> return $ CLCase e t1 b
+                _ -> return $ CLCase e ty t1 b
 
 evalCTerm' (CCons h t) = do
   e <- evalCTerm' h

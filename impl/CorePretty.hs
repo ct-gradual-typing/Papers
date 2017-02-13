@@ -83,14 +83,15 @@ prettyCTerm t@(CCons _ _) = do
          s' <- prettyCTerm t'
          return $ s ++ "," ++ s'
    consToList t = prettyCTerm t
-prettyCTerm (CLCase t t1 b) = do
+prettyCTerm (CLCase t ty t1 b) = do
   s <- prettyCTerm t
   s1 <- prettyCTerm t1
   lunbind b $ (\(x,b') ->
      lunbind b' $ (\(y,t2) ->
    do
      s2 <- prettyCTerm t2
-     return $ "lcase "++s++" of "++s1++" || "++(n2s x)++","++(n2s y)++"."++s2))
+     s3 <- prettyType ty
+     return $ "lcase "++s++" with type "++s3++" of "++s1++"|| "++(n2s x)++","++(n2s y)++"."++s2))
 prettyCTerm (CFun ty b) = do
   tyS <- prettyType ty
   lunbind b $ (\(x,t) -> do           

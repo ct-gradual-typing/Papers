@@ -39,7 +39,7 @@ data CTerm =
  | CNCase CTerm CTerm (Bind CVnm CTerm)             -- Natural number eliminator
  | CEmpty                                           -- Empty list
  | CCons CTerm CTerm                                -- Cons
- | CLCase CTerm CTerm (Bind CVnm (Bind CVnm CTerm)) -- List Eliminator
+ | CLCase CTerm Type CTerm (Bind CVnm (Bind CVnm CTerm)) -- List Eliminator
  deriving Show
  
 $(derive [''CTerm])

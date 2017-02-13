@@ -204,6 +204,9 @@ lcaseParse t = do
   symbol "->"
   t1 <- expr 
   ws
+  symbol "<"
+  ty <- typeParser
+  symbol">"
   symbol ","
   symbol "("
   hv <- varName
@@ -214,7 +217,7 @@ lcaseParse t = do
   symbol ")"
   symbol "->"
   t2 <- expr
-  return $ CLCase t t1 (bind hv (bind tv t2))
+  return $ CLCase t ty t1 (bind hv (bind tv t2))
 
 pairParse = do
   t1 <- expr

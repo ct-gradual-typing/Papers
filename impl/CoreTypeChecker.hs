@@ -296,10 +296,9 @@ inferType (CCons h t) = do
   at <- typeCheck_aux t (List hty)
   return $ ATCons (List hty) ah at
 
-inferType (CLCase t t1 b) = do    
+inferType (CLCase t ty t1 b) = do    
       at <- inferType t
-      let tty = getType at
-      case tty of
+      case ty of
         List ety -> do
           at1 <- inferType t1
           let ty1 = getType at1
@@ -307,7 +306,7 @@ inferType (CLCase t t1 b) = do
             extend_ctx x ety $ extend_ctx y (List ety) $ do
                       at2 <- typeCheck_aux t2 ty1
                       return $ ATLCase ty1 at at1 (bind x (bind y at2))))
-        _ -> TE.throwError $ TE.CoreLCaseScrutinyTypeError t tty
+        _ -> TE.throwError $ TE.CoreLCaseScrutinyTypeError t ty
 
 inferType (CBox ty) = do
              b <- ty `subtype` Simple
