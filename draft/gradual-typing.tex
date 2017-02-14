@@ -35,18 +35,12 @@ terms like $[[\x:(? x ?).(succ (fst x))]]$ to type check.
 \renewcommand{\SLGradydrulevarName}[0]{\text{var}}
 \renewcommand{\SLGradydruleunitName}[0]{\text{unit}}
 \renewcommand{\SLGradydrulezeroName}[0]{\text{zero}}
-\renewcommand{\SLGradydrulesuccName}[0]{\text{succ}}
+\renewcommand{\SLGradydrulesuccSName}[0]{\text{succ}}
 \renewcommand{\SLGradydrulepairName}[0]{\times}
-\renewcommand{\SLGradydrulefstName}[0]{\times_{e_1}}
-\renewcommand{\SLGradydrulesndName}[0]{\times_{e_2}}
-\renewcommand{\SLGradydrulefstCName}[0]{\times_{e_1}}
-\renewcommand{\SLGradydrulesndCName}[0]{\times_{e_2}}
 \renewcommand{\SLGradydrulelamName}[0]{\to}
-\renewcommand{\SLGradydrulesndUName}[0]{\times^?_{e_2}}
-\renewcommand{\SLGradydrulefstUName}[0]{\times^?_{e_1}}
-\renewcommand{\SLGradydrulesuccUName}[0]{\text{succ}^?}
-\renewcommand{\SLGradydruleappCName}[0]{\to_e}
-\renewcommand{\SLGradydruleappUName}[0]{\to_e^?}
+\renewcommand{\SLGradydrulesndSName}[0]{\times_{e_2}}
+\renewcommand{\SLGradydrulefstSName}[0]{\times_{e_1}}
+\renewcommand{\SLGradydruleappSName}[0]{\to_e}
 \begin{figure}  
   \begin{mdframed}
     \small
@@ -54,16 +48,12 @@ terms like $[[\x:(? x ?).(succ (fst x))]]$ to type check.
       \SLGradydrulevar{} \and
       \SLGradydruleunit{} \and
       \SLGradydrulezero{} \and
-      \SLGradydrulesucc{} \and
+      \SLGradydrulesuccS{} \and
       \SLGradydrulepair{} \and
-      \SLGradydrulefstC{} \and
-      \SLGradydrulesndC{} \and
+      \SLGradydrulefstS{} \and
+      \SLGradydrulesndS{} \and
       \SLGradydrulelam{} \and
-      \SLGradydruleappC{} \and      
-      \SLGradydrulesuccU{} \and
-      \SLGradydrulefstU{} \and
-      \SLGradydrulesndU{} \and
-      \SLGradydruleappU{}       
+      \SLGradydruleappS{}     
     \end{mathpar}
   \end{mdframed}
   \caption{Typing rules for $\lambda^?_\to$}
@@ -134,47 +124,42 @@ Figure~\ref{fig:annotated-reduction}.
   \caption{Typing rules for $\lambda^{\langle [[A]] \rangle}_\to$}
   \label{fig:annotated-typing}
 \end{figure}
-\renewcommand{\SLGradydrulerdAXXvaluesName}[0]{\text{value}}
-\renewcommand{\SLGradydrulerdAXXcastAName}[0]{\text{value-cast}}
-\renewcommand{\SLGradydrulerdAXXcastNatName}[0]{[[Nat]]\text{-cast}}
-\renewcommand{\SLGradydrulerdAXXcastArrowName}[0]{\to\hspace{-2.5px}\text{-cast}}
-\renewcommand{\SLGradydrulerdAXXcastPairName}[0]{\times\hspace{-1px}\text{-cast}}
-\renewcommand{\SLGradydrulerdAXXcastName}[0]{\text{cast}}
-\renewcommand{\SLGradydrulerdAXXbetaName}[0]{\beta}
-\renewcommand{\SLGradydrulerdAXXetaName}[0]{\eta}
-\renewcommand{\SLGradydrulerdAXXlamName}[0]{\to}
-\renewcommand{\SLGradydrulerdAXXappOneName}[0]{\to_{e_1}}
-\renewcommand{\SLGradydrulerdAXXappTwoName}[0]{\to_{e_2}}
-\renewcommand{\SLGradydrulerdAXXfstName}[0]{\times_{e_1}}
-\renewcommand{\SLGradydrulerdAXXsndName}[0]{\times_{e_2}}
-\renewcommand{\SLGradydrulerdAXXetaPName}[0]{\times_\eta}
-\renewcommand{\SLGradydrulerdAXXpairOneName}[0]{\times_1}
-\renewcommand{\SLGradydrulerdAXXpairTwoName}[0]{\times_2}
-\begin{figure}
-  \begin{mdframed}
-    \small
-    \begin{mathpar}
-      \SLGradydrulerdAXXvalues{} \and
-      \SLGradydrulerdAXXcastA{} \and
-      \SLGradydrulerdAXXcastNat{} \and
-      \SLGradydrulerdAXXcastArrow{} \and
-      \SLGradydrulerdAXXcastPair{} \and
-      \SLGradydrulerdAXXcast{} \and
-      \SLGradydrulerdAXXbeta{} \and
-      \SLGradydrulerdAXXeta{} \and
-      \SLGradydrulerdAXXlam{} \and
-      \SLGradydrulerdAXXappOne{} \and
-      \SLGradydrulerdAXXappTwo{} \and
-      \SLGradydrulerdAXXfst{} \and
-      \SLGradydrulerdAXXsnd{} \and
-      \SLGradydrulerdAXXetaP{} \and
-      \SLGradydrulerdAXXpairOne{} \and
-      \SLGradydrulerdAXXpairTwo{}      
-    \end{mathpar}
-  \end{mdframed}
-  \caption{Reduction rules for $\lambda^{\langle [[A]] \rangle}_\to$}
-  \label{fig:annotated-reduction}
-\end{figure}
+%% \renewcommand{\SLGradydrulerdAXXvaluesName}[0]{\text{value}}
+%% \renewcommand{\SLGradydrulerdAXXbetaName}[0]{\beta}
+%% \renewcommand{\SLGradydrulerdAXXetaName}[0]{\eta}
+%% \renewcommand{\SLGradydrulerdAXXlamName}[0]{\to}
+%% \renewcommand{\SLGradydrulerdAXXappOneName}[0]{\to_{e_1}}
+%% \renewcommand{\SLGradydrulerdAXXappTwoName}[0]{\to_{e_2}}
+%% \renewcommand{\SLGradydrulerdAXXfstName}[0]{\times_{e_1}}
+%% \renewcommand{\SLGradydrulerdAXXsndName}[0]{\times_{e_2}}
+%% \renewcommand{\SLGradydrulerdAXXetaPName}[0]{\times_\eta}
+%% \renewcommand{\SLGradydrulerdAXXpairOneName}[0]{\times_1}
+%% \renewcommand{\SLGradydrulerdAXXpairTwoName}[0]{\times_2}
+%% \begin{figure}
+%%   \begin{mdframed}
+%%     \small
+%%     \begin{mathpar}
+%%       \SLGradydrulerdAXXvalues{} \and
+%%       %% \SLGradydrulerdAXXcastA{} \and
+%%       %% \SLGradydrulerdAXXcastNat{} \and
+%%       %% \SLGradydrulerdAXXcastArrow{} \and
+%%       %% \SLGradydrulerdAXXcastPair{} \and
+%%       %% \SLGradydrulerdAXXcast{} \and
+%%       \SLGradydrulerdAXXbeta{} \and
+%%       \SLGradydrulerdAXXeta{} \and
+%%       \SLGradydrulerdAXXlam{} \and
+%%       \SLGradydrulerdAXXappOne{} \and
+%%       \SLGradydrulerdAXXappTwo{} \and
+%%       \SLGradydrulerdAXXfst{} \and
+%%       \SLGradydrulerdAXXsnd{} \and
+%%       \SLGradydrulerdAXXetaP{} \and
+%%       \SLGradydrulerdAXXpairOne{} \and
+%%       \SLGradydrulerdAXXpairTwo{}      
+%%     \end{mathpar}
+%%   \end{mdframed}
+%%   \caption{Reduction rules for $\lambda^{\langle [[A]] \rangle}_\to$}
+%%   \label{fig:annotated-reduction}
+%% \end{figure}
 
 The major difference from the formalization of $\lambda^{\langle [[A]]
   \rangle}$ given here and Siek and Taha's is that it is single step
@@ -193,46 +178,42 @@ Since the formalization of both $\lambda^?_\to$ and $\lambda^{\langle
 definition of cast insertion in Figure~\ref{fig:cast-insert}, but this
 is only a slightly modified version from the one given by Siek and
 Taha.
-\renewcommand{\SLGradydruleciXXvarName}[0]{\text{var}}
-\renewcommand{\SLGradydruleciXXzeroName}[0]{\text{zero}}
-\renewcommand{\SLGradydruleciXXtrivName}[0]{\text{unit}}
-\renewcommand{\SLGradydruleciXXsuccName}[0]{\text{succ}}
-\renewcommand{\SLGradydruleciXXpairName}[0]{\times}
-\renewcommand{\SLGradydruleciXXfstOneName}[0]{\times^\sim_{e_1}}
-\renewcommand{\SLGradydruleciXXfstTwoName}[0]{\times_{e_1}}
-\renewcommand{\SLGradydruleciXXsndOneName}[0]{\times^\sim_{e_2}}
-\renewcommand{\SLGradydruleciXXsndTwoName}[0]{\times_{e_2}}
-\renewcommand{\SLGradydruleciXXlamName}[0]{\to}
-\renewcommand{\SLGradydruleciXXappOneName}[0]{\to^?_e}
-\renewcommand{\SLGradydruleciXXappTwoName}[0]{\to^\sim_e}
-\renewcommand{\SLGradydruleciXXappThreeName}[0]{\to_e}
-\renewcommand{\SLGradydruleciXXsuccUName}[0]{\text{succ}^?}
-\renewcommand{\SLGradydruleciXXfstUName}[0]{\times^?_{e_1}}
-\renewcommand{\SLGradydruleciXXsndUName}[0]{\times^?_{e_2}}
-\begin{figure}
-  \begin{mdframed}
-    \begin{mathpar}
-      \SLGradydruleciXXvar{} \and
-      \SLGradydruleciXXzero{} \and
-      \SLGradydruleciXXtriv{} \and
-      \SLGradydruleciXXsucc{} \and
-      \SLGradydruleciXXsuccU{} \and      
-      \SLGradydruleciXXpair{} \and
-      \SLGradydruleciXXfstOne{} \and
-      \SLGradydruleciXXfstTwo{} \and
-      \SLGradydruleciXXsndOne{} \and
-      \SLGradydruleciXXsndTwo{} \and
-      \SLGradydruleciXXfstU{} \and
-      \SLGradydruleciXXsndU{} \and      
-      \SLGradydruleciXXlam{} \and
-      \SLGradydruleciXXappOne{} \and
-      \SLGradydruleciXXappTwo{} \and
-      \SLGradydruleciXXappThree{}       
-    \end{mathpar}
-  \end{mdframed}
-  \caption{Cast Insertion}
-  \label{fig:cast-insert}
-\end{figure}
+%% \renewcommand{\SLGradydruleciXXvarName}[0]{\text{var}}
+%% \renewcommand{\SLGradydruleciXXzeroName}[0]{\text{zero}}
+%% \renewcommand{\SLGradydruleciXXtrivName}[0]{\text{unit}}
+%% \renewcommand{\SLGradydruleciXXsuccOneName}[0]{\text{succ}}
+%% \renewcommand{\SLGradydruleciXXsuccTwoName}[0]{\text{succ}^?}
+%% \renewcommand{\SLGradydruleciXXpairName}[0]{\times}
+%% \renewcommand{\SLGradydruleciXXfstOneName}[0]{\times^\sim_{e_1}}
+%% \renewcommand{\SLGradydruleciXXfstTwoName}[0]{\times_{e_1}}
+%% \renewcommand{\SLGradydruleciXXsndOneName}[0]{\times^\sim_{e_2}}
+%% \renewcommand{\SLGradydruleciXXsndTwoName}[0]{\times_{e_2}}
+%% \renewcommand{\SLGradydruleciXXlamName}[0]{\to}
+%% \renewcommand{\SLGradydruleciXXappOneName}[0]{\to^?_e}
+%% \renewcommand{\SLGradydruleciXXappTwoName}[0]{\to^\sim_e}
+%% \renewcommand{\SLGradydruleciXXappThreeName}[0]{\to_e}
+%% \begin{figure}
+%%   \begin{mdframed}
+%%     \begin{mathpar}
+%%       \SLGradydruleciXXvar{} \and
+%%       \SLGradydruleciXXzero{} \and
+%%       \SLGradydruleciXXtriv{} \and
+%%       \SLGradydruleciXXsuccOne{} \and
+%%       \SLGradydruleciXXsuccTwo{} \and      
+%%       \SLGradydruleciXXpair{} \and
+%%       \SLGradydruleciXXfstOne{} \and
+%%       \SLGradydruleciXXfstTwo{} \and
+%%       \SLGradydruleciXXsndOne{} \and
+%%       \SLGradydruleciXXsndTwo{} \and
+%%       \SLGradydruleciXXlam{} \and
+%%       \SLGradydruleciXXappOne{} \and
+%%       \SLGradydruleciXXappTwo{} \and
+%%       \SLGradydruleciXXappThree{}       
+%%     \end{mathpar}
+%%   \end{mdframed}
+%%   \caption{Cast Insertion}
+%%   \label{fig:cast-insert}
+%% \end{figure}
 
 
 %%% Local Variables: ***

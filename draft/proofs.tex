@@ -155,9 +155,8 @@ This is a proof by induction on the form of $[[A ~ B]]$.
 
 \subsection{Proof of Interpretation of Types Theorem~\ref{thm:interpretation_of_typing}}
 \label{subsec:proof_of_interpretation_of_types}
-This is a proof by induction on $[[G |- t : A]]$.  First, we show
-how to interpret the rules of $\lambda^?_\to$, and then
-$\lambda^{\langle [[A]] \rangle}_\to$.
+This is a proof by induction on $[[G |- t : A]]$.  First, we show how
+to interpret the rules of $\lambda^?_\to$, and then $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \begin{itemize} 
 \item[] Case.
@@ -190,11 +189,9 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \SLGradydrulesucc{}
+  \SLGradydrulesuccS{}
   \]
-  By the induction hypothesis there is a morphism \\ $[[ [| t |] ]] : [[ [| G |] --> Nat]]$.  Then
-  take $[[ [| succ t |] ]] = [[ [| t |] ]];[[succ]] : [[ [| G |] --> Nat ]]$, where
-  $[[succ]] : [[Nat --> Nat]]$ exists because $\cat{C}$ has a SNNO.
+  
   
 \item[] Case.
   \[
@@ -207,23 +204,15 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \SLGradydrulefstC{}
+  \SLGradydrulefstS{}
   \]
-  By the induction hypothesis there is a morphism \\ $[[ [| t |] ]] :
-  [[ [| G |] --> H(A1 x B) ]]$, and by type consistency in the model
-  (Lemma~\ref{lemma:type_consistency_in_the_model}) there exists a
-  casting morphism $c_1 : [[A1 --> A2]]$.
-  Finally, take $[[ [| fst t |] ]] = [[ [| t |] ]];\pi_1;c_1 : [[ [| G |] --> A2]]$.
+  TODO
 
 \item[] Case.
   \[
-  \SLGradydrulesndC{}
+  \SLGradydrulesndS{}
   \]
-  By the induction hypothesis there is a morphism \\ $[[ [| t |] ]] :
-  [[ [| G |] --> H(A x B1) ]]$, and by type consistency in the model
-  (Lemma~\ref{lemma:type_consistency_in_the_model}) there exists a
-  casting morphism $c_1 : [[B1 --> B2]]$.
-  Finally, take $[[ [| snd t |] ]] = [[ [| t |] ]];\pi_2;c_1 : [[ [| G |] --> B2]]$.
+  TODO
 
 \item[] Case.
   \[
@@ -237,54 +226,10 @@ $\lambda^{\langle [[A]] \rangle}_\to$.
 
 \item[] Case.
   \[
-  \SLGradydruleappC{}
+  \SLGradydruleappS{}
   \]
-  By two applications of the induction hypothesis there are
-  morphisms $[[ [| t1 |] ]] : [[ [| G |] --> (A1 -> B)]]$ and $[[ [|
-        t2 |] ]] : [[ [| G |] --> A2]]$, and by type consistency in the model
-  (Lemma~\ref{lemma:type_consistency_in_the_model}) there exists a
-  casting morphism $c_2 : [[A2 --> A1]]$.
-  Then take $[[ [| t1 t2 |] ]] = \langle [[ [| t1 |] ]] , [[ [| t2 |] ]];c_1 \rangle ; \app_{[[A]],[[B]]} : [[ [| G |] --> B]]$.
-  The morphism $\app_{[[A]],[[B]]} : [[ H((A -> B) x A) --> B]]$ exists because $\cat{C}$ is closed.
+  TODO
   
-\item[] Case.
-  \[
-  \SLGradydrulesuccU{}
-  \]
-  By the induction hypothesis there is a morphism $[[ [| t |] ]] :
-  [[ [| G |] --> ?]]$.  In addition, we know that $[[? ~ Nat]]$
-  always holds, and its casing morphisms are $[[unbox Nat]] : [[? -->
-      Nat]]$ and $[[box Nat]] : [[Nat --> ?]]$.
-  Thus, take $[[ [| succ t |] ]] = [[ [| t |] ]];[[unbox Nat]];[[succ]];[[box Nat]]$.
-
-\item[] Case.
-  \[
-  \SLGradydrulefstU{}
-  \]
-  By the induction hypothesis there is a morphism $[[ [| t |] ]] :
-  [[ [| G |] --> ?]]$.  In addition, we know that $[[? ~ ? x ?]]$, and its casting morphisms are
-  $[[split ? x ?]] : [[? --> H(? x ?)]]$ and $[[squash ? x ? : H(? x ?) --> ?]]$.
-  Then take $[[ [| fst t |] ]] = [[ [| t |] ]];[[split ? x ?]];\pi_1 : [[ [| G |] --> ?]]$.
-  
-\item[] Case.
-  \[
-  \SLGradydrulesndU{}
-  \]
-  By the induction hypothesis there is a morphism $[[ [| t |] ]] :
-  [[ [| G |] --> ?]]$.  In addition, we know that $[[? ~ ? x ?]]$, and its casting morphisms are
-  $[[split ? x ?]] : [[? --> H(? x ?)]]$ and $[[squash ? x ? : H(? x ?) --> ?]]$.
-  Then take $[[ [| snd t |] ]] = [[ [| t |] ]];[[split ? x ?]];\pi_2 : [[ [| G |] --> ?]]$.    
-  
-\item[] Case.
-  \[
-  \SLGradydruleappU{}
-  \]
-  By the induction hypothesis there are morphisms $[[ [| t1 |] ]] : [[ [| G |] --> ?]]$
-  and $[[ [| t2 |] ]] : [[ [| G |] --> A]]$.  In addition, we know that $[[? ~ ? -> ?]]$ and $[[? ~ A]]$, and the
-  casting morphisms are
-  $[[split ? -> ?]] : [[? --> (? -> ?)]]$ and $[[squash ? -> ? : (? -> ?) --> ?]]$, and
-  $[[Unbox A]] : [[? --> A]]$ and $[[Box A]] : [[A --> ?]]$.  
-  Then take $[[ [| t1 t2 |] ]] = \langle [[ [| t1 |] ]];[[split ? -> ?]] , [[ [| t2 |] ]];[[Box A]] \rangle;\app_{?,?}$.
 \end{itemize}
 
 Next we turn to $\lambda^{\langle [[A]] \rangle }_\to$, but we do
@@ -314,224 +259,6 @@ well-known to hold within any cartesian closed category; see
 Theorem~\ref{thm:interpretation_of_typing} throughout this proof
 without mention.
 
-\begin{itemize}  
-\item[] Case.
-  \[
-  \SLGradydrulerdAXXvalues{} 
-  \]
-  This case is trivial.
-
-\item[] Case.
-  \[
-  \SLGradydrulerdAXXcastA{} 
-  \]
-
-  Either $[[drop-cast v]] = v$ which implies that $v$ is a simple
-  value, or $v = [[<?>s]]$ for some simple value $[[s]]$, and
-  $[[drop-cast v]] = [[s]]$.
-
-  \ \\
-  If the former is true, then it must be the case that $[[G |- v :
-      C]]$, and $[[G |- <C>v : C]]$ holds using the casting rule
-  $[[C ~ C]]$, and its casting morphism is $\id_C : [[C --> C]]$.
-  Thus, $[[ [| <C>v |] ]] = [[ [| v |] ]];\id_C = [[ [| v |] ]] = [[ [| drop-cast v |] ]]$.
-
-  \ \\ Now suppose $v = [[<?>s]]$ for some simple value $[[s]]$.
-  Then it must be the case that the typing derivation of $[[
-      <C>v]]$ has the following form:
-  \begin{center}
-    \begin{math}
-      $$\mprset{flushleft}
-      \inferrule* [right=] {
-        $$\mprset{flushleft}
-        \inferrule* [right=] {
-          [[G |- s : B]]
-          \\
-          $$\mprset{flushleft}
-          \inferrule* [right=] {
-            \
-          }{[[B ~ ?]]}
-        }{[[G |- <?>s : ?]]}
-        \\
-        $$\mprset{flushleft}
-        \inferrule* [right=] {
-          \,
-        }{[[? ~ C]]}
-      }{[[G |- <C><?>s : C]]}
-    \end{math}
-  \end{center}      
-  This implies that
-  \[
-  \begin{array}{lll}
-    [[ [| <C><?>s |] ]]
-    & = & [[ [| s |] ]];[[Box B]];[[Unbox B]]\\
-    & = & [[ [| s |] ]] ;\id_B \\
-    & = & [[ [| s |] ]]\\
-    & = & [[ [| drop-cast v |] ]]
-  \end{array}
-  \]
-  The previous equality holds by
-  Lemma~\ref{lemma:casting_morphisms}.
-
-\item[] Case.
-  \[
-  \SLGradydrulerdAXXcastNat{} 
-  \]
-
-  It must be the case that the typing derivation of $[[ <Nat>(succ
-      t)]]$ ends as follows:
-  \begin{center}
-    \begin{math}
-      $$\mprset{flushleft}
-      \inferrule* [right=] {
-        $$\mprset{flushleft}
-        \inferrule* [right=] {
-          [[G |- t : ?]]
-        }{[[G |- succ t : ?]]}
-        \\
-        $$\mprset{flushleft}
-        \inferrule* [right=] {
-          \,
-        }{[[? ~ Nat]]}
-      }{[[G |- <Nat>(succ t) : Nat]]}
-    \end{math}
-  \end{center}
-  Then
-  \[
-  \begin{array}{lll}
-    [[ [| <Nat>(succ t) |] ]]
-    & = & [[ [| succ t |] ]];[[unbox Nat]]\\
-    & = & ([[ [| t |] ]];[[unbox Nat]];[[succ]];[[box Nat]]);[[unbox Nat]]\\
-    & = & [[ [| t |] ]];([[unbox Nat]];[[succ]];[[box Nat]];[[unbox Nat]])\\
-    & = & [[ [| t |] ]];([[unbox Nat]];[[succ]];\id_{[[Nat]]})\\
-    & = & [[ [| t |] ]];([[unbox Nat]];[[succ]])\\
-    & = & ([[ [| t |] ]];[[unbox Nat]]);[[succ]]\\
-    & = & [[ [| succ (<Nat> t) |] ]]
-  \end{array}
-  \]
-  The previous equality holds by
-  Lemma~\ref{lemma:casting_morphisms} and because it must be the case that the typing derivation
-  of $[[succ <Nat>t]]$ ends as follows:
-  \begin{center}
-    \begin{math}
-      $$\mprset{flushleft}
-      \inferrule* [right=] {
-        $$\mprset{flushleft}
-        \inferrule* [right=] {          
-          [[G |- t : ?]]          
-          \\
-          $$\mprset{flushleft}
-          \inferrule* [right=] {
-            \,
-          }{[[? ~ Nat]]}
-        }{[[G |- <Nat>t : Nat]]}
-      }{[[G |- succ <Nat>t : Nat]]}
-    \end{math}
-  \end{center}   
-
-\item[] Case.    
-  \begin{center}
-    \small
-    \begin{math}
-      $$\mprset{flushleft}
-      \inferrule* [right=$\SLGradydrulerdAXXcastArrowName{}$] {
-        [[G |- t : A1 -> B1 && (A1 -> B1) ~ (A2 -> B2)]]
-      }{[[G |- <A2 -> B2>t ~> \y : A2.<B2> (t <A1>y) : A2 -> B2]]}
-    \end{math}
-  \end{center}     
-
-  This case requires the following basic results about cartesian
-  closed categories.  First, there is a natural bijection:
-  \[
-  \mathsf{curry} : \Hom{C}{[[X x Y]]}{[[Z]]} \mto \Hom{C}{[[X]]}{[[Y -> Z]]}
-  \]    
-  This bijection implies the following equalities:
-  \[
-  \begin{array}{lll}
-    \curry{\app_{X,Y}} & = & \id_{[[X -> Y]]}\\
-    \curry{(f \times g);x;h} & = & f;\curry{x};(g \to h)\\
-  \end{array}
-  \]
-
-  We know from type consistency in the model
-  (Lemma~\ref{lemma:type_consistency_in_the_model} and
-  Corollary~\ref{corollary:type_consist_coro}) that there is a
-  casting morphism $c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]$
-  where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$.
-
-  It suffices to show that:
-  \[
-  \begin{array}{lll}
-    [[ [| <A2 -> B2>t |] ]]
-    & = & [[ [| t |] ]];(c_1 \to c_2)\\      
-    & = & \curry{([[ [| t |] ]] \times c_1);\app_{[[A1]],[[B1]]};c_2}\\
-    & = & [[ [| \y : A2.<B2> (t <A1>y) |] ]]\\
-  \end{array}
-  \]    
-  We prove this equality from right to left as follows:
-  \[
-  \begin{array}{lll}
-    [[ [| \y : A2.<B2> (t <A1>y) |] ]]
-    & = & \curry{([[ [| t |] ]] \times c_1);\app_{[[A1]],[[B1]]};c_2}\\
-    & = & [[ [| t |] ]];\curry{\app_{[[A1]],[[B1]]}};(c_1 \to c_2)\\
-    & = & [[ [| t |] ]];\id_{[[A1 -> B1]]};(c_1 \to c_2)\\
-    & = & [[ [| t |] ]];(c_1 \to c_2)\\
-    & = & [[ [| <A2 -> B2>t |] ]]
-  \end{array}
-  \]
-
-\item[] Case.    %% \SLGradydrulerdAXXcastPair{}    
-  \begin{center}
-    \small
-    \begin{math}
-      $$\mprset{flushleft}
-      \inferrule* [right=$\SLGradydrulerdAXXcastPairName{}$] {
-        [[G |- t : A1 x B1 && (A1 x B1) ~ (A2 x B2)]]
-      }{[[G |- <A2 x B2>t ~> (<A2>(fst t),<B2>(snd t)) : A2 x B2]]}
-    \end{math}
-  \end{center}
-  We know from type consistency in the model
-  (Lemma~\ref{lemma:type_consistency_in_the_model} and
-  Corollary~\ref{corollary:type_consist_coro}) that there is a
-  casting morphism $c_1 \times c_2 : [[(A1 x B1) --> (A2 x B2)]]$
-  where $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$.
-
-  It suffices to show that:
-  \[
-  \begin{array}{lll}
-    [[ [| <A2 x B2>t |] ]]
-    & = & [[ [| t |] ]];(c_1 \times c_2)\\
-    & = & \langle [[ [| t |] ]];\pi_1;c_1 , [[ [| t |] ]];\pi_2;c_2 \rangle\\
-    & = & [[ [| (<A2>(fst t),<B2>(snd t)) |] ]]
-  \end{array}
-  \]
-  This equality holds using the following well known fact on
-  cartesian categories:
-  \[
-  \langle f;g,f;h \rangle = f;(g \times h)
-  \]
-
-\item[] Case.
-  \[
-  \SLGradydrulerdAXXcast{} 
-  \]
-  By the induction hypothesis we know that
-  $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$, and by
-  type consistency in the model
-  (Lemma~\ref{lemma:type_consistency_in_the_model}) there is a
-  casting morphism $c : [[A --> B]]$.
-
-  Then it suffices to show that:
-  \[
-  \begin{array}{lll}
-    [[ [| <B>t1 |] ]]
-    & = & [[ [| t1 |] ]];c\\
-    & = & [[ [| t2 |] ]];c\\
-    & = & [[ [| <B>t2 |] ]]
-  \end{array}
-  \]
-  But, this clearly holds by the fact that $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
-\end{itemize}
 % subsection proof_of_interpretation_of_evaluation (end)
 
 \subsection{Proof of Lemma~\ref{lemma:syntactic_box_and_unbox}}
