@@ -99,8 +99,8 @@ $(OTTOutputFile) : sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott
 	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex results-ott.tex \
 	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex
 
-# Now this takes the full LaTex translation and compiles it using
-# pdflatex.
+ott :  $(OTTOutputFile) Makefile $(References)
+
 $(PDF) :  $(OTTOutputFile) Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)

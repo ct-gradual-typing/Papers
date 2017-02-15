@@ -29,10 +29,10 @@ grammar
     | t1 -> t2            :: M :: Arrow
     | t1 XX t2            :: M :: Prod
     {{tex [[t1]] \times [[t2]] }}
-    | lsplit U            :: M  :: lsplit
-    {{tex \widehat{\mathsf{split} }_{[[U]]} }}    
-    | lsquash U           :: M  :: lsquash
-    {{tex \widehat{\mathsf{squash} }_{[[U]]} }}        
+    | lsplit S            :: M  :: lsplit
+    {{tex \widehat{\mathsf{split} }_{[[S]]} }}    
+    | lsquash S           :: M  :: lsquash
+    {{tex \widehat{\mathsf{squash} }_{[[S]]} }}        
     | \ x : A . t         ::   :: abs          
     {{tex \lambda [[x]] : [[A]] . [[t]] }}
     | t1 t2               ::   :: app          
@@ -69,10 +69,17 @@ grammar
     | squash U :: :: squash
     | box C    :: :: box
     | unbox C  :: :: unbox    
-    
+
+  S :: 'S_' ::=
+    | ?             ::   :: U
+    | S1 -> S2      ::   :: arrow
+    | S1 x S2       ::   :: prod
+    | ( S )         ::   :: Paren
+    | skeleton A    ::   :: Skel
+
   U :: 'U_' ::=
-    | ? -> ?        ::   :: arrow
-    | ? x ?         ::   :: prod
+    | ? -> ?        ::   :: arrowU
+    | ? x ?         ::   :: prodU
 
   T :: 'T_' ::=                                
     | Unit                ::   :: term         
@@ -165,6 +172,7 @@ grammar
 subrules
   T <:: A
   U <:: A
+  S <:: A  
   n <:: t
   v <:: t
   

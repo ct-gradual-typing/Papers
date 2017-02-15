@@ -93,9 +93,8 @@ types or contexts.
   Syntax for $\lambda^{\langle [[A]] \rangle}_\to$:
   \[
   \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
-    \text{(simple values)} & [[s]] & ::= & [[x]] \mid [[triv]] \mid [[0]]\\
-    \text{(values)}        & [[v]] & ::= & [[s]] \mid [[<?>s]]\\
-    \text{(terms)}         & [[t]] & ::=  & \ldots \mid [[< A > t]]\\
+    \text{(values)}        & [[v]] & ::= & TODO\\
+    \text{(terms)}         & [[t]] & ::=  & \ldots \mid <<t : {A} => {B}>>\\
   \end{array}
   \]
 \end{definition}
@@ -142,7 +141,7 @@ Figure~\ref{fig:annotated-reduction}.
 The major difference from the formalization of $\lambda^{\langle [[A]]
   \rangle}$ given here and Siek and Taha's is that it is single step
 and full $\beta$-reduction, but it is based on their original
-definition.  The function $[[drop-cast v]]$ is defined as follows:
+definition. 
 
 This function is used when casting values to their appropriate type.
 

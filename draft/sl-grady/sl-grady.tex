@@ -73,6 +73,13 @@
 \ottprodline{|}{ \mathsf{box}_{ \ottnt{C} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{unbox}_{ \ottnt{C} } }{}{}{}{}}
 
+\newcommand{\ottS}{
+\ottrulehead{\ottnt{S}}{::=}{}\ottprodnewline
+\ottfirstprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottnt{S_{{\mathrm{1}}}}  \rightarrow  \ottnt{S_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottnt{S_{{\mathrm{1}}}} \, \ottmv{x} \, \ottnt{S_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottsym{(}  \ottnt{S}  \ottsym{)}}{}{}{}{}}
+
 \newcommand{\ottU}{
 \ottrulehead{\ottnt{U}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottsym{\mbox{?}}  \rightarrow  \ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
@@ -101,6 +108,7 @@
 \ottt\ottinterrule
 \ottn\ottinterrule
 \ottv\ottinterrule
+\ottS\ottinterrule
 \ottU\ottinterrule
 \ottT\ottinterrule
 \ottA\ottinterrule

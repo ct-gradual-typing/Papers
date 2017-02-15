@@ -103,27 +103,29 @@ $\lambda^?_\to$ or $\lambda^{\langle [[A]] \rangle}_\to$, but we want
 Grady to contain it, and Grady will directly correspond to the model.
 \begin{definition}
   \label{def:SNNO}
-  Suppose $\cat{C}$ is a cartesian closed category.  A
-  \textbf{Scott natural number object (SNNO)} is an object $[[Nat]]$ of $\cat{C}$ and
-  morphisms $\mathsf{z} : 1 \mto [[Nat]]$ and $[[succ]] : [[Nat]]  \mto [[Nat]]$ of $\cat{C}$,
-  such that, for any morphisms $f : [[Y]] \mto X$ and $g : [[Y x Nat]] \mto X$ of $\cat{C}$ there is a unique morphism
-  $\case_X : [[Y x Nat]] \mto X$ making the following diagrams commute:
+  Suppose $\cat{C}$ is a cartesian closed category.  A \textbf{Scott
+    natural number object (SNNO)} is an object $[[Nat]]$ of $\cat{C}$
+  and morphisms $\mathsf{z} : 1 \mto [[Nat]]$ and $[[succ]] : [[Nat]]
+  \mto [[Nat]]$ of $\cat{C}$, such that, for any morphisms $f : [[Y]]
+  \mto X$ and $g : <<Y x Nat>> \mto X$ of $\cat{C}$ there is a unique
+  morphism $\case_X : <<Y x Nat>> \mto X$ making the following
+  diagrams commute:
        \[
        \begin{array}{lll}
          \bfig
          \qtriangle|amm|<1000,500>[
-           [[Y x Nat]]`
-           [[Y x Nat]]`
+           <<Y x Nat>>`
+           <<Y x Nat>>`
            X;
            \id_Y \times \mathsf{z}`
            \pi_1;f`
            \case_X]
 
          \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
-           [[Y x Nat]]`
-           [[Y x Nat]]`
+           <<Y x Nat>>`
+           <<Y x Nat>>`
            X;
-           \id_Y \times [[succ]]`
+           \id_Y \times <<succ>>`
            \case_X`
            g ]
          \efig                               
@@ -158,7 +160,7 @@ However, to allow this we have found that when combining fixpoints and
 case analysis to define terminating functions on the natural numbers
 it is necessary to uniformly construct the input to both $f$ and $g$
 due to the reduction rule of the Y combinator.  Thus, we extend the
-type of $f$ to $[[Y x Nat]]$, but then ignore the second projection
+type of $f$ to $<<Y x Nat>>$, but then ignore the second projection
 when reaching the base case.
 
 So far we can model the untyped and the typed $\lambda$-calculi within
@@ -417,7 +419,7 @@ between $[[S]]$ and $[[?]]$.
   Suppose $(\cat{S}, [[?]], [[split]],[[squash]])$ is the category of
   skeletons.  Then for any skeleton $[[S]]$,
   \[
-    [[lsquash A]];[[lsplit A]] = \id_A : [[A --> A]]
+    [[lsquash S]];[[lsplit S]] = \id_S : [[S --> S]]
   \]
 \end{lemma}
 \begin{proof}
@@ -520,11 +522,11 @@ These will correspond to casting morphisms.
 \begin{lemma}[Type Consistency in the Model]
   \label{lemma:type_consistency_in_the_model}
   Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
-  a gradual $\lambda$-model, and $[[A ~ B]]$ for some types $[[A]]$
+  a gradual $\lambda$-model, and $<<A ~ B>>$ for some types $[[A]]$
   and $[[B]]$.  Then there are two casting morphisms $c_1 : [[ A --> B ]]$ and $c_2 : [[ B --> A ]]$.
 \end{lemma}
 \begin{proof}
-This proof holds by induction on the form $[[A ~ B]]$ using the
+This proof holds by induction on the form $<<A ~ B>>$ using the
 morphisms $[[Box A]] : [[A --> ?]]$ and $[[Unbox A]] : [[? --> A]]$.
 Please see
 Appendix~\ref{subsec:proof_of_type_consistency_in_the_model} for the
@@ -536,7 +538,7 @@ complete proof.
   Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
   a gradual $\lambda$-model.  Then we know the following:
   \begin{enumR}
-  \item If $[[A1 -> B1 ~ A2 -> B2]]$, then there are casting morphisms:
+  \item If $<<A1 -> B1 ~ A2 -> B2>>$, then there are casting morphisms:
     \[
     \begin{array}{lllll}
       c & = & c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]\\
@@ -546,7 +548,7 @@ complete proof.
     where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
     [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
     
-  \item If $[[A1 x B1 ~ A2 x B2]]$, then there are casting
+  \item If $<<A1 x B1 ~ A2 x B2>>$, then there are casting
     morphisms:
     \[
     \begin{array}{lll}
@@ -565,7 +567,7 @@ complete proof.
 \end{proof}
 
 Showing that both $c_1$ and $c_2$ exist corresponds to the fact that
-$[[A ~ B]]$ is symmetric.  But, this interpretation is an over
+$<<A ~ B>>$ is symmetric.  But, this interpretation is an over
 approximation of type consistency, because type consistency is not
 transitive, but function composition is.  Leaving type consistency
 implicit in the model just does not make good sense categorically,
