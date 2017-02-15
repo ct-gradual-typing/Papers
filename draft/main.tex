@@ -27,6 +27,7 @@
 \usepackage{supertabular}
 \usepackage{todonotes}
 \usepackage{enumitem}
+\usepackage{txfonts}
 
 \newenvironment{enumR}{\begin{enumerate}[label=\roman*.,align=left]}{\end{enumerate}}
 \newenvironment{enumA}{\begin{enumerate}[label=\alph*.]}{\end{enumerate}}
@@ -81,6 +82,11 @@
 \renewcommand{\RightTirName}{\text}
 \renewcommand{\CGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\CGradydrulename{#4}}}
 \renewcommand{\CGradydrulename}[1]{#1}
+
+\input{siek15-gradual-inc}
+\renewcommand{\RightTirName}{\text}
+\renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SLGradydrulename{#4}}}
+\renewcommand{\GSiekdrulename}[1]{#1}
 
 \makeatletter\if@ACM@journal\makeatother
 %% Journal information (used by PACMPL format)

@@ -27,7 +27,7 @@ grammar
     {{tex \mathsf{Unbox}_{[[C]]} }}
     | t1 ; t2             :: M :: Comp
     | t1 -> t2            :: M :: Arrow
-    | t1 XX t2             :: M :: Prod
+    | t1 XX t2            :: M :: Prod
     {{tex [[t1]] \times [[t2]] }}
     | lsplit U            :: M  :: lsplit
     {{tex \widehat{\mathsf{split} }_{[[U]]} }}    

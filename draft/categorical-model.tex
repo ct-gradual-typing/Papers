@@ -304,37 +304,39 @@ where $[[S1]] = [[skeleton A]]$ and $[[S2]] = [[skeleton B]]$.  Now if
 we have a second
 \[ [[S2]] \mto^{[[lunbox B]]} B \mto^{g} C \mto^{[[lbox C]]} [[S3]]\]
 then their composition reduces to composition at the typed level:
-\[
-\bfig
-\square|amma|/->`->`->`<-/<500,500>[
-  [[S1]]`
-  [[A]]`
-  [[S3]]`
-  [[C]];
-  [[lunbox A]]``
-  f;g`
-  [[lbox C]]
-]
+%% \begin{center}
+%%   \begin{math}
+%%     \bfig
+%% \square|amma|/->`->`->`<-/<500,500>[
+%%   [[S1]]`
+%%   [[A]]`
+%%   [[S3]]`
+%%   [[C]];
+%%   [[lunbox A]]``
+%%   f;g`
+%%   [[lbox C]]
+%% ]
 
-\square(500,0)|amma|/->`->`=`<-/<500,500>[
-  [[A]]`
-  [[B]]`
-  [[C]]`
-  [[B]];
-  f`
-  f;g``
-  g]
+%% \square(500,0)|amma|/->`->`=`<-/<500,500>[
+%%   [[A]]`
+%%   [[B]]`
+%%   [[C]]`
+%%   [[B]];
+%%   f`
+%%   f;g``
+%%   g]
 
-\square(1000,0)|amma|/->`=`=`<-/<500,500>[
-  [[B]]`
-  [[S2]]`
-  [[B]]`
-  [[S2]];
-  [[lbox B]]```
-  [[lunbox B]]
-] 
-\efig
-\]
+%% \square(1000,0)|amma|/->`=`=`<-/<500,500>[
+%%   [[B]]`
+%%   [[S2]]`
+%%   [[B]]`
+%%   [[S2]];
+%%   [[lbox B]]```
+%%   [[lunbox B]]
+%% ]
+%% \efig
+%%   \end{math}
+%% \end{center} 
 The right most diagram commutes because $[[B]]$ is a retract of
 $[[S2]]$, and the left unannotated arrow is the composition $[[lunbox
     A]];f;g;[[lbox C]]$.  This tells us that we have a functor $\S

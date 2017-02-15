@@ -112,25 +112,25 @@ This is a proof by induction on the form of $[[A ~ B]]$.
 \begin{itemize}
 \item[] Case.
   \[
-  \SLGradydrulerefl{}
+  \GSiekdrulerefl{}
   \]
   Choose $c_1 = c_2 = \id_A : [[A --> A]]$.
 
 \item[] Case.
   \[
-  \SLGradydrulebox{}
+  \GSiekdrulebox{}
   \]
   Choose $c_1 = [[Box A]] : [[A --> ?]]$ and $c_2 = [[Unbox A]] : [[? -> A]]$.
 
 \item[] Case.
   \[
-  \SLGradydruleunbox{}
+  \GSiekdruleunbox{}
   \]
   Choose $c_1 = [[Unbox A]] : [[? --> A]]$ and $c_2 = [[Box A]] : [[A -> ?]]$.
   
 \item[] Case.
   \[
-  \SLGradydrulearrow{}
+  \GSiekdrulearrow{}
   \]
   By the induction hypothesis there exists four casting morphisms
   $c'_1 : [[A1 --> A2]]$, $c'_2 : [[A2 --> A1]]$, $c'_3 : [[B1 --> B2]]$,
@@ -141,7 +141,7 @@ This is a proof by induction on the form of $[[A ~ B]]$.
 
 \item[] Case.
   \[
-  \SLGradydruleprod{}
+  \GSiekdruleprod{}
   \]
   By the induction hypothesis there exists four casting morphisms
   $c'_1 : [[A1 --> A2]]$, $c'_2 : [[A2 --> A1]]$, $c'_3 : [[B1 --> B2]]$,
@@ -155,99 +155,101 @@ This is a proof by induction on the form of $[[A ~ B]]$.
 
 \subsection{Proof of Interpretation of Types Theorem~\ref{thm:interpretation_of_typing}}
 \label{subsec:proof_of_interpretation_of_types}
-This is a proof by induction on $[[G |- t : A]]$.  First, we show how
-to interpret the rules of $\lambda^?_\to$, and then $\lambda^{\langle [[A]] \rangle}_\to$.
+\begin{comment}
+  %% This is a proof by induction on $[[G |- t : A]]$.  First, we show how
+%% to interpret the rules of $\lambda^?_\to$, and then $\lambda^{\langle [[A]] \rangle}_\to$.
 
-\begin{itemize} 
-\item[] Case.
-  \[
-  \SLGradydrulevar{}
-  \]
-  Suppose with out loss of generality that $[[ [| G |] ]] = [[A1]]
-  \times \cdots \times [[Ai]] \times \cdots \times [[Aj]]$ where
-  $[[Ai]] = [[A]]$.  We know that $j > 0$ or the assumed typing
-  derivation would not hold.  Then take
-  $[[ [| x |] ]] = \pi_i : [[ [| G |] --> A]]$.
+%% \begin{itemize} 
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulevar{}
+%%   \]
+%%   Suppose with out loss of generality that $[[ [| G |] ]] = [[A1]]
+%%   \times \cdots \times [[Ai]] \times \cdots \times [[Aj]]$ where
+%%   $[[Ai]] = [[A]]$.  We know that $j > 0$ or the assumed typing
+%%   derivation would not hold.  Then take
+%%   $[[ [| x |] ]] = \pi_i : [[ [| G |] --> A]]$.
 
-\item[] Case.
-  \[
-  \SLGradydruleunit{}
-  \]
+%% \item[] Case.
+%%   \[
+%%   \SLGradydruleunit{}
+%%   \]
 
-  Take $[[ [| triv |] ]] = \diamond_{[[ [| G |] ]]} : [[ [| G |] -->
-      1]]$ where $\diamond_{[[ [| G |] ]]}$ is the unique terminal
-  arrow that exists because $\cat{C}$ is cartesian closed.
+%%   Take $[[ [| triv |] ]] = \diamond_{[[ [| G |] ]]} : [[ [| G |] -->
+%%       1]]$ where $\diamond_{[[ [| G |] ]]}$ is the unique terminal
+%%   arrow that exists because $\cat{C}$ is cartesian closed.
   
-\item[] Case.
-  \[
-  \SLGradydrulezero{}
-  \]
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulezero{}
+%%   \]
 
-  Take $[[ [| 0 |] ]] = \diamond_{[[ [| G |] ]]};\z : [[ [| G |] --> Nat]]$
-  where $\z : [[1 --> Nat]]$ exists because $\cat{C}$
-  contains a SNNO.
+%%   Take $[[ [| 0 |] ]] = \diamond_{[[ [| G |] ]]};\z : [[ [| G |] --> Nat]]$
+%%   where $\z : [[1 --> Nat]]$ exists because $\cat{C}$
+%%   contains a SNNO.
 
-\item[] Case.
-  \[
-  \SLGradydrulesuccS{}
-  \]
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulesuccS{}
+%%   \]
   
   
-\item[] Case.
-  \[
-  \SLGradydrulepair{}
-  \]
-  By two applications of the induction hypothesis there are two morphisms
-  $[[ [| t1 |] ]] : [[ [| G |] --> A]]$ and $[[ [| t2 |] ]] : [[ [| G |] --> B]]$.
-  Then using the fact that $\cat{C}$ is cartesian we take
-  $[[ [| (t1 , t2) |] ]] = \langle [[ [| t1 |] ]] , [[ [| t2 |] ]] \rangle : [[ [| G |] --> H(A x B)]]$.
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulepair{}
+%%   \]
+%%   By two applications of the induction hypothesis there are two morphisms
+%%   $[[ [| t1 |] ]] : [[ [| G |] --> A]]$ and $[[ [| t2 |] ]] : [[ [| G |] --> B]]$.
+%%   Then using the fact that $\cat{C}$ is cartesian we take
+%%   $[[ [| (t1 , t2) |] ]] = \langle [[ [| t1 |] ]] , [[ [| t2 |] ]] \rangle : [[ [| G |] --> H(A x B)]]$.
 
-\item[] Case.
-  \[
-  \SLGradydrulefstS{}
-  \]
-  TODO
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulefstS{}
+%%   \]
+%%   TODO
 
-\item[] Case.
-  \[
-  \SLGradydrulesndS{}
-  \]
-  TODO
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulesndS{}
+%%   \]
+%%   TODO
 
-\item[] Case.
-  \[
-  \SLGradydrulelam{}
-  \] 
-  By the induction hypothesis there is a morphism $[[ [| t |] ]] :
-  [[ H([| G |] x A) --> B]]$.  Then take $[[ [| \x : A.t |] ]] =
-  \curry {[[ [| t |] ]]} : [[ [| G |] --> (A -> B)]]$, where
-  $\mathsf{curry} : \Hom{C}{X \times Y}{Z} \mto \Hom{C}{X}{Y \to Z}$
-  exists because $\cat{C}$ is closed.
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulelam{}
+%%   \] 
+%%   By the induction hypothesis there is a morphism $[[ [| t |] ]] :
+%%   [[ H([| G |] x A) --> B]]$.  Then take $[[ [| \x : A.t |] ]] =
+%%   \curry {[[ [| t |] ]]} : [[ [| G |] --> (A -> B)]]$, where
+%%   $\mathsf{curry} : \Hom{C}{X \times Y}{Z} \mto \Hom{C}{X}{Y \to Z}$
+%%   exists because $\cat{C}$ is closed.
 
-\item[] Case.
-  \[
-  \SLGradydruleappS{}
-  \]
-  TODO
+%% \item[] Case.
+%%   \[
+%%   \SLGradydruleappS{}
+%%   \]
+%%   TODO
   
-\end{itemize}
+%% \end{itemize}
 
-Next we turn to $\lambda^{\langle [[A]] \rangle }_\to$, but we do
-not show every rule, because it corresponds to the simply typed
-$\lambda$-calculus whose interpretation is similar to what we have
-already shown above except without casting morphism, and so we only
-show the case for the cast rule.
-\begin{itemize}
-\item[] Case.
-  \[
-  \SLGradydrulecast{}
-  \]
-  By the induction hypothesis there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A]]$,
-  and by type consistency in the model (Lemma~\ref{lemma:type_consistency_in_the_model})
-  there is a casting morphism $c_1 : [[A --> B]]$.  So take
-  $[[ [| < B > t |] ]] = [[ [| t |] ]];c_1 : [[ [| G |] --> B]]$.
-\end{itemize}
+%% Next we turn to $\lambda^{\langle [[A]] \rangle }_\to$, but we do
+%% not show every rule, because it corresponds to the simply typed
+%% $\lambda$-calculus whose interpretation is similar to what we have
+%% already shown above except without casting morphism, and so we only
+%% show the case for the cast rule.
+%% \begin{itemize}
+%% \item[] Case.
+%%   \[
+%%   \SLGradydrulecast{}
+%%   \]
+%%   By the induction hypothesis there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A]]$,
+%%   and by type consistency in the model (Lemma~\ref{lemma:type_consistency_in_the_model})
+%%   there is a casting morphism $c_1 : [[A --> B]]$.  So take
+%%   $[[ [| < B > t |] ]] = [[ [| t |] ]];c_1 : [[ [| G |] --> B]]$.
+%% \end{itemize}
 
+\end{comment}
 % subsection proof_of_interpretation_of_types (end)
 
 \subsection{Proof of Interpretation of Evaluation (Theorem~\ref{thm:interpretation_of_evaluation})}
