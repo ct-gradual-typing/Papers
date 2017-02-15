@@ -204,9 +204,8 @@ lcaseParse t = do
   symbol "->"
   t1 <- expr 
   ws
-  symbol "<"
+  symbol ":"
   ty <- typeParser
-  symbol">"
   symbol ","
   symbol "("
   hv <- varName

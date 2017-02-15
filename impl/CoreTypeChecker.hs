@@ -195,16 +195,14 @@ typeCheck_aux (CSnd t) ty = do
     return $ ATFst aty2 aty 
    else
     TE.throwError $ TE.SndTypeError ty
-typeCheck_aux (CNCase t1 t2 b) ty= do
-  at1 <- typeCheck_aux t1 ty
+typeCheck_aux (CNCase t1 t2 b) ty = do
+  at1 <- typeCheck_aux t1 Nat
   at2 <- inferType t2
   lunbind b $ (\(x,t) -> do
     at <- inferType t
     if(at2 `aeq` at)
-     then if(t1 `aeq` CZero)
-            then return $ ATNCase ty at1 at2 $ bind x at
-            else TE.throwError $ TE.NCaseBranchesMistype (getType at1) Nat
-     else TE.throwError $ TE.NCaseBranchesMistype (getType at2) (getType at))
+     then return $ ATNCase ty at1 at2 $ bind x at
+     else TE.throwError $ TE.NCaseBranchesMistype (getType at1) Nat)
 typeCheck_aux (CPair t1 t2) ty@(Prod ty1 ty2) = do
   a1 <- typeCheck_aux t1 ty1
   a2 <- typeCheck_aux t2 ty2
@@ -253,10 +251,6 @@ typeCheck_aux (CApp t1 t2) ty = do
     return $ ATApp ty2 at1 at2
   else
     TE.throwError $ TE.AppTypeError ty ty2
-typeCheck_aux (CTApp ty t) ty'@(Forall ty1 b) = do             -- TODO: Not sure how????
-  _                       
-  undefined
-typeCheck_aux (CTApp _ t) ty = TE.throwError $ TE.CoreNotForallTypeTerm t ty   
 typeCheck_aux (CBox s) ty@(Arr t U) | s `aeq` t = do
   b <- s `subtype` Simple
   if b
@@ -300,7 +294,7 @@ inferType (CCons h t) = do
   return $ ATCons (List hty) ah at
 
 inferType (CLCase t ty t1 b) = do    
-      at <- inferType t
+      at <- typeCheck_aux t (List ty)
       case ty of
         List ety -> do
           at1 <- inferType t1
