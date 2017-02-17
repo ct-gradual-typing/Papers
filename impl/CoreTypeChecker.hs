@@ -195,14 +195,13 @@ typeCheck_aux (CSnd t) ty = do
     return $ ATFst aty2 aty 
    else
     TE.throwError $ TE.SndTypeError ty
-typeCheck_aux (CNCase t1 t2 b) ty = do
+typeCheck_aux (CNCase t1 t2 b) ty' = do
+  let ty = List ty'
   at1 <- typeCheck_aux t1 Nat
-  at2 <- inferType t2
+  at2 <- typeCheck_aux t2 ty
   lunbind b $ (\(x,t) -> do
-    at <- inferType t
-    if(at2 `aeq` at)
-     then return $ ATNCase ty at1 at2 $ bind x at
-     else TE.throwError $ TE.NCaseBranchesMistype (getType at1) Nat)
+    at <- typeCheck_aux t (getType at2)
+    return $ ATNCase ty at1 at2 $ bind x at)
 typeCheck_aux (CPair t1 t2) ty@(Prod ty1 ty2) = do
   a1 <- typeCheck_aux t1 ty1
   a2 <- typeCheck_aux t2 ty2

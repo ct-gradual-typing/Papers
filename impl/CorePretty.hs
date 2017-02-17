@@ -91,7 +91,7 @@ prettyCTerm (CLCase t ty t1 b) = do
    do
      s2 <- prettyCTerm t2
      s3 <- prettyType ty
-     return $ "lcase "++s++" with type "++s3++" of "++s1++"|| "++(n2s x)++","++(n2s y)++"."++s2))
+     return $ "lcase "++s++" with type ["++s3++"] of "++s1++"|| "++(n2s x)++","++(n2s y)++"."++s2))
 prettyCTerm (CFun ty b) = do
   tyS <- prettyType ty
   lunbind b $ (\(x,t) -> do           
