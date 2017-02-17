@@ -80,12 +80,13 @@ grammar
   U :: 'U_' ::=
     | ? -> ?        ::   :: arrowU
     | ? x ?         ::   :: prodU
+    | ( U )         ::   :: Paren
 
   T :: 'T_' ::=                                
     | Unit                ::   :: term         
     | Nat                 ::   :: nat          
     
-  A, B, C, D, E, R :: 'A_' ::=           
+  A, B, C, D, E, R, X, Y :: 'A_' ::=           
     | Unit                ::   :: term         
     {{tex \mathsf{Unit} }}
     | 1                   :: M :: terminal
@@ -106,6 +107,7 @@ grammar
     | [| A |]             :: M :: InterpType
     {{tex \interp{[[A]]} }}
     | skeleton A          :: M :: Skeleton
+    {{tex \mathsf{skeleton}\,[[A]] }}
     | ? -> ?              :: M :: arrowU
     | ? x ?               :: M :: prodU
     {{tex [[?]] \times [[?]] }}

@@ -2,7 +2,7 @@ Just as the simply typed $\lambda$-calculus corresponds to cartesian
 closed categories our categorical model has a corresponding type
 theory we call Grady.  It consists of all of the structure found in
 the model.  Its syntax is an extension of the syntax for
-$\lambda^?_\to$.
+$\GSTLC$.
 
 \begin{definition}
   \label{def:grady-syntax}
@@ -19,9 +19,9 @@ $\lambda^?_\to$.
   \]
 \end{definition}
 \noindent
-The types of Grady are the same as the types of $\lambda^?_\to$
+The types of Grady are the same as the types of $\GSTLC$
 (Definition~\ref{def:gradual-syntax}), in addition, it encompasses all
-the terms of $\lambda^?_\to$, and so we do not repeat either of them
+the terms of $\GSTLC$, and so we do not repeat either of them
 here.  The typing rules for Grady can be found in
 Figure~\ref{fig:grady-typing} and its reduction rules can be found in
 Figure~\ref{fig:grady-reduction}.
@@ -130,26 +130,26 @@ $[[unbox C]]$ to arbitrary type.
 \noindent
 Perhaps unsurprisingly, due to our results with respect to the
 categorical model, we can use the previous result to construct a
-type-directed translation of both $\lambda^?_\to$ and
-$\lambda^{\langle [[A]] \rangle}_\to$ into Grady.
+type-directed translation of both $\GSTLC$ and
+$\CGSTLC$ into Grady.
 \begin{lemma}[Translations]
   \label{lemma:translations}
   \begin{center}
     \begin{itemize}
     \item[] 
-    \item[i.] If $[[G |- t : A]]$ hold in either $\lambda^?_\to$ or
-      $\lambda^{\langle [[A]] \rangle}_\to$, then there exists a term
+    \item[i.] If $[[G |- t : A]]$ hold in either $\GSTLC$ or
+      $\CGSTLC$, then there exists a term
       $[[t']]$ such that $[[G |- t' : A]]$ holds in Grady.
-    \item[ii.] If $[[G |- t1 ~> t2 : A]]$ holds in $\lambda^{\langle [[A]]
-      \rangle}_\to$, then $[[G |- t'1 ~> t'2 : A]]$ holds in Grady,
-      where $[[G |- t'1 : A]]$ and $[[G |- t'2 : A]]$ are both the
-      corresponding Grady terms.
+    \item[ii.] If $[[G |- t1 ~> t2 : A]]$ holds in $\CGSTLC$, then
+      $[[G |- t'1 ~> t'2 : A]]$ holds in Grady, where $[[G |- t'1 :
+        A]]$ and $[[G |- t'2 : A]]$ are both the corresponding Grady
+      terms.
     \end{itemize}
   \end{center}
 \end{lemma}
 \begin{proof}
   The proof of this result is similar to the proof that both
-  $\lambda^?_\to$ and $\lambda^{\langle [[A]] \rangle}_\to$ can be
+  $\GSTLC$ and $\CGSTLC$ can be
   interpreted into the categorical model,
   Theorem~\ref{thm:interpretation_of_typing} and
   Theorem~\ref{thm:interpretation_of_evaluation}, and thus, we do not

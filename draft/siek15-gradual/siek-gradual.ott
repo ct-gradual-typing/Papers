@@ -1,9 +1,9 @@
 % This is the full Ott spec of Seik et al.'s Simply Typed Gradual
 % lambda-Calculus found in Seik:2015.
 
-embed {{ tex-preamble
-\usepackage{txfonts}
-}}
+% embed {{ tex-preamble
+% \usepackage{txfonts}
+% }}
 
 metavar termvar, x, y , z, f ::=
 metavar typevar, X, Y , Z ::=
@@ -28,6 +28,8 @@ grammar
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
     {{tex [[t]] }}
+    | [| t |]             :: M :: Interp
+    {{tex \interp{[[t]]} }}    
     
   T :: 'T_' ::=                                
     | Unit                ::   :: unit         
@@ -65,6 +67,12 @@ grammar
     {{tex [[A]] }}
     | ? -> ?              :: M :: retract
     {{tex ? \to ? }}    
+    | A1 --> A2           :: M :: Morph
+    {{tex [[A1]] \mto [[A2]] }}
+    | [| G |]             :: M :: InterpCtx
+    {{tex \interp{[[G]]} }}
+    | [| A |]             :: M :: InterpType
+    {{tex \interp{[[A]]} }}    
 
   G {{ tex \Gamma }} :: G_ ::=                 
     | .                   ::   :: emptyCtx     
@@ -187,9 +195,9 @@ defn
     --------------------- :: lam
     G |-S \x:A1.t : A -> B
 
-    G |-S t1 : C && fun(C) = A1 -> B1
-    G |-S t2 : A2 && A2 ~ A1
-    -------------------------------- :: app
+    G |-S t1 : C 
+    (G |-S t2 : A2 && A2 ~ A1) && fun(C) = A1 -> B1
+    ----------------------------------------------- :: app
     G |-S t1 t2 : B1
 
 defn

@@ -6,9 +6,6 @@ SKIM := skim_revert.sh
 SKIMRevinPath := $(shell command -v $(SKIM) 2> /dev/null)
 
 TexFileName := main
-OTTFileName := grady
-OTTFile := $(OTTFileName).ott
-OTTGen := $(OTTFileName)-inc.tex
 OTTOutputFile := main.tex
 OTTPrefix := Ott
 
@@ -77,12 +74,15 @@ aux-results-proofs-ott.tex : aux-results-proofs.tex surface-grady/surface-grady.
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
 		-tex_filter aux-results-proofs.tex aux-results-proofs-ott1.tex
 	scripts/prepr_double_ott.sh aux-results-proofs-ott1.tex
-		@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
+	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
 		-tex_filter aux-results-proofs-ott1.tex aux-results-proofs-ott.tex
 
 categorical-model-ott.tex : categorical-model.tex sl-grady/sl-grady.ott siek15-gradual/siek-gradual.ott
 	@$(OTT) $(OTT_FLAGS) -i sl-grady/sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
-		-tex_filter categorical-model.tex categorical-model-ott.tex
+		-tex_filter categorical-model.tex categorical-model-ott1.tex
+	scripts/prepr_double_ott.sh categorical-model-ott1.tex
+	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \
+		-tex_filter categorical-model-ott1.tex categorical-model-ott.tex
 
 gradual-typing-ott.tex : gradual-typing.tex sl-grady/sl-grady.ott siek15-gradual/siek-gradual.ott
 	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \

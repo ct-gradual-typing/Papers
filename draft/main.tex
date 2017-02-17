@@ -27,7 +27,6 @@
 \usepackage{supertabular}
 \usepackage{todonotes}
 \usepackage{enumitem}
-\usepackage{txfonts}
 
 \newenvironment{enumR}{\begin{enumerate}[label=\roman*.,align=left]}{\end{enumerate}}
 \newenvironment{enumA}{\begin{enumerate}[label=\alph*.]}{\end{enumerate}}
@@ -69,24 +68,21 @@
 
 %% Ott includes:
 \input{sl-grady-inc}
-\renewcommand{\RightTirName}{\text}
 \renewcommand{\SLGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SLGradydrulename{#4}}}
 \renewcommand{\SLGradydrulename}[1]{#1}
 
 \input{surface-grady-inc}
-\renewcommand{\RightTirName}{\text}
 \renewcommand{\SGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SGradydrulename{#4}}}
 \renewcommand{\SGradydrulename}[1]{#1}
 
 \input{core-grady-inc}
-\renewcommand{\RightTirName}{\text}
 \renewcommand{\CGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\CGradydrulename{#4}}}
 \renewcommand{\CGradydrulename}[1]{#1}
 
 \input{siek15-gradual-inc}
-\renewcommand{\RightTirName}{\text}
-\renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SLGradydrulename{#4}}}
+\renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\GSiekdrulename{#4}}}
 \renewcommand{\GSiekdrulename}[1]{#1}
+
 
 \makeatletter\if@ACM@journal\makeatother
 %% Journal information (used by PACMPL format)
@@ -261,10 +257,6 @@
 \appendix
 
 \input{proofs-ott}
-% section proofs (end)
 
-%% \section{The Complete Spec of Grady}
-%% \label{sec:the_complete_spec_of_grady}
-%% \Gradyall{}
-%% % section the_complete_spec_of_grady (end)
+% section proofs (end)
 \end{document}

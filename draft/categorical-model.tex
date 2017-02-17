@@ -44,8 +44,8 @@ For a more thorough introduction see \cite{Crole:1994}.
 
 \subsection{The Categorical Model}
 \label{subsec:the_categorical_model}
-We now give a categorical model for $\lambda^?_\to$ and
-$\lambda^{\langle [[A]] \rangle}_\to$.  The model we develop here
+We now give a categorical model for $\GSTLC$ and
+$\CGSTLC$.  The model we develop here
 builds on the seminal work of \cite{Lambek:1980} and
 \cite{Scott:1980}.  \cite{Lambek:1980} showed that the typed
 $\lambda$-calculus can be modeled by a cartesian closed category.  In
@@ -99,7 +99,7 @@ numbers we must be able to interpret them into our model.  We give a
 novel approach to modeling the natural numbers with their
 (non-recursive) eliminator using what we call a Scott natural number
 object.  Now the natural number eliminator is not part of
-$\lambda^?_\to$ or $\lambda^{\langle [[A]] \rangle}_\to$, but we want
+$\GSTLC$ or $\CGSTLC$, but we want
 Grady to contain it, and Grady will directly correspond to the model.
 \begin{definition}
   \label{def:SNNO}
@@ -107,25 +107,25 @@ Grady to contain it, and Grady will directly correspond to the model.
     natural number object (SNNO)} is an object $[[Nat]]$ of $\cat{C}$
   and morphisms $\mathsf{z} : 1 \mto [[Nat]]$ and $[[succ]] : [[Nat]]
   \mto [[Nat]]$ of $\cat{C}$, such that, for any morphisms $f : [[Y]]
-  \mto X$ and $g : <<Y x Nat>> \mto X$ of $\cat{C}$ there is a unique
-  morphism $\case_X : <<Y x Nat>> \mto X$ making the following
+  \mto X$ and $g : [[Y x Nat]] \mto X$ of $\cat{C}$ there is a unique
+  morphism $\case_X : [[Y x Nat]] \mto X$ making the following
   diagrams commute:
        \[
        \begin{array}{lll}
          \bfig
          \qtriangle|amm|<1000,500>[
-           <<Y x Nat>>`
-           <<Y x Nat>>`
+           [[Y x Nat]]`
+           [[Y x Nat]]`
            X;
            \id_Y \times \mathsf{z}`
            \pi_1;f`
            \case_X]
 
          \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
-           <<Y x Nat>>`
-           <<Y x Nat>>`
+           [[Y x Nat]]`
+           [[Y x Nat]]`
            X;
-           \id_Y \times <<succ>>`
+           \id_Y \times [[succ]]`
            \case_X`
            g ]
          \efig                               
@@ -160,7 +160,7 @@ However, to allow this we have found that when combining fixpoints and
 case analysis to define terminating functions on the natural numbers
 it is necessary to uniformly construct the input to both $f$ and $g$
 due to the reduction rule of the Y combinator.  Thus, we extend the
-type of $f$ to $<<Y x Nat>>$, but then ignore the second projection
+type of $f$ to $[[Y x Nat]]$, but then ignore the second projection
 when reaching the base case.
 
 So far we can model the untyped and the typed $\lambda$-calculi within
@@ -178,7 +178,7 @@ the unbox will never have been matched up with the correct boxed data.
 For example, we can cast $3$ to type $\mathsf{Bool}$ by
 $[[unbox]]_{\mathsf{Bool}} ([[box Nat]]\, 3)$, but if this program is
 every run, then we will obtain a dynamic type error.  Note that we can
-type the previous program in $\lambda^{\langle [[A]] \rangle}_\to$ as
+type the previous program in $\CGSTLC$ as
 well, but if we run the program it will result in a dynamic type error
 too.
 
@@ -205,7 +205,7 @@ closed category $\cat{C}$, but it is extended with the structure of
 both the typed and the untyped $\lambda$-calculus with the ability to
 cast data.
 
-Interpreting the typing rules for $\lambda^?_\to$ will require the
+Interpreting the typing rules for $\GSTLC$ will require the
 interpretation of type consistency.  Thus, we must be able to cast any
 type $[[A]]$ to $[[?]]$, but as stated the model only allows atomic
 types to be casted.  It turns out that this can be lifted to any type.
@@ -478,13 +478,13 @@ from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
 
 \subsection{The Interpretation}
 \label{subsec:the_interpretation}
-In this section we show how to interpret $\lambda^?_\to$ and
-$\lambda^{\langle [[A]] \rangle}_\to$ into the categorical model given
+In this section we show how to interpret $\GSTLC$ and
+$\CGSTLC$ into the categorical model given
 in the previous section. We complete the three steps summarized
 above. We will show how to interpret the typing of the former into the
 model, and then show how to do the same for the latter, furthermore,
 we show that reduction can be interpreted into the model as well, thus
-concluding soundness for $\lambda^{\langle [[A]] \rangle}_\to$ with
+concluding soundness for $\CGSTLC$ with
 respect to our model.
 
 First, we must give the interpretation of types and contexts, but this
@@ -515,8 +515,8 @@ the names of types and objects throughout this paper.
 \noindent Throughout the remainder of this paper we will drop the
 interpretation symbols around types.
 
-Before we can interpret the typing rules of $\lambda^?_\to$ and
-$\lambda^{\langle [[A]] \rangle}_\to$ we must show how to interpret
+Before we can interpret the typing rules of $\GSTLC$ and
+$\CGSTLC$ we must show how to interpret
 the consistency relation from Figure~\ref{fig:type-consistency}.
 These will correspond to casting morphisms.
 \begin{lemma}[Type Consistency in the Model]
@@ -580,28 +580,30 @@ just is not the case.  Thus, the explicit cast must be used to obtain
 $f;[[lunbox B]];g$.
 
 At this point we have everything we need to show our main result which
-is that typing in both $\lambda^?_\to$ and $\lambda^{\langle [[A]]
-  \rangle}_\to$, and evaluation in $\lambda^{\langle [[A]] \rangle}$
-can be interpreted into the categorical model.
+is that typing in both $\GSTLC$ and $\CGSTLC$, and evaluation in
+$\CGSTLC$ can be interpreted into the categorical model.
 
 \begin{theorem}[Interpretation of Typing]
   \label{thm:interpretation_of_typing}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx, \unbox)$
-  is a gradual $\lambda$-model.  If $[[G |- t : A]]$ in either
-  $\lambda^?_\to$ or $\lambda^{\langle [[A]] \rangle}_\to$, then there
-  is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
+  is a gradual $\lambda$-model.
+  \begin{enumR}
+  \item If $<<G |-S t : A>>$, then there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
+  \item If $<<G |-C t : A>>$, then there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
+  \end{enumR}
 \end{theorem}
 \begin{proof}
-  The proof holds by induction on the form of $[[G |- t : A]]$ and
-  uses most of the results we have developed up to this point.  Please
-  see Appendix~\ref{subsec:proof_of_interpretation_of_types} for the
+  Both parts of the proof hold by induction on the form of the assumed
+  typing derivation, and uses most of the results we have developed up
+  to this point.  Please see
+  Appendix~\ref{subsec:proof_of_interpretation_of_types} for the
   complete proof.
 \end{proof}
 
 \begin{theorem}[Interpretation of Evaluation]
   \label{thm:interpretation_of_evaluation}
   Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$
-  is a gradual $\lambda$-model.  If $[[G |- t1 ~> t2 : A]]$, then
+  is a gradual $\lambda$-model.  If $<<G |- t1 ~> t2 : A>>$, then
   $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
 \end{theorem}
 \begin{proof}

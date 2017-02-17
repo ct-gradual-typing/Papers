@@ -8,11 +8,14 @@ underlying structure of these languages shines through. In this vein,
 the change in evaluation makes it easier to interpret the language
 into the categorical model.
 
-The syntax of the gradual type system $\lambda^?_\to$ is defined in
+\newcommand{\GSTLC}{\lambda^?_\to}
+\newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to}
+
+The syntax of the gradual type system $\GSTLC$ is defined in
 the following definition.
 \begin{definition}
   \label{def:gradual-syntax}
-  Syntax for $\lambda^?_\to$:
+  Syntax for $\GSTLC$:
     \[
 \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
   \text{(types)} & [[A]],[[B]] & ::=  & [[Unit]] \mid [[Nat]] \mid [[?]] \mid [[A x B]] \mid [[A1 -> A2]]\\
@@ -27,7 +30,7 @@ This definition is the base syntax for every language in this paper.
 The typing rules are defined in Figure~\ref{fig:gradual-typing} and
 the type consistency relation is defined in
 Figure~\ref{fig:type-consistency}.  The main changes of the version of
-$\lambda^?_\to$ defined here from the original due to \cite{Siek:2006}
+$\GSTLC$ defined here from the original due to \cite{Siek:2006}
 is that products and natural numbers have been added.  The definition
 of products follows how casting is done for functions. So it allows
 casting projections of products, for example, it is reasonable for
@@ -56,50 +59,50 @@ terms like $[[\x:(? x ?).(succ (fst x))]]$ to type check.
       \GSiekdruleSXXapp{}     
     \end{mathpar}
   \end{mdframed}
-  \caption{Typing rules for $\lambda^?_\to$}
+  \caption{Typing rules for $\GSTLC$}
   \label{fig:gradual-typing}
 \end{figure}
+\renewcommand{\GSiekdrulereflName}[0]{\text{refl}}
+\renewcommand{\GSiekdruleboxName}[0]{\text{box}}
+\renewcommand{\GSiekdruleunboxName}[0]{\text{unbox}}
+\renewcommand{\GSiekdrulearrowName}[0]{\to}
+\renewcommand{\GSiekdruleprodName}[0]{\times}
 \begin{figure}
-  \renewcommand{\GSiekdrulereflName}[0]{\text{refl}}
-  \renewcommand{\GSiekdruleboxName}[0]{\text{box}}
-  \renewcommand{\GSiekdruleunboxName}[0]{\text{unbox}}
-  \renewcommand{\GSiekdrulearrowName}[0]{\to}
-  \renewcommand{\GSiekdruleprodName}[0]{\times}
   \begin{mdframed}
     \small
     \begin{mathpar}
       \GSiekdrulerefl{} \and
-    \GSiekdrulebox{} \and
-    \GSiekdruleunbox{} \and
-    \GSiekdrulearrow{} \and
-    \GSiekdruleprod{}    
+      \GSiekdrulebox{} \and
+      \GSiekdruleunbox{} \and
+      \GSiekdrulearrow{} \and
+      \GSiekdruleprod{}    
   \end{mathpar}
   \end{mdframed}
-  \caption{Type Consistency for $\lambda^?_\to$}
+  \caption{Type Consistency for $\GSTLC$}
   \label{fig:type-consistency}
 \end{figure}
 
 We can view gradual typing as a surface language feature much like
 type inference, and we give it a semantics by translating it into an
-annotated core. \cite{Siek:2006} do just that and give $\lambda^?_\to$
+annotated core. \cite{Siek:2006} do just that and give $\GSTLC$
 an operational semantics by translating it to a fully annotated core
-language called $\lambda^{\langle [[A]] \rangle}_\to$.  Its syntax is
-an extension of the syntax of $\lambda^?_\to$
+language called $\CGSTLC$.  Its syntax is
+an extension of the syntax of $\GSTLC$
 (Definition~\ref{def:gradual-syntax}) where terms are the only
 syntactic class that differs, and so we do not repeat the syntax of
 types or contexts.
 \begin{definition}
   \label{def:annotated-syntax}
-  Syntax for $\lambda^{\langle [[A]] \rangle}_\to$:
+  Syntax for $\CGSTLC$:
   \[
   \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
     \text{(values)}        & [[v]] & ::= & TODO\\
-    \text{(terms)}         & [[t]] & ::=  & \ldots \mid <<t : {A} => {B}>>\\
+    \text{(terms)}         & [[t]] & ::=  & \ldots \mid [[t : {A} => {B}]]\\
   \end{array}
   \]
 \end{definition}
 \noindent
-The typing rules for $\lambda^{\langle [[A]] \rangle}_\to$ can be
+The typing rules for $\CGSTLC$ can be
 found in Figure~\ref{fig:annotated-typing}, and the reduction rules in
 Figure~\ref{fig:annotated-reduction}.
 \renewcommand{\GSiekdruleCXXvarName}[0]{\text{var}}
@@ -128,28 +131,26 @@ Figure~\ref{fig:annotated-reduction}.
       \GSiekdruleCXXcast{}
     \end{mathpar}
   \end{mdframed}
-  \caption{Typing rules for $\lambda^{\langle [[A]] \rangle}_\to$}
+  \caption{Typing rules for $\CGSTLC$}
   \label{fig:annotated-typing}
 \end{figure}
 
 \begin{figure}
   TODO
-  \caption{Reduction rules for $\lambda^{\langle [[A]] \rangle}_\to$}
+  \caption{Reduction rules for $\CGSTLC$}
   \label{fig:annotated-reduction}
 \end{figure}
 
-The major difference from the formalization of $\lambda^{\langle [[A]]
-  \rangle}$ given here and Siek and Taha's is that it is single step
-and full $\beta$-reduction, but it is based on their original
-definition. 
+The major difference from the formalization of $\CGSTLC$ given here
+and Siek and Taha's is that it is single step and full
+$\beta$-reduction, but it is based on their original definition.
 
 This function is used when casting values to their appropriate type.
 
-Since the formalization of both $\lambda^?_\to$ and $\lambda^{\langle
-  [[A]] \rangle}$ differ from their original definitions we give the
-definition of cast insertion in Figure~\ref{fig:cast-insert}, but this
-is only a slightly modified version from the one given by Siek and
-Taha.
+Since the formalization of both $\GSTLC$ and $\CGSTLC$ differ
+from their original definitions we give the definition of cast
+insertion in Figure~\ref{fig:cast-insert}, but this is only a slightly
+modified version from the one given by Siek and Taha.
 \begin{figure}
   TODO
   \caption{Cast Insertion}

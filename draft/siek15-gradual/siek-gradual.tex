@@ -33,8 +33,6 @@
 \newcommand{\ottprodnewline}{\\}
 \newcommand{\ottinterrule}{\\[5.0mm]}
 \newcommand{\ottafterlastrule}{\\}
-\usepackage{txfonts}
-
 \newcommand{\ottmetavars}{
 \ottmetavartabular{
  $ \ottmv{termvar} ,\, \ottmv{x} ,\, \ottmv{y} ,\, \ottmv{z} ,\, \ottmv{f} $ &  \\
@@ -227,8 +225,8 @@
 
 \newcommand{\ottdruleSXXappName}[0]{\ottdrulename{S\_app}}
 \newcommand{\ottdruleSXXapp}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash_{\mathsf{S} }  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C}   \quad   \mathsf{fun}( \ottnt{C} ) =  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  }%
-\ottpremise{  \Gamma  \vdash_{\mathsf{S} }  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}  }%
+\ottpremise{ \Gamma  \vdash_{\mathsf{S} }  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C} }%
+\ottpremise{    \Gamma  \vdash_{\mathsf{S} }  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}     \quad   \mathsf{fun}( \ottnt{C} ) =  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  }%
 }{
  \Gamma  \vdash_{\mathsf{S} }  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B_{{\mathrm{1}}}} }{%
 {\ottdruleSXXappName}{}%
