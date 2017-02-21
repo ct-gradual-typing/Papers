@@ -89,7 +89,7 @@ $\lambda$-calculus with products.
   $S$ is either $[[? -> ?]]$ or $[[? x ?]]$.
 \end{definition}
 
-\begin{theorem}[\citet{Scott:1980}]
+\begin{theorem}[\cite{Scott:1980}]
   \label{thm:untyped-lambda-model-sound-complete}
   An untyped $\lambda$-model is a sound and complete model of the untyped $\lambda$-calculus.
 \end{theorem}
@@ -108,7 +108,7 @@ Grady to contain it, and Grady will directly correspond to the model.
   and morphisms $\mathsf{z} : 1 \mto [[Nat]]$ and $[[succ]] : [[Nat]]
   \mto [[Nat]]$ of $\cat{C}$, such that, for any morphisms $f : [[Y]]
   \mto X$ and $g : [[Y x Nat]] \mto X$ of $\cat{C}$ there is a unique
-  morphism $\case_X : [[Y x Nat]] \mto X$ making the following
+  morphism $\Case_X : [[Y x Nat]] \mto X$ making the following
   diagrams commute:
        \[
        \begin{array}{lll}
@@ -119,25 +119,25 @@ Grady to contain it, and Grady will directly correspond to the model.
            X;
            \id_Y \times \mathsf{z}`
            \pi_1;f`
-           \case_X]
+           \Case_X]
 
          \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
            [[Y x Nat]]`
            [[Y x Nat]]`
            X;
            \id_Y \times [[succ]]`
-           \case_X`
+           \Case_X`
            g ]
          \efig                               
        \end{array}
        \]
        Informally, the two diagrams essentially assert that we can
-       define $\case_X$ as follows:
+       define $\Case_X$ as follows:
        \begin{center}
          \begin{math}
            \begin{array}{rll}
-             \case_X\,y\,0 & = & f\,y\\
-             \case_X\,y\,[[(succ x)]] & = &  g\,y\,x
+             \Case_X\,y\,0 & = & f\,y\\
+             \Case_X\,y\,[[(succ x)]] & = &  g\,y\,x
            \end{array}
          \end{math}
        \end{center}
@@ -145,9 +145,9 @@ Grady to contain it, and Grady will directly correspond to the model.
 \noindent This formalization of natural numbers is inspired by the
 definition of Scott Numerals \cite{??} where the notion of a case
 distinction is built into the encoding. We can think of $[[Y]]$ in the
-source object of $\case$ as the type of additional inputs that will be
+source object of $\Case$ as the type of additional inputs that will be
 passed to both $f$ and $g$, but we can think of $[[Nat]]$ in the
-source object of $\case$ as the type of the scrutiny.  Thus, since in
+source object of $\Case$ as the type of the scrutiny.  Thus, since in
 the base case there is no predecessor, $f$, will not require the
 scrutiny, and so it is ignored.
 

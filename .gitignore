@@ -23,3 +23,5 @@
 /draft/core_type_rules.tex
 /draft/eval-int.tex
 /draft/siek-red-rules.tex
+generic/*
+draft/generic/*
