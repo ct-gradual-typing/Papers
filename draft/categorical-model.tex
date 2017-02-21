@@ -538,6 +538,24 @@ complete proof.
   Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
   a gradual $\lambda$-model.  Then we know the following:
   \begin{enumR}
+  \item If $<<A ~ A>>$, then $c_1 = c_2 = \id_{[[A]]} : [[A --> A]]$.
+
+  \item If $<<A ~ ?>>$, then there are casting morphisms:
+    \[
+    \begin{array}{lllll}
+      c_1 & = & [[Box A]] : [[A --> ?]]\\
+      c_2 & = & [[Unbox A]] : [[? --> A]]
+    \end{array}
+    \]
+
+    \item If $<<? ~ A>>$, then there are casting morphisms:
+    \[
+    \begin{array}{lllll}      
+      c_1 & = & [[Unbox A]] : [[? --> A]]\\
+      c_2 & = & [[Box A]] : [[A --> ?]]
+    \end{array}
+    \]
+    
   \item If $<<A1 -> B1 ~ A2 -> B2>>$, then there are casting morphisms:
     \[
     \begin{array}{lllll}

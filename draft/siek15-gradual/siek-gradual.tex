@@ -389,27 +389,27 @@
 
 \newcommand{\ottdrulerdAXXcastArrowName}[0]{\ottdrulename{rdA\_castArrow}}
 \newcommand{\ottdrulerdAXXcastArrow}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash_{\mathsf{C} }  \ottnt{v_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}   \quad   \Gamma  \vdash_{\mathsf{C} }  \ottnt{v_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}  }%
+\ottpremise{    \Gamma  \vdash_{\mathsf{C} }  \ottnt{v_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}   \quad   \Gamma  \vdash_{\mathsf{C} }  \ottnt{v_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}     \quad   \ottsym{(}  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  \ottsym{)}  \sim  \ottsym{(}  \ottnt{A_{{\mathrm{2}}}}  \rightarrow  \ottnt{B_{{\mathrm{2}}}}  \ottsym{)}  }%
 }{
-\Gamma  \vdash   \ottsym{(}   \ottnt{v_{{\mathrm{1}}}}  :    \ottsym{(}  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  \ottsym{)}   \Rightarrow   \ottsym{(}  \ottnt{A_{{\mathrm{2}}}}  \rightarrow  \ottnt{B_{{\mathrm{2}}}}  \ottsym{)}     \ottsym{)} \, \ottnt{v_{{\mathrm{2}}}}   \rightsquigarrow     \ottnt{v_{{\mathrm{1}}}} \, \ottsym{(}   \ottnt{v_{{\mathrm{2}}}}  :    \ottnt{A_{{\mathrm{2}}}}   \Rightarrow   \ottnt{A_{{\mathrm{1}}}}     \ottsym{)}   :    \ottnt{B_{{\mathrm{1}}}}   \Rightarrow   \ottnt{B_{{\mathrm{2}}}}      \ottsym{:}  \ottnt{B}}{%
+\Gamma  \vdash   \ottsym{(}   \ottnt{v_{{\mathrm{1}}}}  :    \ottsym{(}  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  \ottsym{)}   \Rightarrow   \ottsym{(}  \ottnt{A_{{\mathrm{2}}}}  \rightarrow  \ottnt{B_{{\mathrm{2}}}}  \ottsym{)}     \ottsym{)} \, \ottnt{v_{{\mathrm{2}}}}   \rightsquigarrow     \ottnt{v_{{\mathrm{1}}}} \, \ottsym{(}   \ottnt{v_{{\mathrm{2}}}}  :    \ottnt{A_{{\mathrm{2}}}}   \Rightarrow   \ottnt{A_{{\mathrm{1}}}}     \ottsym{)}   :    \ottnt{B_{{\mathrm{1}}}}   \Rightarrow   \ottnt{B_{{\mathrm{2}}}}      \ottsym{:}  \ottnt{B_{{\mathrm{2}}}}}{%
 {\ottdrulerdAXXcastArrowName}{}%
 }}
 
 
 \newcommand{\ottdrulerdAXXcastGroundName}[0]{\ottdrulename{rdA\_castGround}}
 \newcommand{\ottdrulerdAXXcastGround}[1]{\ottdrule[#1]{%
-\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottnt{A}   \quad   \ottnt{A}  \sim  \ottnt{T}     \quad   \ottnt{T}  \neq  \ottnt{R}     \quad   \ottnt{T}  \neq  \ottsym{\mbox{?}}  }%
+\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottnt{A}   \quad   \ottnt{A}  \sim  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottsym{\mbox{?}}  }%
 }{
-\Gamma  \vdash   \ottnt{v}  :    \ottnt{A}   \Rightarrow   \ottsym{\mbox{?}}     \rightsquigarrow   \ottnt{v}  :      \ottnt{A}   \Rightarrow   \ottnt{T}     \Rightarrow   \ottsym{\mbox{?}}     \ottsym{:}  \ottsym{\mbox{?}}}{%
+\Gamma  \vdash   \ottnt{v}  :    \ottnt{A}   \Rightarrow   \ottsym{\mbox{?}}     \rightsquigarrow   \ottnt{v}  :      \ottnt{A}   \Rightarrow   \ottnt{R}     \Rightarrow   \ottsym{\mbox{?}}     \ottsym{:}  \ottsym{\mbox{?}}}{%
 {\ottdrulerdAXXcastGroundName}{}%
 }}
 
 
 \newcommand{\ottdrulerdAXXcastExpandName}[0]{\ottdrulename{rdA\_castExpand}}
 \newcommand{\ottdrulerdAXXcastExpand}[1]{\ottdrule[#1]{%
-\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottsym{\mbox{?}}   \quad   \ottnt{A}  \sim  \ottnt{T}     \quad   \ottnt{T}  \neq  \ottnt{R}     \quad   \ottnt{T}  \neq  \ottsym{\mbox{?}}  }%
+\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottsym{\mbox{?}}   \quad   \ottnt{A}  \sim  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottsym{\mbox{?}}  }%
 }{
-\Gamma  \vdash   \ottnt{v}  :    \ottsym{\mbox{?}}   \Rightarrow   \ottnt{A}     \rightsquigarrow   \ottnt{v}  :      \ottsym{\mbox{?}}   \Rightarrow   \ottnt{T}     \Rightarrow   \ottnt{A}     \ottsym{:}  \ottnt{A}}{%
+\Gamma  \vdash   \ottnt{v}  :    \ottsym{\mbox{?}}   \Rightarrow   \ottnt{A}     \rightsquigarrow   \ottnt{v}  :      \ottsym{\mbox{?}}   \Rightarrow   \ottnt{R}     \Rightarrow   \ottnt{A}     \ottsym{:}  \ottnt{A}}{%
 {\ottdrulerdAXXcastExpandName}{}%
 }}
 
