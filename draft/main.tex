@@ -69,6 +69,15 @@
 \input{siek15-gradual-inc}
 \renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\GSiekdrulename{#4}}}
 \renewcommand{\GSiekdrulename}[1]{#1}
+\renewcommand{\GSiekdruleSXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleSXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleSXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleSXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleSXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleSXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleSXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleSXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleSXXappName}[0]{\to_e}
 
 \def\lastname{Eades III and Townsend}
 
@@ -76,7 +85,7 @@
 
 \begin{frontmatter}
   \title{The Combination of Dynamic and Static Typing from a Categorical Perspective}
-  \author{Harley Eades III\thanksref{ALL}\thanksref{heades@augusta.edu}}
+  \author{Harley Eades III\thanksref{ALL}\thanksref{myemail}}
   \address{Computer and Information Sciences\\ Augusta University\\
     Augusta, USA}
   \author{Michael Townsend\thanksref{coemail}}
@@ -86,27 +95,25 @@
   \thanks[ALL]{Thanks: TODO}
   \thanks[myemail]{Email:\href{mailto:heades@augusta.edu} {\texttt{\normalshape heades@augusta.edu}}}
   \thanks[coemail]{Email: \href{mailto:mitownsend@augusta.edu} {\texttt{\normalshape mitownsend@augusta.edu}}}
-\begin{abstract} 
-  Gradual typing was first proposed by Siek and Taha in 2006 as a way
-  for a programming language to combine the strengths of both static
-  and dynamic typing.  However one question we must ask is, what is
-  gradual typing?  This paper contributes to answering this question
-  by providing the first categorical model of gradual typing using the
-  seminal work of Scott and Lambek on the categorical models of the
-  untyped and typed $\lambda$-calculus.  We then extract a functional
-  programming language, called Grady, from the categorical model using
-  the Curry-Howard-Lambek correspondence that combines both static and
-  dynamic typing, but Grady is an annotated language and not a gradual
-  type system.  Finally, we show that Siek and Taha's gradual type
-  system can be translated into Grady, and that their original
-  annotated language is equivalent in expressive power to Grady.
-\end{abstract}
-\begin{keyword}  
-  static typing, dynamic typing, gradual typing, categorical
-  semantics, retract,typed lambda-calculus, untyped lambda-calculus,
-  gradual typing, static typing, dynamic typing, categorical model,
-  functional programming
-\end{keyword}
+  \begin{abstract} 
+    In this paper we introduce a new categorical model based on
+    retracts that combines static and dynamic typing.  This model is
+    initially based on the seminal work of Scott who showed that the
+    untyped $\lambda$-calculus can be considered as typed using
+    retracts.  We then show that our model gives rise to a new and
+    simple type system which combines static and dynamic typing.
+    Finally, we extend this type system with bounded quantification
+    and lists, and then develop a gradually typed surface language
+    that uses our new type system as a core casting calculus.  This
+    paper can be seen as the first of a new project to investigate the
+    categorical semantics of gradual type systems.
+  \end{abstract}
+  \begin{keyword}  
+    static typing, dynamic typing, gradual typing, categorical
+    semantics, retract,typed lambda-calculus, untyped lambda-calculus,
+    gradual typing, static typing, dynamic typing, categorical model,
+    functional programming
+  \end{keyword}
 \end{frontmatter}
 
 \section{Introduction}

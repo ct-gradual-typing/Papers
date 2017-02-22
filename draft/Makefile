@@ -95,13 +95,13 @@ introduction-ott.tex : introduction.tex sl-grady/sl-grady.ott siek15-gradual/sie
 	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \
 		-tex_filter introduction-ott1.tex introduction-ott.tex
 
-$(OTTOutputFile) : sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
+ott : sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
 	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex results-ott.tex \
-	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex
+	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
 
-ott :  $(OTTOutputFile) Makefile $(References)
-
-$(PDF) :  $(OTTOutputFile) Makefile $(References)
+$(PDF) : sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
+	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex results-ott.tex \
+	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)

@@ -65,14 +65,14 @@ grammar
     | ( A )               :: S :: paren
     | H( A )              :: M :: hparen
     {{tex [[A]] }}
-    | ? -> ?              :: M :: retract
-    {{tex ? \to ? }}    
     | A1 --> A2           :: M :: Morph
     {{tex [[A1]] \mto [[A2]] }}
     | [| G |]             :: M :: InterpCtx
     {{tex \interp{[[G]]} }}
     | [| A |]             :: M :: InterpType
-    {{tex \interp{[[A]]} }}    
+    {{tex \interp{[[A]]} }}
+    | ? -> ?              ::   :: retract
+    {{tex ? \to ? }}    
 
   G {{ tex \Gamma }} :: G_ ::=                 
     | .                   ::   :: emptyCtx     
@@ -134,7 +134,6 @@ grammar
 
 subrules
   T <:: A
-  T <:: R
   R <:: A
   
 defns

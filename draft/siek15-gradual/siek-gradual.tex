@@ -62,7 +62,7 @@
 \newcommand{\ottR}{
 \ottrulehead{\ottnt{R}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{Nat} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottkw{Nat}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ ? \to ? }{}{}{}{}}
 
 \newcommand{\ottctag}{
@@ -380,9 +380,9 @@
 
 \newcommand{\ottdrulerdAXXsucceedName}[0]{\ottdrulename{rdA\_succeed}}
 \newcommand{\ottdrulerdAXXsucceed}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottnt{R} }%
+\ottpremise{\texttt{\textcolor{red}{<<no parses (char 15):     G \mbox{$\mid$}-C v : R*** >>}}}%
 }{
-\Gamma  \vdash   \ottnt{v}  :      \ottnt{R}   \Rightarrow   \ottsym{\mbox{?}}     \Rightarrow   \ottnt{R}     \rightsquigarrow  \ottnt{v}  \ottsym{:}  \ottnt{R}}{%
+\texttt{\textcolor{red}{<<no parses (char 17):     G \mbox{$\mid$}- v : h(\{R***\} => \{\mbox{?}\}) => \{R\} ~> v : R >>}}}{%
 {\ottdrulerdAXXsucceedName}{}%
 }}
 
@@ -398,18 +398,18 @@
 
 \newcommand{\ottdrulerdAXXcastGroundName}[0]{\ottdrulename{rdA\_castGround}}
 \newcommand{\ottdrulerdAXXcastGround}[1]{\ottdrule[#1]{%
-\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottnt{A}   \quad   \ottnt{A}  \sim  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottsym{\mbox{?}}  }%
+\ottpremise{\texttt{\textcolor{red}{<<no parses (char 26):     ((G \mbox{$\mid$}-C v : A \&\& A ~ R***) \&\& A != R) \&\& A != \mbox{?} >>}}}%
 }{
-\Gamma  \vdash   \ottnt{v}  :    \ottnt{A}   \Rightarrow   \ottsym{\mbox{?}}     \rightsquigarrow   \ottnt{v}  :      \ottnt{A}   \Rightarrow   \ottnt{R}     \Rightarrow   \ottsym{\mbox{?}}     \ottsym{:}  \ottsym{\mbox{?}}}{%
+\texttt{\textcolor{red}{<<no parses (char 42):     G \mbox{$\mid$}- v : \{A\} => \{\mbox{?}\} ~> v : h(\{A\} => \{R***\}) => \{\mbox{?}\} : \mbox{?} >>}}}{%
 {\ottdrulerdAXXcastGroundName}{}%
 }}
 
 
 \newcommand{\ottdrulerdAXXcastExpandName}[0]{\ottdrulename{rdA\_castExpand}}
 \newcommand{\ottdrulerdAXXcastExpand}[1]{\ottdrule[#1]{%
-\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottsym{\mbox{?}}   \quad   \ottnt{A}  \sim  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottsym{\mbox{?}}  }%
+\ottpremise{\texttt{\textcolor{red}{<<no parses (char 26):     ((G \mbox{$\mid$}-C v : \mbox{?} \&\& A ~ R***) \&\& A != R) \&\& A != \mbox{?} >>}}}%
 }{
-\Gamma  \vdash   \ottnt{v}  :    \ottsym{\mbox{?}}   \Rightarrow   \ottnt{A}     \rightsquigarrow   \ottnt{v}  :      \ottsym{\mbox{?}}   \Rightarrow   \ottnt{R}     \Rightarrow   \ottnt{A}     \ottsym{:}  \ottnt{A}}{%
+\texttt{\textcolor{red}{<<no parses (char 42):     G \mbox{$\mid$}- v : \{\mbox{?}\} => \{A\} ~> v : h(\{\mbox{?}\} => \{R***\}) => \{A\} : A >>}}}{%
 {\ottdrulerdAXXcastExpandName}{}%
 }}
 
@@ -652,7 +652,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        52 good    0 bad
-Definition rule clauses: 97 good    0 bad
+Definition rules:        49 good    3 bad
+Definition rule clauses: 91 good    6 bad
 \end{verbatim}
 \end{document}
