@@ -1,0 +1,169 @@
+\begin{lemma}[Inclusion of Bounded System F]
+  \label{lemma:F-inclusion}
+  Suppose $t$ is fully annotated and does not contain any applications
+  of $[[box]]$ or $[[unbox]]$, and $[[A]]$ is static.  Then
+  \begin{itemize}
+  \item[i.] $[[G |-F t : A]]$ if and only if $\,[[G |- t : A]]$, and 
+  \item[ii.] $[[t F~>* t']]$ if and only if $[[t ~>* t']]$.
+  \end{itemize}
+\end{lemma}
+\begin{proof}
+  We give proof sketches for both parts.  The interesting cases are
+  the right-to-left directions of each part.  If we simply remove all
+  rules mentioning the unknown type $[[?]]$ and the type consistency
+  relation, and then remove $[[box]]$, $[[unbox]]$, and $[[?]]$ from
+  the syntax of Surface Grady, then what we are left with is bounded
+  system F.  Since $[[t]]$ is fully annotated and $[[A]]$ is static,
+  then $[[G |- t : A]]$ will hold within this fragment.
+
+  Moving on to part two, first, we know that $[[t]]$ does not contain
+  any occurrence of $[[box]]$ or $[[unbox]]$ and is fully annotated.
+  This implies that $[[t]]$ lives within the bounded system F fragment
+  of Surface Grady. Thus, before evaluation of $[[t]]$ Surface Grady
+  will apply the cast insertion algorithm which will at most insert
+  applications of the identity function into $[[t]]$ producing a term
+  $\widehat{[[t]]}$, but then after potentially more than one step of
+  evaluation within Core Grady, those applications of the identity
+  function will be $\beta$-reduced away resulting in $\widehat{[[t]]}
+  \rightsquigarrow^* [[t]] \rightsquigarrow^* [[t']]$.  In addition,
+  since $[[t]]$ in Surface Grady is the exact same program as $[[t]]$
+  in bounded system F, then we know $[[t F~>* t']]$ will hold.
+\end{proof}
+
+\begin{lemma}[Inclusion of DTLC]
+  \label{lemma:inclusion_of_dtlc}
+  Suppose $[[t]]$ is a closed term of DTLC. Then
+  \begin{itemize}
+  \item[i.] $[[. |- |t| : ?]]$, and
+  \item[ii.] $[[t D~>* t']]$ if and only if $[[|t| ~>* |t'|]]$.
+  \end{itemize}
+\end{lemma}
+\begin{proof}
+  In this case DTLC is embedded into the simply typed fragment of
+  Grady, and hence, this proof is the same result proven by
+  \cite{Siek:2006}, and \cite{Siek:2015}.
+\end{proof}
+
+
+\renewcommand{\SGradydrulePXXUName}{[[?]]}
+\renewcommand{\SGradydrulePXXreflName}{\text{refl}}
+\renewcommand{\SGradydrulePXXarrowName}{\to}
+\renewcommand{\SGradydrulePXXprodName}{\times}
+\renewcommand{\SGradydrulePXXlistName}{\mathsf{List}}
+\renewcommand{\SGradydrulePXXforallName}{\forall}
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \SGradydrulePXXU{} \and
+      \SGradydrulePXXrefl{} \and
+      \SGradydrulePXXarrow{} \and
+      \SGradydrulePXXprod{} \and
+      \SGradydrulePXXlist{} \and
+      \SGradydrulePXXforall{}      
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Type Precision}
+  \label{fig:type-pre}
+\end{figure}
+
+\begin{lemma}[Left-to-Right Consistent Subtyping]
+  \label{lemma:consistent-subtyping-1}
+  Suppose $[[G |- A <~ B]]$.
+  \begin{enumR}
+    \item $[[G |- A ~ A']]$ and $<<G |- A' <: B>>$ for some $[[A']]$.
+    \item $[[G |- B' ~ B]]$ and $<<G |- A <: B'>>$ for some $[[B']]$.
+  \end{enumR}   
+\end{lemma}
+\begin{proof}
+  This is a proof by induction on $[[G |- A <~ B]]$.  See
+  Appendix~\ref{subsec:proof_of_left-to-right_consistent_subtyping_lemma:consistent-subtyping-1}
+  for the complete proof.
+\end{proof}
+
+\begin{corollary}[Consistent Subtyping]
+  \label{corollary:consistent_subtyping}
+  \begin{enumR}
+  \item[]
+  \item $[[G |- A <~ B]]$ if and only if $[[G |- A ~ A']]$ and $<<G |- A' <: B>>$ for some $[[A']]$.
+  \item $[[G |- A <~ B]]$ if and only if $[[G |- B' ~ B]]$ and $<<G |- A <: B'>>$ for some $[[B']]$.
+  \end{enumR}
+\end{corollary}
+\begin{proof}
+  The left-to-right direction of both cases easily follows from
+  Lemma~\ref{lemma:consistent-subtyping-1}, and the right-to-left
+  direction of both cases follows from induction on the subtyping
+  derivation and Lemma~\ref{lemma:simply_typed_consistent_types_are_subtypes}.
+\end{proof}
+
+
+\begin{lemma}[Gradual Guarantee Part One]
+  \label{lemma:gradual_guarantee_part_one}
+  If $[[G |- t : A]]$, $[[t <= t']]$, and $[[G <= G']]$ then $[[G' |- t' : B]]$ and $[[A <= B]]$.
+\end{lemma}
+\begin{proof}
+  This is a proof by induction on $[[G |- t : A]]$; see
+  Appendix~\ref{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
+  for the complete proof.
+\end{proof}
+
+\begin{lemma}[Type Preservation for Cast Insertion]
+  \label{lemma:type_preservation_for_cast_insertion}
+  If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : B]]$, then $<<G |- t2 : B>>$ and $[[G |- A ~ B]]$.
+\end{lemma}
+\begin{proof}
+  The cast insertion algorithm is type directed and with respect to
+  every term $[[t1]]$ it will produce a term $[[t2]]$ of the core
+  language with the type $[[A]]$ -- this is straightforward to show by
+  induction on the form of $[[G |- t1 : A]]$ making use of typing for
+  casting morphisms Lemma~\ref{lemma:typing_casting_morphisms} --
+  except in the case of type application.  Please see
+  Appendix~\ref{subsec:proof_of_type_preservation_for_cast_insertion}
+  for the complete proof.
+\end{proof}
+
+\begin{lemma}[Type Preservation]
+  \label{lemma:type_preservation}
+  If $<<G |- t1 : A>>$ and $<<t1 ~> t2>>$, then $<<G |- t2 : A>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $<<G |- t1 : A>>$ with further case
+  analysis on the structure the derivation $<<t1 ~> t2>>$.
+\end{proof}
+
+\begin{lemma}[Simulation of More Precise Programs]
+  \label{lemma:simulation_of_more_precise_programs}
+  Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, $<<G |- t'1 : A'>>$, and $<<t1 ~> t2>>$.
+  Then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $<<G |- t1 : A1>>$.  See
+  Appendix~\ref{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
+  for the complete proof.
+\end{proof}
+
+\begin{theorem}[Gradual Guarantee]
+  \label{thm:gradual_guarantee} 
+  \begin{enumR}
+  \item[] 
+  \item If $[[. |- t : A]]$ and $[[t <= t']]$, then $[[. |- t' : B]]$ and $[[A <= B]]$.
+  \item Suppose $<<. |- t : A>>$ and $<<. |- t <= t'>>$. Then
+    \begin{enumA}
+    \item if $<<t ~>* v>>$, then $<<t' ~>* v'>>$ and $<<. |- v <= v'>>$,
+    \item if $<<t ^>>$, then $<<t' ^>>$,
+    \item if $<<t' ~>* v'>>$, then $<<t ~>* v>>$ where $<<. |- v <= v'>>$, or $<<t ~>* error A>>$, and
+    \item if $<<t' ^>>$, then $<<t ^>>$ or $<<t ~>* error A>>$.
+    \end{enumA}
+  \end{enumR}
+\end{theorem}
+\begin{proof}
+  This result follows from the same proof as \cite{Siek:2015}, and so,
+  we only give a brief summary.  Part i. holds by
+  Lemma~\ref{lemma:gradual_guarantee_part_one}, and Part ii. follows
+  from simulation of more precise programs
+  (Lemma~\ref{lemma:simulation_of_more_precise_programs}).
+\end{proof}
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***
