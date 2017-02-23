@@ -82,13 +82,13 @@ However, the gradual guarantee shows that any program in the gradual type system
 can slide either more towards static typing or more towards dynamic typing by
 inserting or removing casts.
 
-\paragraph{Contributions.} This paper offers the following contributions:
+\textbf{Contributions.} This paper offers the following contributions:
 \begin{itemize}
 
 \item A new categorical model for gradual typing for functional
   languages.  We show how to interpret Siek and Taha's
   \cite{Siek:2015} gradual type system in the categorical model
-  outlined above.  
+  outlined above.
 
 \item We then extract a functional programming language called Simple
   Grady from the categorical model via the Curry-Howard-Lambek
@@ -96,18 +96,71 @@ inserting or removing casts.
   as an alternative core casting calculus in which Siek and Taha's
   gradual type system can be translated to.
   
-\item We extend Simple Grady into a new language we call Core Grady that
-  has natural numbers, lists, and bounded quantification. In addition,
-  natural numbers and lists will contain an eliminator that when
-  combined with the Y combinator yields terminating recursion without
-  the need for Grady to explicitly contain a fixpoint operator.
+\item We extend Simple Grady into a new language we call Core Grady
+  that has natural numbers, lists, and bounded quantification. In
+  addition, natural numbers and lists will contain an eliminator that
+  when combined with the Y combinator yields terminating recursion
+  without the need for Grady to explicitly contain a fixpoint
+  operator.
 
 \item Finally, we develop a gradually typed surface language called
   Surface Grady and show that it satisfies the gradual guarantee.
 
 \end{itemize}
 
-\paragraph{Related work.} TODO
+\textbf{Related work.}  We now give a brief summary of related
+work. Each of the articles discussed below can be consulted for
+further references.
+%% - Combing static and dynamic typing
+%% - Gradual Typing
+%%    - Polymorphism
+\begin{itemize}
+\item Abadi et al.~\cite{Abadi:1989} combine dynamic and static typing
+  by adding a new type called $\mathsf{Dynamic}$ along with a new case
+  construct for pattern matching on types.  We do not add such a case
+  construct, and as a result, show that we can obtain a surprising
+  amount of expressivity without it.  They also provide denotational
+  models.
+
+\item Henglein~\cite{Henglein:1994} defines the dynamic
+  $\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to the simply
+  typed $\lambda$-calculus and then adding primitive casting
+  operations called tagging and check-and-untag.  These new operations
+  tag type constructors with their types.  Then untagging checks to
+  make sure the target tag matches the source tag, and if not, returns
+  a dynamic type error.  These operations can be used to build casting
+  coercions which are very similar to our casting morphisms. We can
+  also define $[[split]]$, $[[squash]]$, $[[box]]$, and $[[unbox]]$ in
+  terms of Henglein's casting coercions.  However, our setting is a
+  bit more strict then his, because his ``boxing'' and ``unboxing''
+  operations form an isomorphism, but we show that a retract is only
+  needed.
+
+\item As we mentioned in the introduction Siek and
+  Taha~\cite{Siek:2006} were the first to define gradual typing
+  especially for functional languages.  We show that their language
+  can be given a straightforward categorical model in cartesian closed
+  categories.  Since their original paper introducing gradual types
+  lots of languages have adopted it, but the term ``gradual typing''
+  started to become a catch all phrase for any language combining
+  dynamic and static typing.  As a result of this Siek et
+  al.~\cite{Siek:2015} later refine what it means for a language to
+  support gradual typing by specifying the necessary metatheoretic
+  properties a gradual type system must satisfy called the gradual
+  guarantee.
+
+\item The categorical model we give here is with respect to the core
+  casting calculus.  In future work we plan to investigate a
+  categorical model for the surface language, and we believe that
+  Garcia's~\cite{Garcia:2016} work showing how to extract the gradual
+  type system from a fully static type system using abstract
+  interpretation will play a key role.  Abstract interpretation uses
+  Galois connections which can be studied as adjoints in the category
+  of posets.  Garcia shows that one can start with a static type
+  system, and then use abstract interpretation to infer the gradually
+  typed surface language complete with both statics and dynamics.
+
+\end{itemize}
 
 %%% Local Variables: ***
 %%% mode:latex ***
