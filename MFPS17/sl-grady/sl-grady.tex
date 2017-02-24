@@ -77,13 +77,15 @@
 \ottrulehead{\ottnt{S}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottnt{S_{{\mathrm{1}}}}  \rightarrow  \ottnt{S_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottnt{S_{{\mathrm{1}}}} \, \ottmv{x} \, \ottnt{S_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottsym{(}  \ottnt{S}  \ottsym{)}}{}{}{}{}}
+\ottprodline{|}{ \ottnt{S_{{\mathrm{1}}}}  \times  \ottnt{S_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottsym{(}  \ottnt{S}  \ottsym{)}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{skeleton}\, \ottnt{A} }{}{}{}{}}
 
 \newcommand{\ottU}{
 \ottrulehead{\ottnt{U}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottsym{\mbox{?}}  \rightarrow  \ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \ottsym{\mbox{?}}  \times  \ottsym{\mbox{?}} }{}{}{}{}}
+\ottprodline{|}{ \ottsym{\mbox{?}}  \times  \ottsym{\mbox{?}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottsym{(}  \ottnt{U}  \ottsym{)}}{}{}{}{}}
 
 \newcommand{\ottT}{
 \ottrulehead{\ottnt{T}}{::=}{}\ottprodnewline
@@ -91,7 +93,7 @@
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}}
 
 \newcommand{\ottA}{
-\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{R}}{::=}{}\ottprodnewline
+\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{R}  ,\ \ottnt{X}  ,\ \ottnt{Y}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline

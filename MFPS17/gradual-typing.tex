@@ -1,4 +1,4 @@
-We begin by introducing a slight variation of the gradually typed
+In this section we introduce a slight variation of the gradually typed
 functional language given by Siek et al.~\cite{Siek:2015}.  The syntax
 and typing rules of the gradual type system $\GSTLC$ are defined in
 Figure~\ref{fig:GSTLC}.  The main changes of the version of $\GSTLC$
@@ -55,6 +55,29 @@ example, it is reasonable for terms like $[[\x:(? x ?).(succ (fst
   \label{fig:GSTLC}
 \end{figure}
 
+The typing rules depend on the following partial functions:
+\[
+\begin{array}{lll}
+  \begin{array}{lll}
+  [[prod(?) = ? x ?]]\\
+  [[prod(A1 x A2) = A1 x A2]]\\
+  \end{array}
+  & \quad &
+  \begin{array}{lll}
+  [[fun(?) = ? -> ?]]\\
+  [[fun(A1 -> A2) = A1 -> A2]]\\
+\end{array}
+\end{array}
+\]
+As one can see these allow the unknown type to be split, otherwise
+they simply return the given product/arrow type.  The typing rules
+also depend on type consistency which is a reflexive and symmetric
+binary relation.  Intuitively, one can view these rules as indicating
+which types can be cast.  That is, $[[A ~ B]]$ states that $[[A]]$ can
+be cast into $[[B]]$ and vice versa.  As we will see in the
+interpretation type consistency amounts to requiring the existence of
+a casting morphism.
+
 We can view gradual typing as a surface language feature much like
 type inference, and we give $\GSTLC$ its operational semantics by
 translating it to a fully annotated core language -- sometimes called
@@ -62,31 +85,17 @@ the casting calculus -- called $\CGSTLC$. The syntax, typing rules,
 and reduction relation for $\CGSTLC$ can be found in
 Figure~\ref{fig:CGSTLC}. Its syntax is an extension of the syntax of
 $\GSTLC$ where terms are the only syntactic class that differs, and so
-we do not repeat the syntax of types or contexts.
-\renewcommand{\GSiekdruleCXXvarName}[0]{\text{var}}
-\renewcommand{\GSiekdruleCXXunitName}[0]{\text{unit}}
-\renewcommand{\GSiekdruleCXXzeroName}[0]{\text{zero}}
-\renewcommand{\GSiekdruleCXXsuccName}[0]{\text{succ}}
-\renewcommand{\GSiekdruleCXXpairName}[0]{\times}
-\renewcommand{\GSiekdruleCXXlamName}[0]{\to}
-\renewcommand{\GSiekdruleCXXsndName}[0]{\times_{e_2}}
-\renewcommand{\GSiekdruleCXXfstName}[0]{\times_{e_1}}
-\renewcommand{\GSiekdruleCXXappName}[0]{\to_e}
-\renewcommand{\GSiekdruleCXXcastName}[0]{\text{cast}}
-\renewcommand{\GSiekdrulerdAXXvaluesName}{\text{values}}
-\renewcommand{\GSiekdrulerdAXXcastIdName}{\text{id-atom}}
-\renewcommand{\GSiekdrulerdAXXcastUName}{\text{id-U}}
-\renewcommand{\GSiekdrulerdAXXsucceedName}{\text{succeed}}
-\renewcommand{\GSiekdrulerdAXXcastArrowName}{\text{arrow}}
-\renewcommand{\GSiekdrulerdAXXcastGroundName}{\text{expand}_1}
-\renewcommand{\GSiekdrulerdAXXcastExpandName}{\text{expand}_2}
-\renewcommand{\GSiekdrulerdAXXbetaName}{}
-\renewcommand{\GSiekdrulerdAXXappOneName}{}
-\renewcommand{\GSiekdrulerdAXXappTwoName}{}
-\renewcommand{\GSiekdrulerdAXXfstName}{}
-\renewcommand{\GSiekdrulerdAXXsndName}{}
-\renewcommand{\GSiekdrulerdAXXpairOneName}{}
-\renewcommand{\GSiekdrulerdAXXpairTwoName}{}
+we do not repeat the syntax of types or contexts. The reduction
+relation is defined as a simple extension of call-by-value for the
+simply typed $\lambda$-calculus, and so we do not give all of the
+rules here, but rather only the casting rules.  In addition, to save
+space we do not define the cast insertion algorithm for $\GSTLC$.
+Please see Siek et al.~\cite{Siek:2015} for its definition.  To make
+it easier for the reader to connect the reduction rules to their
+interpretations we give the reduction rules for $\CGSTLC$ using the
+terms-in-context formulation; for an introduction to this style please
+see Crole~\cite{Crole:1994}.
+
 \begin{figure}
   \begin{mdframed}
     \small
@@ -144,15 +153,16 @@ we do not repeat the syntax of types or contexts.
   \caption{The core casting calculus: $\CGSTLC$}
   \label{fig:CGSTLC}
 \end{figure}
-The reduction relation is defined as a simple extension of
-call-by-value for the simply typed $\lambda$-calculus, and so we do
-not give all of the rules here, but rather only the casting rules.  In
-addition, to save space we do not define the cast insertion algorithm
-for $\GSTLC$.  Please see Siek et al.~\cite{Siek:2015} for its
-definition.  To make it easier for the reader to connect the reduction
-rules to their interpretations we give the reduction rules for
-$\CGSTLC$ using the terms-in-context formulation; for an introduction
-to this style please see Crole~\cite{Crole:1994}.
+
+The casting calculus $\CGSTLC$ also depends on type consistency.  Now
+type consistency is not transitive, because in the surface language we
+do not want every type to be consistent with every other type.
+However, the casting calculus allows one to compose consistency
+relations.  For example, suppose $[[A ~ B]]$, $[[B ~ C]]$, and $[[G |-C
+    t : A]]$, then using the rule $\GSiekdruleCXXcastName{}$ of the
+casting calculus we may type $[[G |-C t : h({A} => {B}) => {C} : C]]$.  This composition
+is the reason why we interpret type consistency as casting morphisms
+in the model.
 
 %%% Local Variables: ***
 %%% mode:latex ***

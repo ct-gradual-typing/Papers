@@ -31,17 +31,17 @@ grammar
     | [| t |]             :: M :: Interp
     {{tex \interp{[[t]]} }}    
     
-  T :: 'T_' ::=                                
-    | Unit                ::   :: unit         
-    {{tex \mathsf{Unit} }}
-    | Nat                 ::   :: nat          
+  % T :: 'T_' ::=                                
+  %   | Unit                ::   :: unit         
+  %   {{tex \mathsf{Unit} }}
+  %   | Nat                 ::   :: nat          
 
-  R :: 'R_' ::=                                
-    | Unit                ::   :: unit         
-    {{tex \mathsf{Unit} }}
-    | Nat                 ::   :: nat          
-    | ? -> ?              ::   :: retract
-    {{tex ? \to ? }}
+  % R :: 'R_' ::=                                
+  %   | Unit                ::   :: unit         
+  %   {{tex \mathsf{Unit} }}
+  %   | Nat                 ::   :: nat          
+  %   | ? -> ?              ::   :: retract
+  %   {{tex ? \to ? }}
     
  ctag :: 'ct_' ::=
     | { A } :: :: Type
@@ -53,7 +53,7 @@ grammar
 
   % (Siek) T is an atomic type
   % (Siek) R is either T or ? -> ?
-  A, B, C, D, E, S, U :: 'A_' ::=              
+  A, B, C, D, E, S, U, T, R :: 'A_' ::=              
     | Unit                ::   :: term         
     {{tex \mathsf{Unit} }}
     | Nat                 ::   :: nat          
@@ -71,8 +71,6 @@ grammar
     {{tex \interp{[[G]]} }}
     | [| A |]             :: M :: InterpType
     {{tex \interp{[[A]]} }}
-    | ? -> ?              ::   :: retract
-    {{tex ? \to ? }}    
 
   G {{ tex \Gamma }} :: G_ ::=                 
     | .                   ::   :: emptyCtx     
@@ -132,10 +130,6 @@ grammar
     | prod( A ) = B       :: M :: prodFun
     {{tex \mathsf{prod}([[A]]) = [[B]] }}    
 
-subrules
-  T <:: A
-  R <:: A
-  
 defns
   Typing :: '' ::=
 

@@ -70,30 +70,32 @@ grammar
     | box C    :: :: box
     | unbox C  :: :: unbox    
 
-  S :: 'S_' ::=
-    | ?             ::   :: U
-    | S1 -> S2      ::   :: arrow
-    | S1 x S2       ::   :: prod
-    | ( S )         ::   :: Paren
-    | skeleton A    ::   :: Skel
+  % S :: 'S_' ::=
+  %   | ?             ::   :: U
+  %   {{tex \mathsf{?} }}    
+  %   | S1 -> S2      ::   :: arrow
+  %   | S1 x S2       ::   :: prod
+  %   | ( S )         ::   :: Paren
+  %   | skeleton A    ::   :: Skel
 
-  U :: 'U_' ::=
-    | ? -> ?        ::   :: arrowU
-    | ? x ?         ::   :: prodU
-    | ( U )         ::   :: Paren
+  % U :: 'U_' ::=
+  %   | ? -> ?        ::   :: arrowU
+  %   | ? x ?         ::   :: prodU
+  %   | ( U )         ::   :: Paren
 
   T :: 'T_' ::=                                
     | Unit                ::   :: term         
     | Nat                 ::   :: nat          
     
-  A, B, C, D, E, R, X, Y :: 'A_' ::=           
+  A, B, C, D, E, R, X, Y, U, S :: 'A_' ::=           
     | Unit                ::   :: term         
     {{tex \mathsf{Unit} }}
     | 1                   :: M :: terminal
     {{tex 1}}
     | Nat                 ::   :: nat          
     {{tex \mathsf{Nat} }}    
-    | ?                   ::   :: unitype      
+    | ?                   ::   :: unitype
+    {{tex \mathsf{?} }}
     | A1 -> A2            ::   :: arrow        
     | A1 x A2             ::   :: pair         
     {{tex [[A1]] \times [[A2]] }}     
@@ -108,9 +110,6 @@ grammar
     {{tex \interp{[[A]]} }}
     | skeleton A          :: M :: Skeleton
     {{tex \mathsf{skeleton}\,[[A]] }}
-    | ? -> ?              :: M :: arrowU
-    | ? x ?               :: M :: prodU
-    {{tex [[?]] \times [[?]] }}
 
 
   G {{ tex \Gamma }} :: G_ ::=                 
@@ -129,7 +128,6 @@ grammar
     {{tex \not \vdash }}    
     | succ                ::   :: succ
     {{tex \mathsf{succ} }}
-    | ?                   ::   :: unitype
     | ~                   ::   :: cons
     {{tex \sim }}
     | ~U                  ::   :: conv
@@ -173,8 +171,6 @@ grammar
 
 subrules
   T <:: A
-  U <:: A
-  S <:: A  
   n <:: t
   v <:: t
   

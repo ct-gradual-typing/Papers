@@ -73,25 +73,37 @@ $\lambda$-calculus.
   %% \efig
   %% \]
 \end{definition}
+\noindent
 Thus, $[[? -> ?]]$ is a retract of $[[?]]$, but we also require that
 $[[? x ?]]$ be a retract of $[[?]]$; this is not new, see Lambek and
-Scott~\cite{Lambek:1988}.  
+Scott~\cite{Lambek:1988}.  Putting this together we obtain Scott's
+model of the untyped $\lambda$-calculus.
+\begin{definition}
+  \label{def:model-untyped}
+  An \textbf{untyped $\lambda$-model}, $(\cat{C}, ?, \split,
+  \squash)$, is a cartesian closed category $\cat{C}$ with a
+  distinguished object $?$ and morphisms $\squash : S \mto ?$ and
+  $\split : ? \mto S$ making the object $S$ a retract of $?$, where
+  $S$ is either $[[? -> ?]]$ or $[[? x ?]]$.
+\end{definition}
 
-Since all of the languages we are studying here contain the natural
-numbers we must be able to interpret them into our model.  We give a
-novel approach to modeling the natural numbers with their
-(non-recursive) eliminator using what we call a Scott natural number
-object.  Now the natural number eliminator is not part of $\GSTLC$ or
-$\CGSTLC$, but we want Grady to contain it, and Grady will directly
-correspond to the model.
+\begin{theorem}[Scott~\cite{Scott:1980}]
+  \label{thm:untyped-lambda-model-sound-complete}
+  An untyped $\lambda$-model is a sound and complete model of the untyped $\lambda$-calculus.
+\end{theorem}
+
+We give a novel approach to modeling the natural numbers with their
+(non-recursive) eliminator using what we call a non-recursive natural
+number object.
 \begin{definition}
   \label{def:SNNO}
-  Suppose $\cat{C}$ is a cartesian closed category.  A \textbf{Scott
-    natural number object (SNNO)} is an object $[[Nat]]$ of $\cat{C}$
-  and morphisms $\mathsf{z} : 1 \mto [[Nat]]$ and $[[succ]] : [[Nat]]
-  \mto [[Nat]]$ of $\cat{C}$, such that, for any morphisms $f : [[Y]]
-  \mto X$ and $g : [[Y x Nat]] \mto X$ of $\cat{C}$ there is a unique
-  morphism $\Case_X : [[Y x Nat]] \mto X$ such that:
+  Suppose $\cat{C}$ is a cartesian closed category.  A
+  \textbf{non-recursive natural number object (NRNO)} is an object
+  $[[Nat]]$ of $\cat{C}$ and morphisms $\mathsf{z} : 1 \mto [[Nat]]$
+  and $[[succ]] : [[Nat]] \mto [[Nat]]$ of $\cat{C}$, such that, for
+  any morphisms $f : [[Y]] \mto X$ and $g : [[Y x Nat]] \mto X$ of
+  $\cat{C}$ there is a unique morphism $\Case_X : [[Y x Nat]] \mto X$
+  such that:
   \[
   \begin{array}{lll}
     (\id_Y \times \mathsf{z});\Case_X = \pi_1;f
@@ -122,6 +134,7 @@ correspond to the model.
   %%        \efig                               
   %%      \end{array}
   %%      \]
+  \noindent
        Informally, the two diagrams essentially assert that we can
        define $\Case_X$ as follows:
        \begin{center}
@@ -134,18 +147,15 @@ correspond to the model.
          \end{math}
        \end{center}
 \end{definition}
-\noindent This formalization of natural numbers is inspired by the
-definition of Scott Numerals \cite{??} where the notion of a case
-distinction is built into the encoding.
 %% source object of $\Case$ as the type of additional inputs that will be
 %% passed to both $f$ and $g$, but we can think of $[[Nat]]$ in the
 %% source object of $\Case$ as the type of the scrutiny.  Thus, since in
 %% the base case there is no predecessor, $f$, will not require the
 %% scrutiny, and so it is ignored.
 
-%% One major difference between SNNOs and the more traditional natural
+%% One major difference between NRNOs and the more traditional natural
 %% number objects is that in the definition of the latter $g$ is defined
-%% by well-founded recursion.  However, SNNOs do not allow this, but in
+%% by well-founded recursion.  However, NRNOs do not allow this, but in
 %% the presence of fixpoints we are able to regain this feature without
 %% having to bake it into the definition of natural number objects.
 
@@ -165,7 +175,7 @@ typed is if it were boxed up in the first place.%%   For example, we can
   A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?, \T,
   \split,\squash, \bx,$ $\unbox)$, where $\cat{T}$ is a discrete
   category with at least two objects $[[Nat]]$ and $[[Unit]]$,
-  $\cat{C}$ is a cartesian closed category with a SNNO,
+  $\cat{C}$ is a cartesian closed category with a NRNO,
   $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model, $\T :
   \cat{T} \mto \cat{C}$ is an embedding -- a full and faithful functor
   that is injective on objects -- and for every object $A$ of
@@ -181,10 +191,11 @@ closed category $\cat{C}$, but it is extended with the structure of
 both the typed and the untyped $\lambda$-calculus with the ability to
 cast data.
 
-Interpreting the typing rules for $\GSTLC$ will require the
-interpretation of type consistency.  Thus, we must be able to cast any
-type $[[A]]$ to $[[?]]$, but as stated the model only allows atomic
-types to be casted.  It turns out that this can be lifted to any type.
+As the model is defined it is unclear if we can cast any type to
+$[[?]]$, and vice versa, but we must be able to do this in order to
+model full dynamic typing.  In the remainder of this section we show
+that we can build up such casts in terms of the basic features of our
+model.
 
 We call any morphism defined completely in terms of $\id$, the functors
 $- \times -$ and $- \to -$, $[[split]]$ and $[[squash]]$, and
@@ -264,10 +275,7 @@ As an example, suppose we wanted to cast the type $[[(Nat x ?) ->
 casting morphisms that will do this as follows:
 \[
 \begin{array}{lll}
-  [[lbox ((Nat x ?) -> Nat)]]
-  & = & [[lunbox (Nat x ?)]] \to [[lbox Nat]]\\
-  & = & ([[lunbox Nat]] \times [[lunbox ?]]) \to [[lbox Nat]]\\
-  & = & ([[unbox Nat]] \times \id_{[[?]]}) \to [[box Nat]]\\
+  [[lbox ((Nat x ?) -> Nat)]] = ([[unbox Nat]] \times \id_{[[?]]}) \to [[box Nat]]\\
 \end{array}
 \]
 We can also cast a morphism $[[A]] \mto^f [[B]]$ to a morphism
@@ -276,39 +284,39 @@ where $[[S1]] = [[skeleton A]]$ and $[[S2]] = [[skeleton B]]$.  Now if
 we have a second
 \[ [[S2]] \mto^{[[lunbox B]]} B \mto^{g} C \mto^{[[lbox C]]} [[S3]]\]
 then their composition reduces to composition at the typed level:
-%% \begin{center}
-%%   \begin{math}
-%%     \bfig
-%% \square|amma|/->`->`->`<-/<500,500>[
-%%   [[S1]]`
-%%   [[A]]`
-%%   [[S3]]`
-%%   [[C]];
-%%   [[lunbox A]]``
-%%   f;g`
-%%   [[lbox C]]
-%% ]
+\begin{center}
+  \begin{math}
+    \bfig
+\square|amma|/->`->`->`<-/<500,500>[
+  [[S1]]`
+  [[A]]`
+  [[S3]]`
+  [[C]];
+  [[lunbox A]]``
+  f;g`
+  [[lbox C]]
+]
 
-%% \square(500,0)|amma|/->`->`=`<-/<500,500>[
-%%   [[A]]`
-%%   [[B]]`
-%%   [[C]]`
-%%   [[B]];
-%%   f`
-%%   f;g``
-%%   g]
+\square(500,0)|amma|/->`->`=`<-/<500,500>[
+  [[A]]`
+  [[B]]`
+  [[C]]`
+  [[B]];
+  f`
+  f;g``
+  g]
 
-%% \square(1000,0)|amma|/->`=`=`<-/<500,500>[
-%%   [[B]]`
-%%   [[S2]]`
-%%   [[B]]`
-%%   [[S2]];
-%%   [[lbox B]]```
-%%   [[lunbox B]]
-%% ]
-%% \efig
-%%   \end{math}
-%% \end{center} 
+\square(1000,0)|amma|/->`=`=`<-/<500,500>[
+  [[B]]`
+  [[S2]]`
+  [[B]]`
+  [[S2]];
+  [[lbox B]]```
+  [[lunbox B]]
+]
+\efig
+  \end{math}
+\end{center} 
 The right most diagram commutes because $[[B]]$ is a retract of
 $[[S2]]$, and the left unannotated arrow is the composition $[[lunbox
     A]];f;g;[[lbox C]]$.  This tells us that we have a functor $\S
@@ -349,20 +357,17 @@ above and lift $[[split]]$ and $[[squash]]$ to arbitrary skeletons.
   $[[lsquash S]] : [[S --> ?]]$ and $[[lsplit S]] : [[? --> S]]$ by
   mutual recursion on $[[S]]$ as follows:
   \[
-    \begin{array}{ll|ll}
+    \begin{array}{l}
       \begin{array}{lll}
         [[lsquash ?]] = \id_?\\
-        \\
         [[lsquash (S1 -> S2)]] = ([[lsplit S1]] \to [[lsquash S2]]);[[squash ? -> ?]]\\
-        \\
         [[lsquash (S1 x S2)]] = ([[lsquash S1]] \times [[lsquash S2]]);[[squash ? x ?]]\\
       \end{array}
-      & & \quad &
+      \vspace{5px}\\[7px]
+      \hline 
       \begin{array}{lll}
         [[lsplit ?]] = \id_?\\
-        \\
         [[lsplit (S1 -> S2)]] = [[split ? -> ?]];([[lsquash S1]] \to [[lsplit S2]])\\
-        \\
         [[lsplit (S1 x S2)]] = [[split ? x ?]];([[lsplit S1]] \times [[lsplit S2]])\\      
       \end{array}
     \end{array}  
@@ -371,22 +376,11 @@ above and lift $[[split]]$ and $[[squash]]$ to arbitrary skeletons.
 \noindent
 As an example we will construct the casting morphism that casts the
 skeleton $[[(? x ?) -> ?]]$ to $[[?]]$:
-\[
-\begin{array}{lll}
-  [[lsquash (? x ?) -> ?]]
-  & = & ([[lsplit ? x ?]] \to [[lsquash ?]]);[[squash ? -> ?]]\\
-  & = & ([[split ? x ?]];([[lsplit ?]] \times [[lsplit ?]])) \to [[lsquash ?]]);[[squash ? -> ?]]\\
-  & = & (([[split ? x ?]];(\id_? \times \id_?)) \to \id_?);[[squash ? -> ?]]\\
-  & = & ([[split ? x ?]] \to \id_?);[[squash ? -> ?]]\\
-\end{array}
-\]
-\noindent
-The morphisms $[[lsplit S]]$ and $[[lsquash S]]$ form a retract
-between $[[S]]$ and $[[?]]$.
+$[[lsquash (? x ?) -> ?]] = ([[split ? x ?]] \to \id_?);[[squash ? -> ?]]$.
 
 \begin{lemma}[Splitting and Squashing Lifted Retract]
   \label{lemma:lifted_retract_for_?}
-  Suppose $(\cat{S}, [[?]], [[split]],[[squash]])$ is the category of
+  Suppose \\$(\cat{S}, [[?]], [[split]],[[squash]])$ is the category of
   skeletons.  Then for any skeleton $[[S]]$,
   \[
     [[lsquash S]];[[lsplit S]] = \id_S : [[S --> S]]
@@ -426,7 +420,7 @@ from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
 [[? --> A]]$.  Finally, we have the following result.
 \begin{lemma}[Casting Morphisms to $[[?]]$]
   \label{lemma:casting_morphisms}
-  Suppose $(\cat{T}, \cat{C}, ?, \T, \split, \squash, \bx, \unbox)$ is
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split, \squash, \bx,$ \\$\unbox)$ is
   a gradual $\lambda$-model, and $[[A]]$ is an object of $\cat{C}$.
   Then there exists casting morphisms from $[[A]]$ to $[[?]]$ and vice
   versa that make $[[A]]$ a retract of $[[?]]$.
@@ -436,7 +430,6 @@ from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
   \[
   \begin{array}{lll}
     [[Box A]] := [[lbox A]];[[lsquash (skeleton A)]] : [[A --> ?]]\\
-    \\
     [[Unbox A]] := [[lsplit (skeleton A)]];[[lunbox A]] : [[? --> A]]
   \end{array}
   \]
@@ -445,163 +438,6 @@ from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
   Lemma~\ref{lemma:lifted_retract_for_?}.
 \end{proof}
 % subsection the_categorical_model (end)
-
-\subsection{The Interpretation}
-\label{subsec:the_interpretation}
-In this section we show how to interpret $\GSTLC$ and
-$\CGSTLC$ into the categorical model given
-in the previous section. We complete the three steps summarized
-above. We will show how to interpret the typing of the former into the
-model, and then show how to do the same for the latter, furthermore,
-we show that reduction can be interpreted into the model as well, thus
-concluding soundness for $\CGSTLC$ with
-respect to our model.
-
-First, we must give the interpretation of types and contexts, but this
-interpretation is obvious, because we have been making sure to match
-the names of types and objects throughout this paper.
-\begin{definition}
-  \label{def:interpretation-of-gradual-types}
-  Suppose $(\cat{T}, \cat{C}, ?, \T, \split, \squash, \bx, \unbox)$ is
-  a gradual $\lambda$-model.  Then we define the interpretation of
-  types into $\cat{C}$ as follows:
-  \[
-  \begin{array}{lll}
-    [[ [| Unit |] ]] & = & 1\\
-    [[ [| Nat |] ]] & = & [[Nat]]\\
-    [[ [| ? |] ]] & = & [[?]]\\
-    [[ [| A1 -> A2 |] ]] & = & [[ [| A1 |] -> [| A2 |] ]]\\
-    [[ [| A1 x A2 |] ]] & = & [[ [| A1 |] x [| A2 |] ]]\\
-  \end{array}
-  \]
-  We extend this interpretation to typing contexts as follows:
-  \[
-    \begin{array}{lll}
-      [[ [| . |] ]] & = & 1\\
-      [[ [| G,x : A |] ]] & = & [[ [| G |] x [| A |] ]]\\
-    \end{array}
-  \]
-\end{definition}
-\noindent Throughout the remainder of this paper we will drop the
-interpretation symbols around types.
-
-Before we can interpret the typing rules of $\GSTLC$ and
-$\CGSTLC$ we must show how to interpret
-the consistency relation from Figure~\ref{fig:type-consistency}.
-These will correspond to casting morphisms.
-\begin{lemma}[Type Consistency in the Model]
-  \label{lemma:type_consistency_in_the_model}
-  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
-  a gradual $\lambda$-model, and $<<A ~ B>>$ for some types $[[A]]$
-  and $[[B]]$.  Then there are two casting morphisms $c_1 : [[ A --> B ]]$ and $c_2 : [[ B --> A ]]$.
-\end{lemma}
-\begin{proof}
-This proof holds by induction on the form $<<A ~ B>>$ using the
-morphisms $[[Box A]] : [[A --> ?]]$ and $[[Unbox A]] : [[? --> A]]$.
-Please see
-Appendix~\ref{subsec:proof_of_type_consistency_in_the_model} for the
-complete proof.
-\end{proof}
-
-\begin{corollary}
-  \label{corollary:type_consist_coro}
-  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
-  a gradual $\lambda$-model.  Then we know the following:
-  \begin{enumR}
-  \item If $<<A ~ A>>$, then $c_1 = c_2 = \id_{[[A]]} : [[A --> A]]$.
-
-  \item If $<<A ~ ?>>$, then there are casting morphisms:
-    \[
-    \begin{array}{lllll}
-      c_1 & = & [[Box A]] : [[A --> ?]]\\
-      c_2 & = & [[Unbox A]] : [[? --> A]]
-    \end{array}
-    \]
-
-    \item If $<<? ~ A>>$, then there are casting morphisms:
-    \[
-    \begin{array}{lllll}      
-      c_1 & = & [[Unbox A]] : [[? --> A]]\\
-      c_2 & = & [[Box A]] : [[A --> ?]]
-    \end{array}
-    \]
-    
-  \item If $<<A1 -> B1 ~ A2 -> B2>>$, then there are casting morphisms:
-    \[
-    \begin{array}{lllll}
-      c & = & c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]\\
-      c' & = & c_3 \to c_4 : [[(A2 -> B2) --> (A1 -> B1)]]
-    \end{array}
-    \]
-    where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
-    [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
-    
-  \item If $<<A1 x B1 ~ A2 x B2>>$, then there are casting
-    morphisms:
-    \[
-    \begin{array}{lll}
-       c & = & c_1 \times c_2 : [[(A1 x B1) --> (A2 x B2)]]\\
-      c' & = & c_3 \times c_4 : [[(A2 x B2) --> (A1 x B1)]]
-    \end{array}
-    \]
-    where $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
-    [[A2 --> A1]]$ and $c_4 : [[B2 --> B1]]$.
-  \end{enumR}
-\end{corollary}
-\begin{proof}
-  This proof holds by the construction of the casting morphisms from
-  the proof of the previous result, and the fact that the type
-  consistency rules are unique for each type.
-\end{proof}
-
-Showing that both $c_1$ and $c_2$ exist corresponds to the fact that
-$<<A ~ B>>$ is symmetric.  But, this interpretation is an over
-approximation of type consistency, because type consistency is not
-transitive, but function composition is.  Leaving type consistency
-implicit in the model just does not make good sense categorically,
-because it would break composition.  For example, if we have morphisms
-$f : [[A --> ?]]$ and $g : [[B --> C]]$, then if we implicitly allowed
-$[[?]]$ to be cast to $[[B]]$, then we could compose these two
-morphisms, but this does not fit the definition of a category, because
-it requires the target of $f$ to match the source of $g$, but this
-just is not the case.  Thus, the explicit cast must be used to obtain
-$f;[[lunbox B]];g$.
-
-At this point we have everything we need to show our main result which
-is that typing in both $\GSTLC$ and $\CGSTLC$, and evaluation in
-$\CGSTLC$ can be interpreted into the categorical model.
-
-\begin{theorem}[Interpretation of Typing]
-  \label{thm:interpretation_of_typing}
-  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx, \unbox)$
-  is a gradual $\lambda$-model.
-  \begin{enumR}
-  \item If $<<G |-S t : A>>$, then there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
-  \item If $<<G |-C t : A>>$, then there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
-  \end{enumR}
-\end{theorem}
-\begin{proof}
-  Both parts of the proof hold by induction on the form of the assumed
-  typing derivation, and uses most of the results we have developed up
-  to this point.  Please see
-  Appendix~\ref{subsec:proof_of_interpretation_of_types} for the
-  complete proof.
-\end{proof}
-
-\begin{theorem}[Interpretation of Evaluation]
-  \label{thm:interpretation_of_evaluation}
-  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$
-  is a gradual $\lambda$-model.  If $<<G |- t1 ~> t2 : A>>$, then
-  $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
-\end{theorem}
-\begin{proof}
-  This proof holds by induction on the form of $[[G |- t1 ~> t2 :
-      A]]$, and uses Theorem~\ref{thm:interpretation_of_typing},
-  Lemma~\ref{lemma:type_consistency_in_the_model}, and
-  Corollary~\ref{corollary:type_consist_coro}.  Please see
-  Appendix~\ref{subsec:proof_of_interpretation_of_evaluation} for the
-  complete proof.  
-\end{proof}
 
 %%% Local Variables: ***
 %%% mode:latex ***
