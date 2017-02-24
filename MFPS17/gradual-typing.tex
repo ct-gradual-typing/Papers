@@ -1,20 +1,12 @@
-\newcommand{\GSTLC}{\lambda^?_\to}
-\newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to}
-We begin by introducing a slight variation of \cite{Siek:2006}'s
-gradually typed functional language given by Siek et
-al.~\cite{Siek:2015}.  The syntax of the gradual type system $\GSTLC$
-is defined in the following definition.
-
-This definition is the base syntax for every language in this paper.
-The typing rules are defined in Figure~\ref{fig:gradual-typing} and
-the type consistency relation is defined in
-Figure~\ref{fig:type-consistency}.  The main changes of the version of
-$\GSTLC$ defined here from the original due to Siek et
-al.~\cite{Siek:2015} is that products and natural numbers have been
-added.  The definition of products follows how casting is done for
-functions. So it allows casting projections of products, for example,
-it is reasonable for terms like $[[\x:(? x ?).(succ (fst x))]]$ to
-type check.
+We begin by introducing a slight variation of the gradually typed
+functional language given by Siek et al.~\cite{Siek:2015}.  The syntax
+and typing rules of the gradual type system $\GSTLC$ are defined in
+Figure~\ref{fig:GSTLC}.  The main changes of the version of $\GSTLC$
+defined here from the original is that products and natural numbers
+have been added.  The definition of products follows how casting is
+done for functions. So it allows casting projections of products, for
+example, it is reasonable for terms like $[[\x:(? x ?).(succ (fst
+    x))]]$ to type check.
 \renewcommand{\GSiekdrulereflName}[0]{\text{refl}}
 \renewcommand{\GSiekdruleboxName}[0]{\text{box}}
 \renewcommand{\GSiekdruleunboxName}[0]{\text{unbox}}
@@ -64,13 +56,13 @@ type check.
 \end{figure}
 
 We can view gradual typing as a surface language feature much like
-type inference, and we give it a semantics by translating it into an
-annotated core. The language $\GSTLC$ is given an operational
-semantics by translating it to a fully annotated core language called
-$\CGSTLC$.  Its syntax is an extension of the syntax of $\GSTLC$
-(Definition~\ref{def:gradual-syntax}) where terms are the only
-syntactic class that differs, and so we do not repeat the syntax of
-types or contexts.
+type inference, and we give $\GSTLC$ its operational semantics by
+translating it to a fully annotated core language -- sometimes called
+the casting calculus -- called $\CGSTLC$. The syntax, typing rules,
+and reduction relation for $\CGSTLC$ can be found in
+Figure~\ref{fig:CGSTLC}. Its syntax is an extension of the syntax of
+$\GSTLC$ where terms are the only syntactic class that differs, and so
+we do not repeat the syntax of types or contexts.
 \renewcommand{\GSiekdruleCXXvarName}[0]{\text{var}}
 \renewcommand{\GSiekdruleCXXunitName}[0]{\text{unit}}
 \renewcommand{\GSiekdruleCXXzeroName}[0]{\text{zero}}
@@ -150,20 +142,17 @@ types or contexts.
     \end{itemize}
   \end{mdframed}
   \caption{The core casting calculus: $\CGSTLC$}
-  \label{fig:GSTLC}
+  \label{fig:CGSTLC}
 \end{figure}
-The typing rules for $\CGSTLC$ can be found in
-Figure~\ref{fig:annotated-typing}, and the reduction rules in
-Figure~\ref{fig:annotated-reduction}. The reduction relation is the
-usual definition of call-by-value for the simply typed
-$\lambda$-calculus, and so we do not give all of the rules here, but
-rather only the casting rules.  In addition, to save space we do not
-define the cast insertion algorithm for $\GSTLC$.  Please see Siek et
-al.~\cite{Siek:2015} for its definition.  To make it easier for the
-reader to connect the reduction rules to their interpretations we give
-the reduction rules for $\CGSTLC$ using the terms-in-context
-formulation; for an introduction to this style please see
-Crole~\cite{Crole:1994}.
+The reduction relation is defined as a simple extension of
+call-by-value for the simply typed $\lambda$-calculus, and so we do
+not give all of the rules here, but rather only the casting rules.  In
+addition, to save space we do not define the cast insertion algorithm
+for $\GSTLC$.  Please see Siek et al.~\cite{Siek:2015} for its
+definition.  To make it easier for the reader to connect the reduction
+rules to their interpretations we give the reduction rules for
+$\CGSTLC$ using the terms-in-context formulation; for an introduction
+to this style please see Crole~\cite{Crole:1994}.
 
 %%% Local Variables: ***
 %%% mode:latex ***

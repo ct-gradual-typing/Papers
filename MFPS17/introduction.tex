@@ -55,11 +55,12 @@ Siek and Taha's gradually typed $\lambda$-calculus is defined as the
 simply typed $\lambda$-calculus with the type of untyped terms $[[?]]$
 and the following new application rule:
 \begin{mathpar}
+  \small
 \GSiekdruleSXXapp{}
 \end{mathpar}
 The premise $<<A2 ~ A1>>$ is read, the type $<<A2>>$ is consistent
 with the type $<<A1>>$, and is defined in
-Figure~\ref{fig:type-consistency}.  If we squint we can see
+Figure~\ref{fig:GSTLC}.  If we squint we can see
 $[[split]]$, $[[squash]]$, $[[box]]$, and $[[unbox]]$ hiding in the
 definition of the previous rules, but they have been suppressed.  We
 will show that when one uses either of the two typing rules then one
@@ -96,16 +97,6 @@ inserting or removing casts.
   as an alternative core casting calculus in which Siek and Taha's
   gradual type system can be translated to.
   
-\item We extend Simple Grady into a new language we call Core Grady
-  that has natural numbers, lists, and bounded quantification. In
-  addition, natural numbers and lists will contain an eliminator that
-  when combined with the Y combinator yields terminating recursion
-  without the need for Grady to explicitly contain a fixpoint
-  operator.
-
-\item Finally, we develop a gradually typed surface language called
-  Surface Grady and show that it satisfies the gradual guarantee.
-
 \end{itemize}
 
 \textbf{Related work.}  We now give a brief summary of related

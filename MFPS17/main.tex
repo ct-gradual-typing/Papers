@@ -58,14 +58,6 @@
 \renewcommand{\SLGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SLGradydrulename{#4}}}
 \renewcommand{\SLGradydrulename}[1]{#1}
 
-\input{surface-grady-inc}
-\renewcommand{\SGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SGradydrulename{#4}}}
-\renewcommand{\SGradydrulename}[1]{#1}
-
-\input{core-grady-inc}
-\renewcommand{\CGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\CGradydrulename{#4}}}
-\renewcommand{\CGradydrulename}[1]{#1}
-
 \input{siek15-gradual-inc}
 \renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\GSiekdrulename{#4}}}
 \renewcommand{\GSiekdrulename}[1]{#1}
@@ -78,6 +70,9 @@
 \renewcommand{\GSiekdruleSXXsndName}[0]{\times_{e_2}}
 \renewcommand{\GSiekdruleSXXfstName}[0]{\times_{e_1}}
 \renewcommand{\GSiekdruleSXXappName}[0]{\to_e}
+
+\newcommand{\GSTLC}{\lambda^?_\to}
+\newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to} 
 
 \def\lastname{Eades III and Townsend}
 
@@ -96,17 +91,19 @@
   \thanks[myemail]{Email:\href{mailto:heades@augusta.edu} {\texttt{\normalshape heades@augusta.edu}}}
   \thanks[coemail]{Email: \href{mailto:mitownsend@augusta.edu} {\texttt{\normalshape mitownsend@augusta.edu}}}
   \begin{abstract} 
-    In this paper we introduce a new categorical model based on
-    retracts that combines static and dynamic typing.  This model is
-    initially based on the seminal work of Scott who showed that the
-    untyped $\lambda$-calculus can be considered as typed using
-    retracts.  We then show that our model gives rise to a new and
-    simple type system which combines static and dynamic typing.
-    Finally, we extend this type system with bounded quantification
-    and lists, and then develop a gradually typed surface language
-    that uses our new type system as a core casting calculus.  This
-    paper can be seen as the first of a new project to investigate the
-    categorical semantics of gradual type systems.
+    This paper is part one of a two part series.  In this paper we
+    introduce a new categorical model based on retracts that combines
+    static and dynamic typing.  This model is initially based on the
+    seminal work of Scott who showed that the untyped
+    $\lambda$-calculus can be considered as typed using retracts.  We
+    then show that our model gives rise to a new and simple type
+    system which combines static and dynamic typing.  We then show
+    that Siek and Taha's gradually typed $\lambda$-calculus can be
+    interpreted in our new model.  Finally, we set the stage for a
+    followup paper that greatly extends this type system with bounded
+    quantification and lists, and then develops a gradually typed
+    surface language that uses our new type system as a core casting
+    calculus.
   \end{abstract}
   \begin{keyword}  
     static typing, dynamic typing, gradual typing, categorical
@@ -121,40 +118,26 @@
 \input{introduction-ott}
 % section introduction (end)
 
+\subsection{The Categorical Model}
+\label{subsec:the_categorical_model}
+\input{categorical-model-ott}
+% subsection the_interpretation (end)
+
 \section{Gradual Typing}
 \label{sec:gradual_typing}
+
 \input{gradual-typing-ott}
+
+\subsection{The Interpretation}
+\label{subsec:the_interpretation}
+\input{categorical-interp-ott}
+% subsection the_interpretation (end)
 % section gradual_typing (end)
 
-\section{The Categorical Perspective}
-\label{sec:categorical_perspective}
-\input{categorical-model-ott}
-% section categorical_perspective (end)
-
-\section{Simply Typed Core Grady}
+\section{Simply Typed Grady}
 \label{sec:sl-grady}
 \input{sl-grady-ott}
 % section grady (end)
-
-\section{Grady: A Categorically Inspired Gradual Type System}
-\label{sec:grady:_a_categorical_inspired_gradual_type_system}
-
-\subsection{Surface Grady: A Gradual Type System}
-\label{subsec:surface_grady:_a_gradual_type_system}
-\input{surface-grady-ott}
-% subsection surface_grady:_a_gradual_type_system (end)
-
-\subsection{Core Grady: The Casting Calculus}
-\label{subsec:core_grady:_the_casting_calculus}
-\input{core-grady-ott}
-% subsection core_grady:_the_casting_calculus (end)
-
-\subsection{Analyzing Grady}
-\label{subsec:results}
-\input{results-ott}
-% subsection results (end)
-
-% section grady:_a_categorically_inspired_gradual_type_system (end)
 
 \bibliographystyle{entcs}
 \bibliography{references}

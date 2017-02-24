@@ -34,28 +34,6 @@ quick: quick-pdf
 
 pdf : $(PDF)
 
-results-ott.tex : results.tex surface-grady/surface-grady.ott core-grady/core-grady.ott 
-	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
-		-tex_filter results.tex results-ott1.tex
-	scripts/prepr_double_ott.sh results-ott1.tex
-	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
-		-tex_filter results-ott1.tex results-ott.tex
-
-proofs-gradual-guarantee-part-one-ott.tex : proofs-gradual-guarantee-part-one.tex surface-grady/surface-grady.ott
-	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
-		-tex_filter proofs-gradual-guarantee-part-one.tex proofs-gradual-guarantee-part-one-ott1.tex
-	scripts/prepr_double_ott.sh proofs-gradual-guarantee-part-one-ott1.tex
-		@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
-		-tex_filter proofs-gradual-guarantee-part-one-ott1.tex proofs-gradual-guarantee-part-one-ott.tex
-
-surface-grady-ott.tex : surface-grady.tex surface-grady/surface-grady.ott
-	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
-		-tex_filter surface-grady.tex surface-grady-ott.tex
-
-core-grady-ott.tex : core-grady.tex core-grady/core-grady.ott
-	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
-		-tex_filter core-grady.tex core-grady-ott.tex
-
 sl-grady-ott.tex : sl-grady.tex sl-grady/sl-grady.ott siek15-gradual/siek-gradual.ott
 	@$(OTT) $(OTT_FLAGS) -i sl-grady/sl-grady.ott -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter sl-grady.tex sl-grady-ott1.tex
@@ -70,19 +48,19 @@ proofs-ott.tex : proofs.tex sl-grady/sl-grady.ott siek15-gradual/siek-gradual.ot
 	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \
 		-tex_filter proofs-ott1.tex proofs-ott.tex
 
-aux-results-proofs-ott.tex : aux-results-proofs.tex surface-grady/surface-grady.ott siek15-gradual/siek-gradual.ott
-	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
-		-tex_filter aux-results-proofs.tex aux-results-proofs-ott1.tex
-	scripts/prepr_double_ott.sh aux-results-proofs-ott1.tex
-	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
-		-tex_filter aux-results-proofs-ott1.tex aux-results-proofs-ott.tex
-
 categorical-model-ott.tex : categorical-model.tex sl-grady/sl-grady.ott siek15-gradual/siek-gradual.ott
 	@$(OTT) $(OTT_FLAGS) -i sl-grady/sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
 		-tex_filter categorical-model.tex categorical-model-ott1.tex
 	scripts/prepr_double_ott.sh categorical-model-ott1.tex
 	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \
 		-tex_filter categorical-model-ott1.tex categorical-model-ott.tex
+
+categorical-interp-ott.tex : categorical-interp.tex sl-grady/sl-grady.ott siek15-gradual/siek-gradual.ott
+	@$(OTT) $(OTT_FLAGS) -i sl-grady/sl-grady.ott  -o sl-grady-inc.tex -tex_name_prefix SLGrady \
+		-tex_filter categorical-interp.tex categorical-interp-ott1.tex
+	scripts/prepr_double_ott.sh categorical-interp-ott1.tex
+	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \
+		-tex_filter categorical-interp-ott1.tex categorical-interp-ott.tex
 
 gradual-typing-ott.tex : gradual-typing.tex sl-grady/sl-grady.ott siek15-gradual/siek-gradual.ott
 	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \
@@ -96,12 +74,12 @@ introduction-ott.tex : introduction.tex sl-grady/sl-grady.ott siek15-gradual/sie
 		-tex_filter introduction-ott1.tex introduction-ott.tex
 
 ott : sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
-	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex results-ott.tex \
-	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
+	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex \
+	Makefile $(References) categorical-interp-ott.tex
 
-$(PDF) : sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex core-grady-ott.tex \
-	categorical-model-ott.tex proofs-ott.tex sl-grady-ott.tex surface-grady-ott.tex results-ott.tex \
-	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
+$(PDF) : main.tex sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex \
+	categorical-model-ott.tex categorical-interp-ott.tex proofs-ott.tex sl-grady-ott.tex  \
+	Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)

@@ -48,10 +48,6 @@
 %% isomorphic in the model. This means that whenever $[[G |- t1 ~> t2 : A]]$, then $[[ [|t1|] ]] = [[ [|t2|] ]] : [[ [| G |] --> [| A |] ]]$.
 %% This is the reason why we defined our reduction in a
 %% typed fashion to aid us in understanding how it relates to the model.
-We now give a categorical model for $\GSTLC$ and $\CGSTLC$, and their
-interpretations into the model.  
-\subsection{The Categorical Model}
-\label{subsec:the_categorical_model}
 The model we develop here builds on the seminal work of
 Lambek~\cite{Lambek:1980} and Scott~\cite{Scott:1980}.
 Lambek~\cite{Lambek:1980} showed that the typed $\lambda$-calculus can
@@ -95,29 +91,37 @@ correspond to the model.
   and morphisms $\mathsf{z} : 1 \mto [[Nat]]$ and $[[succ]] : [[Nat]]
   \mto [[Nat]]$ of $\cat{C}$, such that, for any morphisms $f : [[Y]]
   \mto X$ and $g : [[Y x Nat]] \mto X$ of $\cat{C}$ there is a unique
-  morphism $\Case_X : [[Y x Nat]] \mto X$ making the following
-  diagrams commute:
-       \[
-       \begin{array}{lll}
-         \bfig
-         \qtriangle|amm|<1000,500>[
-           [[Y x Nat]]`
-           [[Y x Nat]]`
-           X;
-           \id_Y \times \mathsf{z}`
-           \pi_1;f`
-           \Case_X]
+  morphism $\Case_X : [[Y x Nat]] \mto X$ such that:
+  \[
+  \begin{array}{lll}
+    (\id_Y \times \mathsf{z});\Case_X = \pi_1;f
+    & \quad & 
+    (\id_Y \times [[succ]]);\Case_X = g
+  \end{array}
+  \]
+  %% making the following
+  %% diagrams commute:
+  %%      \[
+  %%      \begin{array}{lll}
+  %%        \bfig
+  %%        \qtriangle|amm|<1000,500>[
+  %%          [[Y x Nat]]`
+  %%          [[Y x Nat]]`
+  %%          X;
+  %%          \id_Y \times \mathsf{z}`
+  %%          \pi_1;f`
+  %%          \Case_X]
 
-         \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
-           [[Y x Nat]]`
-           [[Y x Nat]]`
-           X;
-           \id_Y \times [[succ]]`
-           \Case_X`
-           g ]
-         \efig                               
-       \end{array}
-       \]
+  %%        \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
+  %%          [[Y x Nat]]`
+  %%          [[Y x Nat]]`
+  %%          X;
+  %%          \id_Y \times [[succ]]`
+  %%          \Case_X`
+  %%          g ]
+  %%        \efig                               
+  %%      \end{array}
+  %%      \]
        Informally, the two diagrams essentially assert that we can
        define $\Case_X$ as follows:
        \begin{center}
@@ -156,9 +160,6 @@ typed is if it were boxed up in the first place.%%   For example, we can
 %% a dynamic type error.  Note that we can type the previous program in
 %% $\CGSTLC$ as well, but if we run the program it will result in a
 %% dynamic type error too.
-
-Now we combine everything we have discussed so far to obtain the
-categorical model.
 \begin{definition}
   \label{def:gradual-lambda-model}
   A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?, \T,
@@ -601,7 +602,6 @@ $\CGSTLC$ can be interpreted into the categorical model.
   Appendix~\ref{subsec:proof_of_interpretation_of_evaluation} for the
   complete proof.  
 \end{proof}
-% subsection the_interpretation (end)
 
 %%% Local Variables: ***
 %%% mode:latex ***
