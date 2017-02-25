@@ -2,7 +2,7 @@ Just as the simply typed $\lambda$-calculus corresponds to cartesian
 closed categories our categorical model has a corresponding type
 theory we call Simply Typed Grady (Grady).  It consists of all of the
 structure found in the model.  Its syntax is an extension of the
-syntax for $\GSTLC$.
+syntax for $\CGSTLC$.
 
 \begin{definition}
   \label{def:grady-syntax}
@@ -13,7 +13,8 @@ syntax for $\GSTLC$.
     \text{(skeletons)}       & [[S]] & ::= & [[?]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
     \text{(atomic types)}    & [[C]] & ::= & [[Unit]] \mid [[Nat]]\\
     \text{(terms)}           & [[t]] & ::= & \ldots \mid [[split U]] \mid [[squash U]]
-    \mid [[box C]] \mid [[unbox C]]\\ & & \mid & [[case t of 0 -> t1, (succ x) -> t2]]\\
+    \mid [[box T]] \mid [[unbox T]]\\ & & \mid & [[case t of 0 -> t1, (succ x) -> t2]]\\
+    \text{(values)}          & [[v]] & ::= & \ldots \mid [[squash U]] \mid [[box T]]\\
   \end{array}
   \]
 \end{definition}
@@ -21,15 +22,6 @@ syntax for $\GSTLC$.
 The typing rules for Grady can be found in
 Figure~\ref{fig:grady-typing} and its reduction rules can be found in
 Figure~\ref{fig:grady-reduction}.
-\renewcommand{\SLGradydruleBoxName}{\text{box}}
-\renewcommand{\SLGradydruleUnboxName}{\text{unbox}}
-\renewcommand{\SLGradydruleBoxGName}{\text{Box}}
-\renewcommand{\SLGradydruleUnboxGName}{\text{Unbox}}
-\renewcommand{\SLGradydruleSplitGName}{\text{Split}}
-\renewcommand{\SLGradydruleSquashGName}{\text{Squash}}
-\renewcommand{\SLGradydrulesquashName}{\text{squash}}
-\renewcommand{\SLGradydrulesplitName}{\text{split}}
-\renewcommand{\SLGradydrulecaseName}{[[Nat]]_e}
 \begin{figure}
   \small
   \begin{mdframed}
@@ -53,31 +45,15 @@ Figure~\ref{fig:grady-reduction}.
   \caption{Typing rules for Grady}
   \label{fig:grady-typing}
 \end{figure}
-\renewcommand{\SLGradydrulerdXXvaluesName}{\text{values}} 
-\renewcommand{\SLGradydrulerdXXretracTName}{\text{retract}_1}
-\renewcommand{\SLGradydrulerdXXretracTGName}{\text{retract}_3}
-\renewcommand{\SLGradydrulerdXXretracTSGName}{\text{retract}_4} 
-\renewcommand{\SLGradydrulerdXXretractUName}{\text{retract}_2} 
-\renewcommand{\SLGradydrulerdXXbetaName}{\beta} 
-\renewcommand{\SLGradydrulerdXXprojOneName}{\times_{e_1}} 
-\renewcommand{\SLGradydrulerdXXprojTwoName}{\times_{e_2}} 
-\renewcommand{\SLGradydrulerdXXappOneName}{\to_{e_1}} 
-\renewcommand{\SLGradydrulerdXXappTwoName}{\to_{e_2}} 
-\renewcommand{\SLGradydrulerdXXfstName}{[[fst]]} 
-\renewcommand{\SLGradydrulerdXXsndName}{[[snd]]} 
-\renewcommand{\SLGradydrulerdXXpairOneName}{\times_1} 
-\renewcommand{\SLGradydrulerdXXpairTwoName}{\times_2}
-\renewcommand{\SLGradydrulerdXXsuccName}{\text{succ}}       
-\renewcommand{\SLGradydrulerdXXcaseZeroName}{[[Nat]]_{e_0}} 
-\renewcommand{\SLGradydrulerdXXcaseSuccName}{[[Nat]]_{e_1}} 
-\renewcommand{\SLGradydrulerdXXcaseName}{\text{case}_1} 
 \begin{figure}
   \small
   \begin{mdframed}
     \begin{mathpar}
       \SLGradydrulerdXXvalues{} \and
       \SLGradydrulerdXXretracT{} \and
+      \SLGradydrulerdXXunbox{} \and
       \SLGradydrulerdXXretractU{} \and
+      \SLGradydrulerdXXsplit{} \and
       \SLGradydrulerdXXbeta{} \and
       \SLGradydrulerdXXprojOne{} \and
       \SLGradydrulerdXXprojTwo{} \and
@@ -96,6 +72,10 @@ Figure~\ref{fig:grady-reduction}.
   \caption{Reduction rules for Grady}
   \label{fig:grady-reduction}
 \end{figure}
+Reduction for Grady differs from $\CGSTLC$ in that it is an extended
+formulation of call-by-name.  We only allow reduction under
+$[[unbox]]$ and $[[split]]$, and we do not allow reduction under the
+branches of case.
 
 Just as we did for the categorical model
 (Lemma~\ref{lemma:casting_morphisms}) we can lift $[[box C]]$ and
@@ -160,7 +140,7 @@ type-directed translation of both $\GSTLC$ and $\CGSTLC$ into Grady.
       $\CGSTLC$, then there exists a term
       $[[t']]$ such that $[[G |- t' : A]]$ holds in Grady.
     \item[ii.] If $[[G |- t1 ~> t2 : A]]$ holds in $\CGSTLC$, then
-      $[[G |- t'1 ~> t'2 : A]]$ holds in Grady, where $[[G |- t'1 :
+      $[[G |- t'1 ~>* t'2 : A]]$ holds in Grady, where $[[G |- t'1 :
         A]]$ and $[[G |- t'2 : A]]$ are both the corresponding Grady
       terms.
     \end{itemize}
@@ -184,9 +164,10 @@ type-directed translation of both $\GSTLC$ and $\CGSTLC$ into Grady.
 
 One important point of this system is it is straightforward to extend
 with new features, because it does not depend on type consistency.
-For example, in the sequel paper we show that extending this system with
-bounded quantification is straightforward, but quite difficult for the
-gradually typed surface language.
+For example, in the sequel paper\footnote{TODO cite draft.} we show
+that extending this system with bounded quantification is
+straightforward, but quite difficult for the gradually typed surface
+language.
 
 %% Having the untyped $\lambda$-calculus along side the typed
 %% $\lambda$-calculus can be a lot of fun.  This section can be seen from

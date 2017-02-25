@@ -171,7 +171,9 @@ grammar
     | fun( A ) = B        :: M :: funFun
     {{tex \mathsf{fun}([[A]]) = [[B]] }}
     | prod( A ) = B       :: M :: prodFun
-    {{tex \mathsf{prod}([[A]]) = [[B]] }}    
+    {{tex \mathsf{prod}([[A]]) = [[B]] }}
+    | G |- t1 ~>* t2 : A  :: M :: Trans
+    {{tex [[G]] \vdash [[t1]] \rightsquigarrow^* [[t2]] : [[A]] }}
 
 subrules
   T <:: A
@@ -256,13 +258,17 @@ defn
     G |- t1 ~> t2  : A :: :: red :: rd_ 
 by
 
-    G |- s : A
+    G |- v : A
     --------------- :: values
-    G |- s ~> s : A
+    G |- v ~> v : A
 
     G |- t : T
     ------------------------------- :: retracT
     G |- unbox T (box T t) ~> t : T
+
+    G |- t1 ~> t2 : T
+    --------------------------------- :: unbox
+    G |- unbox T t1 ~> unbox T t2 : T
 
     G |- t : A
     ------------------------------- :: retracTG
@@ -275,6 +281,10 @@ by
     G |- t : U
     ---------------------------------- :: retractU
     G |- split U (squash U t) ~> t : U
+
+    G |- t1 ~> t2 : U
+    --------------------------------- :: split
+    G |- split U t1 ~> split U t2 : U
 
     G |- t ~> t' : Nat
     ---------------------------- :: succ
@@ -296,7 +306,7 @@ by
 
     G, x : A1 |- t1 : A2 && G |- t2 : A1    
     ------------------------------------ :: beta
-    G |- (\x:A1.t1) v ~> [t2/x]t2 : A2
+    G |- (\x:A1.t1) t2 ~> [t2/x]t2 : A2
 
     G |- t1 : A1 && G |- t2 : A2
     ---------------------------- :: proj1

@@ -54,10 +54,13 @@ leads to a new core casting calculus for gradual type systems.
 Siek and Taha's gradually typed $\lambda$-calculus is defined as the
 simply typed $\lambda$-calculus with the type of untyped terms $[[?]]$
 and the following new application rule:
-\begin{mathpar}
-  \small
-\GSiekdruleSXXapp{}
-\end{mathpar}
+\[\small
+  \inferrule* [right=$\GSiekdruleSXXappName{}$] {
+    <<G |-S t1 : C>>
+    \\
+        <<(G |-S t2 : A2 && A2 ~ A1) && fun(C) = A1 -> B1>>
+  }{<<G |-S t1 t2 : B1>>}
+\]
 The premise $<<A2 ~ A1>>$ is read, the type $<<A2>>$ is consistent
 with the type $<<A1>>$, and is defined in
 Figure~\ref{fig:GSTLC}.  If we squint we can see
