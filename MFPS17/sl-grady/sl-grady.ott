@@ -12,7 +12,11 @@ grammar
     | squash U            ::   :: inj          
     {{tex \mathsf{squash}_{[[U]]} }}
     | split U             ::   :: surj         
-    {{tex \mathsf{split}_{[[U]]} }}    
+    {{tex \mathsf{split}_{[[U]]} }}
+    | Squash S            ::   :: injG
+    {{tex \mathsf{Squash}_{[[S]]} }}
+    | Split S             ::   :: surjG         
+    {{tex \mathsf{Split}_{[[S]]} }}        
     | box C               ::   :: gen          
     {{tex \mathsf{box}_{[[C]]} }}    
     | unbox C             ::   :: spec         
@@ -204,6 +208,12 @@ defn
     --------------------- :: split
     G |- split U : ? -> U
 
+    --------------------- :: SplitG
+    G |- Split S : S -> ?
+
+    ---------------------- :: SquashG
+    G |- Squash S : ? -> S
+
     ---------------- :: unit
     G |- triv : Unit
 
@@ -257,6 +267,10 @@ by
     G |- t : A
     ------------------------------- :: retracTG
     G |- Unbox A (Box A t) ~> t : A
+
+    G |- t : S
+    ---------------------------------- :: retracTSG
+    G |- Split S (Squash S t) ~> t : S
 
     G |- t : U
     ---------------------------------- :: retractU

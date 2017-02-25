@@ -73,30 +73,16 @@
 \ottprodline{|}{ \mathsf{box}_{ \ottnt{C} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{unbox}_{ \ottnt{C} } }{}{}{}{}}
 
-\newcommand{\ottS}{
-\ottrulehead{\ottnt{S}}{::=}{}\ottprodnewline
-\ottfirstprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottnt{S_{{\mathrm{1}}}}  \rightarrow  \ottnt{S_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \ottnt{S_{{\mathrm{1}}}}  \times  \ottnt{S_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottsym{(}  \ottnt{S}  \ottsym{)}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{skeleton}\, \ottnt{A} }{}{}{}{}}
-
-\newcommand{\ottU}{
-\ottrulehead{\ottnt{U}}{::=}{}\ottprodnewline
-\ottfirstprodline{|}{\ottsym{\mbox{?}}  \rightarrow  \ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \ottsym{\mbox{?}}  \times  \ottsym{\mbox{?}} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottsym{(}  \ottnt{U}  \ottsym{)}}{}{}{}{}}
-
 \newcommand{\ottT}{
 \ottrulehead{\ottnt{T}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}}
 
 \newcommand{\ottA}{
-\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{R}  ,\ \ottnt{X}  ,\ \ottnt{Y}}{::=}{}\ottprodnewline
+\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{R}  ,\ \ottnt{X}  ,\ \ottnt{Y}  ,\ \ottnt{U}  ,\ \ottnt{S}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{?} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{A_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \ottnt{A_{{\mathrm{1}}}}  \times  \ottnt{A_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{A}  \ottsym{)}} {\textsf{S}}{}{}{}}
@@ -110,8 +96,6 @@
 \ottt\ottinterrule
 \ottn\ottinterrule
 \ottv\ottinterrule
-\ottS\ottinterrule
-\ottU\ottinterrule
 \ottT\ottinterrule
 \ottA\ottinterrule
 \ottG\ottafterlastrule
@@ -132,7 +116,7 @@
 \newcommand{\ottdruleBoxName}[0]{\ottdrulename{Box}}
 \newcommand{\ottdruleBox}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{box}_{ \ottnt{T} }   :  \ottnt{T}  \rightarrow  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash   \mathsf{box}_{ \ottnt{T} }   :  \ottnt{T}  \rightarrow   \mathsf{?}  }{%
 {\ottdruleBoxName}{}%
 }}
 
@@ -140,7 +124,7 @@
 \newcommand{\ottdruleUnboxName}[0]{\ottdrulename{Unbox}}
 \newcommand{\ottdruleUnbox}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{T} }{%
+ \Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T} }   :   \mathsf{?}   \rightarrow  \ottnt{T} }{%
 {\ottdruleUnboxName}{}%
 }}
 
@@ -148,7 +132,7 @@
 \newcommand{\ottdruleBoxGName}[0]{\ottdrulename{BoxG}}
 \newcommand{\ottdruleBoxG}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{Box}_{ \ottnt{A} }   :  \ottnt{A}  \rightarrow  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash   \mathsf{Box}_{ \ottnt{A} }   :  \ottnt{A}  \rightarrow   \mathsf{?}  }{%
 {\ottdruleBoxGName}{}%
 }}
 
@@ -156,7 +140,7 @@
 \newcommand{\ottdruleUnboxGName}[0]{\ottdrulename{UnboxG}}
 \newcommand{\ottdruleUnboxG}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{Unbox}_{ \ottnt{A} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{A} }{%
+ \Gamma  \vdash   \mathsf{Unbox}_{ \ottnt{A} }   :   \mathsf{?}   \rightarrow  \ottnt{A} }{%
 {\ottdruleUnboxGName}{}%
 }}
 
@@ -164,7 +148,7 @@
 \newcommand{\ottdrulesquashName}[0]{\ottdrulename{squash}}
 \newcommand{\ottdrulesquash}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{squash}_{ \ottnt{U} }   :  \ottnt{U}  \rightarrow  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash   \mathsf{squash}_{ \ottnt{U} }   :  \ottnt{U}  \rightarrow   \mathsf{?}  }{%
 {\ottdrulesquashName}{}%
 }}
 
@@ -172,8 +156,24 @@
 \newcommand{\ottdrulesplitName}[0]{\ottdrulename{split}}
 \newcommand{\ottdrulesplit}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash   \mathsf{split}_{ \ottnt{U} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{U} }{%
+ \Gamma  \vdash   \mathsf{split}_{ \ottnt{U} }   :   \mathsf{?}   \rightarrow  \ottnt{U} }{%
 {\ottdrulesplitName}{}%
+}}
+
+
+\newcommand{\ottdruleSplitGName}[0]{\ottdrulename{SplitG}}
+\newcommand{\ottdruleSplitG}[1]{\ottdrule[#1]{%
+}{
+\texttt{\textcolor{red}{<<no parses (char 10):     G \mbox{$\mid$}- S***plit S : S -> \mbox{?} >>}}}{%
+{\ottdruleSplitGName}{}%
+}}
+
+
+\newcommand{\ottdruleSquashGName}[0]{\ottdrulename{SquashG}}
+\newcommand{\ottdruleSquashG}[1]{\ottdrule[#1]{%
+}{
+\texttt{\textcolor{red}{<<no parses (char 10):     G \mbox{$\mid$}- S***quash S : \mbox{?} -> S >>}}}{%
+{\ottdruleSquashGName}{}%
 }}
 
 
@@ -264,6 +264,8 @@
 \ottusedrule{\ottdruleUnboxG{}}
 \ottusedrule{\ottdrulesquash{}}
 \ottusedrule{\ottdrulesplit{}}
+\ottusedrule{\ottdruleSplitG{}}
+\ottusedrule{\ottdruleSquashG{}}
 \ottusedrule{\ottdruleunit{}}
 \ottusedrule{\ottdrulezero{}}
 \ottusedrule{\ottdrulesucc{}}
@@ -305,6 +307,15 @@
 }{
 \Gamma  \vdash   \mathsf{Unbox}_{ \ottnt{A} }  \, \ottsym{(}   \mathsf{Box}_{ \ottnt{A} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}  \ottsym{:}  \ottnt{A}}{%
 {\ottdrulerdXXretracTGName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXretracTSGName}[0]{\ottdrulename{rd\_retracTSG}}
+\newcommand{\ottdrulerdXXretracTSG}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t}  :  \ottnt{S} }%
+}{
+\texttt{\textcolor{red}{<<no parses (char 10):     G \mbox{$\mid$}- S***plit S (Squash S t) ~> t : S >>}}}{%
+{\ottdrulerdXXretracTSGName}{}%
 }}
 
 
@@ -439,6 +450,7 @@
 \ottusedrule{\ottdrulerdXXvalues{}}
 \ottusedrule{\ottdrulerdXXretracT{}}
 \ottusedrule{\ottdrulerdXXretracTG{}}
+\ottusedrule{\ottdrulerdXXretracTSG{}}
 \ottusedrule{\ottdrulerdXXretractU{}}
 \ottusedrule{\ottdrulerdXXsucc{}}
 \ottusedrule{\ottdrulerdXXcaseZero{}}
@@ -472,7 +484,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        33 good    0 bad
-Definition rule clauses: 61 good    0 bad
+Definition rules:        33 good    3 bad
+Definition rule clauses: 62 good    3 bad
 \end{verbatim}
 \end{document}

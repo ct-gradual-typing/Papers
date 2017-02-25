@@ -277,6 +277,69 @@ show the case for the cast rule.
 
 \subsection{Proof of Interpretation of Evaluation (Theorem~\ref{thm:interpretation_of_evaluation})}
 \label{subsec:proof_of_interpretation_of_evaluation}
+This proof requires the following corollary to
+Lemma~\ref{lemma:type_consistency_in_the_model}.
+\begin{corollary}
+  \label{corollary:type_consist_coro}
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
+  a gradual $\lambda$-model.  Then we know the following:
+  \begin{enumR}
+  \item If $<<A ~ A>>$, then $c_1 = c_2 = \id_{[[A]]} : [[A --> A]]$.
+
+  \item If $<<A ~ ?>>$, then there are casting morphisms:
+    \[
+    \begin{array}{lll}
+      \begin{array}{lllll}
+      c_1 & = & [[Box A]] : [[A --> ?]]      
+      \end{array}
+      & \quad &
+    \begin{array}{lll}
+      c_2 & = & [[Unbox A]] : [[? --> A]]
+    \end{array}
+    \end{array}
+    \]
+
+    \item If $<<? ~ A>>$, then there are casting morphisms:
+    \[
+    \begin{array}{lll}
+      \begin{array}{lllll}      
+      c_1 & = & [[Unbox A]] : [[? --> A]]      
+    \end{array}
+    & \quad &
+    \begin{array}{lll}
+      c_2 & = & [[Box A]] : [[A --> ?]]
+    \end{array}
+    \end{array}
+    \]
+    
+  \item If $<<A1 -> B1 ~ A2 -> B2>>$, then there are casting morphisms:
+    \[
+    \begin{array}{lllll}
+      c & = & c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]\\
+      c' & = & c_3 \to c_4 : [[(A2 -> B2) --> (A1 -> B1)]]
+    \end{array}
+    \]
+    where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
+    [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
+    
+  \item If $<<A1 x B1 ~ A2 x B2>>$, then there are casting
+    morphisms:
+    \[
+    \begin{array}{lll}
+       c & = & c_1 \times c_2 : [[(A1 x B1) --> (A2 x B2)]]\\
+      c' & = & c_3 \times c_4 : [[(A2 x B2) --> (A1 x B1)]]
+    \end{array}
+    \]
+    where $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
+    [[A2 --> A1]]$ and $c_4 : [[B2 --> B1]]$.
+  \end{enumR}
+\end{corollary}
+\begin{proof}
+  This proof holds by the construction of the casting morphisms from
+  the proof of the previous result, and the fact that the type
+  consistency rules are unique for each type.
+\end{proof}
+
 This proof holds by induction on the form of $[[G |- t1 ~> t2 : A]]$.
 We only show the cases for the casting rules, because the others are
 well-known to hold within any cartesian closed category; see

@@ -58,7 +58,8 @@ grammar
     {{tex \mathsf{Unit} }}
     | Nat                 ::   :: nat          
     {{tex \mathsf{Nat} }}    
-    | ?                   ::   :: unitype      
+    | ?                   ::   :: unitype
+    {{tex \mathsf{?} }}
     | A1 -> A2            ::   :: arrow        
     | A1 x A2             ::   :: pair         
     {{tex [[A1]] \times [[A2]] }}     
@@ -88,7 +89,6 @@ grammar
     {{tex \not \vdash }}    
     | succ                ::   :: succ
     {{tex \mathsf{succ} }}
-    | ?                   ::   :: unitype
     | ~                   ::   :: cons
     {{tex \sim }}
     | ~U                  ::   :: conv

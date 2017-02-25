@@ -1,8 +1,8 @@
 Just as the simply typed $\lambda$-calculus corresponds to cartesian
 closed categories our categorical model has a corresponding type
-theory we call Grady.  It consists of all of the structure found in
-the model.  Its syntax is an extension of the syntax for
-$\GSTLC$.
+theory we call Simply Typed Grady (Grady).  It consists of all of the
+structure found in the model.  Its syntax is an extension of the
+syntax for $\GSTLC$.
 
 \begin{definition}
   \label{def:grady-syntax}
@@ -12,27 +12,26 @@ $\GSTLC$.
     \text{(basic skeletons)} & [[U]] & ::= & [[? -> ?]] \mid [[? x ?]]\\
     \text{(skeletons)}       & [[S]] & ::= & [[?]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
     \text{(atomic types)}    & [[C]] & ::= & [[Unit]] \mid [[Nat]]\\
-    \text{(terms)}           & [[t]] & ::= & \ldots \mid [[split U]] \mid [[squash U]] \mid [[box C]] \mid [[unbox C]] \mid [[case t of 0 -> t1, (succ x) -> t2]]\\
-    \text{(natural numbers)} & [[n]] & ::= & [[0]] \mid [[succ n]]\\
-    \text{(simple values)}   & [[s]] & ::= & [[x]] \mid [[triv]] \mid [[n]] \mid [[squash U]] \mid [[split U]] \mid [[box C]] \mid [[unbox C]]\\   
+    \text{(terms)}           & [[t]] & ::= & \ldots \mid [[split U]] \mid [[squash U]]
+    \mid [[box C]] \mid [[unbox C]]\\ & & \mid & [[case t of 0 -> t1, (succ x) -> t2]]\\
   \end{array}
   \]
 \end{definition}
 \noindent
-The types of Grady are the same as the types of $\GSTLC$
-(Definition~\ref{def:gradual-syntax}), in addition, it encompasses all
-the terms of $\GSTLC$, and so we do not repeat either of them
-here.  The typing rules for Grady can be found in
+The typing rules for Grady can be found in
 Figure~\ref{fig:grady-typing} and its reduction rules can be found in
 Figure~\ref{fig:grady-reduction}.
 \renewcommand{\SLGradydruleBoxName}{\text{box}}
 \renewcommand{\SLGradydruleUnboxName}{\text{unbox}}
 \renewcommand{\SLGradydruleBoxGName}{\text{Box}}
 \renewcommand{\SLGradydruleUnboxGName}{\text{Unbox}}
+\renewcommand{\SLGradydruleSplitGName}{\text{Split}}
+\renewcommand{\SLGradydruleSquashGName}{\text{Squash}}
 \renewcommand{\SLGradydrulesquashName}{\text{squash}}
 \renewcommand{\SLGradydrulesplitName}{\text{split}}
 \renewcommand{\SLGradydrulecaseName}{[[Nat]]_e}
 \begin{figure}
+  \small
   \begin{mdframed}
     \begin{mathpar}
       \SLGradydrulevar{} \and
@@ -56,7 +55,8 @@ Figure~\ref{fig:grady-reduction}.
 \end{figure}
 \renewcommand{\SLGradydrulerdXXvaluesName}{\text{values}} 
 \renewcommand{\SLGradydrulerdXXretracTName}{\text{retract}_1}
-\renewcommand{\SLGradydrulerdXXretracTGName}{\text{retract}_3} 
+\renewcommand{\SLGradydrulerdXXretracTGName}{\text{retract}_3}
+\renewcommand{\SLGradydrulerdXXretracTSGName}{\text{retract}_4} 
 \renewcommand{\SLGradydrulerdXXretractUName}{\text{retract}_2} 
 \renewcommand{\SLGradydrulerdXXbetaName}{\beta} 
 \renewcommand{\SLGradydrulerdXXprojOneName}{\times_{e_1}} 
@@ -72,6 +72,7 @@ Figure~\ref{fig:grady-reduction}.
 \renewcommand{\SLGradydrulerdXXcaseSuccName}{[[Nat]]_{e_1}} 
 \renewcommand{\SLGradydrulerdXXcaseName}{\text{case}_1} 
 \begin{figure}
+  \small
   \begin{mdframed}
     \begin{mathpar}
       \SLGradydrulerdXXvalues{} \and
@@ -128,10 +129,28 @@ $[[unbox C]]$ to arbitrary type.
   constructions.
 \end{proof}
 \noindent
+Similarly, we can lift $[[split]]$ and $[[squash]]$ to arbitrary
+skeletons.
+\begin{lemma}[Syntactic $[[Split S]]$ and $[[Squash S]]$]
+  \label{lemma:syntactic_box_and_unbox}
+  Given any type $[[A]]$ there are functions $[[Split A]]$ and $[[Squash S]]$
+  such that the following typing rules are admissible:
+  \[
+  \begin{array}{lll}
+    \SLGradydruleSplitG{} & \quad & \SLGradydruleSquashG{}
+  \end{array}
+  \]
+  Furthermore, the following reduction rule is admissible:
+  \[
+  \begin{array}{lll}
+    \SLGradydrulerdXXretracTSG{} 
+  \end{array}
+  \]
+\end{lemma}
+\noindent
 Perhaps unsurprisingly, due to our results with respect to the
-categorical model, we can use the previous result to construct a
-type-directed translation of both $\GSTLC$ and
-$\CGSTLC$ into Grady.
+categorical model, we can use the previous results to construct a
+type-directed translation of both $\GSTLC$ and $\CGSTLC$ into Grady.
 \begin{lemma}[Translations]
   \label{lemma:translations}
   \begin{center}
@@ -163,20 +182,23 @@ $\CGSTLC$ into Grady.
   Theorem~\ref{thm:interpretation_of_evaluation}.
 \end{proof}
 
-\subsection{Exploiting the Untyped $\lambda$-Calculus}
-\label{subsec:exploiting_the_untyped_lambda-calculus}
-Having the untyped $\lambda$-calculus along side the typed
-$\lambda$-calculus can be a lot of fun.  This section can be seen from
-two perspectives: it gives a number of examples in Grady, and shows
-several ways the typed and untyped fragments can be mixed.
-\todo[inline]{Michael is writing this section.}
-\begin{itemize}
-\item Church Encoded Data
-\item Y-combinator and the natural number eliminator, e.g. terminating recursion on natural numbers
-\item Scott Encoded data, this is not available in terminating type theories
-\item Parigot Encoded Data, better efficiency 
-\end{itemize}
-% subsection exploiting_the_untyped_lambda-calculus (end)
+One important point of this system is it is straightforward to extend
+with new features, because it does not depend on type consistency.
+For example, in the sequel paper we show that extending this system with
+bounded quantification is straightforward, but quite difficult for the
+gradually typed surface language.
+
+%% Having the untyped $\lambda$-calculus along side the typed
+%% $\lambda$-calculus can be a lot of fun.  This section can be seen from
+%% two perspectives: it gives a number of examples in Grady, and shows
+%% several ways the typed and untyped fragments can be mixed.
+%% \todo[inline]{Michael is writing this section.}
+%% \begin{itemize}
+%% \item Church Encoded Data
+%% \item Y-combinator and the natural number eliminator, e.g. terminating recursion on natural numbers
+%% \item Scott Encoded data, this is not available in terminating type theories
+%% \item Parigot Encoded Data, better efficiency 
+%% \end{itemize}
 
 %%% Local Variables: ***
 %%% mode:latex ***

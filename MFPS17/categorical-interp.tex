@@ -1,10 +1,8 @@
-In this section we show how to interpret $\GSTLC$ and
-$\CGSTLC$ into the categorical model given
-in the previous section. We complete the three steps summarized
-above. We will show how to interpret the typing of the former into the
-model, and then show how to do the same for the latter, furthermore,
-we show that reduction can be interpreted into the model as well, thus
-concluding soundness for $\CGSTLC$ with
+Next we show how to interpret $\GSTLC$ and $\CGSTLC$ into a gradual
+$\lambda$-model. We will show how to interpret the typing of the
+former into the model, and then show how to do the same for the
+latter, furthermore, we show that reduction can be interpreted into
+the model as well, thus concluding soundness for $\CGSTLC$ with
 respect to our model.
 
 First, we must give the interpretation of types and contexts, but this
@@ -17,19 +15,29 @@ the names of types and objects throughout this paper.
   types into $\cat{C}$ as follows:
   \[
   \begin{array}{lll}
-    [[ [| Unit |] ]] & = & 1\\
-    [[ [| Nat |] ]] & = & [[Nat]]\\
-    [[ [| ? |] ]] & = & [[?]]\\
-    [[ [| A1 -> A2 |] ]] & = & [[ [| A1 |] -> [| A2 |] ]]\\
-    [[ [| A1 x A2 |] ]] & = & [[ [| A1 |] x [| A2 |] ]]\\
+    \begin{array}{lll}
+      [[ [| Unit |] ]] & = & 1\\
+      [[ [| Nat |] ]] & = & [[Nat]]\\
+      [[ [| ? |] ]] & = & [[?]]\\    
+    \end{array}
+    & \quad &
+    \begin{array}{lll}
+      [[ [| A1 -> A2 |] ]] & = & [[ [| A1 |] -> [| A2 |] ]]\\
+      [[ [| A1 x A2 |] ]] & = & [[ [| A1 |] x [| A2 |] ]]\\\\
+    \end{array}
   \end{array}
   \]
   We extend this interpretation to typing contexts as follows:
   \[
+  \begin{array}{lll}
     \begin{array}{lll}
-      [[ [| . |] ]] & = & 1\\
-      [[ [| G,x : A |] ]] & = & [[ [| G |] x [| A |] ]]\\
+      [[ [| . |] ]] & = & 1      
     \end{array}
+    & \quad &
+    \begin{array}{lll}
+      [[ [| G,x : A |] ]] & = & [[ [| G |] x [| A |] ]]
+    \end{array}
+  \end{array}
   \]
 \end{definition}
 \noindent Throughout the remainder of this paper we will drop the
@@ -37,11 +45,11 @@ interpretation symbols around types.
 
 Before we can interpret the typing rules of $\GSTLC$ and
 $\CGSTLC$ we must show how to interpret
-the consistency relation from Figure~\ref{fig:type-consistency}.
+the consistency relation from Figure~\ref{fig:GSTLC}.
 These will correspond to casting morphisms.
 \begin{lemma}[Type Consistency in the Model]
   \label{lemma:type_consistency_in_the_model}
-  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, $\\ $\squash, \bx, \unbox)$ is
   a gradual $\lambda$-model, and $<<A ~ B>>$ for some types $[[A]]$
   and $[[B]]$.  Then there are two casting morphisms $c_1 : [[ A --> B ]]$ and $c_2 : [[ B --> A ]]$.
 \end{lemma}
@@ -52,70 +60,9 @@ Please see
 Appendix~\ref{subsec:proof_of_type_consistency_in_the_model} for the
 complete proof.
 \end{proof}
-
-\begin{corollary}
-  \label{corollary:type_consist_coro}
-  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
-  a gradual $\lambda$-model.  Then we know the following:
-  \begin{enumR}
-  \item If $<<A ~ A>>$, then $c_1 = c_2 = \id_{[[A]]} : [[A --> A]]$.
-
-  \item If $<<A ~ ?>>$, then there are casting morphisms:
-    \[
-    \begin{array}{lllll}
-      c_1 & = & [[Box A]] : [[A --> ?]]\\
-      c_2 & = & [[Unbox A]] : [[? --> A]]
-    \end{array}
-    \]
-
-    \item If $<<? ~ A>>$, then there are casting morphisms:
-    \[
-    \begin{array}{lllll}      
-      c_1 & = & [[Unbox A]] : [[? --> A]]\\
-      c_2 & = & [[Box A]] : [[A --> ?]]
-    \end{array}
-    \]
-    
-  \item If $<<A1 -> B1 ~ A2 -> B2>>$, then there are casting morphisms:
-    \[
-    \begin{array}{lllll}
-      c & = & c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]\\
-      c' & = & c_3 \to c_4 : [[(A2 -> B2) --> (A1 -> B1)]]
-    \end{array}
-    \]
-    where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
-    [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
-    
-  \item If $<<A1 x B1 ~ A2 x B2>>$, then there are casting
-    morphisms:
-    \[
-    \begin{array}{lll}
-       c & = & c_1 \times c_2 : [[(A1 x B1) --> (A2 x B2)]]\\
-      c' & = & c_3 \times c_4 : [[(A2 x B2) --> (A1 x B1)]]
-    \end{array}
-    \]
-    where $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
-    [[A2 --> A1]]$ and $c_4 : [[B2 --> B1]]$.
-  \end{enumR}
-\end{corollary}
-\begin{proof}
-  This proof holds by the construction of the casting morphisms from
-  the proof of the previous result, and the fact that the type
-  consistency rules are unique for each type.
-\end{proof}
-
+\noindent
 Showing that both $c_1$ and $c_2$ exist corresponds to the fact that
-$<<A ~ B>>$ is symmetric.  But, this interpretation is an over
-approximation of type consistency, because type consistency is not
-transitive, but function composition is.  Leaving type consistency
-implicit in the model just does not make good sense categorically,
-because it would break composition.  For example, if we have morphisms
-$f : [[A --> ?]]$ and $g : [[B --> C]]$, then if we implicitly allowed
-$[[?]]$ to be cast to $[[B]]$, then we could compose these two
-morphisms, but this does not fit the definition of a category, because
-it requires the target of $f$ to match the source of $g$, but this
-just is not the case.  Thus, the explicit cast must be used to obtain
-$f;[[lunbox B]];g$.
+$<<A ~ B>>$ is symmetric.  
 
 At this point we have everything we need to show our main result which
 is that typing in both $\GSTLC$ and $\CGSTLC$, and evaluation in
@@ -123,12 +70,9 @@ $\CGSTLC$ can be interpreted into the categorical model.
 
 \begin{theorem}[Interpretation of Typing]
   \label{thm:interpretation_of_typing}
-  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx, \unbox)$
-  is a gradual $\lambda$-model.
-  \begin{enumR}
-  \item If $<<G |-S t : A>>$, then there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
-  \item If $<<G |-C t : A>>$, then there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.
-  \end{enumR}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx,$\\$ \unbox)$
+  is a gradual $\lambda$-model. If $<<G |-S t : A>>$ or $<<G |-C t : A>>$, then
+  there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.  
 \end{theorem}
 \begin{proof}
   Both parts of the proof hold by induction on the form of the assumed
@@ -140,13 +84,13 @@ $\CGSTLC$ can be interpreted into the categorical model.
 
 \begin{theorem}[Interpretation of Evaluation]
   \label{thm:interpretation_of_evaluation}
-  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash,$\\$\bx, \unbox)$
   is a gradual $\lambda$-model.  If $<<G |- t1 ~> t2 : A>>$, then
   $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
 \end{theorem}
 \begin{proof}
-  This proof holds by induction on the form of $[[G |- t1 ~> t2 :
-      A]]$, and uses Theorem~\ref{thm:interpretation_of_typing},
+  This proof holds by induction on the form of $[[G |- t1 ~> t2 : A]]$,
+  and uses Theorem~\ref{thm:interpretation_of_typing},
   Lemma~\ref{lemma:type_consistency_in_the_model}, and
   Corollary~\ref{corollary:type_consist_coro}.  Please see
   Appendix~\ref{subsec:proof_of_interpretation_of_evaluation} for the
