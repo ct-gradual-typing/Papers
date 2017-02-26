@@ -46,6 +46,8 @@
 \ottprodline{|}{ \mathsf{triv} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{squash}_{ \ottnt{U} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{split}_{ \ottnt{U} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{Squash}_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{Split}_{ \ottnt{S} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{box}_{ \ottnt{C} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{unbox}_{ \ottnt{C} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \lambda  \ottmv{x}  :  \ottnt{A}  .  \ottnt{t} }{}{}{}{}\ottprodnewline
@@ -164,7 +166,7 @@
 \newcommand{\ottdruleSplitGName}[0]{\ottdrulename{SplitG}}
 \newcommand{\ottdruleSplitG}[1]{\ottdrule[#1]{%
 }{
-\texttt{\textcolor{red}{<<no parses (char 10):     G \mbox{$\mid$}- S***plit S : S -> \mbox{?} >>}}}{%
+ \Gamma  \vdash   \mathsf{Split}_{ \ottnt{S} }   :  \ottnt{S}  \rightarrow   \mathsf{?}  }{%
 {\ottdruleSplitGName}{}%
 }}
 
@@ -172,7 +174,7 @@
 \newcommand{\ottdruleSquashGName}[0]{\ottdrulename{SquashG}}
 \newcommand{\ottdruleSquashG}[1]{\ottdrule[#1]{%
 }{
-\texttt{\textcolor{red}{<<no parses (char 10):     G \mbox{$\mid$}- S***quash S : \mbox{?} -> S >>}}}{%
+ \Gamma  \vdash   \mathsf{Squash}_{ \ottnt{S} }   :   \mathsf{?}   \rightarrow  \ottnt{S} }{%
 {\ottdruleSquashGName}{}%
 }}
 
@@ -283,12 +285,12 @@
 
 % defns Reduction
 %% defn red
-\newcommand{\ottdrulerdXXvaluesName}[0]{\ottdrulename{rd\_values}}
-\newcommand{\ottdrulerdXXvalues}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{s}  :  \ottnt{A} }%
+\newcommand{\ottdrulerdXXvarName}[0]{\ottdrulename{rd\_var}}
+\newcommand{\ottdrulerdXXvar}[1]{\ottdrule[#1]{%
+\ottpremise{\ottmv{x}  \ottsym{:}  \ottnt{A} \, \in \, \Gamma}%
 }{
-\Gamma  \vdash  \ottnt{s}  \rightsquigarrow  \ottnt{s}  \ottsym{:}  \ottnt{A}}{%
-{\ottdrulerdXXvaluesName}{}%
+\Gamma  \vdash  \ottmv{x}  \rightsquigarrow  \ottmv{x}  \ottsym{:}  \ottnt{A}}{%
+{\ottdrulerdXXvarName}{}%
 }}
 
 
@@ -298,6 +300,15 @@
 }{
 \Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{T} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}  \ottsym{:}  \ottnt{T}}{%
 {\ottdrulerdXXretracTName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXunboxName}[0]{\ottdrulename{rd\_unbox}}
+\newcommand{\ottdrulerdXXunbox}[1]{\ottdrule[#1]{%
+\ottpremise{\Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{T}}%
+}{
+\Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T} }  \, \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow   \mathsf{unbox}_{ \ottnt{T} }  \, \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{T}}{%
+{\ottdrulerdXXunboxName}{}%
 }}
 
 
@@ -314,7 +325,7 @@
 \newcommand{\ottdrulerdXXretracTSG}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{t}  :  \ottnt{S} }%
 }{
-\texttt{\textcolor{red}{<<no parses (char 10):     G \mbox{$\mid$}- S***plit S (Squash S t) ~> t : S >>}}}{%
+\Gamma  \vdash   \mathsf{Split}_{ \ottnt{S} }  \, \ottsym{(}   \mathsf{Squash}_{ \ottnt{S} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}  \ottsym{:}  \ottnt{S}}{%
 {\ottdrulerdXXretracTSGName}{}%
 }}
 
@@ -325,6 +336,15 @@
 }{
 \Gamma  \vdash   \mathsf{split}_{ \ottnt{U} }  \, \ottsym{(}   \mathsf{squash}_{ \ottnt{U} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}  \ottsym{:}  \ottnt{U}}{%
 {\ottdrulerdXXretractUName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXsplitName}[0]{\ottdrulename{rd\_split}}
+\newcommand{\ottdrulerdXXsplit}[1]{\ottdrule[#1]{%
+\ottpremise{\Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{U}}%
+}{
+\Gamma  \vdash   \mathsf{split}_{ \ottnt{U} }  \, \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow   \mathsf{split}_{ \ottnt{U} }  \, \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{U}}{%
+{\ottdrulerdXXsplitName}{}%
 }}
 
 
@@ -370,7 +390,7 @@
 \newcommand{\ottdrulerdXXbeta}[1]{\ottdrule[#1]{%
 \ottpremise{  \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A_{{\mathrm{1}}}}  \vdash  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{1}}}}  }%
 }{
-\Gamma  \vdash  \ottsym{(}   \lambda  \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}}  .  \ottnt{t_{{\mathrm{1}}}}   \ottsym{)} \, \ottnt{v}  \rightsquigarrow  \ottsym{[}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{A_{{\mathrm{2}}}}}{%
+\Gamma  \vdash  \ottsym{(}   \lambda  \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}}  .  \ottnt{t_{{\mathrm{1}}}}   \ottsym{)} \, \ottnt{t_{{\mathrm{2}}}}  \rightsquigarrow  \ottsym{[}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{A_{{\mathrm{2}}}}}{%
 {\ottdrulerdXXbetaName}{}%
 }}
 
@@ -447,11 +467,13 @@
 }}
 
 \newcommand{\ottdefnred}[1]{\begin{ottdefnblock}[#1]{$\Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{A}$}{}
-\ottusedrule{\ottdrulerdXXvalues{}}
+\ottusedrule{\ottdrulerdXXvar{}}
 \ottusedrule{\ottdrulerdXXretracT{}}
+\ottusedrule{\ottdrulerdXXunbox{}}
 \ottusedrule{\ottdrulerdXXretracTG{}}
 \ottusedrule{\ottdrulerdXXretracTSG{}}
 \ottusedrule{\ottdrulerdXXretractU{}}
+\ottusedrule{\ottdrulerdXXsplit{}}
 \ottusedrule{\ottdrulerdXXsucc{}}
 \ottusedrule{\ottdrulerdXXcaseZero{}}
 \ottusedrule{\ottdrulerdXXcaseSucc{}}
@@ -484,7 +506,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        33 good    3 bad
-Definition rule clauses: 62 good    3 bad
+Definition rules:        38 good    0 bad
+Definition rule clauses: 69 good    0 bad
 \end{verbatim}
 \end{document}

@@ -49,7 +49,7 @@ Figure~\ref{fig:grady-reduction}.
   \small
   \begin{mdframed}
     \begin{mathpar}
-      \SLGradydrulerdXXvalues{} \and
+      \SLGradydrulerdXXvar{} \and
       \SLGradydrulerdXXretracT{} \and
       \SLGradydrulerdXXunbox{} \and
       \SLGradydrulerdXXretractU{} \and
@@ -167,7 +167,9 @@ with new features, because it does not depend on type consistency.
 For example, in the sequel paper\footnote{TODO cite draft.} we show
 that extending this system with bounded quantification is
 straightforward, but quite difficult for the gradually typed surface
-language.
+language. Furthermore, the different type of casts are tracked which
+may lead to finer grain analysis of this system.  Lastly, this system
+has a corresponding categorical model.
 
 %% Having the untyped $\lambda$-calculus along side the typed
 %% $\lambda$-calculus can be a lot of fun.  This section can be seen from
