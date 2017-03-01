@@ -14,11 +14,8 @@ fixp = \(X <: Simple) ->
        \(f:X -> X)    ->
            unbox<X> (fix (\(y:?)->box<X> (f (unbox<X> y))));
 
-squash-fix-nat : ((Nat -> Nat) -> (Nat -> Nat)) -> (? -> ?)
-squash-fix-nat = \(f : (Nat -> Nat) -> (Nat -> Nat)) ->
-                 \(y : ?) -> box (Nat -> Nat) (f (\(x:Nat) -> unbox Nat ((split (? -> ?) y) (box Nat x))));
+fixNat : (((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat))
+fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat))    ->
+           unbox<(Nat -> Nat)> (fix (\(y:?)->box<(Nat -> Nat)> (f (unbox<(Nat -> Nat)> y))));
 
--- fix-nat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
--- fix-nat = \(f : (Nat -> Nat) -> (Nat -> Nat)) ->
---           \(r : Nat) ->
               

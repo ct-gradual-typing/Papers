@@ -79,7 +79,7 @@ ott : sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex core-gra
 
 $(PDF) : main.tex sl-grady/sl-grady.ott introduction-ott.tex gradual-typing-ott.tex \
 	categorical-model-ott.tex categorical-interp-ott.tex proofs-ott.tex sl-grady-ott.tex  \
-	Makefile $(References)
+	Makefile $(References) conclusion.tex
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)

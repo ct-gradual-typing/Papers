@@ -189,7 +189,9 @@ powerful feature.  We have a full implementation of Grady with several
 extensions available\footnote{Please see TODO for access to the
   implementation as well as full documentation on how to install and
   use it.}.  All examples in this section can be typed and ran in the
-implementation.
+implementation, and thus, we make use of Grady's concrete syntax which
+is very similar to Haskell's and does not venture too far from the
+mathematical syntax given above.
 
 Grady does not have a primitive notion of recursion, but it is
 well-known that we can define the Y combinator in the untyped
@@ -201,32 +203,45 @@ $\lambda$-calculus.  Its definition in Grady is as follows:
   fix : (? -> ?) -> ?
   fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((split (? -> ?) x) x));
 \end{lstlisting}
-Using the $\lstinline{fix}$ we can define the usual arithmetic operations
+Using $\lstinline{fix}$ we can define the usual arithmetic operations
 in Grady, but we use a typed version of $\lstinline{fix}$.
-\begin{lstlisting}[language=Haskell]    
+\begin{lstlisting}[language=Haskell]
+  fixNat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
+  fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat))    ->
+           unbox{Nat -> Nat} (fix (\(y:?)->box{Nat -> Nat} (f (unbox{Nat -> Nat} y))));
+  
   pred : Nat -> Nat
   pred = \(n:Nat) -> case n of 0 -> 0, (succ n') -> n';
 
-  sub : Nat -> Nat -> Nat
-  sub = \(m:Nat) -> ([Nat -> Nat]fixp)
-       (\(r:Nat -> Nat) ->
-        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));
-
   add : Nat -> Nat -> Nat
-  add = \(m:Nat) -> ([Nat -> Nat]fixp)
+  add = \(m:Nat) -> fixNat
        (\(r:Nat -> Nat) ->
         \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
-
+  
   mult : Nat -> Nat -> Nat
-  mult = \(m:Nat) -> ([Nat -> Nat]fixp)
+  mult = \(m:Nat) -> fixNat
        (\(r:Nat -> Nat) ->
         \(n:Nat) -> case n of 0 -> 0, (succ n') -> add m (r n'));
- 
+
   exp : Nat -> Nat -> Nat
-  exp = \(m:Nat) -> ([Nat -> Nat]fixp)
+  exp = \(m:Nat) -> fixNat
        (\(r:Nat -> Nat) ->
         \(n:Nat) -> case n of 0 -> 1, (succ n') -> mult m (r n'));
 \end{lstlisting}
+The body of each of the examples above are fully typed and the only
+dynamic typing that occurs is in the use of $\lstinline{fix}$.
+Extending Grady with polymorphism would allow for the definition of
+$\lstinline{fixNat}$ to be abstracted, and then we could do statically
+typed recursion at any type.  In fact, the implementation of Grady
+already supports this:
+\begin{lstlisting}[language=Haskell]
+fixp : forall (X <: Simple).((X -> X) -> X)
+fixp = \(X <: Simple) ->
+       \(f:X -> X)    ->
+           unbox{X} (fix (\(y:?)->box{X} (f (unbox{X} y))));
+\end{lstlisting}
+The type bound $\lstinline{Simple}$ forces $\lstinline{X}$ to be a
+simple type.  We do not allow casting of polymorphic types.
 
 %%% Local Variables: ***
 %%% mode:latex ***
