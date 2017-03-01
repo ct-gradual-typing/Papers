@@ -164,12 +164,14 @@ type-directed translation of both $\GSTLC$ and $\CGSTLC$ into Grady.
 
 One important point of this system is it is straightforward to extend
 with new features, because it does not depend on type consistency.
-For example, in the sequel paper\footnote{TODO cite draft.} we show
-that extending this system with bounded quantification is
+For example, in the sequel paper\footnote{The working draft of the
+  next paper on bounded quantification can be found at
+  \url{https://github.com/heades/gradual-typing/blob/MFPS17/Bounded/main.pdf}.}
+we show that extending this system with bounded quantification is
 straightforward, but quite difficult for the gradually typed surface
 language.  Furthermore, the different types of casts in Grady are
 tracked within the term which may lead to finer grain analysis of this
-system.  Lastly, this system has a corresponding categorical model.
+system.
 
 %% Having the untyped $\lambda$-calculus along side the typed
 %% $\lambda$-calculus can be a lot of fun.  This section can be seen from
@@ -186,7 +188,8 @@ Just as Abadi et al.~\cite{Abadi:1989} argue it is quite useful to
 have access to the untyped $\lambda$-calculus.  In the remainder of
 this section we give some example Grady programs utilizing this
 powerful feature.  We have a full implementation of Grady with several
-extensions available\footnote{Please see TODO for access to the
+extensions available\footnote{Please see
+  \url{http://metatheorem.org/gradual-typing/} for access to the
   implementation as well as full documentation on how to install and
   use it.}.  All examples in this section can be typed and ran in the
 implementation, and thus, we make use of Grady's concrete syntax which
