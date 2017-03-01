@@ -13,3 +13,12 @@ fixp : forall (X <: Simple).((X -> X) -> X)
 fixp = \(X <: Simple) ->
        \(f:X -> X)    ->
            unbox<X> (fix (\(y:?)->box<X> (f (unbox<X> y))));
+
+squash-fix-nat : ((Nat -> Nat) -> (Nat -> Nat)) -> (? -> ?)
+squash-fix-nat = \(f : (Nat -> Nat) -> (Nat -> Nat)) ->
+                 \(y : ?) -> box (Nat -> Nat) (f (\(x:Nat) -> unbox Nat ((split (? -> ?) y) (box Nat x))));
+
+-- fix-nat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
+-- fix-nat = \(f : (Nat -> Nat) -> (Nat -> Nat)) ->
+--           \(r : Nat) ->
+              
