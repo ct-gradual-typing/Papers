@@ -220,7 +220,12 @@ in Grady, but we use a typed version of $\lstinline{fix}$.
   add = \(m:Nat) -> fixNat
        (\(r:Nat -> Nat) ->
         \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
-  
+
+  sub : Nat -> Nat -> Nat
+  sub = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));        
+        
   mult : Nat -> Nat -> Nat
   mult = \(m:Nat) -> fixNat
        (\(r:Nat -> Nat) ->

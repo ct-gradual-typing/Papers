@@ -103,37 +103,36 @@ number object.
   and $[[succ]] : [[Nat]] \mto [[Nat]]$ of $\cat{C}$, such that, for
   any morphisms $f : [[Y]] \mto X$ and $g : [[Y x Nat]] \mto X$ of
   $\cat{C}$ there is a unique morphism $\Case_X : [[Y x Nat]] \mto X$
-  such that:
-  \[
-  \begin{array}{lll}
-    (\id_Y \times \mathsf{z});\Case_X = \pi_1;f
-    & \quad & 
-    (\id_Y \times [[succ]]);\Case_X = g
-  \end{array}
-  \]
-  %% making the following
-  %% diagrams commute:
-  %%      \[
-  %%      \begin{array}{lll}
-  %%        \bfig
-  %%        \qtriangle|amm|<1000,500>[
-  %%          [[Y x Nat]]`
-  %%          [[Y x Nat]]`
-  %%          X;
-  %%          \id_Y \times \mathsf{z}`
-  %%          \pi_1;f`
-  %%          \Case_X]
+  such that the following diagrams commute:
+  %% \[
+  %% \begin{array}{lll}
+  %%   (\id_Y \times \mathsf{z});\Case_X = \pi_1;f
+  %%   & \quad & 
+  %%   (\id_Y \times [[succ]]);\Case_X = g
+  %% \end{array}
+  %% \]
+  %% making 
+       \[
+       \begin{array}{lll}
+         \bfig
+         \qtriangle|amm|<1000,500>[
+           [[Y x Nat]]`
+           [[Y x Nat]]`
+           X;
+           \id_Y \times \mathsf{z}`
+           \pi_1;f`
+           \Case_X]
 
-  %%        \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
-  %%          [[Y x Nat]]`
-  %%          [[Y x Nat]]`
-  %%          X;
-  %%          \id_Y \times [[succ]]`
-  %%          \Case_X`
-  %%          g ]
-  %%        \efig                               
-  %%      \end{array}
-  %%      \]
+         \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
+           [[Y x Nat]]`
+           [[Y x Nat]]`
+           X;
+           \id_Y \times [[succ]]`
+           \Case_X`
+           g ]
+         \efig                               
+       \end{array}
+       \]
   \noindent
        Informally, the two diagrams essentially assert that we can
        define $\Case_X$ as follows:
