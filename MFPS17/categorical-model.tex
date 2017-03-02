@@ -94,9 +94,8 @@ model of the untyped $\lambda$-calculus.
 
 We now show how to model the natural numbers with their
 (non-recursive) eliminator using what we call a non-recursive natural
-number object.  This is a simplification a traditional natural number
-object; see Lambek and Scott~\cite{Lambek:1988} for an introduction to
-natural number objects.
+number object.  This is a simplification of the traditional natural
+number object; see Lambek and Scott~\cite{Lambek:1988}.
 \begin{definition}
   \label{def:SNNO}
   Suppose $\cat{C}$ is a cartesian closed category.  A
@@ -129,7 +128,7 @@ natural number objects.
        \]
   \noindent
        Informally, the two diagrams essentially assert that we can
-       define $\Case_X$ as follows:
+       define $\Case_{Y,X}$ as follows:
        \begin{center}
          \begin{math}
            \begin{array}{ccccccccccc}
@@ -157,8 +156,9 @@ a cartesian closed category, but we do not have any way of moving
 typed data into the untyped part and vice versa.  To accomplish this
 we add two new morphisms $[[box C : C --> ?]]$ and $[[unbox C : ? -->
     C]]$ such that each atomic type, $[[C]]$, is a retract of $[[?]]$.
-This enforces that the only time we can really consider something as
-typed is if it were boxed up in the first place.%%   For example, we can
+This enforces that the only time we can cast $[[?]]$ to another type is
+if it were boxed up in the first place.
+%%   For example, we can
 %% cast $3$ to type $\mathsf{Bool}$ by $[[unbox]]_{\mathsf{Bool}} ([[box Nat]]\, 3)$, but if this program is every run, then we will obtain
 %% a dynamic type error.  Note that we can type the previous program in
 %% $\CGSTLC$ as well, but if we run the program it will result in a
@@ -179,10 +179,7 @@ typed is if it were boxed up in the first place.%%   For example, we can
 We call the category $\cat{T}$ the category of atomic types.  We call
 an object, $[[A]]$, \textbf{atomic} iff there is some object $[[A']]$
 in $\cat{T}$ such that $[[A]] = \T[[A']]$. Note that we do not
-consider $[[?]]$ an atomic type.  The model really is the cartesian
-closed category $\cat{C}$, but it is extended with the structure of
-both the typed and the untyped $\lambda$-calculus with the ability to
-cast data.
+consider $[[?]]$ an atomic type.  
 
 As the model is defined it is unclear if we can cast any type to
 $[[?]]$, and vice versa, but we must be able to do this in order to

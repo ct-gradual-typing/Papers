@@ -72,8 +72,7 @@ The typing rules depend on the following partial functions:
 As one can see these allow the unknown type to be split, otherwise
 they simply return the given product/arrow type.  The typing rules
 also depend on type consistency which is a reflexive and symmetric
-binary relation.  Intuitively, one can view these rules as indicating
-which types can be cast.  That is, $[[A ~ B]]$ states that $[[A]]$ can
+binary relation.  Intuitively, $[[A ~ B]]$ states that $[[A]]$ can
 be cast into $[[B]]$ and vice versa.  As we will see in the
 interpretation type consistency amounts to requiring the existence of
 a casting morphism.
@@ -159,7 +158,7 @@ type consistency is not transitive, because in the surface language we
 do not want every type to be consistent with every other type.
 However, the casting calculus allows one to compose consistency
 relations.  For example, suppose $[[A ~ B]]$, $[[B ~ C]]$, and $[[G |-C
-    t : A]]$, then using the rule $\GSiekdruleCXXcastName{}$ of the
+    t : A]]$, then using the rule, $\GSiekdruleCXXcastName{}$, of the
 casting calculus we may type $[[G |-C t : h({A} => {B}) => {C} : C]]$.  This composition
 is the reason why we interpret type consistency as casting morphisms
 in the model.
