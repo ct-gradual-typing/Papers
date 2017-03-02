@@ -92,9 +92,11 @@ model of the untyped $\lambda$-calculus.
   An untyped $\lambda$-model is a sound and complete model of the untyped $\lambda$-calculus.
 \end{theorem}
 
-We give a novel approach to modeling the natural numbers with their
+We now show how to model the natural numbers with their
 (non-recursive) eliminator using what we call a non-recursive natural
-number object.
+number object.  This is a simplification a traditional natural number
+object; see Lambek and Scott~\cite{Lambek:1988} for an introduction to
+natural number objects.
 \begin{definition}
   \label{def:SNNO}
   Suppose $\cat{C}$ is a cartesian closed category.  A
@@ -102,34 +104,26 @@ number object.
   $[[Nat]]$ of $\cat{C}$ and morphisms $\mathsf{z} : 1 \mto [[Nat]]$
   and $[[succ]] : [[Nat]] \mto [[Nat]]$ of $\cat{C}$, such that, for
   any morphisms $f : [[Y]] \mto X$ and $g : [[Y x Nat]] \mto X$ of
-  $\cat{C}$ there is a unique morphism $\Case_X : [[Y x Nat]] \mto X$
+  $\cat{C}$ there is a unique morphism $\Case_{X} \langle f,g \rangle : [[Y x Nat]] \mto X$
   such that the following diagrams commute:
-  %% \[
-  %% \begin{array}{lll}
-  %%   (\id_Y \times \mathsf{z});\Case_X = \pi_1;f
-  %%   & \quad & 
-  %%   (\id_Y \times [[succ]]);\Case_X = g
-  %% \end{array}
-  %% \]
-  %% making 
        \[
        \begin{array}{lll}
          \bfig
          \qtriangle|amm|<1000,500>[
-           [[Y x Nat]]`
+           [[Y]]`
            [[Y x Nat]]`
            X;
-           \id_Y \times \mathsf{z}`
-           \pi_1;f`
-           \Case_X]
+           \langle \id_Y, \diamond_Y;\mathsf{z} \rangle`
+           f`
+           \Case_{Y,X} \langle f,g \rangle]
 
          \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
            [[Y x Nat]]`
            [[Y x Nat]]`
-           X;
-           \id_Y \times [[succ]]`
-           \Case_X`
-           g ]
+           [[X]];
+           \id_Y \times \mathsf{succ}`
+           \Case_{Y,X} \langle f,g \rangle`          
+           g]
          \efig                               
        \end{array}
        \]
@@ -139,9 +133,9 @@ number object.
        \begin{center}
          \begin{math}
            \begin{array}{ccccccccccc}
-             {\Case_X\,y\,0 = f\,y}
+             {\Case_{Y,X} \langle f,g \rangle\,y\,0 = f\,y}
              & \quad & 
-             {\Case_X\,y\,[[(succ x)]] =  g\,y\,x}
+             {\Case_{Y,X} \langle f,g \rangle\,y\,[[(succ n)]] =  g\,y\,n}
            \end{array}
          \end{math}
        \end{center}
