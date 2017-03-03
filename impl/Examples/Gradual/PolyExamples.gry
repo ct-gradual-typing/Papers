@@ -1,0 +1,9 @@
+id : forall (X<:?).(X -> X)
+id = \(X<:?) -> \(x:X) -> x;
+
+gbox : forall (X<:Nat).(X -> ?)
+gbox = \(X<:Nat) -> box<X>; 
+
+-- Fails due to type error:
+-- weirdbox : (forall (X<:?).X) -> ?
+-- weirdbox = [forall (X<:?).X] gbox; 

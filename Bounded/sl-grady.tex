@@ -1,0 +1,184 @@
+Just as the simply typed $\lambda$-calculus corresponds to cartesian
+closed categories our categorical model has a corresponding type
+theory we call Grady.  It consists of all of the structure found in
+the model.  Its syntax is an extension of the syntax for
+$\GSTLC$.
+
+\begin{definition}
+  \label{def:grady-syntax}
+  Syntax for Grady:
+  \[
+  \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+    \text{(basic skeletons)} & [[U]] & ::= & [[? -> ?]] \mid [[? x ?]]\\
+    \text{(skeletons)}       & [[S]] & ::= & [[?]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
+    \text{(atomic types)}    & [[C]] & ::= & [[Unit]] \mid [[Nat]]\\
+    \text{(terms)}           & [[t]] & ::= & \ldots \mid [[split U]] \mid [[squash U]] \mid [[box C]] \mid [[unbox C]] \mid [[case t of 0 -> t1, (succ x) -> t2]]\\
+    \text{(natural numbers)} & [[n]] & ::= & [[0]] \mid [[succ n]]\\
+    \text{(simple values)}   & [[s]] & ::= & [[x]] \mid [[triv]] \mid [[n]] \mid [[squash U]] \mid [[split U]] \mid [[box C]] \mid [[unbox C]]\\   
+  \end{array}
+  \]
+\end{definition}
+\noindent
+The types of Grady are the same as the types of $\GSTLC$
+(Definition~\ref{def:gradual-syntax}), in addition, it encompasses all
+the terms of $\GSTLC$, and so we do not repeat either of them
+here.  The typing rules for Grady can be found in
+Figure~\ref{fig:grady-typing} and its reduction rules can be found in
+Figure~\ref{fig:grady-reduction}.
+\renewcommand{\SLGradydruleBoxName}{\text{box}}
+\renewcommand{\SLGradydruleUnboxName}{\text{unbox}}
+\renewcommand{\SLGradydruleBoxGName}{\text{Box}}
+\renewcommand{\SLGradydruleUnboxGName}{\text{Unbox}}
+\renewcommand{\SLGradydrulesquashName}{\text{squash}}
+\renewcommand{\SLGradydrulesplitName}{\text{split}}
+\renewcommand{\SLGradydrulecaseName}{[[Nat]]_e}
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \SLGradydrulevar{} \and
+      \SLGradydruleBox{} \and
+      \SLGradydruleUnbox{} \and
+      \SLGradydrulesquash{} \and
+      \SLGradydrulesplit{} \and
+      \SLGradydruleunit{} \and
+      \SLGradydrulezero{} \and
+      \SLGradydrulesucc{} \and
+      \SLGradydrulecase{} \and
+      \SLGradydrulepair{} \and
+      \SLGradydrulefst{} \and
+      \SLGradydrulesnd{} \and
+      \SLGradydrulelam{} \and
+      \SLGradydruleapp{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Typing rules for Grady}
+  \label{fig:grady-typing}
+\end{figure}
+\renewcommand{\SLGradydrulerdXXvaluesName}{\text{values}} 
+\renewcommand{\SLGradydrulerdXXretracTName}{\text{retract}_1}
+\renewcommand{\SLGradydrulerdXXretracTGName}{\text{retract}_3} 
+\renewcommand{\SLGradydrulerdXXretractUName}{\text{retract}_2} 
+\renewcommand{\SLGradydrulerdXXbetaName}{\beta} 
+\renewcommand{\SLGradydrulerdXXprojOneName}{\times_{e_1}} 
+\renewcommand{\SLGradydrulerdXXprojTwoName}{\times_{e_2}} 
+\renewcommand{\SLGradydrulerdXXappOneName}{\to_{e_1}} 
+\renewcommand{\SLGradydrulerdXXappTwoName}{\to_{e_2}} 
+\renewcommand{\SLGradydrulerdXXfstName}{[[fst]]} 
+\renewcommand{\SLGradydrulerdXXsndName}{[[snd]]} 
+\renewcommand{\SLGradydrulerdXXpairOneName}{\times_1} 
+\renewcommand{\SLGradydrulerdXXpairTwoName}{\times_2}
+\renewcommand{\SLGradydrulerdXXsuccName}{\text{succ}}       
+\renewcommand{\SLGradydrulerdXXcaseZeroName}{[[Nat]]_{e_0}} 
+\renewcommand{\SLGradydrulerdXXcaseSuccName}{[[Nat]]_{e_1}} 
+\renewcommand{\SLGradydrulerdXXcaseName}{\text{case}_1} 
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \SLGradydrulerdXXvalues{} \and
+      \SLGradydrulerdXXretracT{} \and
+      \SLGradydrulerdXXretractU{} \and
+      \SLGradydrulerdXXbeta{} \and
+      \SLGradydrulerdXXprojOne{} \and
+      \SLGradydrulerdXXprojTwo{} \and
+      \SLGradydrulerdXXsucc{} \and      
+      \SLGradydrulerdXXcaseZero{} \and
+      \SLGradydrulerdXXcaseSucc{} \and
+      \SLGradydrulerdXXcase{} \and
+      \SLGradydrulerdXXappOne{} \and
+      \SLGradydrulerdXXappTwo{} \and
+      \SLGradydrulerdXXfst{} \and
+      \SLGradydrulerdXXsnd{} \and
+      \SLGradydrulerdXXpairOne{} \and
+      \SLGradydrulerdXXpairTwo{}    
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Reduction rules for Grady}
+  \label{fig:grady-reduction}
+\end{figure}
+
+Just as we did for the categorical model
+(Lemma~\ref{lemma:casting_morphisms}) we can lift $[[box C]]$ and
+$[[unbox C]]$ to arbitrary type.
+\begin{lemma}[Syntactic $[[Box A]]$ and $[[Unbox A]]$]
+  \label{lemma:syntactic_box_and_unbox}
+  Given any type $[[A]]$ there are functions $[[Box A]]$ and $[[Unbox
+      A]]$ such that the following typing rules are admissible:
+  \[
+  \begin{array}{lll}
+    \SLGradydruleBoxG{} & \quad & \SLGradydruleUnboxG{}
+  \end{array}
+  \]
+  Furthermore, the following reduction rule is admissible:
+  \[
+  \begin{array}{lll}
+    \SLGradydrulerdXXretracTG{} 
+  \end{array}
+  \]
+\end{lemma}
+\begin{proof}
+  The functions $[[Box A]]$ and $[[Unbox A]]$ can be defined using the
+  construction from the categorical model,
+  e.g. Definition~\ref{def:boxing-unboxing},
+  Definition~\ref{def:lifted-split-squash}, and
+  Lemma~\ref{lemma:casting_morphisms}.  However, the categorical
+  notions of composition, identity, and the functors $- \to -$ and $-
+  \times -$ must be defined as meta-functions first, but after they
+  are, then the same constructions apply.  Please see
+  Appendix~\ref{subsec:proof_of_lemma_syntactic_box_and_unbox} for the
+  constructions.
+\end{proof}
+\noindent
+Perhaps unsurprisingly, due to our results with respect to the
+categorical model, we can use the previous result to construct a
+type-directed translation of both $\GSTLC$ and
+$\CGSTLC$ into Grady.
+\begin{lemma}[Translations]
+  \label{lemma:translations}
+  \begin{center}
+    \begin{itemize}
+    \item[] 
+    \item[i.] If $[[G |- t : A]]$ hold in either $\GSTLC$ or
+      $\CGSTLC$, then there exists a term
+      $[[t']]$ such that $[[G |- t' : A]]$ holds in Grady.
+    \item[ii.] If $[[G |- t1 ~> t2 : A]]$ holds in $\CGSTLC$, then
+      $[[G |- t'1 ~> t'2 : A]]$ holds in Grady, where $[[G |- t'1 :
+        A]]$ and $[[G |- t'2 : A]]$ are both the corresponding Grady
+      terms.
+    \end{itemize}
+  \end{center}
+\end{lemma}
+\begin{proof}
+  The proof of this result is similar to the proof that both
+  $\GSTLC$ and $\CGSTLC$ can be
+  interpreted into the categorical model,
+  Theorem~\ref{thm:interpretation_of_typing} and
+  Theorem~\ref{thm:interpretation_of_evaluation}, and thus, we do not
+  give the full proof.  The proof of part one holds by induction on
+  $[[G |- t : A]]$, and using the realization that if $<<A ~ B>>$ for
+  some types $[[A]]$ and $[[B]]$ then there are casting terms $[[. |-
+      c1 : A -> B]]$ and $[[. |- c2 : B -> A]]$ following the proof of
+  Lemma~\ref{lemma:type_consistency_in_the_model}. The proof of part
+  two holds by induction on $[[G |- t1 ~> t2 : A]]$ making use of part
+  one; it is similar to the proof of
+  Theorem~\ref{thm:interpretation_of_evaluation}.
+\end{proof}
+
+\subsection{Exploiting the Untyped $\lambda$-Calculus}
+\label{subsec:exploiting_the_untyped_lambda-calculus}
+Having the untyped $\lambda$-calculus along side the typed
+$\lambda$-calculus can be a lot of fun.  This section can be seen from
+two perspectives: it gives a number of examples in Grady, and shows
+several ways the typed and untyped fragments can be mixed.
+\todo[inline]{Michael is writing this section.}
+\begin{itemize}
+\item Church Encoded Data
+\item Y-combinator and the natural number eliminator, e.g. terminating recursion on natural numbers
+\item Scott Encoded data, this is not available in terminating type theories
+\item Parigot Encoded Data, better efficiency 
+\end{itemize}
+% subsection exploiting_the_untyped_lambda-calculus (end)
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

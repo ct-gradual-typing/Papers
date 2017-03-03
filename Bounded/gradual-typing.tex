@@ -1,0 +1,171 @@
+\newcommand{\GSTLC}{\lambda^?_\to}
+\newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to}
+We begin by introducing a slight variation of \cite{Siek:2006}'s
+gradually typed functional language given by Siek et
+al.~\cite{Siek:2015}.  The syntax of the gradual type system $\GSTLC$
+is defined in the following definition.
+
+This definition is the base syntax for every language in this paper.
+The typing rules are defined in Figure~\ref{fig:gradual-typing} and
+the type consistency relation is defined in
+Figure~\ref{fig:type-consistency}.  The main changes of the version of
+$\GSTLC$ defined here from the original due to Siek et
+al.~\cite{Siek:2015} is that products and natural numbers have been
+added.  The definition of products follows how casting is done for
+functions. So it allows casting projections of products, for example,
+it is reasonable for terms like $[[\x:(? x ?).(succ (fst x))]]$ to
+type check.
+\renewcommand{\GSiekdrulereflName}[0]{\text{refl}}
+\renewcommand{\GSiekdruleboxName}[0]{\text{box}}
+\renewcommand{\GSiekdruleunboxName}[0]{\text{unbox}}
+\renewcommand{\GSiekdrulearrowName}[0]{\to}
+\renewcommand{\GSiekdruleprodName}[0]{\times}
+\begin{figure}
+  \begin{mdframed}
+    \small
+    \begin{itemize}
+  \item[] \textbf{Syntax:}
+    \[ 
+    \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+      \text{(types)} & [[A]],[[B]],[[C]],[[D]] & ::=  & [[Unit]] \mid [[Nat]] \mid [[?]] \mid [[A x B]] \mid [[A1 -> A2]]\\
+      \text{(terms)} & [[t]] & ::=  & [[x]] \mid [[triv]] \mid [[0]] \mid [[succ t]] \mid [[\x:A.t]]  \mid [[t1 t2]]
+      \mid [[(t1,t2)]] \mid [[fst t]] \mid [[snd t]] \\
+      \text{(contexts)} & [[G]] & ::= & [[.]] \mid [[x : A]] \mid [[G1,G2]]\\
+    \end{array}
+    \]
+
+  \item[] \textbf{Typing Rules:}
+    {    \small
+    \begin{mathpar}
+      \GSiekdruleSXXvar{} \and
+      \GSiekdruleSXXunit{} \and
+      \GSiekdruleSXXzero{} \and
+      \GSiekdruleSXXsucc{} \and
+      \GSiekdruleSXXpair{} \and
+      \GSiekdruleSXXfst{} \and
+      \GSiekdruleSXXsnd{} \and
+      \GSiekdruleSXXlam{} \and
+      \GSiekdruleSXXapp{}     
+    \end{mathpar}
+    }
+
+  \item[] \textbf{Type Consistency:}
+    \begin{mathpar}
+      \GSiekdrulerefl{} \and
+      \GSiekdrulebox{} \and
+      \GSiekdruleunbox{} \and
+      \GSiekdrulearrow{} \and
+      \GSiekdruleprod{}    
+  \end{mathpar}
+    \end{itemize}
+  \end{mdframed}
+  \caption{The gradually simply typed $\lambda$-calculus: $\GSTLC$}
+  \label{fig:GSTLC}
+\end{figure}
+
+We can view gradual typing as a surface language feature much like
+type inference, and we give it a semantics by translating it into an
+annotated core. The language $\GSTLC$ is given an operational
+semantics by translating it to a fully annotated core language called
+$\CGSTLC$.  Its syntax is an extension of the syntax of $\GSTLC$
+(Definition~\ref{def:gradual-syntax}) where terms are the only
+syntactic class that differs, and so we do not repeat the syntax of
+types or contexts.
+\renewcommand{\GSiekdruleCXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleCXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleCXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleCXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleCXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleCXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleCXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleCXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleCXXappName}[0]{\to_e}
+\renewcommand{\GSiekdruleCXXcastName}[0]{\text{cast}}
+\renewcommand{\GSiekdrulerdAXXvaluesName}{\text{values}}
+\renewcommand{\GSiekdrulerdAXXcastIdName}{\text{id-atom}}
+\renewcommand{\GSiekdrulerdAXXcastUName}{\text{id-U}}
+\renewcommand{\GSiekdrulerdAXXsucceedName}{\text{succeed}}
+\renewcommand{\GSiekdrulerdAXXcastArrowName}{\text{arrow}}
+\renewcommand{\GSiekdrulerdAXXcastGroundName}{\text{expand}_1}
+\renewcommand{\GSiekdrulerdAXXcastExpandName}{\text{expand}_2}
+\renewcommand{\GSiekdrulerdAXXbetaName}{}
+\renewcommand{\GSiekdrulerdAXXappOneName}{}
+\renewcommand{\GSiekdrulerdAXXappTwoName}{}
+\renewcommand{\GSiekdrulerdAXXfstName}{}
+\renewcommand{\GSiekdrulerdAXXsndName}{}
+\renewcommand{\GSiekdrulerdAXXpairOneName}{}
+\renewcommand{\GSiekdrulerdAXXpairTwoName}{}
+\begin{figure}
+  \begin{mdframed}
+    \small
+    \begin{itemize}
+    \item[] \textbf{Syntax:}
+      \[ \small
+  \begin{array}{cccccc}
+    \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+    \text{(Atomic Types)}  & [[T]] & ::= & [[Unit]] \mid [[Nat]]\\
+    \text{(Ground Types)}  & [[R]] & ::= & [[T]] \mid [[?]] \to [[?]]\\    
+    \end{array}
+    & \quad & 
+  \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+    \text{(values)}        & [[v]] & ::= & [[\x:A.t]]\\
+    \text{(terms)}         & [[t]] & ::=  & \ldots \mid [[t : {A} => {B}]]\\
+  \end{array}
+  \end{array}
+  \]
+
+  \item[] \textbf{Typing Rules:}
+    {    \small
+      \begin{mathpar}
+        \GSiekdruleCXXvar{} \and
+      \GSiekdruleCXXunit{} \and
+      \GSiekdruleCXXzero{} \and
+      \GSiekdruleCXXsucc{} \and
+      \GSiekdruleCXXpair{} \and
+      \GSiekdruleCXXfst{} \and
+      \GSiekdruleCXXsnd{} \and
+      \GSiekdruleCXXlam{} \and
+      \GSiekdruleCXXapp{} \and      
+      \GSiekdruleCXXcast{}    
+    \end{mathpar}
+    }
+
+  \item[] \textbf{Reduction Relation:}
+    \begin{mathpar}
+      \GSiekdrulerdAXXvalues{} \and
+      \GSiekdrulerdAXXcastId{} \and
+      \GSiekdrulerdAXXcastU{} \and
+      \GSiekdrulerdAXXsucceed{} \and
+      \GSiekdrulerdAXXcastArrow{} \and
+      \GSiekdrulerdAXXcastGround{} \and
+      \GSiekdrulerdAXXcastExpand{} 
+      %% \GSiekdrulerdAXXbeta{} \and
+      %% \GSiekdrulerdAXXappOne{} \and
+      %% \GSiekdrulerdAXXappTwo{} \and
+      %% \GSiekdrulerdAXXfst{} \and
+      %% \GSiekdrulerdAXXsnd{} \and
+      %% \GSiekdrulerdAXXpairOne{} \and
+      %% \GSiekdrulerdAXXpairTwo{}  
+  \end{mathpar}
+    \end{itemize}
+  \end{mdframed}
+  \caption{The core casting calculus: $\CGSTLC$}
+  \label{fig:GSTLC}
+\end{figure}
+The typing rules for $\CGSTLC$ can be found in
+Figure~\ref{fig:annotated-typing}, and the reduction rules in
+Figure~\ref{fig:annotated-reduction}. The reduction relation is the
+usual definition of call-by-value for the simply typed
+$\lambda$-calculus, and so we do not give all of the rules here, but
+rather only the casting rules.  In addition, to save space we do not
+define the cast insertion algorithm for $\GSTLC$.  Please see Siek et
+al.~\cite{Siek:2015} for its definition.  To make it easier for the
+reader to connect the reduction rules to their interpretations we give
+the reduction rules for $\CGSTLC$ using the terms-in-context
+formulation; for an introduction to this style please see
+Crole~\cite{Crole:1994}.
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

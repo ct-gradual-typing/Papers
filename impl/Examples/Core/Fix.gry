@@ -1,0 +1,21 @@
+import Skeleton;
+
+omega : (? -> ?) -> ?
+omega = \(x : ? -> ?) -> (x (squashar x));
+
+loop : ?
+loop = omega (\(x : ?) -> (omega (splitar x)));
+
+fix : (? -> ?) -> ?
+fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((splitar x) x));
+
+fixp : forall (X <: Simple).((X -> X) -> X)
+fixp = \(X <: Simple) ->
+       \(f:X -> X)    ->
+           unbox<X> (fix (\(y:?)->box<X> (f (unbox<X> y))));
+
+fixNat : (((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat))
+fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat))    ->
+           unbox<(Nat -> Nat)> (fix (\(y:?)->box<(Nat -> Nat)> (f (unbox<(Nat -> Nat)> y))));
+
+              

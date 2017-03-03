@@ -9,11 +9,14 @@ import Unbound.LocallyNameless.Subst
 
 import Queue
 import Syntax
+import CoreSyntax
 import Parser
 import Pretty
+import CorePretty
 import TypeChecker
 import Eval
 import TypeErrors
+import CastInsertion
 
 type Qelm = (Vnm, Term)
 type REPLStateIO = StateT (FilePath,Queue Qelm) IO
@@ -53,7 +56,7 @@ unfoldQueue q = fixQ q emptyQ step
       substDef x t (y, t') = (y, subst x t t')
       
 containsTerm :: Queue Qelm -> Vnm -> Bool
-containsTerm (Queue f r) vnm = (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f) 
+containsTerm (Queue f r) vnm = foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f
 
 tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
@@ -77,7 +80,7 @@ tyCheckQ q = do
                         Left er -> io.putStrLn.readTypeError $ er
                         Right b -> 
                             if b
-                            then do
+                            then
                               -- Determine if definition already in queue
                               if(containsTerm defs v)
                               then  io.putStrLn $ "error: The variable "++(show v)++" is already in the context."
@@ -95,23 +98,33 @@ handleCMD s =
       Right l -> handleLine l
   where
     handleLine :: REPLExpr -> REPLStateIO ()
-    handleLine (Eval t) = do
-      (f, defs) <- get
-      let tu = unfoldDefsInTerm defs t
-          r = eval tu
-       in case r of
-            Left m -> io.putStrLn.readTypeError $ m
-            Right e -> io.putStrLn.runPrettyTerm $ e
+    handleLine (HelpMenu) = do
+      io.putStrLn $ "----------------------------------------------------------"
+      io.putStrLn $ "                  The Grady Help Menu                     "
+      io.putStrLn $ "----------------------------------------------------------"
+      io.putStrLn $ ":h/:help -> Display the help menu"
+      io.putStrLn $ ":t/:type <term> -> Typecheck a term"
+      io.putStrLn $ ":s/:show <term> -> Display the Abstract Syntax Type of a term"
+      io.putStrLn $ ":u/:unfold <term> -> Unfold the expression" -- TODO: Is there a better way to explaing this?
+      io.putStrLn $ ":d/:dump -> Display the context"
+      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
+      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
+      io.putStrLn $ "let <Variable name> = <expression> -> Bind an expression to a variable and load it into the context"
+      io.putStrLn $ "You may also evaluate expressions directly in the Repl"
+      io.putStrLn $ "----------------------------------------------------------"
+
     handleLine (Let x t) = do
       (f, defs) <- get
       let tu = unfoldDefsInTerm defs t
           r = runIR tu
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
-            Right ty ->  do
-                if(containsTerm defs x)
-                then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
-                else push (x , t)
+            Right e -> io.putStrLn.runPrettyTerm $ e
+    handleLine (Let x t) = do
+      (f, defs) <- get
+      if(containsTerm defs x)
+        then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
+        else push (x , t)
     handleLine (TypeCheck t) = do
       (_, defs) <- get
       let tu = unfoldDefsInTerm defs t
@@ -119,7 +132,9 @@ handleCMD s =
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
             Right ty ->  io.putStrLn.runPrettyType $ ty
-    handleLine (ShowAST t) = io.putStrLn.show $ t
+    handleLine (ShowAST t) = do
+      (_,defs) <- get
+      io.putStrLn.show $ unfoldDefsInTerm defs t
     handleLine (Unfold t) =
         get >>= (\(f,defs) -> io.putStrLn.runPrettyTerm $ unfoldDefsInTerm defs t)
     handleLine (LoadFile p) = do
@@ -134,10 +149,22 @@ handleCMD s =
      where
        prettyDef :: (Name a, Term) -> String
        prettyDef (x, t) = "let "++(n2s x)++" = "++(runPrettyTerm t)
-
+    handleLine (Eval t) = do
+      (_, defs) <- get
+      let tu = unfoldDefsInTerm defs t
+      let r = insertCasts tu
+      case r of
+        Left m -> io.putStrLn.readTypeError $ m
+        Right (ct, _) -> let me = eval ct
+                          in case me of
+                               Left m' -> io.putStrLn.readTypeError $ m'
+                               Right e -> io.putStrLn.runPrettyCTerm $ e
+      
 loadFile :: FilePath -> REPLStateIO ()
 loadFile p = do
   (wdir,_) <- get
+  -- delete definitions currently in queue, this allows reloading the same file after making changes
+  put (wdir,emptyQ)         
   msgOrGFile <- lift $ runFileParser p wdir
   case msgOrGFile of
     Left l -> io.putStrLn $ l

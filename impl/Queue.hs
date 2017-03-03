@@ -36,6 +36,9 @@ queue :: [a] -> [a] -> Queue a
 queue [] r = Queue (reverse r) []
 queue f r = Queue f r
 
+enqueue :: a -> Queue a -> Queue a
+enqueue elem (Queue f r) = (Queue (elem:f) r) 
+
 snoc :: Queue a -> a -> Queue a
 snoc (Queue f r) x = queue f (x:r)
 
@@ -44,6 +47,7 @@ tailQ (Queue (x:f) r) = queue f r
                        
 mapQ :: (a -> b) -> Queue a -> Queue b
 mapQ m (Queue f r) = Queue (map m f) (map m r)
+
 
 -- The following fixpoint operation makes it easier to do structural
 -- recursion over queues.

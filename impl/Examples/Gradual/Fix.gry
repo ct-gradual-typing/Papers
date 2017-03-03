@@ -1,0 +1,14 @@
+omega : ? -> ?
+omega = \(x : ?) -> (x x);
+
+loop : ?
+loop = omega omega;
+
+ycomb : (? -> ?) -> ?
+ycomb = \(f : ? -> ?) -> omega (\(x:?) -> f (x x));
+
+-- Notice that this will *not* typecheck without the unbox<X>, because
+-- gradual typing does not implicitly convert target types in
+-- applications.
+fix : forall (X <: Simple).((X -> X) -> X)
+fix = \(X <: Simple) -> \(f:X -> X) -> unbox<X> (ycomb (\(x:?) -> (f x)));

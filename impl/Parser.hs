@@ -19,6 +19,7 @@ module Parser (module Text.Parsec, expr,
 import Prelude
 import Data.List
 import Data.Char 
+import qualified Data.Text as T
 import Text.Parsec hiding (Empty)
 import Text.Parsec.Expr
 import qualified Text.Parsec.Token as Token
@@ -37,9 +38,9 @@ import Pretty
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedNames   = ["of","0","?","triv","proj1","proj2","split","squash","forall",
+  Token.reservedNames   = ["of","0","?","triv","proj1","proj2","forall",
                            "ncase","box","unbox","Nat","Unit", "||", "[]", ":", "lcase"],
-  Token.reservedOpNames = ["->", "succ", "\\", "proj1", "proj2", "box", "unbox", "squash", "split", "forall", "ncase", ":", "lcase"]
+  Token.reservedOpNames = ["->", "succ", "\\","box","unbox", "proj1", "proj2", "forall", "ncase", ":", "lcase"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -71,8 +72,6 @@ tvar = ws *> var' typeVarName TVar <* ws
 tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "Unit" Unit         
-tyTop = parseConst "*" Top
-tyCastable = parseConst "Simple" Simple
         
 prod = do
   symbol "("
@@ -102,11 +101,13 @@ list = do
   symbol "]"
   return $ List ty
 
+tySimple = parseConst "Simple" Simple
+
 -- The initial expression parsing table for types.
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyTop <|> try tyCastable
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tySimple
                                       <|> try forall <|> try prod <|> try list <|> tvar
 
 parseType :: String -> Either String Type
@@ -123,11 +124,11 @@ int2term 0 = Zero
 int2term n = Succ $ int2term $ n-1
 
 aterm = try (parens pairParse) <|> parens expr    <|> try intParse
-                               <|> try trivParse  <|> try squash
-                               <|> try split      <|> try boxParse
-                               <|> try unboxParse <|> listParse <|> var                                
-expr = ws *> (try intParse <|> try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
-                           <|> try caseParse <|> tappParse <|> appParse <|> parens expr <?> "parse error")
+                               <|> try trivParse  <|> try boxParse
+                               <|> try unboxParse <|> try emptyListParse
+                               <|> try listNParse <|> var                                
+expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
+                           <|> try caseParse <|> tappParse <|> try listParse <|> appParse <|> parens expr <?> "parse error")
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
 var = ws *> var' varName Var <* ws
@@ -136,6 +137,18 @@ intParse = integer >>= return.int2term
 
 zeroParse = parseConst "0" Zero
 trivParse = parseConst "triv" Triv
+
+boxParse = do
+  symbol "box"
+  ty <- between (symbol "<") (symbol ">") typeParser
+  return $ Box ty
+
+unboxParse = do
+  symbol "unbox"
+  symbol "<"
+  ty <- typeParser
+  symbol ">"
+  return $ Unbox ty
 
 tfunParse = do
   reservedOp "\\"
@@ -157,18 +170,6 @@ tappParse = try $ do
   symbol "]"
   t <- expr
   return $ TApp ty t
-
-boxParse = do
-  symbol "box"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  return $ Box ty
-
-unboxParse = do
-  symbol "unbox"
-  symbol "<"
-  ty <- typeParser
-  symbol ">"
-  return $ Unbox ty
 
 succParse = do
   reservedOp "succ"
@@ -251,23 +252,30 @@ appParse = do
     [] -> fail "A term must be supplied"
     _ -> return $ foldl1 App l
 
-squash = do
-  symbol "squash"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  return $ (Squash ty)
-  
-split = do
-  symbol "split"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  return $ (Split ty)
+getPos = do
+  p <- getPosition
+  return (sourceLine p, sourceColumn p, sourceName p)
 
-listParse = do
+listNParse = do
   symbol "["
-  l <- expr `sepBy` (symbol ",")
+  l <- aterm `sepBy1` (symbol ",")
   symbol "]"
   return $ case l of
     [] -> Empty
     _ -> foldr Cons Empty l
+
+emptyListParse = do
+  symbol "[]"
+  return Empty
+
+consParse = do
+  lookAhead $ (aterm >> ws >> (symbol "::"))
+  l <- aterm `sepBy1` (ws >> symbol "::")
+  return $ case l of
+    [] -> error "empty list"
+    _ -> foldr1 Cons l
+
+listParse = (try listNParse) <|> consParse
 
 parseTerm :: String -> Either String Term
 parseTerm s = case (parse expr "" s) of
@@ -424,10 +432,13 @@ replFileCmdParser short long c = do
   symbol ":"
   cmd <- many lower
   ws
-  path <- many1 anyChar
+  pathUntrimmed <- many1 anyChar
   eof
   if(cmd == long || cmd == short)
-  then return $ c path
+  then do
+    -- Trim whiteSpace from path
+    let path = T.unpack . T.strip . T.pack $ pathUntrimmed
+    return $ c path
   else fail $ "Command \":"++cmd++"\" is unrecognized."
   
 replTermCmdParser short long c p = do
