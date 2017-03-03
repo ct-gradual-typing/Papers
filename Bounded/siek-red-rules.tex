@@ -1,0 +1,156 @@
+\begin{itemize}
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXvaluesName{}$] {
+[[G |-C v : A]]
+}{[[G |- v ~> v : A]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXcastIdName{}$] {
+[[G |-C v : T]]
+}{[[G |- v : {T} => {T} ~> v : T]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXcastUName{}$] {
+[[G |-C v : ?]]
+}{[[G |- v : {?} => {?} ~> v : ?]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXsucceedName{}$] {
+[[G |-C v : R]]
+}{[[G |- v : h({R} => {?}) => {R} ~> v : R]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXcastArrowName{}$] {
+[[(G |-C v1 : A1 -> B1 && G |-C v2 : A2) && (A1 -> B1) ~ (A2 -> B2)]]
+}{[[G |- H((v1 : {(A1 -> B1)} => {(A2 -> B2)}) v2) ~> H(H(v1 (v2 : {A2} => {A1})) : {B1} => {B2}) : B2]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXcastGroundName{}$] {
+[[((G |-C v : A && A ~ R) && A != R) && A != ?]]
+}{[[G |- v : {A} => {?} ~> v : h({A} => {R}) => {?} : ?]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXcastExpandName{}$] {
+[[((G |-C v : ? && A ~ R) && A != R) && A != ?]]
+}{[[G |- v : {?} => {A} ~> v : h({?} => {R}) => {A} : A]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXbetaName{}$] {
+[[G, x : A1 |-C t : A2 && G |-C v : A1]]
+}{[[G |- (\x:A1.t) v ~> [v/x]t : A2]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXapp1Name{}$] {
+[[G |- t1 ~> t'1 : A1 -> A2 && G |-C t2 : A1]]
+}{[[G |- t1 t2 ~> t'1 t2 : A2]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXapp2Name{}$] {
+[[G |-C v : A1 -> A2 && G |- t ~> t' : A1]]
+}{[[G |- v t ~> v t' : A2]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXfstName{}$] {
+[[G |- t ~> t' : A1 x A2]]
+}{[[G |- fst t ~> fst t' : A1]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXsndName{}$] {
+[[G |- t ~> t' : A1 x A2]]
+}{[[G |- snd t ~> snd t' : A2]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXpair1Name{}$] {
+[[G |- t1 ~> t'1 : A1 && G |-C t2 : A2]]
+}{[[G |- (t1,t2) ~> (t'1,t2) : A1 x A2]]}
+\end{math}
+\end{center}
+
+
+\item[] Case.\ \\ 
+\begin{center}
+\begin{math}
+$$\mprset{flushleft}
+\inferrule* [right=$\GSiekdruleredAXXpair2Name{}$] {
+[[G |-C t1 : A1 && G |- t2  ~> t'2 : A2]]
+}{[[G |- (t1,t2) ~> (t1,t'2) : A1 x A2]]}
+\end{math}
+\end{center}
+
+
+\end{itemize}

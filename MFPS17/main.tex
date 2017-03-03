@@ -1,0 +1,299 @@
+%% Submission instructions:
+%%
+%% 15 pages max
+\documentclass{entcs}
+
+\usepackage{preentcsmacro}
+\usepackage{graphicx}
+
+\usepackage{amssymb,amsmath}
+\usepackage{hyperref}
+\usepackage{mathpartir}
+\usepackage[barr]{xy}
+\usepackage{mdframed}
+\usepackage{supertabular}
+\usepackage{todonotes}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{color}
+
+%% From: https://hal.inria.fr/file/index/docid/881085/filename/lsthaskell.sty
+\lstdefinelanguage{Haskell}{ 
+  %
+  % Anything betweeen $ becomes LaTeX math mode
+  mathescape=true,
+  %
+  % Comments may or not include Latex commands
+  texcl=false, 
+  %
+  morekeywords=[1]{class, instance},
+  %
+  morekeywords=[2]{where},
+  %
+  morekeywords=[3]{Maybe},
+  %
+  morekeywords=[4]{main},
+  %
+  morekeywords=[6]{do, last, first, try, idtac, repeat},
+  %
+  % Comments delimiters, we do turn this off for the manual
+  morecomment=[s]{(*}{*)},
+  %
+  % Spaces are not displayed as a special character
+  showstringspaces=false,
+  %
+  % String delimiters
+  morestring=[b]",
+  morestring=[d],
+  %
+  % Size of tabulations
+  tabsize=3,
+  %
+  % Enables ASCII chars 128 to 255
+  extendedchars=false,
+  %
+  % Case sensitivity
+  sensitive=true,
+  %
+  % Automatic breaking of long lines
+  breaklines=false,
+  %
+  % Default style fors listings
+  basicstyle=\small,
+  %
+  % Position of captions is bottom
+  captionpos=b,
+  %
+  % flexible columns
+  columns=[l]flexible,
+  %
+  % Style for (listings') identifiers
+  identifierstyle={\ttfamily\color{black}},
+  % Style for declaration keywords
+  keywordstyle=[1]{\ttfamily\color{dkviolet}},
+  % Style for gallina keywords
+  keywordstyle=[2]{\ttfamily\color{dkgreen}},
+  % Style for sorts keywords
+  keywordstyle=[3]{\ttfamily\color{ltblue}},
+  % Style for tactics keywords
+  keywordstyle=[4]{\ttfamily\color{dkblue}},
+  % Style for terminators keywords
+  keywordstyle=[5]{\ttfamily\color{dkred}},
+  %Style for iterators
+  %keywordstyle=[6]{\ttfamily\color{dkpink}},
+  % Style for strings
+  stringstyle=\ttfamily,
+  % Style for comments
+  commentstyle={\ttfamily\color{dkgreen}},
+  %
+  %moredelim=**[is][\ttfamily\color{red}]{/&}{&/},
+  literate=
+  {->}{{$\rightarrow\;$}}1
+  {=>}{{$\Rightarrow\;$}}1
+  {<:}{{$<\hspace{-2px}\colon$}}1
+  {++}{{\code{++}}}1
+  {\{}{{$\langle$}}1
+  {\}}{{$\rangle\;$}}1
+  {~}{{\ }}1
+  {\\dollar}{{$\$$\;}}1
+  %
+}[keywords,comments,strings]
+
+\lstnewenvironment{haskell}{\lstset{language=Haskell}}{}
+
+% pour inliner dans le texte
+\def\hasqel{\lstinline[language=Haskell, basicstyle=\small]}
+% pour inliner dans les tableaux / displaymath...
+\def\haskels{\lstinline[language=Haskell, basicstyle=\scriptsize]}
+
+\newenvironment{enumR}{\begin{enumerate}[label=\roman*.,align=left]}{\end{enumerate}}
+\newenvironment{enumA}{\begin{enumerate}[label=\alph*.]}{\end{enumerate}}
+
+\newcommand{\cL}{{\cal L}}
+
+\let\mto\to                     % Used for arrows
+\let\to\relax                   % Used for implication
+\newcommand{\to}{\rightarrow}
+\newcommand{\id}{\mathsf{id}}
+\newcommand{\redto}{\rightsquigarrow}
+\newcommand{\cat}[1]{\mathcal{#1}}
+\newcommand{\catop}[1]{\mathcal{#1}^{\mathsf{op}}}
+\newcommand{\Case}[0]{\mathsf{case}}
+
+\let\split\relax
+\let\S\relax
+
+\newcommand{\split}[0]{\mathsf{split}}
+\newcommand{\squash}[0]{\mathsf{squash}}
+\newcommand{\bx}[0]{\mathsf{box}}
+\newcommand{\unbox}[0]{\mathsf{unbox}}
+\newcommand{\T}[0]{\mathsf{T}}
+\newcommand{\S}[0]{\mathsf{S}}
+\newcommand{\U}[0]{\mathsf{U}}
+\newcommand{\C}[0]{\mathsf{C}}
+\newcommand{\z}[0]{\mathsf{z}}
+\newcommand{\app}[0]{\mathsf{app}}
+\newcommand{\curry}[1]{\mathsf{curry}(#1)}
+\newcommand{\interp}[1]{[\negthinspace[#1]\negthinspace]}
+\newcommand{\Hom}[3]{\mathsf{Hom}_{\cat{#1}}(#2,#3)}
+
+%% \newtheorem{theorem}{Theorem}
+%% \newtheorem{lemma}[theorem]{Lemma}
+%% \newtheorem{corollary}[theorem]{Corollary}
+%% \newtheorem{definition}[theorem]{Definition}
+%% \newtheorem{proposition}[theorem]{Proposition}
+%% \newtheorem{example}[theorem]{Example}
+
+%% Ott includes:
+\input{sl-grady-inc}
+\renewcommand{\SLGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SLGradydrulename{#4}}}
+\renewcommand{\SLGradydrulename}[1]{#1}
+
+\input{siek15-gradual-inc}
+\renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\GSiekdrulename{#4}}}
+\renewcommand{\GSiekdrulename}[1]{#1}
+\renewcommand{\GSiekdruleSXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleSXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleSXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleSXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleSXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleSXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleSXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleSXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleSXXappName}[0]{\to_e}
+
+\renewcommand{\GSiekdruleCXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleCXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleCXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleCXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleCXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleCXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleCXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleCXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleCXXappName}[0]{\to_e}
+\renewcommand{\GSiekdruleCXXcastName}[0]{\text{cast}}
+\renewcommand{\GSiekdrulerdAXXvaluesName}{\text{values}}
+\renewcommand{\GSiekdrulerdAXXcastIdName}{\text{id-atom}}
+\renewcommand{\GSiekdrulerdAXXcastUName}{\text{id-U}}
+\renewcommand{\GSiekdrulerdAXXsucceedName}{\text{succeed}}
+\renewcommand{\GSiekdrulerdAXXcastArrowName}{\text{arrow}}
+\renewcommand{\GSiekdrulerdAXXcastGroundName}{\text{expand}_1}
+\renewcommand{\GSiekdrulerdAXXcastExpandName}{\text{expand}_2}
+\renewcommand{\GSiekdrulerdAXXbetaName}{}
+\renewcommand{\GSiekdrulerdAXXappOneName}{}
+\renewcommand{\GSiekdrulerdAXXappTwoName}{}
+\renewcommand{\GSiekdrulerdAXXfstName}{}
+\renewcommand{\GSiekdrulerdAXXsndName}{}
+\renewcommand{\GSiekdrulerdAXXpairOneName}{}
+\renewcommand{\GSiekdrulerdAXXpairTwoName}{}
+\renewcommand{\SLGradydruleBoxName}{\text{box}}
+\renewcommand{\SLGradydruleUnboxName}{\text{unbox}}
+\renewcommand{\SLGradydruleBoxGName}{\text{Box}}
+\renewcommand{\SLGradydruleUnboxGName}{\text{Unbox}}
+\renewcommand{\SLGradydruleSplitGName}{\text{Split}}
+\renewcommand{\SLGradydruleSquashGName}{\text{Squash}}
+\renewcommand{\SLGradydrulesquashName}{\text{squash}}
+\renewcommand{\SLGradydrulesplitName}{\text{split}}
+\renewcommand{\SLGradydrulecaseName}{\mathsf{Nat}_e}
+\renewcommand{\SLGradydrulerdXXvarName}{\text{var}}
+\renewcommand{\SLGradydrulerdXXunboxName}{\text{unbox}}
+\renewcommand{\SLGradydrulerdXXsplitName}{\text{split}}
+\renewcommand{\SLGradydrulerdXXretracTName}{\text{retract}_1}
+\renewcommand{\SLGradydrulerdXXretracTGName}{\text{retract}_3}
+\renewcommand{\SLGradydrulerdXXretracTSGName}{\text{retract}_4} 
+\renewcommand{\SLGradydrulerdXXretractUName}{\text{retract}_2} 
+\renewcommand{\SLGradydrulerdXXbetaName}{\beta} 
+\renewcommand{\SLGradydrulerdXXprojOneName}{\times_{e_1}} 
+\renewcommand{\SLGradydrulerdXXprojTwoName}{\times_{e_2}} 
+\renewcommand{\SLGradydrulerdXXappOneName}{\to_{e_1}} 
+\renewcommand{\SLGradydrulerdXXappTwoName}{\to_{e_2}} 
+\renewcommand{\SLGradydrulerdXXfstName}{\mathsf{fst}} 
+\renewcommand{\SLGradydrulerdXXsndName}{\mathsf{snd}} 
+\renewcommand{\SLGradydrulerdXXpairOneName}{\times_1} 
+\renewcommand{\SLGradydrulerdXXpairTwoName}{\times_2}
+\renewcommand{\SLGradydrulerdXXsuccName}{\text{succ}}       
+\renewcommand{\SLGradydrulerdXXcaseZeroName}{\mathsf{Nat}_{e_0}} 
+\renewcommand{\SLGradydrulerdXXcaseSuccName}{\mathsf{Nat}_{e_1}} 
+\renewcommand{\SLGradydrulerdXXcaseName}{\text{case}_1} 
+\newcommand{\GSTLC}{\lambda^?_\to}
+\newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to} 
+
+\def\lastname{Eades III and Townsend}
+
+\begin{document}
+
+\begin{frontmatter}
+  \title{The Combination of Dynamic and Static Typing from a Categorical Perspective}
+  \author{Harley Eades III\thanksref{ALL}\thanksref{myemail}}
+  \address{Computer and Information Sciences\\ Augusta University\\
+    Augusta, USA}
+  \author{Michael Townsend\thanksref{coemail}}
+  \address{Computer and Information Sciences\\ Augusta University\\
+    Augusta, USA}
+
+  \thanks[ALL]{Thanks: TODO}
+  \thanks[myemail]{Email:\href{mailto:heades@augusta.edu} {\texttt{\normalshape heades@augusta.edu}}}
+  \thanks[coemail]{Email: \href{mailto:mitownsend@augusta.edu} {\texttt{\normalshape mitownsend@augusta.edu}}}
+  \begin{abstract} 
+    This paper is part one of a two part series.  In this paper we
+    introduce a new categorical model based on retracts that combines
+    static and dynamic typing.  This model is initially based on the
+    seminal work of Scott who showed that the untyped
+    $\lambda$-calculus can be considered as typed using retracts.  We
+    then show that our model gives rise to a new and simple type
+    system which combines static and dynamic typing.  We then show
+    that Siek and Taha's gradually typed $\lambda$-calculus can be
+    interpreted into our new model.  Finally, we set the stage for a
+    followup paper that greatly extends our type system with bounded
+    quantification and lists, and then develops a gradually typed
+    surface language that uses our new type system as a core casting
+    calculus.
+  \end{abstract}
+  \begin{keyword}  
+    static typing, dynamic typing, gradual typing, categorical
+    semantics, retract,typed lambda-calculus, untyped lambda-calculus,
+    functional programming
+  \end{keyword}
+\end{frontmatter}
+
+\section{Introduction}
+\label{sec:introduction}
+\input{introduction-ott}
+% section introduction (end)
+
+\section{The Categorical Model}
+\label{subsec:the_categorical_model}
+\input{categorical-model-ott}
+% section the_interpretation (end)
+
+\section{Gradual Typing}
+\label{sec:gradual_typing}
+
+\input{gradual-typing-ott}
+
+\subsection{The Interpretation}
+\label{subsec:the_interpretation}
+\input{categorical-interp-ott}
+% subsection the_interpretation (end)
+% section gradual_typing (end)
+
+\section{Simply Typed Grady}
+\label{sec:sl-grady}
+\input{sl-grady-ott}
+% section grady (end)
+
+\section{Conclusion}
+\label{sec:conclusion}
+\input{conclusion}
+% section conclusion (end)
+
+
+\bibliographystyle{entcs}
+\bibliography{references}
+
+\appendix
+
+\input{proofs-ott}
+
+% section proofs (end)
+\end{document}

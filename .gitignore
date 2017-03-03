@@ -12,3 +12,16 @@
 /impl/#Pair.gry#
 /impl/.#Pair.gry
 *.backup
+/draft/subtyping_rules.tex
+/draft/gradual-proof-old.tex
+/draft/proof-old.tex
+/draft/termpre_rules.tex
+/draft/typepre_rules.tex
+/draft/typing_rules.tex
+*-ott1.tex
+/draft/castin_rules.tex
+/draft/core_type_rules.tex
+/draft/eval-int.tex
+/draft/siek-red-rules.tex
+generic/*
+draft/generic/*
