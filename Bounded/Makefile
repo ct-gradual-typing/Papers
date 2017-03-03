@@ -78,11 +78,11 @@ introduction-ott.tex : introduction.tex core-grady/core-grady.ott surface-grady/
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
 		-tex_filter introduction-ott1.tex introduction-ott.tex
 
-ott : introduction-ott.tex core-grady-ott.tex \
-	proofs-ott.tex surface-grady-ott.tex results-ott.tex \
-	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
+ott : main.tex introduction-ott.tex core-grady-ott.tex \
+      proofs-ott.tex surface-grady-ott.tex results-ott.tex \
+      aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
 
-$(PDF) : introduction-ott.tex core-grady-ott.tex \
+$(PDF) : main.tex introduction-ott.tex core-grady-ott.tex \
 	proofs-ott.tex surface-grady-ott.tex results-ott.tex \
 	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
