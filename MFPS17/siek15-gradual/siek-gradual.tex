@@ -54,17 +54,6 @@
 \ottprodline{|}{\ottsym{0}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{t}  \ottsym{)}} {\textsf{S}}{}{}{}}
 
-\newcommand{\ottT}{
-\ottrulehead{\ottnt{T}}{::=}{}\ottprodnewline
-\ottfirstprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{ \mathsf{Nat} }{}{}{}{}}
-
-\newcommand{\ottR}{
-\ottrulehead{\ottnt{R}}{::=}{}\ottprodnewline
-\ottfirstprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottkw{Nat}}{}{}{}{}\ottprodnewline
-\ottprodline{|}{ ? \to ? }{}{}{}{}}
-
 \newcommand{\ottctag}{
 \ottrulehead{\ottnt{ctag}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{ \ottnt{A} }{}{}{}{}\ottprodnewline
@@ -72,10 +61,10 @@
 \ottprodline{|}{ \ottnt{ctag} }{}{}{}{}}
 
 \newcommand{\ottA}{
-\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}}{::=}{}\ottprodnewline
+\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}  ,\ \ottnt{T}  ,\ \ottnt{R}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{?} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{A_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \ottnt{A_{{\mathrm{1}}}}  \times  \ottnt{A_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{A}  \ottsym{)}} {\textsf{S}}{}{}{}}
@@ -92,8 +81,6 @@
 
 \newcommand{\ottgrammar}{\ottgrammartabular{
 \ottt\ottinterrule
-\ottT\ottinterrule
-\ottR\ottinterrule
 \ottctag\ottinterrule
 \ottA\ottinterrule
 \ottG\ottinterrule
@@ -114,7 +101,7 @@
 \newcommand{\ottdruleboxName}[0]{\ottdrulename{box}}
 \newcommand{\ottdrulebox}[1]{\ottdrule[#1]{%
 }{
- \ottnt{A}  \sim  \ottsym{\mbox{?}} }{%
+ \ottnt{A}  \sim   \mathsf{?}  }{%
 {\ottdruleboxName}{}%
 }}
 
@@ -122,7 +109,7 @@
 \newcommand{\ottdruleunboxName}[0]{\ottdrulename{unbox}}
 \newcommand{\ottdruleunbox}[1]{\ottdrule[#1]{%
 }{
- \ottsym{\mbox{?}}  \sim  \ottnt{A} }{%
+  \mathsf{?}   \sim  \ottnt{A} }{%
 {\ottdruleunboxName}{}%
 }}
 
@@ -371,18 +358,18 @@
 
 \newcommand{\ottdrulerdAXXcastUName}[0]{\ottdrulename{rdA\_castU}}
 \newcommand{\ottdrulerdAXXcastU}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottsym{\mbox{?}} }%
+\ottpremise{ \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :   \mathsf{?}  }%
 }{
-\Gamma  \vdash   \ottnt{v}  :    \ottsym{\mbox{?}}   \Rightarrow   \ottsym{\mbox{?}}     \rightsquigarrow  \ottnt{v}  \ottsym{:}  \ottsym{\mbox{?}}}{%
+\Gamma  \vdash   \ottnt{v}  :     \mathsf{?}    \Rightarrow    \mathsf{?}      \rightsquigarrow  \ottnt{v}  \ottsym{:}   \mathsf{?} }{%
 {\ottdrulerdAXXcastUName}{}%
 }}
 
 
 \newcommand{\ottdrulerdAXXsucceedName}[0]{\ottdrulename{rdA\_succeed}}
 \newcommand{\ottdrulerdAXXsucceed}[1]{\ottdrule[#1]{%
-\ottpremise{\texttt{\textcolor{red}{<<no parses (char 15):     G \mbox{$\mid$}-C v : R*** >>}}}%
+\ottpremise{ \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottnt{R} }%
 }{
-\texttt{\textcolor{red}{<<no parses (char 17):     G \mbox{$\mid$}- v : h(\{R***\} => \{\mbox{?}\}) => \{R\} ~> v : R >>}}}{%
+\Gamma  \vdash   \ottnt{v}  :      \ottnt{R}   \Rightarrow    \mathsf{?}      \Rightarrow   \ottnt{R}     \rightsquigarrow  \ottnt{v}  \ottsym{:}  \ottnt{R}}{%
 {\ottdrulerdAXXsucceedName}{}%
 }}
 
@@ -398,18 +385,18 @@
 
 \newcommand{\ottdrulerdAXXcastGroundName}[0]{\ottdrulename{rdA\_castGround}}
 \newcommand{\ottdrulerdAXXcastGround}[1]{\ottdrule[#1]{%
-\ottpremise{\texttt{\textcolor{red}{<<no parses (char 26):     ((G \mbox{$\mid$}-C v : A \&\& A ~ R***) \&\& A != R) \&\& A != \mbox{?} >>}}}%
+\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :  \ottnt{A}   \quad   \ottnt{A}  \sim  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottnt{R}     \quad   \ottnt{A}  \neq   \mathsf{?}   }%
 }{
-\texttt{\textcolor{red}{<<no parses (char 42):     G \mbox{$\mid$}- v : \{A\} => \{\mbox{?}\} ~> v : h(\{A\} => \{R***\}) => \{\mbox{?}\} : \mbox{?} >>}}}{%
+\Gamma  \vdash   \ottnt{v}  :    \ottnt{A}   \Rightarrow    \mathsf{?}      \rightsquigarrow   \ottnt{v}  :      \ottnt{A}   \Rightarrow   \ottnt{R}     \Rightarrow    \mathsf{?}      \ottsym{:}   \mathsf{?} }{%
 {\ottdrulerdAXXcastGroundName}{}%
 }}
 
 
 \newcommand{\ottdrulerdAXXcastExpandName}[0]{\ottdrulename{rdA\_castExpand}}
 \newcommand{\ottdrulerdAXXcastExpand}[1]{\ottdrule[#1]{%
-\ottpremise{\texttt{\textcolor{red}{<<no parses (char 26):     ((G \mbox{$\mid$}-C v : \mbox{?} \&\& A ~ R***) \&\& A != R) \&\& A != \mbox{?} >>}}}%
+\ottpremise{      \Gamma  \vdash_{\mathsf{C} }  \ottnt{v}  :   \mathsf{?}    \quad   \ottnt{A}  \sim  \ottnt{R}     \quad   \ottnt{A}  \neq  \ottnt{R}     \quad   \ottnt{A}  \neq   \mathsf{?}   }%
 }{
-\texttt{\textcolor{red}{<<no parses (char 42):     G \mbox{$\mid$}- v : \{\mbox{?}\} => \{A\} ~> v : h(\{\mbox{?}\} => \{R***\}) => \{A\} : A >>}}}{%
+\Gamma  \vdash   \ottnt{v}  :     \mathsf{?}    \Rightarrow   \ottnt{A}     \rightsquigarrow   \ottnt{v}  :       \mathsf{?}    \Rightarrow   \ottnt{R}     \Rightarrow   \ottnt{A}     \ottsym{:}  \ottnt{A}}{%
 {\ottdrulerdAXXcastExpandName}{}%
 }}
 
@@ -521,9 +508,9 @@
 
 \newcommand{\ottdruleciXXsuccOneName}[0]{\ottdrulename{ci\_succOne}}
 \newcommand{\ottdruleciXXsuccOne}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{2}}}}  :  \ottsym{\mbox{?}} }%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{?}  }%
 }{
- \Gamma  \vdash  \mathsf{succ} \, \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \mathsf{succ} \, \ottsym{(}   \ottnt{t_{{\mathrm{2}}}}  :    \ottsym{\mbox{?}}   \Rightarrow    \mathsf{Nat}      \ottsym{)}  :   \mathsf{Nat}  }{%
+ \Gamma  \vdash  \mathsf{succ} \, \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \mathsf{succ} \, \ottsym{(}   \ottnt{t_{{\mathrm{2}}}}  :     \mathsf{?}    \Rightarrow    \mathsf{Nat}      \ottsym{)}  :   \mathsf{Nat}  }{%
 {\ottdruleciXXsuccOneName}{}%
 }}
 
@@ -548,9 +535,9 @@
 
 \newcommand{\ottdruleciXXfstOneName}[0]{\ottdrulename{ci\_fstOne}}
 \newcommand{\ottdruleciXXfstOne}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{2}}}}  :  \ottsym{\mbox{?}} }%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{?}  }%
 }{
- \Gamma  \vdash  \mathsf{fst} \, \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \mathsf{fst} \, \ottsym{(}   \ottnt{t_{{\mathrm{2}}}}  :    \ottsym{\mbox{?}}   \Rightarrow   \ottsym{(}   \ottsym{\mbox{?}}  \times  \ottsym{\mbox{?}}   \ottsym{)}     \ottsym{)}  :  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash  \mathsf{fst} \, \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \mathsf{fst} \, \ottsym{(}   \ottnt{t_{{\mathrm{2}}}}  :     \mathsf{?}    \Rightarrow   \ottsym{(}    \mathsf{?}   \times   \mathsf{?}    \ottsym{)}     \ottsym{)}  :   \mathsf{?}  }{%
 {\ottdruleciXXfstOneName}{}%
 }}
 
@@ -566,9 +553,9 @@
 
 \newcommand{\ottdruleciXXsndOneName}[0]{\ottdrulename{ci\_sndOne}}
 \newcommand{\ottdruleciXXsndOne}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{2}}}}  :  \ottsym{\mbox{?}} }%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{2}}}}  :   \mathsf{?}  }%
 }{
- \Gamma  \vdash  \mathsf{snd} \, \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \mathsf{snd} \, \ottsym{(}   \ottnt{t_{{\mathrm{2}}}}  :    \ottsym{\mbox{?}}   \Rightarrow   \ottsym{(}   \ottsym{\mbox{?}}  \times  \ottsym{\mbox{?}}   \ottsym{)}     \ottsym{)}  :  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash  \mathsf{snd} \, \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \mathsf{snd} \, \ottsym{(}   \ottnt{t_{{\mathrm{2}}}}  :     \mathsf{?}    \Rightarrow   \ottsym{(}    \mathsf{?}   \times   \mathsf{?}    \ottsym{)}     \ottsym{)}  :   \mathsf{?}  }{%
 {\ottdruleciXXsndOneName}{}%
 }}
 
@@ -593,9 +580,9 @@
 
 \newcommand{\ottdruleciXXappOneName}[0]{\ottdrulename{ci\_app1}}
 \newcommand{\ottdruleciXXappOne}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{3}}}}  :  \ottsym{\mbox{?}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \boxdotRight  \ottnt{t_{{\mathrm{4}}}}  :  \ottnt{A}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \boxdotRight  \ottnt{t_{{\mathrm{3}}}}  :   \mathsf{?}    \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \boxdotRight  \ottnt{t_{{\mathrm{4}}}}  :  \ottnt{A}  }%
 }{
- \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  \boxdotRight  \ottsym{(}   \ottnt{t_{{\mathrm{3}}}}  :    \ottsym{\mbox{?}}   \Rightarrow   \ottsym{(}  \ottnt{A}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}     \ottsym{)} \, \ottnt{t_{{\mathrm{4}}}}  :  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  \boxdotRight  \ottsym{(}   \ottnt{t_{{\mathrm{3}}}}  :     \mathsf{?}    \Rightarrow   \ottsym{(}  \ottnt{A}  \rightarrow   \mathsf{?}   \ottsym{)}     \ottsym{)} \, \ottnt{t_{{\mathrm{4}}}}  :   \mathsf{?}  }{%
 {\ottdruleciXXappOneName}{}%
 }}
 
@@ -652,7 +639,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        49 good    3 bad
-Definition rule clauses: 91 good    6 bad
+Definition rules:        52 good    0 bad
+Definition rule clauses: 97 good    0 bad
 \end{verbatim}
 \end{document}

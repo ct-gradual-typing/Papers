@@ -129,7 +129,11 @@ grammar
     {{tex \mathsf{fun}([[A]]) = [[B]] }}
     | prod( A ) = B       :: M :: prodFun
     {{tex \mathsf{prod}([[A]]) = [[B]] }}    
-
+    | [| G |-S t : A |]    :: M :: interpJdgS
+    {{tex \interp{[[G]] \vdash_{\mathsf{S} } [[t]] : [[A]]} }}
+    | [| G |-C t : A |]    :: M :: interpJdgC
+    {{tex \interp{[[G]] \vdash_{\mathsf{C} } [[t]] : [[A]]} }}
+    
 defns
   Typing :: '' ::=
 
@@ -186,7 +190,7 @@ defn
 
     G, x : A |-S t : B
     --------------------- :: lam
-    G |-S \x:A1.t : A -> B
+    G |-S \x:A.t : A -> B
 
     G |-S t1 : C 
     (G |-S t2 : A2 && A2 ~ A1) && fun(C) = A1 -> B1
@@ -225,7 +229,7 @@ defn
 
     G, x : A |-C t : B
     --------------------- :: lam
-    G |-C \x:A1.t : A -> B
+    G |-C \x:A.t : A -> B
 
     G |-C t1 : A -> B && G |-C t2 : A
     ---------------------------------- :: app

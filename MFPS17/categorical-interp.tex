@@ -71,8 +71,46 @@ $<<A ~ B>>$ is symmetric.
 
 At this point we have everything we need to show our main result which
 is that typing in both $\GSTLC$ and $\CGSTLC$, and evaluation in
-$\CGSTLC$ can be interpreted into the categorical model.
-
+$\CGSTLC$ can be interpreted into the categorical model.  The
+interpretation of terms used in the following proofs is summarized in
+Figure~\ref{fig:interp-terms}.
+\begin{figure}
+  \small  
+    \begin{center}
+      \begin{math}
+          \begin{array}{|l|}
+            \hline
+            << [| G1 , x : Ai , G2 |-S x : Ai |] >> = \pi_i\\
+            \hline
+            << [| G |-S triv : Unit |] >> = \diamond_{<< [| G |] >>}\\
+            \hline
+            << [| G |-S 0 : Nat |] >> = \diamond_{<< [| G |] >>};\z\\
+            \hline
+            << [| G |-S succ t : Nat |] >> = << [| t |] >>;c;<<succ>>\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : A>>\text{ and }c : <<A --> Nat>>\\
+            \hline
+            << [| G |-S (t1,t2) : A1 x A2 |] >> = \langle << [| t1 |] >> , << [| t2 |] >> \rangle\\
+            \hline
+            << [| G |-S fst t : A1 |] >> = << [| t |] >>;c;\pi_1\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : B>>\text{ and }c : <<B --> (A1 x A2)>>\\
+            \hline
+            << [| G |-S snd t : A2 |] >> = << [| t |] >>;c;\pi_2\\           
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : B>>\text{ and }c : <<B --> (A1 x A2)>>\\
+            \hline
+            << [| G |-S \x:A.t : A -> B |] >> = \curry{<< [| t |] >>}\\
+            \hline
+            << [| G |-S t1 t2 : B1 |] >> = \langle << [| t1 |] >>;c_1, << [| t2 |] >>;c_2\rangle;\app_{[[A1]],[[B1]]}\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t1 : C>>\text{, }<<G |-S t2 : A2>>, c_1 : <<C --> (A1 -> B1)>>, \text{ and }c_2 : <<A2 --> A1>>\\
+            \hline
+            << [| G |-C t : {A} => {B} : B |] >> = << [| t |] >>;c\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : A>> \text{ and }c : <<A --> B>>\\
+            \hline
+          \end{array}
+      \end{math}
+    \end{center}
+  \caption{Interpretation of Terms}
+  \label{fig:interp-terms}
+\end{figure}
 \begin{theorem}[Interpretation of Typing]
   \label{thm:interpretation_of_typing}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx,$\\$ \unbox)$
