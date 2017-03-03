@@ -104,30 +104,36 @@ number object; see Lambek and Scott~\cite{Lambek:1988}.
   and $[[succ]] : [[Nat]] \mto [[Nat]]$ of $\cat{C}$, such that, for
   any morphisms $f : [[Y]] \mto X$ and $g : [[Y x Nat]] \mto X$ of
   $\cat{C}$ there is a unique morphism $\Case_{X} \langle f,g \rangle : [[Y x Nat]] \mto X$
-  such that the following diagrams commute:
-       \[
-       \begin{array}{lll}
-         \bfig
-         \qtriangle|amm|<1000,500>[
-           [[Y]]`
-           [[Y x Nat]]`
-           X;
-           \langle \id_Y, \diamond_Y;\mathsf{z} \rangle`
-           f`
-           \Case_{Y,X} \langle f,g \rangle]
+  such that the following hold:
+  \[
+  \begin{array}{lll}
+    \langle \id_Y, \diamond_Y;\mathsf{z} \rangle;\Case_{Y,X} \langle f,g \rangle = f & \text{ and } & 
+    \langle \id_Y \times \mathsf{succ};\mathsf{z} \rangle;\Case_{Y,X} \langle f,g \rangle = g\\
+  \end{array}
+  \]
+  %% \[
+  %%      \begin{array}{lll}
+  %%        \bfig
+  %%        \qtriangle|amm|<1000,500>[
+  %%          [[Y]]`
+  %%          [[Y x Nat]]`
+  %%          X;
+  %%          \langle \id_Y, \diamond_Y;\mathsf{z} \rangle`
+  %%          f`
+  %%          \Case_{Y,X} \langle f,g \rangle]
 
-         \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
-           [[Y x Nat]]`
-           [[Y x Nat]]`
-           [[X]];
-           \id_Y \times \mathsf{succ}`
-           \Case_{Y,X} \langle f,g \rangle`          
-           g]
-         \efig                               
-       \end{array}
-       \]
+  %%        \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
+  %%          [[Y x Nat]]`
+  %%          [[Y x Nat]]`
+  %%          [[X]];
+  %%          \id_Y \times \mathsf{succ}`
+  %%          \Case_{Y,X} \langle f,g \rangle`          
+  %%          g]
+  %%        \efig                               
+  %%      \end{array}
+  %%      \]
   \noindent
-       Informally, the two diagrams essentially assert that we can
+       Informally, the two equations essentially assert that we can
        define $\Case_{Y,X}$ as follows:
        \begin{center}
          \begin{math}
