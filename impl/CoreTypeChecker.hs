@@ -279,7 +279,7 @@ inferType (CUnbox ty) = do
              b <- ty `subtype` Simple
              if b
              then return $ ATUnbox (Arr U ty) ty
-             else TE.throwError $ TE.BoxError ty
+             else TE.throwError $ TE.UnboxError ty
 
 inferType (CSplit ty@(Arr U U)) = return $ ATSplit (Arr U ty) ty
 inferType (CSplit ty@(Prod U U)) = return $ ATSplit (Arr U ty) ty
