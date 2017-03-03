@@ -1,0 +1,435 @@
+%% One cited strength and main motivation for giving a categorical model
+%% to a programming language is that it can expose the fundamental
+%% structure of the language.  This arises because a lot of the language
+%% features that often cloud the picture go away, for example, syntactic
+%% notions like variables disappear.  This can often simplify things and
+%% exposes the underlying structure.  For example, when giving the simply
+%% typed $\lambda$-calculus a categorical model we see that it is a
+%% cartesian closed category, but we also know that intuitionistic logic
+%% has the same model due to Lambek~\cite{Lambek:1980}; on the syntactic
+%% side these two theories are equivalent as well due to
+%% Howard~\cite{Howard:1980}. 
+
+%% However, that motivation places defining a categorical model as an
+%% after thought.  The Grady languages developed here were designed from
+%% the other way around.  We started with the question, how do we combine
+%% static and dynamic typing categorically? Then after developing the
+%% model we use it to push us toward the correct language design.
+%% Reynolds \cite{Brookes:2013} was a big advocate for the use of
+%% category theory in programming language research for this reasons.  We
+%% think the following quote -- reported by Brookes et
+%% al.~\cite{Brookes:2013} -- makes this point nicely:
+%% \begin{center}
+%%   \parbox{300pt}{
+%%     \emph{Programming language semanticists should be the obstetricians\\
+%%     of programming languages, not their coroners.\\
+%%     {\rightline{--- John C. Reynolds}}}}
+%% \end{center}
+
+%% Thus, categorical semantics provides a powerful tool to study language
+%% extensions.  For example, purely functional programming in Haskell
+%% would not be where it is without the seminal work of Moggi and Wadler
+%% \cite{Moggi:1989,Wadler:1995} on using monads -- a purely categorical
+%% notion -- to add side effects to to pure functional programming
+%% languages.  Thus, we believe that developing these types of models for
+%% new language designs and features can be hugely beneficial.
+
+%% Interpreting a programming language into a categorical model requires
+%% three steps.  First, the types are interpreted as objects.  Then
+%% programs are interpreted as morphisms in the category, but this is a
+%% simplification.  Every morphism, $f$, in a category has a source
+%% object and a target object, we usually denote this by $f : A \mto B$.
+%% Thus, in order to interpret programs as morphisms the program must
+%% have a source and target.  So instead of interpreting raw terms as
+%% morphisms we interpret terms in their typing context.  That is, we
+%% must show how to interpret every $[[G |- t : A]]$ as a morphism $[[t]]
+%% : \interp{[[G]]} \mto \interp{[[A]]}$.  The third step is to show that
+%% whenever one program reduces to another their interpretations are
+%% isomorphic in the model. This means that whenever $[[G |- t1 ~> t2 : A]]$, then $[[ [|t1|] ]] = [[ [|t2|] ]] : [[ [| G |] --> [| A |] ]]$.
+%% This is the reason why we defined our reduction in a
+%% typed fashion to aid us in understanding how it relates to the model.
+The model we develop here builds on the seminal work of
+Lambek~\cite{Lambek:1980} and Scott~\cite{Scott:1980}.
+Lambek~\cite{Lambek:1980} showed that the typed $\lambda$-calculus can
+be modeled by a cartesian closed category.  In the same volume as
+Lambek, Scott essentially showed that the untyped $\lambda$-calculus
+is actually typed.  That is, typed theories are more fundamental than
+untyped ones.  He accomplished this by adding a single type, $[[?]]$,
+and two functions $[[squash : (? -> ?) -> ?]]$ and $[[split : ? -> (?
+    -> ?)]]$, such that, $[[squash]];[[split]] = \id : [[(? -> ?) ->
+    (?  -> ?)]]$. At this point he was able to translate the untyped
+$\lambda$-calculus into this unityped one.  Categorically, he modeled
+$[[split]]$ and $[[squash]]$ as the morphisms in a retract within a
+cartesian closed category -- the same model as typed
+$\lambda$-calculus.
+\begin{definition}
+  \label{def:retract}
+  Suppose $\cat{C}$ is a category.  Then an object $A$ is a
+  \textbf{retract} of an object $B$ if there are morphisms $i : A \mto
+  B$ and $r : B \mto A$ such that $i;r = \id_A$.%% the following diagram commutes:
+  %% \[
+  %% \bfig
+  %% \qtriangle/->`=`->/[A`B`A;i``r]
+  %% \efig
+  %% \]
+\end{definition}
+\noindent
+Thus, $[[? -> ?]]$ is a retract of $[[?]]$, but we also require that
+$[[? x ?]]$ be a retract of $[[?]]$; this is not new, see Lambek and
+Scott~\cite{Lambek:1988}.  Putting this together we obtain Scott's
+model of the untyped $\lambda$-calculus.
+\begin{definition}
+  \label{def:model-untyped}
+  An \textbf{untyped $\lambda$-model}, $(\cat{C}, ?, \split,
+  \squash)$, is a cartesian closed category $\cat{C}$ with a
+  distinguished object $?$ and morphisms $\squash : S \mto ?$ and
+  $\split : ? \mto S$ making the object $S$ a retract of $?$, where
+  $S$ is either $[[? -> ?]]$ or $[[? x ?]]$.
+\end{definition}
+
+\begin{theorem}[Scott~\cite{Scott:1980}]
+  \label{thm:untyped-lambda-model-sound-complete}
+  An untyped $\lambda$-model is a sound and complete model of the untyped $\lambda$-calculus.
+\end{theorem}
+
+We now show how to model the natural numbers with their
+(non-recursive) eliminator using what we call a non-recursive natural
+number object.  This is a simplification of the traditional natural
+number object; see Lambek and Scott~\cite{Lambek:1988}.
+\begin{definition}
+  \label{def:SNNO}
+  Suppose $\cat{C}$ is a cartesian closed category.  A
+  \textbf{non-recursive natural number object (NRNO)} is an object
+  $[[Nat]]$ of $\cat{C}$ and morphisms $\mathsf{z} : 1 \mto [[Nat]]$
+  and $[[succ]] : [[Nat]] \mto [[Nat]]$ of $\cat{C}$, such that, for
+  any morphisms $f : [[Y]] \mto X$ and $g : [[Y x Nat]] \mto X$ of
+  $\cat{C}$ there is a unique morphism $\Case_{X} \langle f,g \rangle : [[Y x Nat]] \mto X$
+  such that the following diagrams commute:
+       \[
+       \begin{array}{lll}
+         \bfig
+         \qtriangle|amm|<1000,500>[
+           [[Y]]`
+           [[Y x Nat]]`
+           X;
+           \langle \id_Y, \diamond_Y;\mathsf{z} \rangle`
+           f`
+           \Case_{Y,X} \langle f,g \rangle]
+
+         \ptriangle(1000,0)|amm|/<-`->`->/<1000,500>[
+           [[Y x Nat]]`
+           [[Y x Nat]]`
+           [[X]];
+           \id_Y \times \mathsf{succ}`
+           \Case_{Y,X} \langle f,g \rangle`          
+           g]
+         \efig                               
+       \end{array}
+       \]
+  \noindent
+       Informally, the two diagrams essentially assert that we can
+       define $\Case_{Y,X}$ as follows:
+       \begin{center}
+         \begin{math}
+           \begin{array}{ccccccccccc}
+             {\Case_{Y,X} \langle f,g \rangle\,y\,0 = f\,y}
+             & \quad & 
+             {\Case_{Y,X} \langle f,g \rangle\,y\,[[(succ n)]] =  g\,y\,n}
+           \end{array}
+         \end{math}
+       \end{center}
+\end{definition}
+%% source object of $\Case$ as the type of additional inputs that will be
+%% passed to both $f$ and $g$, but we can think of $[[Nat]]$ in the
+%% source object of $\Case$ as the type of the scrutiny.  Thus, since in
+%% the base case there is no predecessor, $f$, will not require the
+%% scrutiny, and so it is ignored.
+
+%% One major difference between NRNOs and the more traditional natural
+%% number objects is that in the definition of the latter $g$ is defined
+%% by well-founded recursion.  However, NRNOs do not allow this, but in
+%% the presence of fixpoints we are able to regain this feature without
+%% having to bake it into the definition of natural number objects.
+
+So far we can model the untyped and the typed $\lambda$-calculi within
+a cartesian closed category, but we do not have any way of moving
+typed data into the untyped part and vice versa.  To accomplish this
+we add two new morphisms $[[box C : C --> ?]]$ and $[[unbox C : ? -->
+    C]]$ such that each atomic type, $[[C]]$, is a retract of $[[?]]$.
+This enforces that the only time we can cast $[[?]]$ to another type is
+if it were boxed up in the first place.
+%%   For example, we can
+%% cast $3$ to type $\mathsf{Bool}$ by $[[unbox]]_{\mathsf{Bool}} ([[box Nat]]\, 3)$, but if this program is every run, then we will obtain
+%% a dynamic type error.  Note that we can type the previous program in
+%% $\CGSTLC$ as well, but if we run the program it will result in a
+%% dynamic type error too.
+\begin{definition}
+  \label{def:gradual-lambda-model}
+  A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?, \T,
+  \split,\squash, \bx,$ $\unbox)$, where $\cat{T}$ is a discrete
+  category with at least two objects $[[Nat]]$ and $[[Unit]]$,
+  $\cat{C}$ is a cartesian closed category with a NRNO,
+  $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model, $\T :
+  \cat{T} \mto \cat{C}$ is an embedding -- a full and faithful functor
+  that is injective on objects -- and for every object $A$ of
+  $\cat{T}$ there are morphisms $\bx_A : TA \mto ?$ and $\unbox_A : ?
+  \mto TA$ making $TA$ a retract of $?$.
+\end{definition}
+\noindent
+We call the category $\cat{T}$ the category of atomic types.  We call
+an object, $[[A]]$, \textbf{atomic} iff there is some object $[[A']]$
+in $\cat{T}$ such that $[[A]] = \T[[A']]$. Note that we do not
+consider $[[?]]$ an atomic type.  
+
+As the model is defined it is unclear if we can cast any type to
+$[[?]]$, and vice versa, but we must be able to do this in order to
+model full dynamic typing.  In the remainder of this section we show
+that we can build up such casts in terms of the basic features of our
+model.
+
+We call any morphism defined completely in terms of $\id$, the functors
+$- \times -$ and $- \to -$, $[[split]]$ and $[[squash]]$, and
+$[[box]]$ and $[[unbox]]$ a \textbf{casting morphism}. To cast any
+type $[[A]]$ to $[[?]]$ we will build casting morphisms that first
+take the object $[[A]]$ to its skeleton, and then takes the skeleton
+to $[[?]]$.
+\begin{definition}
+  \label{def:skeleton}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model.  Then the \textbf{skeleton} of an
+  object $[[A]]$ of $\cat{C}$ is an object $[[S]]$ that is constructed
+  by replacing each atomic type in $[[A]]$ with $[[?]]$. Given an
+  object $[[A]]$ we denote its skeleton by $[[skeleton A]]$.
+\end{definition}
+One should think of the skeleton of an object as the supporting type
+structure of the object, but we do not know what kind of data is
+actually in the structure. For example, the skeleton of the object
+$[[Nat]]$ is $[[?]]$, and the skeleton of $[[(Nat x Unit) -> Nat ->
+    Nat]]$ is $[[(?  x ?) -> ? -> ?]]$.
+
+The next definition defines a means of constructing a casting morphism
+that casts a type $[[A]]$ to its skeleton and vice versa.  This
+definition is by mutual recursion on the input type.
+\begin{definition}
+  \label{def:boxing-unboxing}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model.  Then for any object $[[A]]$ whose
+  skeleton is $[[S]]$ we define the morphisms
+  $[[lbox A]] : [[A --> S]]$ and
+  $[[lunbox A]] : [[S --> A]]$ by mutual recursion on
+  $[[A]]$ as follows:
+  \[
+  \begin{array}{ll|ll}
+    \begin{array}{lll}
+      [[lbox A]] = [[box A]]\\
+    \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
+    [[lbox ?]] = \id_{[[?]]}\\
+    [[lbox (A1 -> A2)]] = [[lunbox A1]] \to [[lbox A2]]\\
+    [[lbox (A1 x A2)]] = [[lbox A1]] \times [[lbox A2]]\\        
+    \end{array}
+    & & \quad & 
+    \begin{array}{lll}
+    [[lunbox A]] = [[unbox A]]\\
+    \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
+    [[lunbox ?]] = \id_{[[?]]}\\
+    [[lunbox (A1 -> A2)]] = [[lbox A1]] \to [[lunbox A2]]\\
+    [[lunbox (A1 x A2)]] = [[lunbox A1]] \times [[lunbox A2]]\\        
+    \end{array}
+  \end{array}
+  \]
+\end{definition}
+\noindent
+The definition of both $\widehat{[[box]]}$ or $\widehat{[[unbox]]}$
+uses the functor $- \to - : \catop{C} \times \cat{C} \mto \cat{C}$
+which is contravariant in its first argument, and thus, in that
+contravariant position we must make a recursive call to the opposite
+function, and hence, they must be mutually defined. Every call to
+either $\widehat{[[box]]}$ or $\widehat{[[unbox]]}$ in the previous
+definition is on a smaller object than the input object.  Thus, their
+definitions are well founded.  Furthermore, $\widehat{[[box]]}$ and
+$\widehat{[[unbox]]}$ form a retract between $[[A]]$ and $[[S]]$.
+\begin{lemma}[Boxing and Unboxing Lifted Retract]
+  \label{lemma:lifted_retract}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model.  Then for any object $[[A]]$,
+  $[[lbox A]];[[lunbox A]] = \id_A : [[A --> A]]$.
+\end{lemma}
+\begin{proof}  
+  This proof holds by induction on the form $[[A]]$.  Please see
+  Appendix~\ref{subsec:proof_of_lifted_retract} for the complete
+  proof.
+\end{proof}
+
+As an example, suppose we wanted to cast the type $[[(Nat x ?) ->
+    Nat]]$ to its skeleton $[[(? x ?) -> ?]]$.  Then we can obtain a
+casting morphisms that will do this as follows:
+\[
+\begin{array}{lll}
+  [[lbox ((Nat x ?) -> Nat)]] = ([[unbox Nat]] \times \id_{[[?]]}) \to [[box Nat]]\\
+\end{array}
+\]
+We can also cast a morphism $[[A]] \mto^f [[B]]$ to a morphism
+\[ [[S1]] \mto^{[[lunbox A]]} A \mto^{f} B \mto^{[[lbox B]]} [[S2]]\]
+where $[[S1]] = [[skeleton A]]$ and $[[S2]] = [[skeleton B]]$.  Now if
+we have a second
+\[ [[S2]] \mto^{[[lunbox B]]} B \mto^{g} C \mto^{[[lbox C]]} [[S3]]\]
+then their composition reduces to composition at the typed level:
+\begin{center}
+  \begin{math}
+    \bfig
+\square|amma|/->`->`->`<-/<500,500>[
+  [[S1]]`
+  [[A]]`
+  [[S3]]`
+  [[C]];
+  [[lunbox A]]``
+  f;g`
+  [[lbox C]]
+]
+
+\square(500,0)|amma|/->`->`=`<-/<500,500>[
+  [[A]]`
+  [[B]]`
+  [[C]]`
+  [[B]];
+  f`
+  f;g``
+  g]
+
+\square(1000,0)|amma|/->`=`=`<-/<500,500>[
+  [[B]]`
+  [[S2]]`
+  [[B]]`
+  [[S2]];
+  [[lbox B]]```
+  [[lunbox B]]
+]
+\efig
+  \end{math}
+\end{center} 
+The right most diagram commutes because $[[B]]$ is a retract of
+$[[S2]]$, and the left unannotated arrow is the composition $[[lunbox
+    A]];f;g;[[lbox C]]$.  This tells us that we have a functor $\S
+: \cat{C} \mto \cat{S}$:
+\[
+\begin{array}{lll}
+  \S[[A]] = [[skeleton A]]\\
+  \S (f : [[A --> B]]) = [[lunbox A]];f;[[lbox A]]
+\end{array}
+\]
+where $\cat{S}$ is the full subcategory of $\cat{C}$ consisting of the
+skeletons and morphisms between them, that is, $\cat{S}$ is a
+cartesian closed category with one basic object $[[?]]$ such that
+$(\cat{S},[[?]],[[split]],[[squash]])$ is an untyped $\lambda$-model.
+The following turns out to be true.
+\begin{lemma}[$\S$ is faithful]
+  \label{lemma:S_is_faithful}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a gradual $\lambda$-model, and
+  $(\cat{S},[[?]],[[split]],[[squash]])$ is the category of skeletons.
+  Then the functor $\S : \cat{C} \mto \cat{S}$ is faithful.
+\end{lemma}
+\begin{proof}
+  This proof follows from the definition $\S$ and
+  Lemma~\ref{lemma:lifted_retract}.  For the full proof see
+  Appendix~\ref{subsec:proof_of_S_is_faithful}.
+\end{proof}
+Thus, we can think of the functor $\S$ as an injection of the typed
+world into the untyped one.
+
+Now that we can cast any type into its skeleton we must show that
+every skeleton can be cast to $[[?]]$.  We do this similarly to the
+above and lift $[[split]]$ and $[[squash]]$ to arbitrary skeletons.
+\begin{definition}
+  \label{def:lifted-split-squash}
+  Suppose $(\cat{S}, [[?]], [[split]],[[squash]])$ is the category of
+  skeletons.  Then for any skeleton $[[S]]$ we define the morphisms
+  $[[lsquash S]] : [[S --> ?]]$ and $[[lsplit S]] : [[? --> S]]$ by
+  mutual recursion on $[[S]]$ as follows:
+  \[
+    \begin{array}{l}
+      \begin{array}{lll}
+        [[lsquash ?]] = \id_?\\
+        [[lsquash (S1 -> S2)]] = ([[lsplit S1]] \to [[lsquash S2]]);[[squash ? -> ?]]\\
+        [[lsquash (S1 x S2)]] = ([[lsquash S1]] \times [[lsquash S2]]);[[squash ? x ?]]\\
+      \end{array}
+      \vspace{5px}\\[7px]
+      \hline 
+      \begin{array}{lll}
+        [[lsplit ?]] = \id_?\\
+        [[lsplit (S1 -> S2)]] = [[split ? -> ?]];([[lsquash S1]] \to [[lsplit S2]])\\
+        [[lsplit (S1 x S2)]] = [[split ? x ?]];([[lsplit S1]] \times [[lsplit S2]])\\      
+      \end{array}
+    \end{array}  
+  \]
+\end{definition}
+\noindent
+As an example we will construct the casting morphism that casts the
+skeleton $[[(? x ?) -> ?]]$ to $[[?]]$:
+$[[lsquash (? x ?) -> ?]] = ([[split ? x ?]] \to \id_?);[[squash ? -> ?]]$.
+
+\begin{lemma}[Splitting and Squashing Lifted Retract]
+  \label{lemma:lifted_retract_for_?}
+  Suppose \\$(\cat{S}, [[?]], [[split]],[[squash]])$ is the category of
+  skeletons.  Then for any skeleton $[[S]]$,
+  \[
+    [[lsquash S]];[[lsplit S]] = \id_S : [[S --> S]]
+  \]
+\end{lemma}
+\begin{proof}
+  The proof is similar to the proof of the boxing and unboxing lifted
+  retract (Lemma~\ref{lemma:lifted_retract}).
+\end{proof}
+There is also a faithful functor from $\cat{S}$ to $\cat{U}$ where
+$\cat{U}$ is the full subcategory of $\cat{S}$ that consists of the
+single object $[[?]]$ and all its morphisms between it:
+\[
+\begin{array}{lll}
+  \U S = ?\\
+  \U (f : [[S1 --> S2]]) = [[lsplit S1]];f;[[lsquash S2]]
+\end{array}
+\]
+This finally implies that there is a functor $\C : \cat{C} \mto
+\cat{U}$ that injects all of $\cat{C}$ into the object $[[?]]$.
+\begin{lemma}[Casting to $[[?]]$]
+  \label{lemma:casting_to_?}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,\squash, \bx,$ $\unbox)$
+  is a \\ gradual $\lambda$-model, $(\cat{S},[[?]],[[split]],[[squash]])$
+  is the full subcategory of skeletons, and $(\cat{U},[[?]])$ is the
+  full subcategory containing only $[[?]]$ and its morphisms.  Then
+  there is a faithful functor $\C = \cat{C} \mto^{\S} \cat{S} \mto^{\U} \cat{U}$.
+\end{lemma}
+\noindent
+In a way we can think of $\C : \cat{C} \mto \cat{U}$ as a forgetful
+functor.  It forgets the type information.
+
+Getting back the typed information is harder.  There is no nice
+functor from $\cat{U}$ to $\cat{C}$, because we need more information.
+However, given a type $[[A]]$ we can always obtain a casting morphism
+from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
+[[? --> A]]$.  Finally, we have the following result.
+\begin{lemma}[Casting Morphisms to $[[?]]$]
+  \label{lemma:casting_morphisms}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split, \squash, \bx,$ \\$\unbox)$ is
+  a gradual $\lambda$-model, and $[[A]]$ is an object of $\cat{C}$.
+  Then there exists casting morphisms from $[[A]]$ to $[[?]]$ and vice
+  versa that make $[[A]]$ a retract of $[[?]]$.
+\end{lemma}
+\begin{proof}
+  The two morphisms are as follows:
+  \[
+  \begin{array}{lll}
+    [[Box A]] := [[lbox A]];[[lsquash (skeleton A)]] : [[A --> ?]]\\
+    [[Unbox A]] := [[lsplit (skeleton A)]];[[lunbox A]] : [[? --> A]]
+  \end{array}
+  \]
+  The fact the these form a retract between $[[A]]$ and $[[?]]$ holds
+  by Lemma~\ref{lemma:lifted_retract} and
+  Lemma~\ref{lemma:lifted_retract_for_?}.
+\end{proof}
+% subsection the_categorical_model (end)
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

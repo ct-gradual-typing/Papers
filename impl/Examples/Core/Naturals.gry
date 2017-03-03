@@ -1,0 +1,44 @@
+import Fix;
+
+pred : Nat -> Nat
+pred = \(n:Nat) -> case n of 0 -> 0, (succ n') -> n';
+
+subp : Nat -> Nat -> Nat
+subp = \(m:Nat) -> ([Nat -> Nat]fixp)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));
+
+sub : Nat -> Nat -> Nat
+sub = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));
+
+addp : Nat -> Nat -> Nat
+addp = \(m:Nat) -> ([Nat -> Nat]fixp)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
+
+add : Nat -> Nat -> Nat
+add = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
+
+multp : Nat -> Nat -> Nat
+multp = \(m:Nat) -> ([Nat -> Nat]fixp)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 0, (succ n') -> add m (r n'));
+
+mult : Nat -> Nat -> Nat
+mult = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 0, (succ n') -> add m (r n'));
+
+expp : Nat -> Nat -> Nat
+expp = \(m:Nat) -> ([Nat -> Nat]fixp)
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 1, (succ n') -> mult m (r n'));
+
+exp : Nat -> Nat -> Nat
+exp = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 1, (succ n') -> mult m (r n'));
