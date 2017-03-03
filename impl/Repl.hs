@@ -56,7 +56,7 @@ unfoldQueue q = fixQ q emptyQ step
       substDef x t (y, t') = (y, subst x t t')
       
 containsTerm :: Queue Qelm -> Vnm -> Bool
-containsTerm (Queue f r) vnm = (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False r) || (foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f) 
+containsTerm (Queue f r) vnm = foldl (\b (defName, defTerm)-> b || (vnm == defName)) False f
 
 tyCheckQ :: GFile -> REPLStateIO ()
 tyCheckQ (Queue [] []) = return () 
@@ -80,15 +80,15 @@ tyCheckQ q = do
                         Left er -> io.putStrLn.readTypeError $ er
                         Right b -> 
                             if b
-                            then do
+                            then
                               -- Determine if definition already in queue
                               if(containsTerm defs v)
-                              then  io.putStrLn $ "Error: The variable "++(show v)++" is already in the context."
+                              then  io.putStrLn $ "error: The variable "++(show v)++" is already in the context."
                               else  do
                                 push (v,tu)
                                 tyCheckQ $ tailQ q
-                            else io.putStrLn $ "Error: "++(runPrettyType ity)++" is not a subtype of "++(runPrettyType ty)
-    else io.putStrLn $ "Error: free variables found in "++(show v)
+                            else io.putStrLn $ "TODO: make error message"
+    else io.putStrLn $ "error - free variables found in q: "++(show q)
 
 handleCMD :: String -> REPLStateIO ()
 handleCMD "" = return ()
@@ -119,10 +119,12 @@ handleCMD s =
           r = runIR tu
        in case r of
             Left m -> io.putStrLn.readTypeError $ m
-            Right ty ->  do
-                if(containsTerm defs x)
-                then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
-                else push (x , t)
+            Right e -> io.putStrLn.runPrettyTerm $ e
+    handleLine (Let x t) = do
+      (f, defs) <- get
+      if(containsTerm defs x)
+        then io.putStrLn $ "error: The variable "++(show x)++" is already in the context."
+        else push (x , t)
     handleLine (TypeCheck t) = do
       (_, defs) <- get
       let tu = unfoldDefsInTerm defs t

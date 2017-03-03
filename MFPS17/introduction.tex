@@ -1,0 +1,157 @@
+Scott \cite{Scott:1980} showed how to model the untyped
+$\lambda$-calculus within a cartesian closed category, $\cat{C}$, with
+a distinguished object we will call $[[?]]$ -- read as the type of
+untyped terms, or the unknown type -- such that the object\footnote{We
+  will use the terms ``object'' and ``type'' interchangeably.} $[[?
+    ->?]]$ is a retract of $?$.  That is, there are morphisms
+$[[squash : (? -> ?)  --> ?]]$ and $[[split : ?  --> (? -> ?)]]$ where
+$[[squash]];[[split]] = \id : [[(? -> ?)  --> (? -> ?)]]$\footnote{We
+  denote composition of morphisms by $f;g : A \mto C$ given morphisms
+  $f : A \mto B$ and $g : B \mto C$.}.  For example, taking these
+morphisms as terms in the typed $\lambda$-calculus we can define the
+prototypical looping term $(\lambda x.x\,x)(\lambda x.x\,x)$ by
+$[[(\x:?.H((split x) x))(squash (\x:?.H((split x) x)))]]$.
+
+In the same volume as Scott, Lambek \cite{Lambek:1980} showed that
+cartesian closed categories also model the typed
+$\lambda$-calculus. However, Scott's model required a retract, but
+Lambek's does not.  Now combine both of Scott and Lambek's work by
+adding to $\cat{C}$ the type of untyped terms $[[?]]$, $[[squash]]$,
+and $[[split]]$. At this point $\cat{C}$ is a model of both the typed
+and the untyped $\lambda$-calculus.  However, the two theories are
+really just sitting side by side in $\cat{C}$ and cannot really
+interact much.
+
+Suppose $A$ is an atomic type.  Then we add to $\cat{C}$ the morphisms
+$[[box]] : A \mto [[?]]$ and $[[unbox]] :\, ? \mto A$ such that
+$[[box]];[[unbox]] = \id : A \mto A$ making $A$ a retract of $[[?]]$.
+This is the bridge allowing the typed world to interact with the
+untyped one.  We can think of $[[box]]$ as injecting typed data into
+the untyped world, and $[[unbox]]$ as taking it back.  Notice that the
+only time we can actually get the typed data back out is if it were
+injected into the untyped world initially.  In the model this is
+enforced through composition, but in the language this will be
+enforced at runtime, and hence, requires the language to contain
+dynamic typing.  Thus, what we have just built up is a categorical
+model that offers a new perspective of how to combine static and
+dynamic typing.
+
+Siek and Taha \cite{Siek:2006} define gradual typing to be the
+combination of both static and dynamic typing that allows for the
+programmer to program in dynamic style without the need for the them
+to explicitly insert casts into their programs.  Siek and Taha's
+initial paper laid out the first gradually typed $\lambda$-calculus,
+but Siek et al. \cite{Siek:2015} layout a refined criteria for what
+metatheortic properties a gradual type system should have called the
+gradual guarantee.  In this paper we show that our categorical model
+leads to a new core casting calculus for gradual type systems.
+
+Siek and Taha's gradually typed $\lambda$-calculus is defined as the
+simply typed $\lambda$-calculus with the type of untyped terms $[[?]]$
+and the following new application rule:
+\[
+  \inferrule* [right=$\GSiekdruleSXXappName{}$] {
+    <<G |-S t1 : C>>
+    \\
+        <<(G |-S t2 : A2 && A2 ~ A1) && fun(C) = A1 -> B1>>
+  }{<<G |-S t1 t2 : B1>>}
+\]
+The premise $<<A2 ~ A1>>$ is read, the type $<<A2>>$ is consistent
+with the type $<<A1>>$, and is defined in Figure~\ref{fig:GSTLC}.  If
+we squint we can see $[[split]]$, $[[squash]]$, $[[box]]$, and
+$[[unbox]]$ hiding in the definition of the previous rules, but they
+have been suppressed.  We will show that when one uses this typing
+rule then one is really implicitly using a casting morphism built from
+$[[split]]$, $[[squash]]$, $[[box]]$, and $[[unbox]]$.  In fact, the
+consistency relation $<<A ~ B>>$ can be interpreted as such a
+morphism.  Then the typing above can be read semantically as a saying
+if a casting morphism exists, then the type really can be converted
+into the necessary type.  The premise $<<fun(C) = A1 -> B1>>$ requires
+that $<<C>>$ either be $<<A1 -> B1>>$ or $<<C>> = <<?>>$ and
+$\mathsf{fun}(C) = [[? -> ?]]$ where $<<A1>> = <<?>>$ and $<<B1>> =
+<<?>>$. Again, we can see $[[split]]$ and $[[box]]$ hiding in the
+shadows.  When $<<C>> = <<?>>$, then $<<A1>> = <<?>>$, and hence,
+$<<A2 ~ A1>>$ will correspond to $[[box]]$, and the premise
+$\mathsf{fun}(C) = [[? -> ?]]$ corresponds to using $[[split]]$.
+Thus, in this case the term $<<t1 t2>>$ can be converted into a term
+in our calculus by $[[(split (? -> ?) t1) (box A2 t2)]]$.  An
+interesting point about this rule is that dynamically typed programs
+tend toward statically typed programs.  However, the gradual guarantee
+shows that any program in the gradual type system can slide either
+more towards static typing or more towards dynamic typing by inserting
+or removing casts.
+
+\textbf{Contributions.} This paper offers the following contributions:
+\begin{itemize}
+
+\item A new categorical model for gradual typing for functional
+  languages.  We show how to interpret Siek and Taha's
+  \cite{Siek:2015} gradual type system in the categorical model
+  outlined above.
+
+\item We then extract a functional programming language called Simply
+  Typed Grady -- or just Grady -- from the categorical model via the
+  Curry-Howard-Lambek correspondence.  This is not a gradual type
+  system, but can be seen as an alternative core casting calculus in
+  which Siek and Taha's gradual type system can be translated to.
+  
+\end{itemize}
+
+\textbf{Related work.}  We now give a brief summary of related
+work. Each of the articles discussed below can be consulted for
+further references.
+%% - Combing static and dynamic typing
+%% - Gradual Typing
+%%    - Polymorphism
+\begin{itemize}
+\item Abadi et al.~\cite{Abadi:1989} combine dynamic and static typing
+  by adding a new type called $\mathsf{Dynamic}$ along with a new case
+  construct for pattern matching on types.  We do not add such a case
+  construct, and as a result, show that we can obtain a surprising
+  amount of expressivity without it.  They also provide denotational
+  models.
+
+\item Henglein~\cite{Henglein:1994} defines the dynamic
+  $\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to the simply
+  typed $\lambda$-calculus and then adding primitive casting
+  operations called tagging and check-and-untag.  These new operations
+  tag type constructors with their types.  Then untagging checks to
+  make sure the target tag matches the source tag, and if not, returns
+  a dynamic type error.  These operations can be used to build casting
+  coercions which are very similar to our casting morphisms. We can
+  also define $[[split]]$, $[[squash]]$, $[[box]]$, and $[[unbox]]$ in
+  terms of Henglein's casting coercions.  However, our setting is a
+  bit more strict then his, because his ``boxing'' and ``unboxing''
+  operations form an isomorphism, but we show that a retract is only
+  needed.
+
+\item As we mentioned in the introduction Siek and
+  Taha~\cite{Siek:2006} were the first to define gradual typing
+  especially for functional languages.  We show that their language
+  can be given a straightforward categorical model in cartesian closed
+  categories.  Since their original paper introducing gradual types
+  lots of languages have adopted it, but the term ``gradual typing''
+  started to become a catch all phrase for any language combining
+  dynamic and static typing.  As a result of this Siek et
+  al.~\cite{Siek:2015} later refine what it means for a language to
+  support gradual typing by specifying the necessary metatheoretic
+  properties a gradual type system must satisfy called the gradual
+  guarantee.
+
+\item The categorical model we give here is with respect to the core
+  casting calculus.  In future work we plan to investigate a
+  categorical model for the surface language, and we believe that
+  Garcia's~\cite{Garcia:2016} work showing how to extract the gradual
+  type system from a fully static type system using abstract
+  interpretation will play a key role.  Abstract interpretation uses
+  Galois connections which can be studied as adjoints in the category
+  of posets.  Garcia shows that one can start with a static type
+  system, and then use abstract interpretation to infer the gradually
+  typed surface language complete with both statics and dynamics.
+
+\end{itemize}
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***
