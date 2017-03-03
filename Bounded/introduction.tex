@@ -1,4 +1,25 @@
-TODO
+Static and dynamic typing can be combined in a very simple and
+intuitive way by extending the work of Scott~\cite{Scott:1980} on
+categorical models of the untyped $\lambda$-calculus.  First, add a
+new type $<<?>>$ read ``the type of untyped programs'' -- also
+sometimes called the unknown type -- and then add four new programs
+$<<split>> : <<? -> (? -> ?)>>$, $ <<squash>> : <<(? -> ?) -> ?>> $,
+$<<box C>> : <<C -> ?>>$, and $<<unbox C>> : <<? -> C>>$, such that,
+$<<squash>>;<<squash>> = \id_{[[? -> ?]]}$ and $<<box C>>;<<unbox C>>
+= \id_{[[C]]}$.  Categorically, $<<split>>$ and $<<squash>>$, and
+$<<box>>$ and $<<unbox>>$ form two retracts.  The authors
+\cite{Eades:2017} have shown in a previous paper that extending the
+simply typed $\lambda$-calculus with these two retracts results in a
+new core casting calculus, called Simply Typed Grady, for Siek and
+Taha's gradual functional type system \cite{Siek:2015}.  Furthermore,
+the authors show that Siek and Taha's system can be given a
+categorical model in cartesian closed categories with the two
+retracts.
+
+In this paper we extend Grady with bounded quantification and lists.
+We chose bounded quantification so that the bounds can be used to
+control which types are castable and which should not be.  Currently,
+we will not allow polymorphic types to be cast to the unknown type.  
 
 %%% Local Variables: ***
 %%% mode:latex ***
