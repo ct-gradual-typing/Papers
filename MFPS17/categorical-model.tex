@@ -275,10 +275,10 @@ casting morphisms that will do this as follows:
 \end{array}
 \]
 We can also cast a morphism $[[A]] \mto^f [[B]]$ to a morphism
-\[ [[S1]] \mto^{[[lunbox A]]} A \mto^{f} B \mto^{[[lbox B]]} [[S2]]\]
+$[[lunbox A]];f;[[lbox A]] : [[S1]] \mto [[S2]]$
 where $[[S1]] = [[skeleton A]]$ and $[[S2]] = [[skeleton B]]$.  Now if
 we have a second
-\[ [[S2]] \mto^{[[lunbox B]]} B \mto^{g} C \mto^{[[lbox C]]} [[S3]]\]
+$[[lunbox B]];g;[[lbox C]] : [[S2]] \mto [[S3]]$
 then their composition reduces to composition at the typed level:
 \begin{center}
   \begin{math}
@@ -429,6 +429,7 @@ from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
     [[Unbox A]] := [[lsplit (skeleton A)]];[[lunbox A]] : [[? --> A]]
   \end{array}
   \]
+  \noindent
   The fact the these form a retract between $[[A]]$ and $[[?]]$ holds
   by Lemma~\ref{lemma:lifted_retract} and
   Lemma~\ref{lemma:lifted_retract_for_?}.

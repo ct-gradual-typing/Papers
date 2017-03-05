@@ -7,13 +7,13 @@ syntax for $\CGSTLC$.
 \begin{definition}
   \label{def:grady-syntax}
   Syntax for Grady:
-  \[
+  \[\small
   \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
     \text{(basic skeletons)} & [[U]] & ::= & [[? -> ?]] \mid [[? x ?]]\\
     \text{(skeletons)}       & [[S]] & ::= & [[?]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
     \text{(atomic types)}    & [[C]] & ::= & [[Unit]] \mid [[Nat]]\\
     \text{(terms)}           & [[t]] & ::= & \ldots \mid [[split U]] \mid [[squash U]]
-    \mid [[box T]] \mid [[unbox T]]\\ & & \mid & [[case t of 0 -> t1, (succ x) -> t2]]\\
+    \mid [[box T]] \mid [[unbox T]] \mid [[case t of 0 -> t1, (succ x) -> t2]]\\
     \text{(values)}          & [[v]] & ::= & \ldots \mid [[squash U]] \mid [[box T]]\\
   \end{array}
   \]
@@ -84,13 +84,13 @@ $[[unbox C]]$ to arbitrary type.
   \label{lemma:syntactic_box_and_unbox}
   Given any type $[[A]]$ there are functions $[[Box A]]$ and $[[Unbox
       A]]$ such that the following typing rules are admissible:
-  \[
+  \[\small
   \begin{array}{lll}
     \SLGradydruleBoxG{} & \quad & \SLGradydruleUnboxG{}
   \end{array}
   \]
   Furthermore, the following reduction rule is admissible:
-  \[
+  \[\small
   \begin{array}{lll}
     \SLGradydrulerdXXretracTG{} 
   \end{array}
@@ -115,13 +115,13 @@ skeletons.
   \label{lemma:syntactic_box_and_unbox}
   Given any type $[[A]]$ there are functions $[[Split A]]$ and $[[Squash S]]$
   such that the following typing rules are admissible:
-  \[
+  \[\small
   \begin{array}{lll}
     \SLGradydruleSplitG{} & \quad & \SLGradydruleSquashG{}
   \end{array}
   \]
   Furthermore, the following reduction rule is admissible:
-  \[
+  \[\small
   \begin{array}{lll}
     \SLGradydrulerdXXretracTSG{} 
   \end{array}
