@@ -90,6 +90,7 @@ Figure~\ref{fig:interp-terms}.
             \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : A>>\text{ and }c : <<A --> Nat>>\\
             \hline
             << [| G |-S (t1,t2) : A1 x A2 |] >> = \langle << [| t1 |] >> , << [| t2 |] >> \rangle\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t1 : A1>>\text{ and } <<G |-S t2 : A2>>\\
             \hline
             << [| G |-S fst t : A1 |] >> = << [| t |] >>;c;\pi_1\\
             \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : B>>\text{ and }c : <<B --> (A1 x A2)>>\\
@@ -98,6 +99,7 @@ Figure~\ref{fig:interp-terms}.
             \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : B>>\text{ and }c : <<B --> (A1 x A2)>>\\
             \hline
             << [| G |-S \x:A.t : A -> B |] >> = \curry{<< [| t |] >>}\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G, x : A |-S t : B>>\\
             \hline
             << [| G |-S t1 t2 : B1 |] >> = \langle << [| t1 |] >>;c_1, << [| t2 |] >>;c_2\rangle;\app_{[[A1]],[[B1]]}\\
             \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t1 : C>>\text{, }<<G |-S t2 : A2>>, c_1 : <<C --> (A1 -> B1)>>, \text{ and }c_2 : <<A2 --> A1>>\\
