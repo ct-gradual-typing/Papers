@@ -1,6 +1,5 @@
 {-# LANGUAGE LambdaCase #-}
-module Repl where
-
+module Core.Repl where
 
 import Control.Monad.State
 import System.Console.Haskeline
@@ -11,11 +10,11 @@ import Unbound.LocallyNameless.Subst
 import qualified Data.Map.Strict as M
 
 import Queue
-import CoreSyntax
+import Core.Syntax
 import TypeSyntax
-import CoreParser
-import CorePretty
-import CoreTypeChecker
+import Core.Parser
+import Core.Pretty
+import Core.TypeChecker
 import Eval
 import TypeErrors
 
