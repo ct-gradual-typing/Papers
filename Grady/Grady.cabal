@@ -16,7 +16,7 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md, README
 cabal-version:       >=1.10
 
-executable Grady
+executable grady
   main-is:             Main.hs
   -- other-modules:       
   other-extensions:    LambdaCase, FlexibleContexts, TypeSynonymInstances
