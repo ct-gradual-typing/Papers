@@ -50,12 +50,6 @@ prettyTerm (NCase t t1 b) = do
 prettyTerm (Var x) = return.n2s $ x
 prettyTerm (Fst t) = prettyUnaryArg t prettyTerm "fst"
 prettyTerm (Snd t) = prettyUnaryArg t prettyTerm "snd"
-prettyTerm (Unbox ty) = do
-    pTy <- prettyType ty
-    return $ "unbox <"++pTy++">"
-prettyTerm (Box ty) = do
-    pTy <- prettyType ty
-    return $ "box <"++pTy++">"
 prettyTerm Empty = return "[]"
 prettyTerm t@(Cons _ _) = do
   s <- consToList t

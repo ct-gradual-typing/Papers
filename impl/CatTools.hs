@@ -56,4 +56,4 @@ list_func a b f = let r = s2n "r"
                    in do
                      fx <- fix
                      return $ CApp fx $ CFun (Arr (List a) (List b)) $ bind r $ CFun (List a) $ bind l $
-                            CLCase (CVar l) (CTApp b CEmpty) $ bind x $ bind xs $ CCons (CApp f (CVar x)) (CApp (CVar r) (CVar xs))
+                            CLCase (CVar l) a (CTApp b CEmpty) $ bind x $ bind xs $ CCons (CApp f (CVar x)) (CApp (CVar r) (CVar xs))

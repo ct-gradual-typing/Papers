@@ -97,29 +97,6 @@ handleCMD s =
       Left msg -> io $ putStrLn msg
       Right l -> handleLine l
   where
-    handleLine :: REPLExpr -> REPLStateIO ()
-    handleLine (HelpMenu) = do
-      io.putStrLn $ "----------------------------------------------------------"
-      io.putStrLn $ "                  The Grady Help Menu                     "
-      io.putStrLn $ "----------------------------------------------------------"
-      io.putStrLn $ ":h/:help -> Display the help menu"
-      io.putStrLn $ ":t/:type <term> -> Typecheck a term"
-      io.putStrLn $ ":s/:show <term> -> Display the Abstract Syntax Type of a term"
-      io.putStrLn $ ":u/:unfold <term> -> Unfold the expression" -- TODO: Is there a better way to explaing this?
-      io.putStrLn $ ":d/:dump -> Display the context"
-      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
-      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
-      io.putStrLn $ "let <Variable name> = <expression> -> Bind an expression to a variable and load it into the context"
-      io.putStrLn $ "You may also evaluate expressions directly in the Repl"
-      io.putStrLn $ "----------------------------------------------------------"
-
-    handleLine (Let x t) = do
-      (f, defs) <- get
-      let tu = unfoldDefsInTerm defs t
-          r = runIR tu
-       in case r of
-            Left m -> io.putStrLn.readTypeError $ m
-            Right e -> io.putStrLn.runPrettyTerm $ e
     handleLine (Let x t) = do
       (f, defs) <- get
       if(containsTerm defs x)
