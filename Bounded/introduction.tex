@@ -17,8 +17,6 @@ gradual functional type system \cite{Siek:2015}.  Furthermore, the
 authors show that Siek and Taha's system can be given a categorical
 model in cartesian closed categories with the two retracts.
 
-- gradual typing
-
 In this paper we extend Grady with bounded quantification and lists.
 We chose bounded quantification so that the bounds can be used to
 control which types are castable and which should not be.  Currently,
@@ -42,22 +40,62 @@ versions as primitive.
 Grady now consists of two languages: a surface language -- called
 Surface Grady -- and a core language -- called Core Grady. The
 difference between the surface and the core is that the former is
-gradually typed while the latter is statically typed.  The surface
-will then allow the programmer to leave off explicit casts into the
-unknown type.  Then the surface language will be translated into the
-core by algorithmically inserting the explicit casts.  One should view
-the relationship between the surface language and the core language
-as the former being a subsystem of the latter.  The gradual guarantee
--- the metatheoretic property that shows that explicit casts can be
-inserted or removed without breaking typeability -- helps enforce this
-relationship.  In fact, this language was designed so that the gradual
-guarantee holds.
+gradually typed while the latter is statically typed. Gradual typing
+is the combination of static and dynamic typing in such a way that one
+can program in dynamic style.  That is, the programmer should not have
+to introduce explicit casts. The first functional gradually typed
+language is due to Siek and Taha \cite{Siek:2006} where they extend
+the typed $\lambda$-calculus with the unknown type $[[?]]$ and a new
+relation on types, called the type consistency relation, that indicated
+when types should be considered as being castable or not.  For
+example, consider the function application rule of Surface Grady:
+\[
+\SGradydruleTXXapp{}
+\]
+This rule depends on the relation $[[G |- A2 ~ A1]]$ which is the type
+consistency relation.  It is reflexive and symmetric, but not
+transitive, or one could prove that any type is consistent with any
+other type.  Thus, type consistency indicates exactly where explicit
+casts need to be inserted.  This rule also depends on the partial
+function:
+\[
+\begin{array}{lll}
+  [[fun(?) = ? -> ?]]\\
+  [[fun(A1 -> B1) = A1 -> B1]]
+\end{array}
+\]
+As we will see below $[[G |- ? ~ A]]$ for any type $[[A]]$.  As an
+example, suppose $[[G |- t1 : ?]]$ and $[[G |- t2 : Nat]]$.  Then
+based on the rule above, we know that $[[G |- ? ~ Nat]]$, and
+$[[fun(?) = ? -> ?]]$, thus, $[[G |- t1 t2 : ?]]$ is typable.  Notice
+there are no explicit casts.  Using $<<split>>$ and $<<box Nat>>$ we
+can translate this application into Core Grady by adding the casts:
+$<<G |- (split (? -> ?) t1) (box Nat t2) : ?>>$.
 
 Subtyping in Core Grady is standard subtyping for bounded system F
 extended with the new bounds for simple types.  One important point is
 that in Core Grady the unknown type is not a top type, and in fact, is
 only related to itself and $[[SL]]$.  However, subtyping in the
-surface language is the 
+surface language is substantially different.  Subtyping in Surface
+Grady is the combination of subtyping and type consistency called
+consistent subtyping due to Garcia~\cite{Garcia:2016}.  We denote
+consistent subtyping by $[[G |- A <~ B]]$.  Unlike Core Grady we have
+$[[G |- ? <~ A]]$ and $[[G |- A <~ ?]]$ for any type $[[A]]$.  This
+gives us some flexibility when instantiating polymorphic functions.
+For example, suppose $[[G |- t : Forall (X <: Nat).(X -> X)]]$.  Then,
+$[[G |- [?]t : ? -> ?]]$ is typable, as well as, $[[G |- [Nat]t : Nat
+    -> Nat]]$ by subsumption.  Similarly, if $[[G |- t : Forall (X <:
+    ?).(X -> X)]]$, then we can instantiate $[[t]]$ with any type at
+all.  This seems very flexible, but it turns out that it does nothing
+more than what Core Grady allows when adding explicit casts.
+
+One feature Surface Grady has that cannot be found in previous systems
+is allowing explicit casts in the surface language.  Adding this
+feature actually increases the expressivity of the language.  For
+example, consider the following Surface Grady program -- here we use
+the concrete syntax from Grady's implementation, but it is very
+similar to Haskell and not far from the mathematical syntax:
+
 
 %% - subtyping for core versus surface
 %% - allowing explicit casts in surface (fix is typable)
