@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeSynonymInstances,
+             FlexibleInstances #-}
 module Surface.Repl where
 
 import Control.Monad.State
@@ -21,7 +23,7 @@ import CastInsertion
 type Qelm = (Vnm, Term)
 type REPLStateIO = StateT (FilePath,Queue Qelm) IO
 
-instance MonadException m => MonadException (StateT s m) where
+instance MonadException m => MonadException (StateT (FilePath,Queue Qelm) m) where
     controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
                     run' = RunIO (fmap (StateT . const) . run . flip runStateT s)
                     in fmap (flip runStateT s) $ f run'
@@ -150,38 +152,31 @@ loadFile p = do
 getFV :: Term -> [Vnm]
 getFV t = fv t :: [Vnm]
 
-banner :: String
-banner = "Welcome to Grady!\n\n"
-
 helpMenu :: String                          
 helpMenu = 
-      "----------------------------------------------------------\n"++
-      "                  The Grady Help Menu                     \n"++
-      "----------------------------------------------------------\n"++
-      ":h/:help -> Display the help menu\n"++
-      ":t/:type <term> -> Typecheck a term\n"++
-      ":s/:show <term> -> Display the Abstract Syntax Type of a term\n"++
-      ":u/:unfold <term> -> Unfold the expression\n"++ -- TODO: Is there a better way to explaing this?
-      ":d/:dump -> Display the context\n"++
-      ":l/:load <filepath> -> Load an external file into the context\n"++
-      ":l/:load <filepath> -> Load an external file into the context\n"++
-      "let <Variable name> = <expression> -> Bind an expression to a variable and load it into the context\n"++
-      "You may also evaluate expressions directly in the Repl\n"++
-      "----------------------------------------------------------"
+      "-----------------------------------------------------------------------------------\n"++
+      "                  The Surface Grady Help Menu                                      \n"++
+      "-----------------------------------------------------------------------------------\n"++
+      ":help             (:h)  Display the help menu\n"++
+      ":type term        (:t)  Typecheck a term\n"++
+      ":show <term>      (:s)  Display the Abstract Syntax Type of a term\n"++
+      ":unfold <term>    (:u)  Unfold the expression into one without toplevel definition.\n"++ 
+      ":dump             (:d)  Display the context\n"++
+      "load <filepath>   (:l)  Load an external file into the context\n"++
+      "-----------------------------------------------------------------------------------"
 
-main :: IO ()
-main = do
-  putStr banner
+repl :: IO ()
+repl = do
   evalStateT (runInputT defaultSettings loop) ("",emptyQ)
    where 
        loop :: InputT REPLStateIO ()
        loop = do           
-           minput <- getInputLine "Grady> "
+           minput <- getInputLine "Surface> "
            case minput of
                Nothing -> return ()
                Just [] -> loop
                Just input | input == ":q" || input == ":quit"
-                              -> liftIO $ putStrLn "Goodbye!" >> return ()
+                              -> liftIO $ putStrLn "Leaving Surface Grady." >> return ()
                           | input == ":h" || input == ":help"
                               -> (liftIO $ putStrLn helpMenu) >> loop
                           | otherwise -> (lift.handleCMD $ input) >> loop

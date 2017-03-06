@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE LambdaCase #-}
 module Core.Repl where
 
@@ -15,12 +17,17 @@ import TypeSyntax
 import Core.Parser
 import Core.Pretty
 import Core.TypeChecker
-import Eval
+import Core.Eval
 import TypeErrors
 
 
 type Qelm = (CVnm, CTerm)
 type REPLStateIO = StateT (FilePath,Queue (QDefName, QDefDef)) IO
+
+instance MonadException m => MonadException (StateT (FilePath,Queue (QDefName, QDefDef)) m) where
+    controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
+                    run' = RunIO (fmap (StateT . const) . run . flip runStateT s)
+                    in fmap (flip runStateT s) $ f run'                       
 
 data QDefName = Var CVnm | DefName CVnm
     deriving (Show, Eq)
@@ -68,12 +75,6 @@ getQCT q qCV = case getQDef (headQ q) of
                  
 qToMap :: Queue (CVnm,Type) -> (M.Map CVnm Type)
 qToMap q = foldl (\m (a,b) -> M.insert a b m) M.empty (toListQ q)
- 
-
-instance MonadException m => MonadException (StateT s m) where
-    controlIO f = StateT $ \s -> controlIO $ \(RunIO run) -> let
-                    run' = RunIO (fmap (StateT . const) . run . flip runStateT s)
-                    in fmap (flip runStateT s) $ f run'
                 
 io :: IO a -> REPLStateIO a
 io i = liftIO i
@@ -152,29 +153,13 @@ tyCheckQ q = do
                         else io.putStrLn $ "Error: "++(runPrettyType ity)++" is not a subtype of "++(runPrettyType ty)
   else io.putStrLn $ "Error: free variables found in "++(show v)
 
-
 handleCMD :: String -> REPLStateIO ()
 handleCMD "" = return ()
 handleCMD s =    
     case (parseLine s) of
       Left msg -> io $ putStrLn msg
       Right l -> handleLine l
-  where
-    handleLine :: REPLExpr -> REPLStateIO ()
-    handleLine (HelpMenu) = do
-      io.putStrLn $ "----------------------------------------------------------"
-      io.putStrLn $ "                  The Core Grady Help Menu                     "
-      io.putStrLn $ "----------------------------------------------------------"
-      io.putStrLn $ ":h/:help -> Display the help menu"
-      io.putStrLn $ ":t/:type <term> -> Typecheck a term"
-      io.putStrLn $ ":s/:show <term> -> Display the Abstract Syntax Type of a term"
-      io.putStrLn $ ":u/:unfold <term> -> Unfold the expression" -- TODO: Is there a better way to explaing this?
-      io.putStrLn $ ":d/:dump -> Display the context"
-      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
-      io.putStrLn $ ":l/:load <filepath> -> Load an external file into the context"
-      io.putStrLn $ "let <Variable name> = <expression> -> Bind an expression to a variable and load it into the context"
-      io.putStrLn $ "You may also evaluate expressions directly in the Repl"
-      io.putStrLn $ "----------------------------------------------------------"
+  where    
     handleLine (Eval t) = do
       (f, defs') <- get
       defs <- getQCTM defs' emptyQ
@@ -245,20 +230,31 @@ loadFile p = do
 getFV :: CTerm -> [CVnm]
 getFV t = fv t :: [CVnm]
 
-banner :: String
-banner = "Welcome to Core Grady!\n\n"
-
-main :: IO ()
-main = do
-  putStr banner
+helpMenu :: String                          
+helpMenu = 
+      "-----------------------------------------------------------------------------------\n"++
+      "                  The Core Grady Help Menu                                         \n"++
+      "-----------------------------------------------------------------------------------\n"++
+      ":help             (:h)  Display the help menu\n"++
+      ":type term        (:t)  Typecheck a term\n"++
+      ":show <term>      (:s)  Display the Abstract Syntax Type of a term\n"++
+      ":unfold <term>    (:u)  Unfold the expression into one without toplevel definition.\n"++ 
+      ":dump             (:d)  Display the context\n"++
+      "load <filepath>   (:l)  Load an external file into the context\n"++
+      "-----------------------------------------------------------------------------------"
+          
+repl :: IO ()
+repl = do
   evalStateT (runInputT defaultSettings loop) ("",emptyQ)
    where 
        loop :: InputT REPLStateIO ()
        loop = do           
-           minput <- getInputLine "Core Grady> "
+           minput <- getInputLine "Core> "
            case minput of
                Nothing -> return ()
                Just [] -> loop
                Just input | input == ":q" || input == ":quit"
-                              -> liftIO $ putStrLn "Goodbye!" >> return ()
+                              -> liftIO $ putStrLn "Leaving Core Grady." >> return ()
+                          | input == ":h" || input == ":help"
+                              -> (liftIO $ putStrLn helpMenu) >> loop                                 
                           | otherwise -> (lift.handleCMD $ input) >> loop

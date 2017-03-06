@@ -19,7 +19,7 @@ cabal-version:       >=1.10
 executable Grady
   main-is:             Main.hs
   -- other-modules:       
-  other-extensions:    LambdaCase, FlexibleContexts
+  other-extensions:    LambdaCase, FlexibleContexts, TypeSynonymInstances
   build-depends:       base >=4.9 && <4.10,
                        containers >=0.5 && <0.6,
                        unbound >=0.5 && <0.6,
