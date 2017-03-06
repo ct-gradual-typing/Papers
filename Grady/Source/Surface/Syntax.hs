@@ -5,7 +5,7 @@ LANGUAGE
   MultiParamTypeClasses, 
   UndecidableInstances 
 #-}
-module Syntax (module Unbound.LocallyNameless, 
+module Surface.Syntax (module Unbound.LocallyNameless, 
                module Unbound.LocallyNameless.Alpha,
                module Names,
                module TypeSyntax,

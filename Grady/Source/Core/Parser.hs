@@ -6,7 +6,7 @@ LANGUAGE
   FlexibleContexts 
 #-}
 
-module CoreParser (module Text.Parsec, expr, 
+module Core.Parser (module Text.Parsec, expr, 
                    CVnm, 
                    letParser, 
                    lineParser, 
@@ -30,7 +30,7 @@ import Text.Parsec.Extra
 import System.FilePath
 import System.Directory
 
-import CoreSyntax
+import Core.Syntax
 import TypeSyntax
 import Queue
 
@@ -429,7 +429,6 @@ data REPLExpr =
  | Unfold CTerm                  -- Unfold the definitions in a term for debugging.
  | LoadFile String               -- Loading an external file into the context
  | Eval CTerm                    -- The defualt is to evaluate.
- | HelpMenu                      -- To display help menu
  | DecVar CVnm Type            -- Allows variables to be types for evaluating in CoreRepl
  deriving Show
                     
@@ -503,11 +502,16 @@ dumpStateParser = replIntCmdParser "d" "dump" DumpState
 
 loadFileParser = replFileCmdParser "l" "load" LoadFile
 
-helpParser = replIntCmdParser "h" "help" HelpMenu
-
 decvarParser = repl2TermCmdParser "dv" "decvar" DecVar typeParser
                
-lineParser = try letParser <|> try loadFileParser <|> try helpParser <|> try decvarParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
+lineParser = try letParser
+          <|> try loadFileParser
+          <|> try decvarParser
+          <|> try typeCheckParser
+          <|> try showASTParser
+          <|> try unfoldTermParser
+          <|> try dumpStateParser
+          <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of

@@ -1,0 +1,4 @@
+Running Grady:
+- First install stack: https://docs.haskellstack.org/en/stable/install_and_upgrade/
+On Ubuntu:  
+  - install libtinfo-dev

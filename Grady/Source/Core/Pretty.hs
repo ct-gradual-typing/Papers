@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
-module CorePretty (module PrettyType, prettyCTerm, runPrettyCTerm) where
+module Core.Pretty (module PrettyType, prettyCTerm, runPrettyCTerm) where
 
-import CoreSyntax
+import Core.Syntax
 import PrettyType
   
 isCInt :: CTerm -> Bool

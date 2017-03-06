@@ -1,6 +1,6 @@
-module Eval where
+module Core.Eval where
 
-import CoreSyntax
+import Core.Syntax
 import TypeErrors
 
 type EM = ExceptT TypeError LFreshM

@@ -2,7 +2,7 @@ module Skeleton where
 
 import Prelude hiding (id)
 
-import CoreSyntax
+import Core.Syntax
 import CatTools as CT
     
 -- Converts a type into its skeleton.

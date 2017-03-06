@@ -6,7 +6,7 @@ LANGUAGE
   FlexibleContexts 
 #-}
 
-module Parser (module Text.Parsec, expr, 
+module Surface.Parser (module Text.Parsec, expr, 
                Vnm, 
                letParser, 
                lineParser, 
@@ -30,9 +30,9 @@ import Text.Parsec.Extra
 import System.FilePath
 import System.Directory
 
-import Syntax
+import Surface.Syntax
 import Queue
-import Pretty
+import Surface.Pretty
 
 ------------------------------------------------------------------------
 -- We first setup the lexer.                                          --

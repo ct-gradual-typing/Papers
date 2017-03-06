@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Pretty (module PrettyType, prettyTerm, runPrettyTerm) where
+module Surface.Pretty (module PrettyType, prettyTerm, runPrettyTerm) where
 
-import Syntax
+import Surface.Syntax
 import PrettyType
 
 isInt :: Term -> Bool

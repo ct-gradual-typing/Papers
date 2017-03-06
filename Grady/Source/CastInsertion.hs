@@ -2,9 +2,9 @@ module CastInsertion where
 
 import qualified Data.Map.Strict as M
 
-import Syntax
-import CoreSyntax
-import TypeChecker
+import Surface.Syntax
+import Core.Syntax
+import Surface.TypeChecker
 import CatTools as CT
 import Skeleton
 import TypeErrors
