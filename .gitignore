@@ -27,3 +27,4 @@ generic/*
 draft/generic/*
 dist/*
 Grady/dist/*
+Grady/.stack-work/*

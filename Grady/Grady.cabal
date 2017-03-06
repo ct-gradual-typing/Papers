@@ -14,8 +14,27 @@ extra-source-files:  ChangeLog.md, README
 cabal-version:       >=1.10
 
 executable grady
-  main-is:             Main.hs
-  -- other-modules:       
+  main-is: Main.hs
+  other-modules:
+    CastInsertion,
+    CatTools,
+    Core.Eval,
+    Core.Parser,
+    Core.Pretty,
+    Core.Repl,
+    Core.Syntax,
+    Core.TypeChecker,
+    Names,
+    PrettyType,
+    Queue,
+    Skeleton,
+    Surface.Parser,
+    Surface.Pretty,
+    Surface.Repl,
+    Surface.Syntax,
+    Surface.TypeChecker,
+    TypeErrors,
+    TypeSyntax
   other-extensions:    LambdaCase, FlexibleContexts, TypeSynonymInstances
   build-depends:       base >=4.9 && <4.10,
                        containers >=0.5 && <0.6,
