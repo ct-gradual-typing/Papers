@@ -1,4 +1,4 @@
-module Repl where
+module Surface.Repl where
 
 import Control.Monad.State
 import System.Console.Haskeline
@@ -8,13 +8,13 @@ import System.FilePath
 import Unbound.LocallyNameless.Subst
 
 import Queue
-import Syntax
-import CoreSyntax
-import Parser
-import Pretty
-import CorePretty
-import TypeChecker
-import Eval
+import Surface.Syntax
+import Core.Syntax
+import Surface.Parser
+import Surface.Pretty
+import Core.Pretty
+import Surface.TypeChecker
+import Core.Eval
 import TypeErrors
 import CastInsertion
 

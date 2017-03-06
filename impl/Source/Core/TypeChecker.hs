@@ -6,13 +6,13 @@ LANGUAGE
   UndecidableInstances,
   ViewPatterns
 #-}
-module CoreTypeChecker where
+module Core.TypeChecker where
 
 import qualified Data.Map.Strict as M
 
 import qualified TypeErrors as TE
-import CoreSyntax
-import CorePretty
+import Core.Syntax
+import Core.Pretty
 import TypeSyntax
 
 data ACTerm =

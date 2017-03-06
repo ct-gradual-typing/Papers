@@ -6,13 +6,13 @@ LANGUAGE
   UndecidableInstances,
   ViewPatterns
 #-}
-module TypeChecker where
+module Surface.TypeChecker where
 
 import qualified Data.Map.Strict as M
 
 import qualified TypeErrors as TE
-import Syntax
-import Pretty
+import Surface.Syntax
+import Surface.Pretty
 
 data ATerm =
    ATVar Type (Name ATerm)        

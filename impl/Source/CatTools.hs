@@ -1,7 +1,7 @@
 module CatTools where
 
-import CoreSyntax
-import CorePretty
+import Core.Syntax
+import Core.Pretty
 
 import Prelude hiding (id)
 

@@ -6,15 +6,15 @@ LANGUAGE
   FlexibleContexts 
 #-}
 
-module CoreParser (module Text.Parsec, expr, 
-                   CVnm, 
-                   letParser, 
-                   lineParser, 
-                   REPLExpr(..), 
-                   parseLine, 
-                   runFileParser, 
-                   GFile, 
-                   Prog(..)) where
+module Surface.Parser (module Text.Parsec, expr, 
+               Vnm, 
+               letParser, 
+               lineParser, 
+               REPLExpr(..), 
+               parseLine, 
+               runFileParser, 
+               GFile, 
+               Prog(..)) where
 
 import Prelude
 import Data.List
@@ -30,17 +30,17 @@ import Text.Parsec.Extra
 import System.FilePath
 import System.Directory
 
-import CoreSyntax
-import TypeSyntax
+import Surface.Syntax
 import Queue
+import Surface.Pretty
 
 ------------------------------------------------------------------------
 -- We first setup the lexer.                                          --
 ------------------------------------------------------------------------
 lexer = haskellStyle {
-  Token.reservedNames   = ["of","0","?","triv","proj1","proj2","split","squash","forall",
+  Token.reservedNames   = ["of","0","?","triv","proj1","proj2","forall",
                            "ncase","box","unbox","Nat","Unit", "||", "[]", ":", "lcase"],
-  Token.reservedOpNames = ["->", "succ", "\\", "proj1", "proj2", "box", "unbox", "squash", "split", "forall", "ncase", ":", "lcase"]
+  Token.reservedOpNames = ["->", "succ", "\\","box","unbox", "proj1", "proj2", "forall", "ncase", ":", "lcase"]
 }
 tokenizer = Token.makeTokenParser lexer
 
@@ -72,7 +72,6 @@ tvar = ws *> var' typeVarName TVar <* ws
 tyNat = parseConst "Nat" Nat
 tyU = parseConst "?" U
 tyUnit = parseConst "Unit" Unit         
-tyCastable = parseConst "Simple" Simple
         
 prod = do
   symbol "("
@@ -102,11 +101,13 @@ list = do
   symbol "]"
   return $ List ty
 
+tySimple = parseConst "Simple" Simple
+
 -- The initial expression parsing table for types.
 table = [[binOp AssocRight "->" (\d r -> Arr d r)]]
 binOp assoc op f = Text.Parsec.Expr.Infix (do{ ws;reservedOp op;ws;return f}) assoc
 typeParser = ws *> buildExpressionParser table (ws *> typeParser')
-typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tyCastable
+typeParser' = try (parens typeParser) <|> tyNat <|> tyU <|> tyUnit <|> try tySimple
                                       <|> try forall <|> try prod <|> try list <|> tvar
 
 parseType :: String -> Either String Type
@@ -118,25 +119,36 @@ parseType s = case (parse typeParser "" s) of
 -- Next the term parsers.                                             --
 ------------------------------------------------------------------------
 
-int2term :: Integer -> CTerm
-int2term 0 = CZero
-int2term n = CSucc $ int2term $ n-1
+int2term :: Integer -> Term
+int2term 0 = Zero
+int2term n = Succ $ int2term $ n-1
 
 aterm = try (parens pairParse) <|> parens expr    <|> try intParse
-                               <|> try trivParse  <|> try squash
-                               <|> try split      <|> try boxParse
+                               <|> try trivParse  <|> try boxParse
                                <|> try unboxParse <|> try emptyListParse
                                <|> try listNParse <|> var                                
 expr = ws *> (try funParse <|> tfunParse  <|> succParse <|> fstParse  <|> sndParse
                            <|> try caseParse <|> tappParse <|> try listParse <|> appParse <|> parens expr <?> "parse error")
 
 varName = varName' isUpper "Term variables must begin with a lowercase letter."
-var = ws *> var' varName CVar <* ws
+var = ws *> var' varName Var <* ws
 
 intParse = integer >>= return.int2term
 
-zeroParse = parseConst "0" CZero
-trivParse = parseConst "triv" CTriv
+zeroParse = parseConst "0" Zero
+trivParse = parseConst "triv" Triv
+
+boxParse = do
+  symbol "box"
+  ty <- between (symbol "<") (symbol ">") typeParser
+  return $ Box ty
+
+unboxParse = do
+  symbol "unbox"
+  symbol "<"
+  ty <- typeParser
+  symbol ">"
+  return $ Unbox ty
 
 tfunParse = do
   reservedOp "\\"
@@ -149,7 +161,7 @@ tfunParse = do
   symbol ")"
   symbol "->"
   t <- expr
-  return $ CTFun ty $ bind v t
+  return $ TFun ty $ bind v t
 
 tappParse = try $ do
   symbol "["
@@ -157,24 +169,12 @@ tappParse = try $ do
   ws
   symbol "]"
   t <- expr
-  return $ CTApp ty t
-
-boxParse = do
-  symbol "box"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  return $ CBox ty
-
-unboxParse = do
-  symbol "unbox"
-  symbol "<"
-  ty <- typeParser
-  symbol ">"
-  return $ CUnbox ty
+  return $ TApp ty t
 
 succParse = do
   reservedOp "succ"
   t <- expr
-  return $ CSucc t
+  return $ Succ t
          
 caseParse = do
   symbol "case"
@@ -197,17 +197,13 @@ ncaseParse t = do
   symbol ")"         
   symbol "->" 
   t2 <- expr
-  return $ CNCase t t1 (bind x t2)  
+  return $ NCase t t1 (bind x t2)  
 
 lcaseParse t = do
   symbol "[]"
   symbol "->"
   t1 <- expr 
   ws
-  symbol ":"
-  symbol "["
-  ty <- typeParser
-  symbol "]"
   symbol ","
   symbol "("
   hv <- varName
@@ -218,23 +214,23 @@ lcaseParse t = do
   symbol ")"
   symbol "->"
   t2 <- expr
-  return $ CLCase t ty t1 (bind hv (bind tv t2))
+  return $ LCase t t1 (bind hv (bind tv t2))
 
 pairParse = do
   t1 <- expr
   symbol ","
   t2 <- expr
-  return $ CPair t1 t2
+  return $ Pair t1 t2
 
 fstParse = do
   reservedOp "fst"
   t <- expr
-  return $ CFst t
+  return $ Fst t
 
 sndParse = do
   reservedOp "snd"
   t <- expr
-  return $ CSnd t 
+  return $ Snd t 
          
 funParse = do
   reservedOp "\\"
@@ -248,50 +244,40 @@ funParse = do
   symbol ")"  
   symbol "->"
   body <- expr
-  return . CFun ty . bind name $ body
+  return . Fun ty . bind name $ body
 
 appParse = do
   l <- many (ws *> aterm)
   case l of
     [] -> fail "A term must be supplied"
-    _ -> return $ foldl1 CApp l
+    _ -> return $ foldl1 App l
 
 getPos = do
   p <- getPosition
   return (sourceLine p, sourceColumn p, sourceName p)
-
-squash = do
-  symbol "squash"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  return $ (CSquash ty)
-
-split = do
-  symbol "split"
-  ty <- between (symbol "<") (symbol ">") typeParser
-  return $ (CSplit ty)
 
 listNParse = do
   symbol "["
   l <- aterm `sepBy1` (symbol ",")
   symbol "]"
   return $ case l of
-    [] -> CEmpty
-    _ -> foldr CCons CEmpty l
+    [] -> Empty
+    _ -> foldr Cons Empty l
 
 emptyListParse = do
   symbol "[]"
-  return CEmpty
+  return Empty
 
 consParse = do
   lookAhead $ (aterm >> ws >> (symbol "::"))
   l <- aterm `sepBy1` (ws >> symbol "::")
   return $ case l of
     [] -> error "empty list"
-    _ -> foldr1 CCons l
+    _ -> foldr1 Cons l
 
 listParse = (try listNParse) <|> consParse
 
-parseTerm :: String -> Either String CTerm
+parseTerm :: String -> Either String Term
 parseTerm s = case (parse expr "" s) of
                 Left msg -> Left $ show msg
                 Right l -> Right l
@@ -300,10 +286,10 @@ parseTerm s = case (parse expr "" s) of
 -- Parsers for the Files                                              --
 ------------------------------------------------------------------------        
 
-type TypeDef = (CVnm, Type)   
-type ExpDef = (CVnm, CTerm)
+type TypeDef = (Vnm, Type)   
+type ExpDef = (Vnm, Term)
 
-data Prog = Def CVnm Type CTerm
+data Prog = Def Vnm Type Term
   deriving Show
 
 type GFile = Queue Prog      -- Grady file
@@ -422,15 +408,13 @@ runFileParser' path = do
 ------------------------------------------------------------------------        
 
 data REPLExpr =
-   Let CVnm CTerm                -- Toplevel let-expression: for the REPL
- | TypeCheck CTerm               -- Typecheck a term
- | ShowAST CTerm                 -- Show a terms AST
- | DumpState                     -- Trigger to dump the state for debugging.
- | Unfold CTerm                  -- Unfold the definitions in a term for debugging.
- | LoadFile String               -- Loading an external file into the context
- | Eval CTerm                    -- The defualt is to evaluate.
- | HelpMenu                      -- To display help menu
- | DecVar CVnm Type            -- Allows variables to be types for evaluating in CoreRepl
+   Let Vnm Term                 -- Toplevel let-expression: for the REPL
+ | TypeCheck Term               -- Typecheck a term
+ | ShowAST Term                 -- Show a terms AST
+ | DumpState                    -- Trigger to dump the state for debugging.
+ | Unfold Term                  -- Unfold the definitions in a term for debugging.
+ | LoadFile String              -- Loading an external file into the context
+ | Eval Term                    -- The defualt is to evaluate.
  deriving Show
                     
 letParser = do
@@ -466,20 +450,6 @@ replTermCmdParser short long c p = do
   if (cmd == long || cmd == short)
   then return $ c t
   else fail $ "Command \":"++cmd++"\" is unrecognized."
-  
-repl2TermCmdParser short long c p = do
-  symbol ":"
-  cmd <- many lower
-  ws 
-  vname <- varName
-  ws
-  symbol ":"
-  ws
-  ty <- p
-  eof
-  if (cmd == long || cmd == short)
-  then return $ c vname ty
-  else fail $ "Command \":"++cmd++"\" is unrecognized."
 
 replIntCmdParser short long c = do
   symbol ":"
@@ -502,12 +472,8 @@ unfoldTermParser = replTermCmdParser "u" "unfold" Unfold expr
 dumpStateParser = replIntCmdParser "d" "dump" DumpState
 
 loadFileParser = replFileCmdParser "l" "load" LoadFile
-
-helpParser = replIntCmdParser "h" "help" HelpMenu
-
-decvarParser = repl2TermCmdParser "dv" "decvar" DecVar typeParser
-               
-lineParser = try letParser <|> try loadFileParser <|> try helpParser <|> try decvarParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
+              
+lineParser = try letParser <|> try loadFileParser <|> try typeCheckParser <|> try showASTParser <|> try unfoldTermParser <|> try dumpStateParser <|> evalParser
 
 parseLine :: String -> Either String REPLExpr
 parseLine s = case (parse lineParser "" s) of

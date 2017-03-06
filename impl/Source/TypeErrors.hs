@@ -6,10 +6,10 @@ import Control.Applicative
 import Control.Monad.Reader
 import Control.Monad.Except  
 
-import Syntax
-import CoreSyntax  
-import Pretty
-import CorePretty
+import Surface.Syntax
+import Core.Syntax  
+import Surface.Pretty
+import Core.Pretty
 
 --Error Types
 data TypeError = FreeVarsError Vnm
