@@ -111,14 +111,14 @@ insert_casts (LCase t t1 b) = do
               extend_ctx x U $ extend_ctx y (List U) $
                   do (t'2, a') <- insert_casts t2
                      if a `aeq` a'
-                     then return (CLCase (CApp (CSplit (List U)) t') t'1 (bind (translate x) (bind (translate y) t'2)), a)
+                     then return (CLCase (CApp (CSplit U) t') (List U) t'1 (bind (translate x) (bind (translate y) t'2)), a)
                      else throwError $ LCaseBranchesMistype a a'))
     List a -> do (t'1, a') <- insert_casts t1
                  lunbind b $ (\(x,b') -> lunbind b' $ (\(y,t2) ->
                    extend_ctx x a $ extend_ctx y (List a) $
                     do (t'2, a'') <- insert_casts t2
                        if a' `aeq` a''
-                       then return (CLCase t' t'1 (bind (translate x) (bind (translate y) t'2)), a')
+                       then return (CLCase t' (List a) t'1 (bind (translate x) (bind (translate y) t'2)), a')
                        else throwError $ LCaseBranchesMistype a a'))
     _ -> throwError $ LCaseScrutinyTypeError t ty
 insert_casts (Fun ty b) = do
