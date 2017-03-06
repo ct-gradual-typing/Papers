@@ -1,25 +1,64 @@
-Static and dynamic typing can be combined in a very simple and
-intuitive way by extending the work of Scott~\cite{Scott:1980} on
-categorical models of the untyped $\lambda$-calculus.  First, add a
-new type $<<?>>$ read ``the type of untyped programs'' -- also
-sometimes called the unknown type -- and then add four new programs
+In a previous paper the authors \cite{Eades:2017} have shown that
+static and dynamic typing can be combined in a very simple and
+intuitive way by combining the work of Scott~\cite{Scott:1980} and
+Lambek~\cite{Lambek:1980} on categorical models of the untyped and
+typed $\lambda$-calculus, respectively.  First, add a new type $<<?>>$
+read ``the type of untyped programs'' -- also sometimes called the
+unknown type -- and then add four new programs
 $<<split>> : <<? -> (? -> ?)>>$, $ <<squash>> : <<(? -> ?) -> ?>> $,
 $<<box C>> : <<C -> ?>>$, and $<<unbox C>> : <<? -> C>>$, such that,
-$<<squash>>;<<squash>> = \id_{[[? -> ?]]}$ and $<<box C>>;<<unbox C>>
-= \id_{[[C]]}$.  Categorically, $<<split>>$ and $<<squash>>$, and
-$<<box>>$ and $<<unbox>>$ form two retracts.  The authors
-\cite{Eades:2017} have shown in a previous paper that extending the
-simply typed $\lambda$-calculus with these two retracts results in a
-new core casting calculus, called Simply Typed Grady, for Siek and
-Taha's gradual functional type system \cite{Siek:2015}.  Furthermore,
-the authors show that Siek and Taha's system can be given a
-categorical model in cartesian closed categories with the two
-retracts.
+$<<squash>>;<<split>> = \id_{[[? -> ?]]}$ and
+$<<box C>>;<<unbox C>> = \id_{[[C]]}$.
+Categorically, $<<split>>$ and $<<squash>>$, and $<<box>>$ and
+$<<unbox>>$ form two retracts.  Then extending the simply typed
+$\lambda$-calculus with these two retracts results in a new core
+casting calculus, called Simply Typed Grady, for Siek and Taha's
+gradual functional type system \cite{Siek:2015}.  Furthermore, the
+authors show that Siek and Taha's system can be given a categorical
+model in cartesian closed categories with the two retracts.
 
 In this paper we extend Grady with bounded quantification and lists.
 We chose bounded quantification so that the bounds can be used to
 control which types are castable and which should not be.  Currently,
-we will not allow polymorphic types to be cast to the unknown type.  
+we will not allow polymorphic types to be cast to the unknown type,
+because we do not have a good model nor practical examples showing
+this is interesting and useful.  We do this by adding a new bounds,
+$[[SL]]$, whose subtypes are all non-polymorphic types -- referred to
+hence forth as simple types.  Then we give $[[box]]$ and $[[unbox]]$
+the following types:
+\[\small
+\begin{array}{lll}
+  \CGradydruleTXXBox{} & \text{ and } & \CGradydruleTXXUnbox{}
+\end{array}
+\]
+This differs from our previous work where we limited $<<box>>$ and
+$<<unbox>>$ to only atomic types, but then we showed that they could
+be extended to any type by combining $<<box>>$ and $<<unbox>>$ with
+$<<split>>$ and $<<squash>>$.  In this paper we take these extended
+versions as primitive.
+
+Grady now consists of two languages: a surface language -- called
+Surface Grady -- and a core language -- called Core Grady. The
+difference between the surface and the core is that the former is
+gradually typed while the latter is statically typed.  The surface
+will then allow the programmer to leave off explicit casts into the
+unknown type.  Then the surface language will be translated into the
+core by algorithmically inserting the explicit casts.  One should view
+the relationship between the surface language and the core language
+has the former being a subsystem of the latter.  The gradual guarantee
+-- the metatheoretic property that shows that explicit casts can be
+inserted or removed without breaking typeability -- helps enforce this
+relationship.  In fact, this language was designed so that the gradual
+guarantee holds.
+
+Subtyping in Core Grady is standard subtyping for bounded system F
+extended with the new bounds for simple types.  One important point is
+that in Core Grady the unknown type is not a type top, and in fact, is
+only related to itself and $[[SL]]$.  
+
+%% - subtyping for core versus surface
+%% - allowing explicit casts in surface (fix is typable)
+%% - related work
 
 %%% Local Variables: ***
 %%% mode:latex ***
