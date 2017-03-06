@@ -17,6 +17,8 @@ gradual functional type system \cite{Siek:2015}.  Furthermore, the
 authors show that Siek and Taha's system can be given a categorical
 model in cartesian closed categories with the two retracts.
 
+- gradual typing
+
 In this paper we extend Grady with bounded quantification and lists.
 We chose bounded quantification so that the bounds can be used to
 control which types are castable and which should not be.  Currently,
@@ -45,7 +47,7 @@ will then allow the programmer to leave off explicit casts into the
 unknown type.  Then the surface language will be translated into the
 core by algorithmically inserting the explicit casts.  One should view
 the relationship between the surface language and the core language
-has the former being a subsystem of the latter.  The gradual guarantee
+as the former being a subsystem of the latter.  The gradual guarantee
 -- the metatheoretic property that shows that explicit casts can be
 inserted or removed without breaking typeability -- helps enforce this
 relationship.  In fact, this language was designed so that the gradual
@@ -53,8 +55,9 @@ guarantee holds.
 
 Subtyping in Core Grady is standard subtyping for bounded system F
 extended with the new bounds for simple types.  One important point is
-that in Core Grady the unknown type is not a type top, and in fact, is
-only related to itself and $[[SL]]$.  
+that in Core Grady the unknown type is not a top type, and in fact, is
+only related to itself and $[[SL]]$.  However, subtyping in the
+surface language is the 
 
 %% - subtyping for core versus surface
 %% - allowing explicit casts in surface (fix is typable)
