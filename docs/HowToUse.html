@@ -4,6 +4,14 @@
 		<title>How To Use Grady</title>
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="grady.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script>
+            
+            
+            $('#Intro').click(function(){
+                $("p").toggle();
+            });
+        </script>
 	</head>
 	<body>
 	<div id="wrapper">
@@ -36,30 +44,29 @@
                 </p>
             </div>
 			<div id="Replcmds">
-                <h2>Repl Commands</h2>
-                <h4>Used in either Repl</h4>
+                <h2>Repl Commands - Both Repls</h2>
                 <div class="command">
-                    <h3>:help/:h</h3>
+                    <h3>:help (:h)</h3>
                     <p>
                        At any time in the Repl use this command to enter into the help menu.  From here you 
                        will see a list of all commands available.
                     </p>
                 </div>
                 <div class="command">
-                    <h3>:type/:t &lt;term&gt;</h3>
+                    <h3>:type (:t) &lt;term&gt;</h3>
                     <p>
                        This command allows you to typecheck a term.  If the term typechecks, the term's type is 
                        returned.  If the term does not typecheck, then the appropriate error message is returned.
                     </p>
                 </div>
                 <div class="command">
-                    <h3>:show/:s &lt;term&gt;</h3>
+                    <h3>:show (:s) &lt;term&gt;</h3>
                     <p>
                        The show command will display the abstract syntax type of the provided term.
                     </p>
                 </div>
                 <div class="command">
-                    <h3>:unfold/:u &lt;term&gt;</h3>
+                    <h3>:unfold (:u) &lt;term&gt;</h3>
                     <p>
                        Unfold displays your term and where appropriate substitutes terms from 
                        the context into your term.  In this way a function that is composed of several
@@ -67,14 +74,14 @@
                     </p>
                 </div>
                 <div class="command">
-                    <h3>:dump/:d</h3>
+                    <h3>:dump (:d)</h3>
                     <p>
                        The dump command will display the terms in the context.  These will be displayed in the form
                        "let &lt;variable&gt; = &lt;term&gt;"
                     </p>
                 </div>
                 <div class="command">
-                    <h3>:load/:l &lt;filename&gt;</h3>
+                    <h3>:load (:l) &lt;filename&gt;</h3>
                     <p>
                        You may load an external file of definitions using this command.  These files are
                        requred to have the extention .gry.  The terms are all typedchecked and then add to the context 
@@ -84,81 +91,191 @@
                     </p>
                 </div>
             </div>
-            <div id="syntax">
+            <div id="syntaxTypes">
                 <h2>Syntactic Types</h2>
                 <div class="command">
-                    <h3>Variable binding</h3>
+                    <h3>Type Variable Binding</h3>
                     <p>
-                       Binding a variable to a term is done with a "let" statement.  If you wanted to have a variable
-                       named <strong>true</strong> bound to a term it would look like <strong>let true = \(p:?) -> \(q:?) -> p</strong>.
-                       This means that the variable takes it two parameters of type <strong>?</strong>, which
-                       is the untyped type, and returns an element of the same type.
-                       
+                    <strong>let &lt;variable name&gt; = &lt;type&gt;</strong><br>
+                       Binding a type to a variable is done with a "let" statement.  The variable persists in the context and can be viewed using the <strong>:dump</strong> command.                         
                        All bindings must typecheck.
                     </p>
                 </div>
-                <div class="command">
-                    <h3>Simple Type</h3>
-                    <p>
-                       ?????
-                    </p>
-                </div>
+                <!-- Do we need this one displayed???
+                <div class="command"> -->
+                    <!-- <h3>Simple</h3> -->
+                    <!-- <p> -->
+                       <!-- Universe of simple types -->
+                    <!-- </p> -->
+                <!-- </div> -->
                 <div class="command">
                     <h3>Natural Number Type</h3>
                     <p>
-                       Any natural number.  The type is notated as <strong>Nat</strong>.<br>
-                       An example: <strong>\(m:Nat)</strong><br>
-                       This indicates that <strong>m</strong> has the Natural Number type.
+                       <strong>Nat</strong> <br>
+                       Any natural number.  
                     </p>
                 </div>
                 <div class="command">
                     <h3>Unit Type</h3>
                     <p>
-                       ?????
+                       <strong>Unit</strong>
                     </p>
                 </div>
                 <div class="command">
                     <h3>Untyped</h3>
                     <p>
-                       This type represents the an element in the untyped universe.  Its notation is 
-                       <strong>?</strong>.<br>
-                       An example: <strong>\(m:?)</strong><br>
-                       This indicates that <strong>m</strong> has the untyped type.
+                       <strong>?</strong> <br>
+                       This type represents the an element in the untyped universe.<br>
+                       <strong>Note: </strong>This is only used in the Core Repl.
                     </p>
                 </div>
                 <div class="command">
                     <h3>Function Type</h3>
                     <p>
-                       This type allows Grady to represent functions using an arrow, <strong>-></strong>.<br>
-                       An example: <strong>\(m:? -> ?)</strong><br>
-                       In the example, <strong>m</strong> is a function that takes in an element of type
-                       <strong>?</strong> and returns something of the same type.
+                        <strong>&lt;type&gt; -> &lt;type&gt;</strong> <br>
+                       This type allows Grady to represent functions using an arrow. 
                     </p>
                 </div>
                 <div class="command">
                     <h3>Product Type</h3>
                     <p>
-                       The product type, notated as <strong>(,)</strong> takes two elements and maintains them
-                       as a tuple.<br>
-                       An example: <strong>\(m:(?,Nat))</strong><br>
-                       Here you can see that <strong>m</strong> is a tuple of two elements.  The first
-                       projection is of type <strong>?</strong> and the second projection is of type
-                       <strong>Nat</strong>.
+                       <strong>(&lt;type&gt;,&lt;type&gt;)</strong> <br>
+                       The product type takes two elements and maintains them
+                       as a tuple.
                     </p>
                 </div>
                 <div class="command">
                     <h3>List Type</h3>
                     <p>
-                       In Grady you may use lists using the List type.  It is denoted, <strong>[]</strong> with
-                       items in the list separated by commas.  All items in the list must have the same type.<br>
-                       For example: <strong>[1,2,3]</strong><br>
-                       This is simply a list containing the natural numbers 1,2, and 3.
+                       <strong>[&lt;term&gt;]</strong><br>
+                       In Grady you may use lists using the List type, with
+                       items in the list separated by commas.  All items in the list must have the same type.
+                       <strong>Note: </strong>This is only used in the Surface Repl.
                     </p>
                 </div>
                 <div class="command">
-                    <h3>Universal Quantification</h3>
+                    <h3>Forall Type</h3>
                     <p>
-                       ?????
+                       Universal quantification
+                    </p>
+                </div>
+            </div>
+            <div id="syntaxSurface">
+                <h2>Syntax Terms</h2>
+                <div class="command">
+                    <h3>Term Variable Binding</h3>
+                    <p>
+                    <strong>let &lt;variable name&gt; = &lt;term&gt;</strong><br>
+                       Binding a type to a variable is done with a "let" statement.  The variable persists in the context and can be viewed using the <strong>:dump</strong> command.                         
+                       All bindings must typecheck.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Triv</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Box</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Unbox</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Functions</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Type Functions</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Application</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Type Application</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Pair</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>First Projection</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Second Projection</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Successor</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Zero</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Natural Number Eliminator</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Empty List</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Cons</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>List Eliminator</h3>
+                    <p>
+                    
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Split</h3>
+                    <p>
+                    <strong>Note: </strong>This is only used in the Core Repl.
+                    </p>
+                </div>
+                <div class="command">
+                    <h3>Squash</h3>
+                    <p>
+                    <strong>Note: </strong>This is only used in the Core Repl.
                     </p>
                 </div>
             </div>
@@ -170,15 +287,4 @@
 	</div>
 </body>
 </html>
-/*
-Top                     -- Top type
- | Simple                  -- Castable type
- | Nat                     -- Natural number type
- | Unit                    -- Unit type
- | U                       -- Untyped universe
- | Arr Type Type           -- Function type
- | Prod Type Type          -- Product type
- | List Type               -- List type
- | Forall Type (Bind TVnm Type) -- Universal quantification
- */
  
