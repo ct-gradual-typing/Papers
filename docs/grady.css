@@ -33,7 +33,6 @@ body{
 header{
 	color: #FFFFFF;
 	background-color: #FC4349;
-	background-image: url("headerPic.png");
 	background-position: right;
 	background-repeat: no-repeat;
 	border-radius: 10px 10px 0 0;
@@ -85,7 +84,7 @@ h1{
 
 h2{
 	margin: 0;
-	padding: 0 10px 5px;
+	padding: 0 5px 10px;
 	font-size: 18pt;
 	line-height: 22pt;
 	font-weight: bold;
