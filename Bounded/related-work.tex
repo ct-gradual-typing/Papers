@@ -1,0 +1,83 @@
+We now give a brief summary of related work. Each of the articles
+discussed below can be consulted for further references.
+%% - Combing static and dynamic typing
+%% - Gradual Typing
+%%    - Polymorphism
+\begin{itemize}
+\item Abadi et al.~\cite{Abadi:1989} combine dynamic and static typing
+  by adding a new type called $\mathsf{Dynamic}$ along with a new case
+  construct for pattern matching on types.  We do not add such a case
+  construct, and as a result, show that we can obtain a surprising
+  amount of expressivity without it.  They also provide denotational
+  models.
+\item[]
+\item Henglein~\cite{Henglein:1994} defines the dynamic
+  $\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to the simply
+  typed $\lambda$-calculus and then adding primitive casting
+  operations called tagging and check-and-untag.  These new operations
+  tag type constructors with their types.  Then untagging checks to
+  make sure the target tag matches the source tag, and if not, returns
+  a dynamic type error.  These operations can be used to build casting
+  coercions which are very similar to our casting morphisms. We can
+  also define $<<split>>$, $<<squash>>$, $<<box>>$, and $<<unbox>>$ in
+  terms of Henglein's casting coercions.  We consider our previous
+  paper \cite{Eades:2017} as a clarification of Henglein's system.
+  His core casting calculus can be interpreted into our setting where
+  we require retracts instead of full isomorphisms.  This paper can be
+  seen as a further extension of this type of work to include bounded
+  quantification.
+\item[]
+\item There is a long history of polymorphism in both static and
+  dynamic typing, and in systems that combine static and dynamic
+  typing. Henglein and Rehof~\cite{Henglein:1995} and
+  Rehof~\cite{Rehof:1995} show how to extend Henglein's previous work
+  on combining static and dynamic typing discussed above.  This work
+  improves on their work by considering bounded quantification and
+  adding a gradually typed surface language.
+
+  \ \\
+  Matthews and Ahmed~\cite{Matthews:2008:PPT:1792878.1792881} extend
+  Girard/Reynolds' System F with static and dynamic typing where the
+  unknown type is allowed to be cast to a type variable.  They call
+  this type of cast ``consealing''.  This was extended by Ahmed et
+  al.~\cite{Ahmed:2011:BLA:1926385.1926409} into a casting calculus
+  with blame that included the ability to cast a polymorphic type to
+  the unknown type and vice versa.  Grady also includes that ability
+  to box and unbox a type variable, but we have chosen not to allow
+  one to cast a polymorphic type to the unknown type or vice
+  versa. Currently, we are unsure how this will affect gradual typing,
+  and we do not have a denotational model that allows this.  We hope
+  to include this feature in future work.
+
+  \ \\
+  Ahmed et al.~\cite{Ahmed:2011:BLA:1926385.1926409} has some
+  similarities to this paper.  Their ``compatibility'' relation is
+  similar to type consistency, and they also discuss
+  subtyping. However, they do not give a gradually type surface
+  language.  In addition, our system can be seen as a further
+  clarification of the underlying structure of the casting fragment of
+  their system.  We do not have full explicit casts of the form $t : A
+  \Rightarrow B$, but instead only have $<<box>>$, $<<unbox>>$,
+  $<<split>>$, and $<<squash>>$.  
+\item[]
+\item As we mentioned in the introduction Siek and
+  Taha~\cite{Siek:2006} were the first to define gradual typing
+  especially for functional languages, but only for simple types.
+  Since their original paper introducing gradual types lots of
+  languages have adopted it, but the term ``gradual typing'' started
+  to become a catch all phrase for any language combining dynamic and
+  static typing.  As a result of this Siek et al.~\cite{Siek:2015}
+  later refine what it means for a language to support gradual typing
+  by specifying the necessary metatheoretic properties a gradual type
+  system must satisfy called the gradual guarantee.  We prove the
+  gradual guarantee for Grady in Section~\ref{sec:results}.
+
+  \ \\
+  Subtyping for gradual type systems was introduced by Siek and
+  Taha~\cite{Siek:2007}, and then further extended by
+  Garcia~\cite{Garcia:2016}.  However, neither consider polymorphism.
+  The subtyping system for Grady is based on Garcia's work.  He does
+  indeed prove the gradual guarantee, but again, his work does not
+  consider polymorphism.
+
+\end{itemize}

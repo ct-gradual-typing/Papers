@@ -21,11 +21,11 @@ In this paper we extend Grady with bounded quantification and lists.
 We chose bounded quantification so that the bounds can be used to
 control which types are castable and which should not be.  Currently,
 we will not allow polymorphic types to be cast to the unknown type,
-because we do not have a good model nor practical examples showing
-this is interesting and useful.  We do this by adding a new bounds,
-$[[SL]]$, whose subtypes are all non-polymorphic types -- referred to
-hence forth as simple types.  Then we give $[[box]]$ and $[[unbox]]$
-the following types:
+because we do not have a good model nor are we sure how this would
+affect gradual typing.  We do this by adding a new bounds, $[[SL]]$,
+whose subtypes are all non-polymorphic types -- referred to hence
+forth as simple types.  Then we give $[[box]]$ and $[[unbox]]$ the
+following types:
 \[\small
 \begin{array}{lll}
   \CGradydruleTXXBox{} & \text{ and } & \CGradydruleTXXUnbox{}
@@ -65,9 +65,10 @@ function:
 \end{array}
 \]
 As we will see below $[[G |- ? ~ A]]$ for any type $[[A]]$.  As an
-example, suppose $[[G |- t1 : ?]]$ and $[[G |- t2 : Nat]]$.  Then
-based on the rule above, we know that $[[G |- ? ~ Nat]]$, and
-$[[fun(?) = ? -> ?]]$, thus, $[[G |- t1 t2 : ?]]$ is typable.  Notice
+example, suppose $[[G |- t1 : ?]]$ and $[[G |- t2 : Nat]]$.  In addition, we know
+$[[G |- ? ~ Nat]]$, and $[[fun(?) = ? -> ?]]$.
+Then
+based on the rule above $[[G |- t1 t2 : ?]]$ is typable.  Notice
 there are no explicit casts.  Using $<<split>>$ and $<<box Nat>>$ we
 can translate this application into Core Grady by adding the casts:
 $<<G |- (split (? -> ?) t1) (box Nat t2) : ?>>$.
@@ -76,18 +77,20 @@ Subtyping in Core Grady is standard subtyping for bounded system F
 extended with the new bounds for simple types.  One important point is
 that in Core Grady the unknown type is not a top type, and in fact, is
 only related to itself and $[[SL]]$.  However, subtyping in the
-surface language is substantially different.  Subtyping in Surface
-Grady is the combination of subtyping and type consistency called
-consistent subtyping due to Garcia~\cite{Garcia:2016}.  We denote
-consistent subtyping by $[[G |- A <~ B]]$.  Unlike Core Grady we have
-$[[G |- ? <~ A]]$ and $[[G |- A <~ ?]]$ for any type $[[A]]$.  This
-gives us some flexibility when instantiating polymorphic functions.
-For example, suppose $[[G |- t : Forall (X <: Nat).(X -> X)]]$.  Then,
-$[[G |- [?]t : ? -> ?]]$ is typable, as well as, $[[G |- [Nat]t : Nat
-    -> Nat]]$ by subsumption.  Similarly, if $[[G |- t : Forall (X <:
-    ?).(X -> X)]]$, then we can instantiate $[[t]]$ with any type at
-all.  This seems very flexible, but it turns out that it does nothing
-more than what Core Grady allows when adding explicit casts.
+surface language is substantially different.
+
+In Surface Grady subtyping is the combination of subtyping and type
+consistency called consistent subtyping due to
+Garcia~\cite{Garcia:2016}.  We denote consistent subtyping by $[[G |-
+    A <~ B]]$.  Unlike Core Grady we have $[[G |- ? <~ A]]$ and $[[G
+    |- A <~ ?]]$ for any type $[[A]]$.  This gives us some flexibility
+when instantiating polymorphic functions.  For example, suppose $[[G
+    |- t : Forall (X <: Nat).(X -> X)]]$.  Then, $[[G |- [?]t : ? ->
+    ?]]$ is typable, as well as, $[[G |- [Nat]t : Nat -> Nat]]$ by
+subsumption.  Similarly, if $[[G |- t : Forall (X <: ?).(X -> X)]]$,
+then we can instantiate $[[t]]$ with any type at all.  This seems very
+flexible, but it turns out that it does nothing more than what Core
+Grady allows when adding explicit casts.
 
 One feature Surface Grady has that cannot be found in previous systems
 is allowing explicit casts in the surface language.  Adding this
@@ -95,11 +98,27 @@ feature actually increases the expressivity of the language.  For
 example, consider the following Surface Grady program -- here we use
 the concrete syntax from Grady's implementation, but it is very
 similar to Haskell and not far from the mathematical syntax:
+\begin{lstlisting}[language=Haskell]
+  omega : ? -> ?
+  omega = \(x : ?) -> (x x);
 
+  ycomb : (? -> ?) -> ?
+  ycomb = \(f : ? -> ?) -> omega (\(x:?) -> f (x x));
 
-%% - subtyping for core versus surface
-%% - allowing explicit casts in surface (fix is typable)
-%% - related work
+  fix : forall (X <: Simple).((X -> X) -> X)
+  fix = \(X <: Simple) -> \(f:X -> X) -> unbox<X> (ycomb f);
+\end{lstlisting}
+The previous example defines the Y combinator and a polymorphic fix
+point operator.  This example is gradually typed, for example, in the
+definition of \ginline{omega} we are applying \ginline{x} to
+itself without an explicit cast.  However, there is one explicit cast
+in the definition of \ginline{fix} which applies
+\ginline{unbox} to the result of the Y combinator.  If we did not
+have this explicit cast, then \ginline{fix} would not type check.
+This is because the application rule -- given above -- does not allow
+one to cast the result of the application.  Thus, allowing explicit
+casts in the surface language along side gradual typing increases the
+number of valid programs.
 
 %%% Local Variables: ***
 %%% mode:latex ***

@@ -101,10 +101,7 @@
 
 \lstnewenvironment{haskell}{\lstset{language=Haskell}}{}
 
-% pour inliner dans le texte
-\def\hasqel{\lstinline[language=Haskell, basicstyle=\small]}
-% pour inliner dans les tableaux / displaymath...
-\def\haskels{\lstinline[language=Haskell, basicstyle=\scriptsize]}
+\def\ginline{\lstinline[language=Haskell, basicstyle=\small]}
 
 \newenvironment{enumR}{\begin{enumerate}[label=\roman*.,align=left]}{\end{enumerate}}
 \newenvironment{enumA}{\begin{enumerate}[label=\alph*.]}{\end{enumerate}}
@@ -258,6 +255,11 @@
 \label{sec:introduction}
 \input{introduction-ott}
 % section introduction (end)
+
+\section{Related Work}
+\label{sec:related-work}
+\input{related-work-ott}
+% section related-work (end)
 
 \section{Grady: A Categorically Inspired Gradual Type System}
 \label{sec:grady:_a_categorical_inspired_gradual_type_system}
