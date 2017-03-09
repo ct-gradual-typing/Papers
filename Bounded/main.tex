@@ -147,6 +147,7 @@
 \input{surface-grady-inc}
 \renewcommand{\SGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SGradydrulename{#4}}}
 \renewcommand{\SGradydrulename}[1]{#1}
+
 \renewcommand{\SGradydruleSXXReflName}{\text{refl}}
 \renewcommand{\SGradydruleSXXVarName}{\text{var}}
 \renewcommand{\SGradydruleSXXBoxName}{\mathsf{box}}
@@ -155,6 +156,14 @@
 \renewcommand{\SGradydruleSXXProdName}{\times}
 \renewcommand{\SGradydruleSXXArrowName}{\to}
 \renewcommand{\SGradydruleSXXForallName}{\forall}
+\renewcommand{\SGradydruleSXXTopName}{\text{top}}
+\renewcommand{\SGradydruleSXXUSLName}{\text{?}_\mathcal{S}}
+\renewcommand{\SGradydruleSXXNatSLName}{\mathsf{Nat}_\mathcal{S}}
+\renewcommand{\SGradydruleSXXUnitSLName}{\mathsf{Unit}_\mathcal{S}}
+\renewcommand{\SGradydruleSXXListSLName}{\mathsf{List}_\mathcal{S}}
+\renewcommand{\SGradydruleSXXArrowSLName}{\to_\mathcal{S}}
+\renewcommand{\SGradydruleSXXProdSLName}{\times_\mathcal{S}}
+
 \renewcommand{\SGradydruleCXXReflName}{\text{refl}}
 \renewcommand{\SGradydruleCXXBoxName}{\mathsf{box}}
 \renewcommand{\SGradydruleCXXUnboxName}{\mathsf{unbox}}
@@ -162,6 +171,7 @@
 \renewcommand{\SGradydruleCXXArrowName}{\to}
 \renewcommand{\SGradydruleCXXProdName}{\times}
 \renewcommand{\SGradydruleCXXForallName}{\forall}
+
 \renewcommand{\SGradydruleTXXvarPName}{\text{var}}
 \renewcommand{\SGradydruleTXXBoxName}{\mathsf{box}}
 \renewcommand{\SGradydruleTXXUnboxName}{\mathsf{unbox}}
@@ -180,6 +190,7 @@
 \renewcommand{\SGradydruleTXXLamName}{\forall_i}
 \renewcommand{\SGradydruleTXXtypeAppName}{\forall_e}
 \renewcommand{\SGradydruleTXXSubName}{\text{sub}}
+
 \renewcommand{\SGradydruleciXXvarName}{}
 \renewcommand{\SGradydruleciXXBoxName}{}
 \renewcommand{\SGradydruleciXXUnboxName}{}
@@ -266,7 +277,13 @@
 \section{Grady: A Categorically Inspired Gradual Type System}
 \label{sec:grady:_a_categorical_inspired_gradual_type_system}
 
-
+We begin by introducing the surface and core languages making up
+Grady.  Throughout this section we give a number of interesting
+examples.  All example programs will be given in the concrete syntax
+of Grady\footnote{The implementation and documentation of Grady can be
+  found at \url{http://www.ct-gradual-typing.github.io/Grady}.}.  Both
+the surface and the core languages are based on Bounded System F; for
+an introduction please see Pierce~\cite{Pierce:2002:TPL:509043}.
 
 \subsection{Surface Grady: A Gradual Type System}
 \label{subsec:surface_grady:_a_gradual_type_system}

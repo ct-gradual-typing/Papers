@@ -1,30 +1,124 @@
-\begin{figure}
-  \begin{mdframed}
-    \begin{mathpar}
-      \SGradydruleSXXRefl{} \and
-    \SGradydruleSXXTop{} \and      
-    \SGradydruleSXXVar{} \and
-    \SGradydruleSXXBox{} \and    
-    \SGradydruleSXXUnbox{} \and
-    \SGradydruleSXXUSL{} \and
-    \SGradydruleSXXNatSL{} \and
-    \SGradydruleSXXUnitSL{} \and    
-    \SGradydruleSXXListSL{} \and
-    \SGradydruleSXXProdSL{} \and
-    \SGradydruleSXXArrowSL{} \and
-    \SGradydruleSXXList{} \and
-    \SGradydruleSXXProd{} \and
-    \SGradydruleSXXArrow{} \and
-    \SGradydruleSXXForall{}
-  \end{mathpar}
-  \end{mdframed}
-  \caption{Subtyping for Surface Grady}
-  \label{fig:subtyping-surface-grady}
-\end{figure}
+The aim of the gradual typing is to allow the programmer to program
+either statically and catch as many errors at compile time as
+possible, or to program in dynamic style and leave some error checking
+to run time, but the programmer should not be burdened by having to
+explicitly insert casts.  Surface Grady is gradually typed and in this
+section we give the details of the language.
 
+Surface Grady's syntax is defined in
+Fig.~\ref{fig:syntax-surface-grady}.  
 \begin{figure}
+  \small
   \begin{mdframed}
-    \begin{mathpar}
+    \begin{itemize}
+    \item[] \textbf{Syntax:}
+      \[
+      \begin{array}{cl}
+        \begin{array}{l}
+          \text{(types)}\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[A]],[[B]],[[C]] & ::= & [[X]] \mid [[Top]] \mid [[SL]] \mid [[Unit]] \mid [[Nat]] \mid [[?]] \mid [[List A]] \mid [[A x B]] \mid [[A -> B]] \\ & \mid &[[Forall (X <: A).B]]\\
+        \end{array}\\\\
+        
+        %% \text{(skeletons)} &
+        %% \begin{array}{lcl}
+        %%   [[S]] & ::= & [[?]] \mid [[List S]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
+        %% \end{array}\\\\
+        
+        \begin{array}{l}
+          \text{(terms)}\\\\\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[t]] & ::= & [[x]] \mid [[triv]] \mid [[box A]] \mid [[unbox A]] \mid [[0]] \mid [[succ t]] \\ & \mid & [[case t of 0 -> t1, (succ x) -> t2]] \mid [[(t1 , t2)]] \mid [[fst t]] \mid [[snd t]] \\ & \mid & [[ [] ]] \mid [[t1 :: t2]] \mid [[case t of [] -> t1, (x :: y) -> t2]] \mid [[\x : A.t]] \\ & \mid & [[t1 t2]] \mid [[Lam X <: A.t]] \mid [[ [ A ] t ]]\\
+        \end{array}\\\\
+        
+        \text{(contexts)}  &
+        \begin{array}{lcl}
+          [[G]] & ::= & [[.]] \mid [[x : A]] \mid [[G1,G2]]\\
+        \end{array}\\
+      \end{array}
+      \]
+    \item[] \textbf{Metafunctions:}
+      \[
+      \begin{array}{lll}
+        \begin{array}{lll}
+          [[nat(?) = Nat]]\\
+          [[nat(Nat) = Nat]]\\
+        \end{array}
+        & \quad & 
+        \begin{array}{lll}
+          [[list(?) = List ?]]\\
+          [[list(List A) = List A]]\\
+        \end{array}\\\\                       
+        \begin{array}{lll}
+          [[prod(?) = ? x ?]]\\
+          [[prod(A x B) = A x B]]\\
+        \end{array}
+        & \quad &
+        \begin{array}{lll}
+          [[fun(?) = ? -> ?]]\\
+          [[fun(A -> B) = A -> B]]\\
+        \end{array}
+      \end{array}
+      \]
+    \end{itemize}
+  \end{mdframed}
+  \caption{Syntax and Metafunctions for Surface Grady}
+  \label{fig:syntax-surface-grady}
+\end{figure}
+The types $[[Top]]$ and $[[SL]]$ will be used strictly as upper bounds
+with respect to quantification, and so, they will not have any
+introduction typing rules. The type of polymorphic functions is
+$[[Forall (X <: A).B]]$ where $[[A]]$ is the called the bound on the
+type variable $[[X]]$.  This bound will restrict which types are
+allowed to replace $[[X]]$ during type application -- also known as
+instantiation.  The restriction is that the type one wishes to replace
+$[[X]]$ with must be a subtype of the bounds $[[A]]$.  As we mentioned
+in the introduction the type $[[?]]$ is the unknown type and should be
+thought of as the universe of untyped terms.
+%% 
+%% Skeletons are the bare bones structure of types.  The skeleton,
+%% $[[S]]$, of a type $[[A]]$ is $[[A]]$ where every atomic type as been
+%% replaced with $[[?]]$.  
+Syntax for terms and typing contexts are fairly standard.  One thing
+to note is that we do allow explicit boxing and unboxing, but not
+splitting and squashing, the latter are a purely core language
+feature.  This is because any use of splitting or squashing can be
+algorithmically inserted, and so the programmer never has to worry
+about inserting those explicitly.  Keep in mind that even though we
+allow explicitly boxing and unboxing in the surface language most
+places where boxing and unboxing would be used can be algorithmically
+inserted, and so the programmer should only use explicit boxing and
+unboxing in places where the algorithm fails.
+
+The rules defining type consistency and consistent subtyping can be
+found in Fig.~\ref{fig:subtyping-surface-grady}.  
+\begin{figure}
+  \small
+  \begin{mdframed}
+    \begin{itemize}
+    \item[] \textbf{Consistent Subtyping:}
+      \begin{mathpar}
+        \SGradydruleSXXRefl{} \and
+        \SGradydruleSXXTop{} \and      
+        \SGradydruleSXXVar{} \and
+        \SGradydruleSXXBox{} \and    
+        \SGradydruleSXXUnbox{} \and
+        \SGradydruleSXXUSL{} \and
+        \SGradydruleSXXNatSL{} \and
+        \SGradydruleSXXUnitSL{} \and    
+        \SGradydruleSXXListSL{} \and
+        \SGradydruleSXXProdSL{} \and
+        \SGradydruleSXXArrowSL{} \and
+        \SGradydruleSXXList{} \and
+        \SGradydruleSXXProd{} \and
+        \SGradydruleSXXArrow{} \and
+        \SGradydruleSXXForall{}
+      \end{mathpar}
+      
+    \item[] \textbf{Type Consistency:}
+      \begin{mathpar}
       \SGradydruleCXXRefl{} \and
       \SGradydruleCXXBox{} \and
       \SGradydruleCXXUnbox{} \and
@@ -33,12 +127,42 @@
       \SGradydruleCXXProd{} \and
       \SGradydruleCXXForall{}      
     \end{mathpar}
-  \end{mdframed}  
-  \caption{Type consistency for Surface Grady}
-  \label{fig:type-consistency-surface-grady}
+    \end{itemize}
+  \end{mdframed}
+  \caption{Subtyping and Type Consistency for Surface Grady}
+  \label{fig:subtyping-surface-grady}
 \end{figure}
+In a gradual type system we use a reflexive and symmetric, but
+non-transitive, relation on types to determine when two types may be
+cast between each other \cite{Siek:2006}.  This relation is called
+type consistency, and is denoted by $[[G |- A ~ B]]$.
+Non-transitivity prevents the system from being able to cast between
+arbitrary types.  The type $[[SL]]$ stands for ``simple types'' and is
+a super type whose subtypes are all non-polymorphic types.  Thus, by
+the definition of type consistency the only types that can be boxed or
+unboxed are non-polymorphic types.  Note that the type consistency
+rules $\SGradydruleCXXBoxName{}$ and $\SGradydruleCXXUnboxName{}$
+embody boxing and unboxing, and splitting and squashing.  The
+remainder of the rules simply are congruence rules.  We will use this
+intuition when translating Surface Grady to Core Grady.
 
+Consistent subtyping, denoted $[[G |- A <~ B]]$, was proposed by Siek
+and Taha~\cite{Siek:2007} in their work extending gradual type systems
+to object oriented programming.  It embodies both standard subtyping,
+denoted $[[G |- A <: B]]$, and type consistency.  Thus, consistent
+subtyping is also non-transitive.  One major difference between this
+definition of consistent subtyping and others found in the literature,
+for example in \cite{Siek:2007} and \cite{Garcia:2016}, is the rule
+for type variables.  Naturally, we must have a rule for type
+variables, because we are dealing with polymorphism, but the proof of
+the gradual guarantee -- see Section~\ref{sec:results} -- required
+that this rule be relaxed and allow the bounds provided by the
+programmer to be consistent with the subtype in question.  
+
+Typing for Surface Grady is given in
+Fig.~\ref{fig:typing-surface-grady}.
 \begin{figure}
+  \small
   \begin{mdframed}
     \begin{mathpar}
       \SGradydruleTXXvarP{} \and
@@ -64,35 +188,21 @@
   \caption{Typing rules for Surface Grady}
   \label{fig:typing-surface-grady}
 \end{figure}
-
-\begin{figure}
-  \begin{mdframed}
-    \begin{mathpar}
-      \SGradydruleciXXvar{} \and
-      \SGradydruleciXXBox{} \and
-      \SGradydruleciXXUnbox{} \and
-      \SGradydruleciXXzero{} \and
-      \SGradydruleciXXtriv{} \and
-      \SGradydruleciXXsuccU{} \and
-      \SGradydruleciXXsucc{} \and
-      \SGradydruleciXXncaseU{} \and
-      \SGradydruleciXXncase{} \and
-      \SGradydruleciXXpair{} \and
-      \SGradydruleciXXfstU{} \and
-      \SGradydruleciXXfst{} \and
-      \SGradydruleciXXsndU{} \and
-      \SGradydruleciXXsnd{} \and
-      \SGradydruleciXXEmpty{} \and
-      \SGradydruleciXXcons{} \and
-      \SGradydruleciXXlcaseU{} \and
-      \SGradydruleciXXlcase{} \and
-      \SGradydruleciXXlam{} \and
-      \SGradydruleciXXappU{} \and
-      \SGradydruleciXXapp{} \and
-      \SGradydruleciXXLam{} \and
-      \SGradydruleciXXtypeApp{}
-    \end{mathpar}
-  \end{mdframed}
-  \caption{Cast insertion for Surface Grady}
-  \label{fig:cast-insert-surface-grady}
-\end{figure}
+It follows the formulation of the Gradual Simply Typed
+$\lambda$-calculus given by Siek et al.~\cite{Siek:2015} pretty
+closely.  The most interesting rules are the elimination rules,
+because this is where type consistency -- and hence casting -- comes
+into play.  Consider the elimination for lists:
+\[
+\SGradydruleTXXlcase{}
+\]
+The type $[[C]]$ can be either $[[?]]$ or $[[List A]]$.  If it is the
+former, then $[[C]]$ will be split into $[[List ?]]$.  In addition, we
+allow the type of the branches to be cast to other types as well, just
+as long as, they are consistent with $[[B]]$.  The idea is, the
+branches of a case expression, whether for lists or natural numbers,
+can have different types only when they can be cast to the same type.
+For example, if $[[t1]]$ was a boolean and $[[t2]]$ was a natural
+number, then a type checking will fail, because the types are not
+consistent, and hence, we cannot cast between them.  The other rules
+are setup similarly.
