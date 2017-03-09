@@ -17,6 +17,8 @@
 \usepackage{listings}
 \usepackage{color}
 
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+
 %% From: https://hal.inria.fr/file/index/docid/881085/filename/lsthaskell.sty
 \lstdefinelanguage{Haskell}{ 
   %
@@ -26,9 +28,9 @@
   % Comments may or not include Latex commands
   texcl=false, 
   %
-  morekeywords=[1]{class, instance},
+  morekeywords=[1]{omega, fix, ycomb},
   %
-  morekeywords=[2]{where},
+  morekeywords=[2]{unbox, box},
   %
   morekeywords=[3]{Maybe},
   %
@@ -70,7 +72,7 @@
   % Style for (listings') identifiers
   identifierstyle={\ttfamily\color{black}},
   % Style for declaration keywords
-  keywordstyle=[1]{\ttfamily\color{dkviolet}},
+  keywordstyle=[1]{\ttfamily\color{blue}},
   % Style for gallina keywords
   keywordstyle=[2]{\ttfamily\color{dkgreen}},
   % Style for sorts keywords
@@ -263,6 +265,8 @@
 
 \section{Grady: A Categorically Inspired Gradual Type System}
 \label{sec:grady:_a_categorical_inspired_gradual_type_system}
+
+
 
 \subsection{Surface Grady: A Gradual Type System}
 \label{subsec:surface_grady:_a_gradual_type_system}

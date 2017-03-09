@@ -110,15 +110,16 @@ similar to Haskell and not far from the mathematical syntax:
 \end{lstlisting}
 The previous example defines the Y combinator and a polymorphic fix
 point operator.  This example is gradually typed, for example, in the
-definition of \ginline{omega} we are applying \ginline{x} to
-itself without an explicit cast.  However, there is one explicit cast
-in the definition of \ginline{fix} which applies
-\ginline{unbox} to the result of the Y combinator.  If we did not
-have this explicit cast, then \ginline{fix} would not type check.
-This is because the application rule -- given above -- does not allow
-one to cast the result of the application.  Thus, allowing explicit
-casts in the surface language along side gradual typing increases the
-number of valid programs.
+definition of \ginline{omega} we are applying \ginline{x} to itself
+without an explicit cast.  However, there is one explicit cast in the
+definition of \ginline{fix} which applies \ginline{unbox} to the
+result of the Y combinator.  If we did not have this explicit cast,
+then \ginline{fix} would not type check.  This is because the
+application rule -- given above -- does not allow one to cast the
+result of the application.  Thus, allowing explicit casts in the
+surface language along side gradual typing increases the number of
+valid programs.  We will use \ginline{fix} to develop quite a few
+interesting examples including a full library of operations on lists.
 
 %%% Local Variables: ***
 %%% mode:latex ***
