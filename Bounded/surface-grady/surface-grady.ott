@@ -343,10 +343,6 @@ defn
     G |- ? <~ A
 
     G Ok
-    ------------ :: USL
-    G |- ? <~ SL
-
-    G Ok
     -------------- :: NatSL
     G |- Nat <~ SL
 

@@ -230,10 +230,6 @@ defn
     X <: A elem G && G Ok
     ---------------------:: Var
     G |- X <: A
-
-    G Ok
-    ------------ :: USL
-    G |- U <: SL
     
     G Ok
     -------------- :: NatSL
@@ -308,13 +304,13 @@ by
     -------------------- :: var
     G |- x <= x
 
-    K1 <= K2
+    S1 <= S2
     ------------------------- :: split
-    G |- split K1 <= split K2
+    G |- split S1 <= split S2
 
-    K1 <= K2
+    S1 <= S2
     --------------------------- :: squash
-    G |- squash K1 <= squash K2
+    G |- squash S1 <= squash S2
 
     G Ok
     --------------- :: box
@@ -382,11 +378,11 @@ by
 
     G |- t : ?
     --------------------- :: spliting
-    G |- (split K t) <= t
+    G |- (split S t) <= t
 
-    G |- t : K
+    G |- t : S
     --------------------- :: squashing
-    G |- t <= (squash K t)
+    G |- t <= (squash S t)
 
     G, X <: A |- t1 <= t2
     --------------------------------------- :: tfun
@@ -418,11 +414,11 @@ defn
 
     G Ok
     ---------------------- :: squash
-    G |- squash K : K -> ?
+    G |- squash S : S -> ?
 
     G Ok
     --------------------- :: split
-    G |- split K : ? -> K
+    G |- split S : ? -> S
 
     G Ok
     ---------------- :: unitP
@@ -504,11 +500,11 @@ by
     unbox A (box B t) ~> error A
 
     ------------------------- :: retractU
-    split U (squash U t) ~> t
+    split S (squash S t) ~> t
 
-    U1 != U2
+    S1 != S2
     ---------------------------------- :: retractUE
-    split U1 (squash U2 t) ~> error U1
+    split S1 (squash S2 t) ~> error S1
 
     t ~> t'
     ----------------- :: succ
@@ -555,21 +551,17 @@ by
     --------------- :: app
     t1 t2 ~> t'1 t2
 
-    t ~> t'
-    ------------------------ :: squash
-    squash K t ~> squash K t'
+    t2 ~> t'2
+    --------------- :: app2
+    v t2 ~> v t'2
 
     t ~> t'
     ----------------------- :: split
-    split K t ~> split K t'
+    split S t ~> split S t'
 
     t ~> t'
     ----------------------- :: unbox
     unbox A t ~> unbox A t'
-
-    t ~> t'
-    ------------------ :: box
-    box A t ~> box A t'
 
     t ~> t'
     --------------- :: fst

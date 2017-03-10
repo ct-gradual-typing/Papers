@@ -87,7 +87,7 @@
 \ottfirstprodline{|}{ \star }{}{}{}{}}
 
 \newcommand{\ottA}{
-\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}  ,\ \ottnt{K}}{::=}{}\ottprodnewline
+\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottmv{X}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \top }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{List}\, \ottnt{A} }{}{}{}{}\ottprodnewline
@@ -257,15 +257,6 @@
 }}
 
 
-\newcommand{\ottdruleSXXUSLName}[0]{\ottdrulename{S\_USL}}
-\newcommand{\ottdruleSXXUSL}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash  \ottnt{U}  <\hspace{-2px}\colon   \mathbb{S}  }{%
-{\ottdruleSXXUSLName}{}%
-}}
-
-
 \newcommand{\ottdruleSXXNatSLName}[0]{\ottdrulename{S\_NatSL}}
 \newcommand{\ottdruleSXXNatSL}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
@@ -350,7 +341,6 @@
 \ottusedrule{\ottdruleSXXRefl{}}
 \ottusedrule{\ottdruleSXXTop{}}
 \ottusedrule{\ottdruleSXXVar{}}
-\ottusedrule{\ottdruleSXXUSL{}}
 \ottusedrule{\ottdruleSXXNatSL{}}
 \ottusedrule{\ottdruleSXXUnitSL{}}
 \ottusedrule{\ottdruleSXXListSL{}}
@@ -436,18 +426,18 @@
 
 \newcommand{\ottdruleTPXXsplitName}[0]{\ottdrulename{TP\_split}}
 \newcommand{\ottdruleTPXXsplit}[1]{\ottdrule[#1]{%
-\ottpremise{ \ottnt{K_{{\mathrm{1}}}}  \sqsubseteq  \ottnt{K_{{\mathrm{2}}}} }%
+\ottpremise{ \ottnt{S_{{\mathrm{1}}}}  \sqsubseteq  \ottnt{S_{{\mathrm{2}}}} }%
 }{
- \Gamma  \vdash   \mathsf{split}_{ \ottnt{K_{{\mathrm{1}}}} }   \sqsubseteq   \mathsf{split}_{ \ottnt{K_{{\mathrm{2}}}} }  }{%
+ \Gamma  \vdash   \mathsf{split}_{ \ottnt{S_{{\mathrm{1}}}} }   \sqsubseteq   \mathsf{split}_{ \ottnt{S_{{\mathrm{2}}}} }  }{%
 {\ottdruleTPXXsplitName}{}%
 }}
 
 
 \newcommand{\ottdruleTPXXsquashName}[0]{\ottdrulename{TP\_squash}}
 \newcommand{\ottdruleTPXXsquash}[1]{\ottdrule[#1]{%
-\ottpremise{ \ottnt{K_{{\mathrm{1}}}}  \sqsubseteq  \ottnt{K_{{\mathrm{2}}}} }%
+\ottpremise{ \ottnt{S_{{\mathrm{1}}}}  \sqsubseteq  \ottnt{S_{{\mathrm{2}}}} }%
 }{
- \Gamma  \vdash   \mathsf{squash}_{ \ottnt{K_{{\mathrm{1}}}} }   \sqsubseteq   \mathsf{squash}_{ \ottnt{K_{{\mathrm{2}}}} }  }{%
+ \Gamma  \vdash   \mathsf{squash}_{ \ottnt{S_{{\mathrm{1}}}} }   \sqsubseteq   \mathsf{squash}_{ \ottnt{S_{{\mathrm{2}}}} }  }{%
 {\ottdruleTPXXsquashName}{}%
 }}
 
@@ -600,16 +590,16 @@
 \newcommand{\ottdruleTPXXspliting}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :  \ottsym{\mbox{?}} }%
 }{
- \Gamma  \vdash  \ottsym{(}   \mathsf{split}_{ \ottnt{K} }  \, \ottnt{t}  \ottsym{)}  \sqsubseteq  \ottnt{t} }{%
+ \Gamma  \vdash  \ottsym{(}   \mathsf{split}_{ \ottnt{S} }  \, \ottnt{t}  \ottsym{)}  \sqsubseteq  \ottnt{t} }{%
 {\ottdruleTPXXsplitingName}{}%
 }}
 
 
 \newcommand{\ottdruleTPXXsquashingName}[0]{\ottdrulename{TP\_squashing}}
 \newcommand{\ottdruleTPXXsquashing}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :  \ottnt{K} }%
+\ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :  \ottnt{S} }%
 }{
- \Gamma  \vdash  \ottnt{t}  \sqsubseteq  \ottsym{(}   \mathsf{squash}_{ \ottnt{K} }  \, \ottnt{t}  \ottsym{)} }{%
+ \Gamma  \vdash  \ottnt{t}  \sqsubseteq  \ottsym{(}   \mathsf{squash}_{ \ottnt{S} }  \, \ottnt{t}  \ottsym{)} }{%
 {\ottdruleTPXXsquashingName}{}%
 }}
 
@@ -699,7 +689,7 @@
 \newcommand{\ottdruleTXXsquash}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
 }{
- \Gamma  \vdash_{\mathsf{CG} }   \mathsf{squash}_{ \ottnt{K} }   :  \ottnt{K}  \rightarrow  \ottsym{\mbox{?}} }{%
+ \Gamma  \vdash_{\mathsf{CG} }   \mathsf{squash}_{ \ottnt{S} }   :  \ottnt{S}  \rightarrow  \ottsym{\mbox{?}} }{%
 {\ottdruleTXXsquashName}{}%
 }}
 
@@ -708,7 +698,7 @@
 \newcommand{\ottdruleTXXsplit}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
 }{
- \Gamma  \vdash_{\mathsf{CG} }   \mathsf{split}_{ \ottnt{K} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{K} }{%
+ \Gamma  \vdash_{\mathsf{CG} }   \mathsf{split}_{ \ottnt{S} }   :  \ottsym{\mbox{?}}  \rightarrow  \ottnt{S} }{%
 {\ottdruleTXXsplitName}{}%
 }}
 
@@ -907,16 +897,16 @@
 \newcommand{\ottdrulerdXXretractUName}[0]{\ottdrulename{rd\_retractU}}
 \newcommand{\ottdrulerdXXretractU}[1]{\ottdrule[#1]{%
 }{
- \mathsf{split}_{ \ottnt{U} }  \, \ottsym{(}   \mathsf{squash}_{ \ottnt{U} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
+ \mathsf{split}_{ \ottnt{S} }  \, \ottsym{(}   \mathsf{squash}_{ \ottnt{S} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
 {\ottdrulerdXXretractUName}{}%
 }}
 
 
 \newcommand{\ottdrulerdXXretractUEName}[0]{\ottdrulename{rd\_retractUE}}
 \newcommand{\ottdrulerdXXretractUE}[1]{\ottdrule[#1]{%
-\ottpremise{ \ottnt{U_{{\mathrm{1}}}}  \neq  \ottnt{U_{{\mathrm{2}}}} }%
+\ottpremise{ \ottnt{S_{{\mathrm{1}}}}  \neq  \ottnt{S_{{\mathrm{2}}}} }%
 }{
- \mathsf{split}_{ \ottnt{U_{{\mathrm{1}}}} }  \, \ottsym{(}   \mathsf{squash}_{ \ottnt{U_{{\mathrm{2}}}} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow   \mathsf{error}_{ \ottnt{U_{{\mathrm{1}}}} } }{%
+ \mathsf{split}_{ \ottnt{S_{{\mathrm{1}}}} }  \, \ottsym{(}   \mathsf{squash}_{ \ottnt{S_{{\mathrm{2}}}} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow   \mathsf{error}_{ \ottnt{S_{{\mathrm{1}}}} } }{%
 {\ottdrulerdXXretractUEName}{}%
 }}
 
@@ -1006,15 +996,6 @@
 }}
 
 
-\newcommand{\ottdrulerdXXetaName}[0]{\ottdrulename{rd\_eta}}
-\newcommand{\ottdrulerdXXeta}[1]{\ottdrule[#1]{%
-\ottpremise{ \ottmv{x}  \not\in \mathsf{FV}( \ottnt{t} ) }%
-}{
- \lambda ( \ottmv{x}  :  \ottnt{A_{{\mathrm{1}}}} ) .   \ottnt{t} \, \ottmv{x}    \rightsquigarrow  \ottnt{t}}{%
-{\ottdrulerdXXetaName}{}%
-}}
-
-
 \newcommand{\ottdrulerdXXprojOneName}[0]{\ottdrulename{rd\_proj1}}
 \newcommand{\ottdrulerdXXprojOne}[1]{\ottdrule[#1]{%
 }{
@@ -1031,14 +1012,6 @@
 }}
 
 
-\newcommand{\ottdrulerdXXetaPName}[0]{\ottdrulename{rd\_etaP}}
-\newcommand{\ottdrulerdXXetaP}[1]{\ottdrule[#1]{%
-}{
-\ottsym{(}  \mathsf{fst} \, \ottnt{t}  \ottsym{,}  \mathsf{snd} \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}}{%
-{\ottdrulerdXXetaPName}{}%
-}}
-
-
 \newcommand{\ottdrulerdXXappName}[0]{\ottdrulename{rd\_app}}
 \newcommand{\ottdrulerdXXapp}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{1}}}}}%
@@ -1048,12 +1021,12 @@
 }}
 
 
-\newcommand{\ottdrulerdXXsquashName}[0]{\ottdrulename{rd\_squash}}
-\newcommand{\ottdrulerdXXsquash}[1]{\ottdrule[#1]{%
-\ottpremise{\ottnt{t}  \rightsquigarrow  \ottnt{t'}}%
+\newcommand{\ottdrulerdXXappTwoName}[0]{\ottdrulename{rd\_app2}}
+\newcommand{\ottdrulerdXXappTwo}[1]{\ottdrule[#1]{%
+\ottpremise{\ottnt{t_{{\mathrm{2}}}}  \rightsquigarrow  \ottnt{t'_{{\mathrm{2}}}}}%
 }{
- \mathsf{squash}_{ \ottnt{K} }  \, \ottnt{t}  \rightsquigarrow   \mathsf{squash}_{ \ottnt{K} }  \, \ottnt{t'}}{%
-{\ottdrulerdXXsquashName}{}%
+\ottnt{v} \, \ottnt{t_{{\mathrm{2}}}}  \rightsquigarrow  \ottnt{v} \, \ottnt{t'_{{\mathrm{2}}}}}{%
+{\ottdrulerdXXappTwoName}{}%
 }}
 
 
@@ -1061,7 +1034,7 @@
 \newcommand{\ottdrulerdXXsplit}[1]{\ottdrule[#1]{%
 \ottpremise{\ottnt{t}  \rightsquigarrow  \ottnt{t'}}%
 }{
- \mathsf{split}_{ \ottnt{K} }  \, \ottnt{t}  \rightsquigarrow   \mathsf{split}_{ \ottnt{K} }  \, \ottnt{t'}}{%
+ \mathsf{split}_{ \ottnt{S} }  \, \ottnt{t}  \rightsquigarrow   \mathsf{split}_{ \ottnt{S} }  \, \ottnt{t'}}{%
 {\ottdrulerdXXsplitName}{}%
 }}
 
@@ -1072,15 +1045,6 @@
 }{
  \mathsf{unbox}_{ \ottnt{A} }  \, \ottnt{t}  \rightsquigarrow   \mathsf{unbox}_{ \ottnt{A} }  \, \ottnt{t'}}{%
 {\ottdrulerdXXunboxName}{}%
-}}
-
-
-\newcommand{\ottdrulerdXXboxName}[0]{\ottdrulename{rd\_box}}
-\newcommand{\ottdrulerdXXbox}[1]{\ottdrule[#1]{%
-\ottpremise{\ottnt{t}  \rightsquigarrow  \ottnt{t'}}%
-}{
- \mathsf{box}_{ \ottnt{A} }  \, \ottnt{t}  \rightsquigarrow   \mathsf{box}_{ \ottnt{A} }  \, \ottnt{t'}}{%
-{\ottdrulerdXXboxName}{}%
 }}
 
 
@@ -1151,15 +1115,12 @@
 \ottusedrule{\ottdrulerdXXtail{}}
 \ottusedrule{\ottdrulerdXXlcase{}}
 \ottusedrule{\ottdrulerdXXbeta{}}
-\ottusedrule{\ottdrulerdXXeta{}}
 \ottusedrule{\ottdrulerdXXprojOne{}}
 \ottusedrule{\ottdrulerdXXprojTwo{}}
-\ottusedrule{\ottdrulerdXXetaP{}}
 \ottusedrule{\ottdrulerdXXapp{}}
-\ottusedrule{\ottdrulerdXXsquash{}}
+\ottusedrule{\ottdrulerdXXappTwo{}}
 \ottusedrule{\ottdrulerdXXsplit{}}
 \ottusedrule{\ottdrulerdXXunbox{}}
-\ottusedrule{\ottdrulerdXXbox{}}
 \ottusedrule{\ottdrulerdXXfst{}}
 \ottusedrule{\ottdrulerdXXsnd{}}
 \ottusedrule{\ottdrulerdXXpairOne{}}
@@ -1185,7 +1146,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        104 good    0 bad
-Definition rule clauses: 193 good    0 bad
+Definition rules:        100 good    0 bad
+Definition rule clauses: 186 good    0 bad
 \end{verbatim}
 \end{document}

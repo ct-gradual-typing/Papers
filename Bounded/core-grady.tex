@@ -1,13 +1,71 @@
+Core Grady is a non-gradual type system that combines both static and
+dynamic typing.  It is an extension of the authors previous work
+\cite{Eades:2017}, adding bounded quantification and lists, on combing
+the work of Scott \cite{Scott:1980} and Lambek \cite{Lambek:1988}.
+Furthermore, Core Grady is a simple extension of Bounded System F.
+The syntax for Core Grady can be found in
+Fig.~\ref{fig:syntax-core-grady}.
 \begin{figure}
+    \small
   \begin{mdframed}
+    %% \item[] \textbf{Syntax:}
+      \[
+      \begin{array}{cl}
+        \begin{array}{l}
+          \text{(skeletons)}
+        \end{array}     &
+        \begin{array}{lcl}
+          [[S]], [[K]], [[U]] & ::= & [[?]] \mid [[List S]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
+        \end{array}\\\\
+                
+        \begin{array}{l}
+          \text{(terms)}
+        \end{array}     &
+        \begin{array}{lcl}
+          [[t]] & ::= & \cdots \mid [[squash S]] \mid [[split S]] \mid [[error A]]\\
+        \end{array}\\\\        
+      \end{array}
+      \]    
+  \end{mdframed}
+  \caption{Syntax for Core Grady}
+  \label{fig:syntax-core-grady}
+\end{figure}
+The syntax of types and typing context for Core Grady are exactly the
+same as Surface Grady, and so we do not repeat them here.  The syntax
+of terms is an extension of the syntax for Surface Grady, and so we
+only show the additions.  The term $[[error A]]$ will be used to
+trigger a type error during run time.
+
+Subtyping for Core Grady is as one might expect for Bounded System F.
+The rules for subtyping are given in
+Fig.~\ref{fig:subtyping-core-grady}.
+\begin{figure}
+  \begin{mdframed}\small
     \begin{mathpar}
-      TODO
+      \CGradydruleSXXRefl{} \and
+      \CGradydruleSXXTop{} \and
+      \CGradydruleSXXVar{} \and
+      \CGradydruleSXXNatSL{} \and
+      \CGradydruleSXXUnitSL{} \and
+      \CGradydruleSXXListSL{} \and
+      \CGradydruleSXXArrowSL{} \and
+      \CGradydruleSXXProdSL{} \and
+      \CGradydruleSXXList{} \and
+      \CGradydruleSXXProd{} \and
+      \CGradydruleSXXArrow{} \and
+      \CGradydruleSXXForall{}      
     \end{mathpar}
   \end{mdframed}
   \caption{Subtyping for Core Grady}
   \label{fig:subtyping-core-grady}
 \end{figure}
+Note that Core Grady does not depend on type consistency, this is
+purely a surface language feature.  In addition, subtyping in the core
+is also non-transitive just like subtyping in Surface Grady.  We
+axiomatize the super type $[[SL]]$ in the same way as Surface Grady.
 
+Similarly to subtyping, typing for Core Grady is a simple extension of
+typing for Bounded System F.
 \begin{figure}
   \begin{mdframed}
     \begin{mathpar}
@@ -37,47 +95,58 @@
   \caption{Typing rules for Core Grady}
   \label{fig:typing-core-grady}
 \end{figure}
+The most interesting rules here are the rules for splitting and
+squashing. Core Grady has the following types of casts:
+\[
+\begin{array}{lll}
+  \text{(boxing)} & [[box A]] : [[A -> ?]]\\
+  \text{(unboxing)} & [[unbox A]] : [[? -> A]]\\
+  \text{(splitting)} & [[split S]] : [[? -> S]]\\
+  \text{(squashing)} & [[squash S]] : [[S -> ?]]\\
+\end{array}
+\]
+These casts are enough to do everything the surface language can
+do. In addition, the general casting rule used in the casting calculi
+found in the gradual typing literature, e.g.
+\cite{Siek:2007,Siek:2006,Ahmed:2011:BLA:1926385.1926409,Siek:2015},
+denoted $[[t]] : [[A]] \Rightarrow [[B]]$ can be modeled by these four
+operations \cite{Eades:2017}.
 
-\renewcommand{\CGradydrulerdXXretracTName}{}
-\renewcommand{\CGradydrulerdXXretracTEName}{}
-\renewcommand{\CGradydrulerdXXretractUName}{}
-\renewcommand{\CGradydrulerdXXretractUEName}{}
-\renewcommand{\CGradydrulerdXXsuccName}{}
-\renewcommand{\CGradydrulerdXXncaseZeroName}{}
-\renewcommand{\CGradydrulerdXXncaseSuccName}{}
-\renewcommand{\CGradydrulerdXXncaseName}{}
-\renewcommand{\CGradydrulerdXXlcaseEmptyName}{}
-\renewcommand{\CGradydrulerdXXlcaseConsName}{}
-\renewcommand{\CGradydrulerdXXheadName}{}
-\renewcommand{\CGradydrulerdXXtailName}{}
-\renewcommand{\CGradydrulerdXXlcaseName}{}
-\renewcommand{\CGradydrulerdXXbetaName}{}
-\renewcommand{\CGradydrulerdXXprojOneName}{}
-\renewcommand{\CGradydrulerdXXprojTwoName}{}
-\renewcommand{\CGradydrulerdXXappName}{}
-\renewcommand{\CGradydrulerdXXsquashName}{}
-\renewcommand{\CGradydrulerdXXsplitName}{}
-\renewcommand{\CGradydrulerdXXunboxName}{}
-\renewcommand{\CGradydrulerdXXboxName}{}
-\renewcommand{\CGradydrulerdXXfstName}{}
-\renewcommand{\CGradydrulerdXXsndName}{}
-\renewcommand{\CGradydrulerdXXpairOneName}{}
-\renewcommand{\CGradydrulerdXXpairTwoName}{}
-\renewcommand{\CGradydrulerdXXtypeBetaName}{}
-\renewcommand{\CGradydrulerdXXtypeAppName}{}
+Unlike Surface Grady, Core Grady has a reduction relation.  The
+surface language will then be translated into the core language where
+evaluation will take place.  The reduction relation is defined in
+Fig.~\ref{fig:reduction-core-grady}.
 \begin{figure}
   \begin{mdframed}
     \begin{mathpar}
-      TODO
+      \CGradydrulerdXXretracT{} \and
+      \CGradydrulerdXXretracTE{} \and
+      \CGradydrulerdXXretractU{} \and
+      \CGradydrulerdXXretractUE{} \and
+      \CGradydrulerdXXncaseZero{} \and
+      \CGradydrulerdXXncaseSucc{} \and
+      \CGradydrulerdXXlcaseEmpty{} \and
+      \CGradydrulerdXXlcaseCons{} \and      
+      \CGradydrulerdXXprojOne{} \and
+      \CGradydrulerdXXprojTwo{} \and
+      \CGradydrulerdXXbeta{} \and      
+      \CGradydrulerdXXtypeBeta{} \and
     \end{mathpar}
   \end{mdframed}
   \caption{Reduction rules for Core Grady}
   \label{fig:reduction-core-grady}
 \end{figure}
-
+Reduction is a extended version of call-by-name.  We omit congruence
+rules for brevity.  Reduction will not reduce under
+$\lambda$-abstractions or arguments to $[[box]]$ or $[[squash]]$.
+However, it will reduce arguments to $[[unbox]]$ and $[[split]]$ in
+order to insure the retract rules apply as much as possible.
 
 \section{Cast Insertion}
 \label{sec:cast_insertion}
+
+
+
 \begin{figure}
   \small
   \begin{mdframed}
