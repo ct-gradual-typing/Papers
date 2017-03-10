@@ -1,4 +1,4 @@
-metavar termvar, x, y , z, f ::=
+metavar termvar, x, y , z, f, r, ys ::=
 metavar typevar, X, Y , Z ::=
 indexvar index, i , j, k ::=
 
@@ -50,6 +50,8 @@ grammar
     {{tex \mathsf{split} }}    
     | [ A / X ] t         :: M :: TypeSub
     | n                   :: M :: num
+    | fix t               :: M :: fix
+    {{tex \mathsf{fix}\,[[t]] }}
 
   n, m :: 'n_' ::=
     | 0 :: :: zero
@@ -73,7 +75,7 @@ grammar
     {{tex \lambda ([[x]] : [[A]]) . [[t]] }}
     | n                   ::   :: num
     | case t : A of t3 -> t1 , t4 -> t2 :: :: natElim
-    {{tex \mathsf{case}\,[[t]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}    
+    {{tex \mathsf{case}\,[[t]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
 
   Kd :: 'Kd_' ::=
     | *                   ::   :: TypeOfTypes

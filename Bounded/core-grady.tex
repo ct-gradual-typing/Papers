@@ -145,38 +145,70 @@ order to insure the retract rules apply as much as possible.
 \section{Cast Insertion}
 \label{sec:cast_insertion}
 
+Surface Grady is translated into Core Grady by the cast insertion
+algorithm.  Any where type consistency or one of the metafunctions
+defined in Fig.~\ref{fig:syntax-surface-grady} are used a cast must be
+inserted.
 
+We call a Core Grady expression that is built from $[[box]]$,
+$[[unbox]]$, $[[split]]$, $[[squash]]$, the functors
+$\mathsf{List}\,-$, $- \times -$, and $- \to -$, and the identity
+function a casting morphism.  Each of the functors are definable as
+metafunctions:
+\begin{center}\small
+  \begin{itemize}
+  \item[] (List functor)  \\
+    $\mathsf{List}\,[[t]] :=
+    [[fix (\r:H(List A) -> List B.H(\x:H(List A).H(case x : List A of [] -> [], (y::ys) -> H((t y) :: (r ys))))) ]]$
+    given $[[G |- t : A -> B]]$
+  \item[]    
+  \item[] (Product functor) \\ 
+    $[[t1]] \times [[t2]] := [[\ x : A x B.(t1 (fst x), t2 (snd x))]]$
+    given $[[G |- t1 : A -> D]]$ and $[[G |- t2 : B -> E]]$
+  \item[]    
+  \item[] (Internal Hom Functor) \\  
+    $[[t1]] \to [[t2]] := [[\ f : A -> B.\y : D.H(t2 (f (t1 y)))]]$ 
+    given $[[G |- t1 : D -> A]]$ and $[[G |- t2 : B -> E]]$
+  \end{itemize}
+\end{center}
+The definition of the list functor is the usual definition of the map
+function for lists which requires the use of the fix point operator
+given in the introduction.
 
+In the authors previous work \cite{Eades:2017} they showed a similar
+result to the following.  In fact, their proofs are nearly identical,
+and so we do not give the proof here.
+\begin{lemma}[Casting Morphisms]
+  \label{lemma:casting_morphisms}
+  If $<<G |- A ~ B>>$, then there are casting morphisms $[[G |- c1 : A -> B]]$
+  and $[[G |- c2 : B -> A]]$.
+\end{lemma}
+Using this result we can define the cast insertion algorithm which
+takes in a Surface Grady term and then returns a Core Grady term by
+inserting casting morphisms where type consistency is used.  Thus,
+this algorithm is type directed.  Its definition is given in
+Fig.~\ref{fig:cast-insert}.
 \begin{figure}
-  \small
-  \begin{mdframed}
+  \begin{mdframed}[innertopmargin=60px]
+    \rotatebox{90}{
     \begin{mathpar}
-      \SGradydruleciXXvar{} \and
-      \SGradydruleciXXBox{} \and
-      \SGradydruleciXXUnbox{} \and
-      \SGradydruleciXXzero{} \and
-      \SGradydruleciXXtriv{} \and
-      \SGradydruleciXXsuccU{} \and
-      \SGradydruleciXXsucc{} \and
-      \SGradydruleciXXncaseU{} \and
-      \SGradydruleciXXncase{} \and
-      \SGradydruleciXXpair{} \and
-      \SGradydruleciXXfstU{} \and
-      \SGradydruleciXXfst{} \and
-      \SGradydruleciXXsndU{} \and
-      \SGradydruleciXXsnd{} \and
-      \SGradydruleciXXEmpty{} \and
-      \SGradydruleciXXcons{} \and
-      \SGradydruleciXXlcaseU{} \and
-      \SGradydruleciXXlcase{} \and
-      \SGradydruleciXXlam{} \and
-      \SGradydruleciXXappU{} \and
-      \SGradydruleciXXapp{} \and
-      \SGradydruleciXXLam{} \and
-      \SGradydruleciXXtypeApp{}
-    \end{mathpar}
+    \SGradydruleciXXsuccU{} \and
+    \SGradydruleciXXsucc{} \and      
+    \SGradydruleciXXfstU{} \and
+    \SGradydruleciXXfst{} \and
+    \SGradydruleciXXsndU{} \and
+    \SGradydruleciXXsnd{} \and
+    \SGradydruleciXXlcaseU{} \and
+    \SGradydruleciXXlcase{} \and
+    \SGradydruleciXXappU{} \and
+    \SGradydruleciXXapp{} 
+  \end{mathpar}}
   \end{mdframed}
-  \caption{Cast insertion for Surface Grady}
-  \label{fig:cast-insert-surface-grady}
+  \caption{Cast Insertion Algorithm}
+  \label{fig:cast-insert}
 \end{figure}
+We only give the most interesting cases, because the others are either
+trivial identity cases or are similar to the ones given.  We denote
+constructing the casting morphism for $<<G |- A ~ B>>$ by
+$<<caster(A,B) = c>>$.
 % section cast_insertion (end)

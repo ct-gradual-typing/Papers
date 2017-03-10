@@ -55,7 +55,10 @@ surface-grady-ott.tex : surface-grady.tex surface-grady/surface-grady.ott
 
 core-grady-ott.tex : core-grady.tex core-grady/core-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
-		-tex_filter core-grady.tex core-grady-ott.tex
+		-tex_filter core-grady.tex core-grady-ott1.tex
+	scripts/prepr_double_ott.sh core-grady-ott1.tex
+		@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix CGrady \
+		-tex_filter core-grady-ott1.tex core-grady-ott.tex
 
 proofs-ott.tex : proofs.tex surface-grady/surface-grady.ott core-grady/core-grady.ott 
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
