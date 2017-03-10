@@ -206,3 +206,56 @@ For example, if $[[t1]]$ was a boolean and $[[t2]]$ was a natural
 number, then a type checking will fail, because the types are not
 consistent, and hence, we cannot cast between them.  The other rules
 are setup similarly.
+
+Being able to define the typed fix point operator given in the
+introduction makes Grady very expressive.  Combing \ginline{fix} with
+the eliminators for natural numbers and lists results in typed
+terminating recursion.  We now give several examples in Surface Grady
+that illustrate this\footnote{Please see the following example file for the complete list library: \url{https://github.com/ct-gradual-typing/Grady/blob/master/Examples/Gradual/List.gry}}:
+\begin{lstlisting}[language=Haskell]
+  append : forall (A <: Simple).([A] -> [A] -> [A])
+  append = \(A <: Simple) ->
+           ([ [A] -> [A] -> [A] ]fix)
+             (\(r : [A] -> [A] -> [A]) -> \(l1 : [A]) -> \(l2 : [A]) ->
+               case l1 of
+                 [] -> l2,
+                 (a :: as) -> a :: (r as l2));
+
+  length : forall (A <: Simple).([A] -> Nat)
+  length = \(A <: Simple) -> ([ [A] -> Nat]fix)
+             (\(r : [A] -> Nat) -> \(l : [A]) ->
+               case l of
+                 [] -> 0,
+                 (a :: as) -> succ (r as));
+
+  foldr : forall (A <: Simple).
+         (forall (B <: Simple).((A -> B -> B) -> B -> ([A] -> B)))
+  foldr = \(A <: Simple) -> \(B <: Simple) -> \(f : A -> B -> B) -> \(b : B) ->
+          ([ [A] -> B]fix) (\(r : [A] -> B) -> \(l : [A]) ->
+                   case l of
+                     [] -> b,
+                     (a :: as) -> (f a (r as)));
+
+  foldl : forall (A <: Simple).
+         (forall (B <: Simple).((B -> A -> B) -> (B -> [A] -> B)))
+  foldl = \(A <: Simple) -> \(B <: Simple) -> \(f : B -> A -> B) ->
+          ([B -> [A] -> B]fix) (\(r : B -> [A] -> B) -> \(b : B) -> \(l : [A]) ->
+                   case l of
+                     [] -> b,
+                     (a :: as) -> r (f b a) as);
+
+  zipWith : forall (A <: Simple).(forall (B <: Simple).(forall (C <: Simple).
+               ((A -> B -> C) -> ([A] -> [B] -> [C]))))
+  zipWith = \(A <: Simple) ->
+             \(B <: Simple) -> \(C <: Simple) -> \(f : A -> B -> C) ->
+            ([ [A] -> [B] -> [C] ]fix)
+              (\(r : [A] -> [B] -> [C]) -> \(l1 : [A]) -> \(l2 : [B]) ->
+                 case l1 of
+                   [] -> [C][],
+                   (a :: as) -> case l2 of
+                                  [] -> [C][],
+                                  (b :: bs) -> (f a b) :: (r as bs));
+\end{lstlisting}
+All of the previous examples are staticly typed, but eventually the
+static types are boxed and moved to the dynamic fragment when running
+\ginline{fix}.

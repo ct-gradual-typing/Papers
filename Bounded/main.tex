@@ -28,13 +28,13 @@
   % Comments may or not include Latex commands
   texcl=false, 
   %
-  morekeywords=[1]{omega, fix, ycomb},
+  morekeywords=[1]{omega, fix, ycomb, foldr, foldl, length, zipWith, append},
   %
   morekeywords=[2]{unbox, box},
   %
-  morekeywords=[3]{Maybe},
+  morekeywords=[3]{r},
   %
-  morekeywords=[4]{main},
+  morekeywords=[4]{case, of},
   %
   morekeywords=[6]{do, last, first, try, idtac, repeat},
   %
@@ -61,7 +61,7 @@
   breaklines=false,
   %
   % Default style fors listings
-  basicstyle=\small,
+  basicstyle=\footnotesize,
   %
   % Position of captions is bottom
   captionpos=b,
@@ -76,9 +76,9 @@
   % Style for gallina keywords
   keywordstyle=[2]{\ttfamily\color{dkgreen}},
   % Style for sorts keywords
-  keywordstyle=[3]{\ttfamily\color{ltblue}},
+  keywordstyle=[3]{\ttfamily\color{purple}},
   % Style for tactics keywords
-  keywordstyle=[4]{\ttfamily\color{dkblue}},
+  keywordstyle=[4]{\ttfamily\color{violet}},
   % Style for terminators keywords
   keywordstyle=[5]{\ttfamily\color{dkred}},
   %Style for iterators
@@ -97,6 +97,7 @@
   {\{}{{$\langle$}}1
   {\}}{{$\rangle\;$}}1
   {~}{{\ }}1
+  {::}{{\text{::}}}1
   {\\dollar}{{$\$$\;}}1
   %
 }[keywords,comments,strings]
