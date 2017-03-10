@@ -211,4 +211,20 @@ We only give the most interesting cases, because the others are either
 trivial identity cases or are similar to the ones given.  We denote
 constructing the casting morphism for $<<G |- A ~ B>>$ by
 $<<caster(A,B) = c>>$.
+
+As an example the following is the result of applying the cast
+insertion algorithm -- after some simplifications -- to the fix point
+operator given in the introduction:
+\begin{lstlisting}[language=Haskell]
+  omega : (? -> ?) -> ?
+  omega = \(x : ? -> ?) -> (x (squash (? -> ?) x));
+
+  ycomb : (? -> ?) -> ?
+  ycomb = \(f : ? -> ?) -> omega (\(x:?) -> f ((split (? -> ?) x) x));
+
+  fix : forall (X <: Simple).((X -> X) -> X)
+  fix = \(X <: Simple) -> \(f:X -> X) ->
+           unbox<X> (ycomb (\(y:?)->box<X> (f (unbox<X> y))));
+\end{lstlisting}
+
 % section cast_insertion (end)
