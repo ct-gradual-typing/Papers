@@ -1,0 +1,28 @@
+In this paper we extended our previous work \cite{Eades:2017} on a new
+foundation of gradual typing to a gradual type system with bounded
+quantification called Grady.  We pointed out the existence of explicit
+casts in the surface language of gradual type systems that may be used
+to extend the expressiveness of the language.  We then proved the
+gradual guarantee for Grady.  Finally, we gave several interesting
+gradually typed bounded polymorphic programs in Grady's concrete
+implementation.
+
+\paragraph{Future work.}  The simplistic nature of Core Grady suggests
+that we may extend Grady with even more features.  We plan to study an
+extension of Core Grady with dependent types by first extending its
+categorical model given in our previous work \cite{Eades:2017}, and
+then extending Grady itself.  The idea we have in mind is to make the
+static fragment dependent, but the untype fragment remain as it is in
+Core Grady.  This is akin to Krishnaswami et al.'s method of
+integrating linear and dependent types
+\cite{Krishnaswami:2015:ILD:2676726.2676969}.  However, some
+interesting problems arise, for example, as we have seen here
+non-termination exists in gradually typed programs.  We can type the Y
+combinator after all.  Thus, a dependently type gradual type system
+would need to employ some method of tracking non-termination, and
+preventing non-terminating programs from running in proofs.  This was
+exactly the task of the Trelly's project; see \cite{?}.  We believe
+that the method developed by Stephanie Weirich and her students
+\cite{Casinghino:2014:CPP:2535838.2535883} might be the solution for
+gradual typing.  Combing gradual typing and dependent types would
+allow for the verification of gradually typed programs.

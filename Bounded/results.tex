@@ -126,7 +126,25 @@ We now embark on the proof of the gradual guarantee.  Our proof
 follows the scheme adopted by Siek et al.~\cite{Siek:2015} in their
 proof of the gradual guarantee for the gradual simply typed
 $\lambda$-calculus.  That is, we prove the exact same results as they
-do.  
+do.
+
+Cast insertion preserves type up to type consistency.  This is fairly
+straightforward to show.  The only interesting case is the one for
+type application.
+\begin{lemma}[Type Preservation for Cast Insertion]
+  \label{lemma:type_preservation_for_cast_insertion}
+  If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : B]]$, then $<<G |- t2 : B>>$ and $[[G |- A ~ B]]$.
+\end{lemma}
+\begin{proof}
+  The cast insertion algorithm is type directed and with respect to
+  every term $[[t1]]$ it will produce a term $[[t2]]$ of the core
+  language with the type $[[A]]$ -- this is straightforward to show by
+  induction on the form of $[[G |- t1 : A]]$ making use of typing for
+  casting morphisms Lemma~\ref{lemma:typing_casting_morphisms} --
+  except in the case of type application.  Please see
+  Appendix~\ref{subsec:proof_of_type_preservation_for_cast_insertion}
+  for the complete proof.
+\end{proof}
 
 The proof of the gradual guarantee will be phrased in terms of
 precision for types and terms.  A type $[[B]]$ is less precise than a
@@ -157,60 +175,46 @@ casts.  Term precision is defined in Fig.~\ref{fig:term-precision}.
     \begin{itemize}
     \item[] \textbf{Term Precision for Surface Grady:}
       \begin{mathpar}
-        TODO
+        \SGradydruleTPXXrefl{} \and
+        \SGradydruleTPXXsucc{} \and
+        \SGradydruleTPXXNate{} \and
+        \SGradydruleTPXXpair{} \and
+        \SGradydruleTPXXfst{} \and
+        \SGradydruleTPXXsnd{} \and
+        \SGradydruleTPXXcons{} \and
+        \SGradydruleTPXXListe{} \and
+        \SGradydruleTPXXFun{} \and
+        \SGradydruleTPXXapp{} \and
+        \SGradydruleTPXXtfun{} \and
+        \SGradydruleTPXXtapp{}
       \end{mathpar}
 
     \item[] \textbf{Term Precision for Core Grady:}
       \begin{mathpar}
-        TODO
+        \CGradydruleTPXXunboxing{} \and
+        \CGradydruleTPXXboxing{} \and
+        \CGradydruleTPXXspliting{} \and
+        \CGradydruleTPXXsquashing{} \and
+        \CGradydruleTPXXerror{}        
       \end{mathpar}
     \end{itemize}
   \end{mdframed}
   \caption{Term Precision}
   \label{fig:term-precision}
 \end{figure}
+Term precision for Core Grady is an extension of term precision for
+Surface Grady.  Thus, we only show the new rules for casting and
+error.  As we travel up a term precision chain the terms type tend
+toward the unknown type, as opposed to, when we travel down the chain
+the terms type tend toward some static type.  The terms in this chain
+only differ by the insertion or removal of casts.  This characterizes
+our desired property, which is, that a gradual program can transition
+towards dynamic or static typing without compromising it behavior.
 
-
-\begin{lemma}[Gradual Guarantee Part One]
-  \label{lemma:gradual_guarantee_part_one}
-  If $[[G |- t : A]]$, $[[t <= t']]$, and $[[G <= G']]$ then $[[G' |- t' : B]]$ and $[[A <= B]]$.
-\end{lemma}
-\begin{proof}
-  This is a proof by induction on $[[G |- t : A]]$; see
-  Appendix~\ref{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
-  for the complete proof.
-\end{proof}
-
-\begin{lemma}[Type Preservation for Cast Insertion]
-  \label{lemma:type_preservation_for_cast_insertion}
-  If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : B]]$, then $<<G |- t2 : B>>$ and $[[G |- A ~ B]]$.
-\end{lemma}
-\begin{proof}
-  The cast insertion algorithm is type directed and with respect to
-  every term $[[t1]]$ it will produce a term $[[t2]]$ of the core
-  language with the type $[[A]]$ -- this is straightforward to show by
-  induction on the form of $[[G |- t1 : A]]$ making use of typing for
-  casting morphisms Lemma~\ref{lemma:typing_casting_morphisms} --
-  except in the case of type application.  Please see
-  Appendix~\ref{subsec:proof_of_type_preservation_for_cast_insertion}
-  for the complete proof.
-\end{proof}
-
-\begin{lemma}[Simulation of More Precise Programs]
-  \label{lemma:simulation_of_more_precise_programs}
-  Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, $<<G |- t'1 : A'>>$, and $<<t1 ~> t2>>$.
-  Then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
-\end{lemma}
-\begin{proof}
-  This proof holds by induction on $<<G |- t1 : A1>>$.  See
-  Appendix~\ref{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
-  for the complete proof.
-\end{proof}
-
+The gradual guarantee is defined as follows.
 \begin{theorem}[Gradual Guarantee]
   \label{thm:gradual_guarantee} 
   \begin{enumR}
-  \item[] 
   \item If $[[. |- t : A]]$ and $[[t <= t']]$, then $[[. |- t' : B]]$ and $[[A <= B]]$.
   \item Suppose $<<. |- t : A>>$ and $<<. |- t <= t'>>$. Then
     \begin{enumA}
@@ -228,6 +232,51 @@ casts.  Term precision is defined in Fig.~\ref{fig:term-precision}.
   from simulation of more precise programs
   (Lemma~\ref{lemma:simulation_of_more_precise_programs}).
 \end{proof}
+Part one states that one may insert casts into a closed gradual
+program, $[[t]]$, yielding a less precise program, $[[t']]$, and the
+program will remain typable, but at a less precise type.  This part
+follows from the following generalization:
+\begin{lemma}[Gradual Guarantee Part One]
+  \label{lemma:gradual_guarantee_part_one}
+  If $[[G |- t : A]]$, $[[t <= t']]$, and $[[G <= G']]$ then $[[G' |- t' : B]]$ and $[[A <= B]]$.
+\end{lemma}
+\begin{proof}
+  This is a proof by induction on $[[G |- t : A]]$; see
+  Appendix~\ref{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
+  for the complete proof.
+\end{proof}
+The previous result depends on context precision, denoted $[[G <=
+    G']]$, but we omit its definition, because it is the
+straightforward extension of type precision.
+
+The remaining parts of the gradual guarantee follow from the next
+result.
+\begin{lemma}[Simulation of More Precise Programs]
+  \label{lemma:simulation_of_more_precise_programs}
+  Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, $<<G |- t'1 : A'>>$, and $<<t1 ~> t2>>$.
+  Then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $<<G |- t1 : A1>>$.  See
+  Appendix~\ref{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
+  for the complete proof.
+\end{proof}
+This result simply states that programs may become less precise by
+adding or removing casts, but they will behave in an expected manner.
+
+The results given here are the main results in the proof of the
+gradual guarantee, but they depend on a number of auxiliary results.
+Unfortunately, they are too numerous to list here, but they are all
+given in Appedix~\ref{sec:auxiliary_results_with_proofs}.  Previous
+proofs of the gradual guarantee, e.g. \cite{Siek:2015} and
+\cite{Garcia:2016}, make heavy use of inversion for typing.  However,
+as type systems become more complex inversion for typing is harder to
+obtain.  Instead of using inversion for typing we proved inversion
+principles for the other judgments.  This turned out to be a lot
+easier, because judgments like type and term precision, consistent
+subtyping, etc, have less complex definitions.  All of the inversion
+principles we used can be found in
+Appedix~\ref{sec:auxiliary_results_with_proofs}.
 
 %%% Local Variables: ***
 %%% mode:latex ***

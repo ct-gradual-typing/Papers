@@ -227,6 +227,19 @@
 \renewcommand{\SGradydrulePXXlistName}{\mathsf{List}}
 \renewcommand{\SGradydrulePXXforallName}{\forall}
 
+\renewcommand{\SGradydruleTPXXreflName}{\text{refl}}
+\renewcommand{\SGradydruleTPXXsuccName}{\mathsf{succ}}
+\renewcommand{\SGradydruleTPXXNateName}{\mathsf{Nat}}
+\renewcommand{\SGradydruleTPXXpairName}{\times_i}
+\renewcommand{\SGradydruleTPXXfstName}{\times_{e_1}}
+\renewcommand{\SGradydruleTPXXsndName}{\times_{e_2}}
+\renewcommand{\SGradydruleTPXXconsName}{\mathsf{List}_i}
+\renewcommand{\SGradydruleTPXXListeName}{\mathsf{List}_e}
+\renewcommand{\SGradydruleTPXXFunName}{\to_i}
+\renewcommand{\SGradydruleTPXXappName}{\to_2}
+\renewcommand{\SGradydruleTPXXtfunName}{\forall_i}
+\renewcommand{\SGradydruleTPXXtappName}{\forall_e}
+
 \input{core-grady-inc}
 \renewcommand{\CGradydruleSXXReflName}{\text{refl}}
 \renewcommand{\CGradydruleSXXTopName}{\text{top}}
@@ -290,6 +303,12 @@
 \renewcommand{\CGradydrulerdXXtypeBetaName}{\text{type}_{\beta}}
 \renewcommand{\CGradydrulerdXXtypeAppName}{}
 
+\renewcommand{\CGradydruleTPXXunboxingName}{\mathsf{box}}
+\renewcommand{\CGradydruleTPXXboxingName}{\mathsf{unbox}}
+\renewcommand{\CGradydruleTPXXsplitingName}{\mathsf{split}}
+\renewcommand{\CGradydruleTPXXsquashingName}{\mathsf{squash}}
+\renewcommand{\CGradydruleTPXXerrorName}{\mathsf{error}}
+
 \def\lastname{Eades III and Townsend}
 
 \begin{document}
@@ -348,9 +367,13 @@ an introduction please see Pierce~\cite{Pierce:2002:TPL:509043}.
 \section{Analyzing Grady}
 \label{sec:results}
 \input{results-ott}
-% subsection results (end)
+% section results (end)
 
-% section grady:_a_categorically_inspired_gradual_type_system (end)
+\section{Conclusion}
+\label{sec:conclusion}
+\input{conclusion}
+% section conclusion (end)
+
 
 \bibliographystyle{splncs}
 \bibliography{references}

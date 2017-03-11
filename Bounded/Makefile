@@ -93,7 +93,7 @@ ott : main.tex introduction-ott.tex core-grady-ott.tex \
       aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
 
 $(PDF) : main.tex introduction-ott.tex related-work-ott.tex core-grady-ott.tex \
-	proofs-ott.tex surface-grady-ott.tex results-ott.tex \
+	proofs-ott.tex surface-grady-ott.tex results-ott.tex conclusion.tex \
 	aux-results-proofs-ott.tex proofs-gradual-guarantee-part-one-ott.tex Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)
