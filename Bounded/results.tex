@@ -66,7 +66,7 @@ after the final application we will have a term of type $[[?]]$.  We
 now have the following result.
 \begin{lemma}[Inclusion of the Untyped $\lambda$-Calculus]
   \label{lemma:inclusion_of_dtlc}
-  Suppose $[[t]]$ is a closed term of of the untyped
+  Suppose $[[t]]$ is a closed term of the untyped
   $\lambda$-calculus. Then
   \begin{itemize}
   \item[i.] $[[. |- |t| : ?]]$, and
@@ -122,6 +122,17 @@ this precise.
 The previous two results are similar to those proved by Siek and
 Taha~\cite{Siek:2007} and Garcia~\cite{Garcia:2016}.
 
+We now embark on the proof of the gradual guarantee.  Our proof
+follows the scheme adopted by Siek et al.~\cite{Siek:2015} in their
+proof of the gradual guarantee for the gradual simply typed
+$\lambda$-calculus.  That is, we prove the exact same results as they
+do.  
+
+The proof of the gradual guarantee will be phrased in terms of
+precision for types and terms.  A type $[[B]]$ is less precise than a
+type $[[A]]$, denoted $[[A <= B]]$, if $[[B]]$ replaces some
+subexpression(s) of $[[A]]$ with the unknown type.  Type precision is
+defined by the rules in Fig.~\ref{fig:type-pre}.
 \begin{figure}
   \begin{mdframed}
     \begin{mathpar}
@@ -137,6 +148,28 @@ Taha~\cite{Siek:2007} and Garcia~\cite{Garcia:2016}.
   \caption{Type Precision}
   \label{fig:type-pre}
 \end{figure}
+Term precision, which is defined for both the surface language and the
+core language, is similar to type precision, but, and this is where
+our definition differs from others, we must factor in the explicit
+casts.  Term precision is defined in Fig.~\ref{fig:term-precision}.
+\begin{figure}
+  \begin{mdframed}
+    \begin{itemize}
+    \item[] \textbf{Term Precision for Surface Grady:}
+      \begin{mathpar}
+        TODO
+      \end{mathpar}
+
+    \item[] \textbf{Term Precision for Core Grady:}
+      \begin{mathpar}
+        TODO
+      \end{mathpar}
+    \end{itemize}
+  \end{mdframed}
+  \caption{Term Precision}
+  \label{fig:term-precision}
+\end{figure}
+
 
 \begin{lemma}[Gradual Guarantee Part One]
   \label{lemma:gradual_guarantee_part_one}
