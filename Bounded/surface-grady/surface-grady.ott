@@ -10,7 +10,11 @@ grammar
     | squash U            :: M  :: inj          
     {{tex \mathsf{squash}_{[[U]]} }}
     | split U             :: M  :: surj         
-    {{tex \mathsf{split}_{[[U]]} }}        
+    {{tex \mathsf{split}_{[[U]]} }}
+    | squash            :: M  :: inj2
+    {{tex \mathsf{squash} }}
+    | split             :: M  :: surj2
+    {{tex \mathsf{split} }}            
     | box                 ::   :: gen          
     {{tex \mathsf{box} }}
     | box A               :: M :: genA
@@ -43,6 +47,8 @@ grammar
     | [ A / X ] t         :: M :: TypeSub
     | | t |               :: M :: DEnc
     {{tex \lceil [[t]] \rceil }}
+    | \ x . t             :: M :: UntypedLam
+    {{tex \lambda [[x]].[[t]] }}
 
   K :: 'K_' ::=
     | *                   ::   :: TypeOfTypes
@@ -135,7 +141,7 @@ grammar
     | t F~>* t'            :: M :: Fr1
     {{tex [[t]] \rightsquigarrow^*_F [[t']] }}
     | t D~>* t'            :: M :: Dr
-    {{tex [[t]] \rightsquigarrow^*_{DTLC} [[t']] }}    
+    {{tex [[t]] \rightsquigarrow^*_{\lambda} [[t']] }}    
     | t ~>* t'            :: M :: Rd
     {{tex [[t]] \rightsquigarrow^* [[t']] }}
     | t \|/ t'           :: M :: Join
@@ -222,6 +228,12 @@ defn
    ------------ :: Unbox
    G |- ? ~ A
 
+   ---------- :: Split
+   G |- ? ~ S
+   
+   ---------- :: Squash
+   G |- S ~ ?
+
    G |- A ~ B
    ------------------------ :: List
    G |- (List A) ~ (List B)
@@ -246,6 +258,9 @@ by
    G |- A <~ SL
    ------------ :: U
    A <= ?
+
+   ------ :: skeleton
+   S <= ?
 
    ------ :: refl
    A <= A
@@ -342,6 +357,12 @@ defn
     ----------- :: Unbox
     G |- ? <~ A
 
+    ------------ :: Split
+    G |- ? <~ S
+
+    ----------- :: Squash
+    G |- S <~ ?
+
     G Ok
     -------------- :: NatSL
     G |- Nat <~ SL
@@ -386,13 +407,21 @@ defn
     -------------------- :: varP
     G |- x : A
 
-    G Ok
-    ------------------------------------ :: Box
-    G |- box : Forall (X <: SL).(X -> ?)
+    G |- t : A
+    ---------------- :: box
+    G |- box A t : ?
 
-    G Ok    
-    -------------------------------------- :: Unbox
-    G |- unbox : Forall (X <: SL).(? -> X)
+    G |- t : A
+    ------------------ :: unbox
+    G |- unbox A t : A
+
+    G |- t : S
+    ------------------- :: squash
+    G |- squash S t : ?
+
+    G |- t : ?
+    ------------------ :: split
+    G |- split S t : S
 
     G Ok
     ---------------- :: unitP
@@ -465,14 +494,6 @@ by
     x : A elem G && G Ok
     -------------------- :: var
     G |- x => x : A
-
-    G Ok
-    ------------------------------------------- :: Box
-    G |- box => box : Forall (X <: SL).(X -> ?)
-
-    G Ok
-    ----------------------------------------------- :: Unbox
-    G |- unbox => unbox : Forall (X <: SL).(? -> X)
 
     G Ok
     ----------------- :: zero

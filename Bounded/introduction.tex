@@ -92,34 +92,7 @@ then we can instantiate $[[t]]$ with any type at all.  This seems very
 flexible, but it turns out that it does nothing more than what Core
 Grady allows when adding explicit casts.
 
-One feature Surface Grady has that cannot be found in previous systems
-is allowing explicit casts in the surface language.  Adding this
-feature actually increases the expressivity of the language.  For
-example, consider the following Surface Grady program -- here we use
-the concrete syntax from Grady's implementation, but it is very
-similar to Haskell and not far from the mathematical syntax:
-\begin{lstlisting}[language=Haskell]
-  omega : ? -> ?
-  omega = \(x : ?) -> (x x);
-
-  ycomb : (? -> ?) -> ?
-  ycomb = \(f : ? -> ?) -> omega (\(x:?) -> f (x x));
-
-  fix : forall (X <: Simple).((X -> X) -> X)
-  fix = \(X <: Simple) -> \(f:X -> X) -> unbox<X> (ycomb f);
-\end{lstlisting}
-The previous example defines the Y combinator and a polymorphic fix
-point operator.  This example is gradually typed, for example, in the
-definition of \ginline{omega} we are applying \ginline{x} to itself
-without an explicit cast.  However, there is one explicit cast in the
-definition of \ginline{fix} which applies \ginline{unbox} to the
-result of the Y combinator.  If we did not have this explicit cast,
-then \ginline{fix} would not type check.  This is because the
-application rule -- given above -- does not allow one to cast the
-result of the application.  Thus, allowing explicit casts in the
-surface language along side gradual typing increases the number of
-valid programs.  We will use \ginline{fix} to develop quite a few
-interesting examples including a full library of operations on lists.
+\paragraph{Contributions.} TODO
 
 %%% Local Variables: ***
 %%% mode:latex ***

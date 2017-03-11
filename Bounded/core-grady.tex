@@ -99,10 +99,15 @@ The most interesting rules here are the rules for splitting and
 squashing. Core Grady has the following types of casts:
 \[
 \begin{array}{lll}
-  \text{(boxing)} & [[box A]] : [[A -> ?]]\\
+  \begin{array}{lll}
+    \text{(boxing)} & [[box A]] : [[A -> ?]]\\
   \text{(unboxing)} & [[unbox A]] : [[? -> A]]\\
-  \text{(splitting)} & [[split S]] : [[? -> S]]\\
+  \end{array}
+  & \quad & 
+  \begin{array}{lll}
+    \text{(splitting)} & [[split S]] : [[? -> S]]\\
   \text{(squashing)} & [[squash S]] : [[S -> ?]]\\
+  \end{array}
 \end{array}
 \]
 These casts are enough to do everything the surface language can
@@ -142,8 +147,8 @@ $\lambda$-abstractions or arguments to $[[box]]$ or $[[squash]]$.
 However, it will reduce arguments to $[[unbox]]$ and $[[split]]$ in
 order to insure the retract rules apply as much as possible.
 
-\section{Cast Insertion}
-\label{sec:cast_insertion}
+\subsection{Cast Insertion}
+\label{subsec:cast_insertion}
 
 Surface Grady is translated into Core Grady by the cast insertion
 algorithm.  Any where type consistency or one of the metafunctions

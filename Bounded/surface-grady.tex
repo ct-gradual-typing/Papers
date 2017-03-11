@@ -21,16 +21,16 @@ Fig.~\ref{fig:syntax-surface-grady}.
           [[A]],[[B]],[[C]] & ::= & [[X]] \mid [[Top]] \mid [[SL]] \mid [[Unit]] \mid [[Nat]] \mid [[?]] \mid [[List A]] \mid [[A x B]] \mid [[A -> B]] \\ & \mid &[[Forall (X <: A).B]]\\
         \end{array}\\\\
         
-        %% \text{(skeletons)} &
-        %% \begin{array}{lcl}
-        %%   [[S]] & ::= & [[?]] \mid [[List S]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
-        %% \end{array}\\\\
+        \text{(skeletons)} &
+        \begin{array}{lcl}
+          [[S]],[[K]],[[U]] & ::= & [[?]] \mid [[List S]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
+        \end{array}\\\\
         
         \begin{array}{l}
           \text{(terms)}\\\\\\\\
         \end{array}     &
         \begin{array}{lcl}
-          [[t]] & ::= & [[x]] \mid [[triv]] \mid [[box A]] \mid [[unbox A]] \mid [[0]] \mid [[succ t]] \\ & \mid & [[case t of 0 -> t1, (succ x) -> t2]] \mid [[(t1 , t2)]] \mid [[fst t]] \mid [[snd t]] \\ & \mid & [[ [] ]] \mid [[t1 :: t2]] \mid [[case t of [] -> t1, (x :: y) -> t2]] \mid [[\x : A.t]] \\ & \mid & [[t1 t2]] \mid [[Lam X <: A.t]] \mid [[ [ A ] t ]]\\
+          [[t]] & ::= & [[x]] \mid [[triv]] \mid [[0]] \mid [[succ t]] \mid [[case t of 0 -> t1, (succ x) -> t2]] \\ & \mid & [[(t1 , t2)]] \mid [[fst t]] \mid [[snd t]] \mid [[ [] ]] \mid [[t1 :: t2]] \\ & \mid & [[case t of [] -> t1, (x :: y) -> t2]] \mid [[\x : A.t]] \\ & \mid & [[t1 t2]] \mid [[Lam X <: A.t]] \mid [[ [ A ] t ]]\\
         \end{array}\\\\
         
         \text{(contexts)}  &
@@ -105,6 +105,10 @@ found in Fig.~\ref{fig:subtyping-surface-grady}.
         \SGradydruleSXXVar{} \and
         \SGradydruleSXXBox{} \and    
         \SGradydruleSXXUnbox{} \and
+        \SGradydruleSXXBox{} \and    
+        \SGradydruleSXXUnbox{} \and
+        \SGradydruleSXXSplit{} \and    
+        \SGradydruleSXXSquash{} \and                
         \SGradydruleSXXNatSL{} \and
         \SGradydruleSXXUnitSL{} \and    
         \SGradydruleSXXListSL{} \and
@@ -121,6 +125,8 @@ found in Fig.~\ref{fig:subtyping-surface-grady}.
       \SGradydruleCXXRefl{} \and
       \SGradydruleCXXBox{} \and
       \SGradydruleCXXUnbox{} \and
+      \SGradydruleCXXSplit{} \and
+      \SGradydruleCXXSquash{} \and      
       \SGradydruleCXXList{} \and
       \SGradydruleCXXArrow{} \and
       \SGradydruleCXXProd{} \and
@@ -166,8 +172,6 @@ Fig.~\ref{fig:typing-surface-grady}.
   \begin{mdframed}
     \begin{mathpar}
       \SGradydruleTXXvarP{} \and
-      \SGradydruleTXXBox{} \and
-      \SGradydruleTXXUnbox{} \and
       \SGradydruleTXXunitP{} \and
       \SGradydruleTXXzeroP{} \and
       \SGradydruleTXXsucc{} \and
@@ -207,11 +211,79 @@ number, then a type checking will fail, because the types are not
 consistent, and hence, we cannot cast between them.  The other rules
 are setup similarly.
 
-Being able to define the typed fix point operator given in the
-introduction makes Grady very expressive.  Combing \ginline{fix} with
-the eliminators for natural numbers and lists results in typed
-terminating recursion.  We now give several examples in Surface Grady
-that illustrate this\footnote{Please see the following example file for the complete list library: \url{https://github.com/ct-gradual-typing/Grady/blob/master/Examples/Gradual/List.gry}}:
+One non-obvious feature of gradual typing is the ability to use
+explicit casts in the surface language without having the explicit
+casts as primitive features of the language.  This realization
+actually increases the expressivity of the language.  Consider the
+application rule for Surface Grady:
+\[
+\SGradydruleTXXapp{}
+\]
+Notice that this rule does not apply any implicit casts to the result
+of the application.  Thus, if one needs to cast the result, then on
+first look, it would seem they are out of luck.  However, if we push
+the cast into the argument position then this rule will insert the
+appropriate cast.  This leads us to the following definitions:
+\[
+\begin{array}{lll}
+  \begin{array}{lll}
+    [[box A t]]    & = & [[(\x:?.x) t]]\\
+    [[unbox A t]]  & = & [[(\x:A.x) t]]\\
+  \end{array}
+  & \quad & 
+  \begin{array}{lll}
+    [[squash S t]] & = & [[(\x:?.x) t]]\\
+    [[split S t]]  & = & [[(\x:S.x) t]]\\
+  \end{array}
+\end{array}
+\]
+The reader should keep in mind the differences between $[[box]]$ and
+$[[squash]]$, and $[[unbox]]$ and $[[split]]$.  When these are
+translated into Core Grady using the cast insertion algorithm --
+see Sect.~\ref{subsec:cast_insertion} -- the inserted cast will match the
+definition.  We now have the following result.
+\begin{lemma}[Explicit Casts Typing]
+  \label{lemma:explicit_casts_typing}
+  The following rules are derivable in Surface Grady:
+  \begin{mathpar}
+    \SGradydruleTXXbox{} \and
+    \SGradydruleTXXunbox{} \and
+    \SGradydruleTXXsplit{} \and
+    \SGradydruleTXXsquash{}
+  \end{mathpar}
+\end{lemma}
+
+As an example consider the following Surface Grady program -- here we
+use the concrete syntax from Grady's implementation, but it is very
+similar to Haskell and not far from the mathematical syntax:
+\begin{lstlisting}[language=Haskell]
+  omega : ? -> ?
+  omega = \(x : ?) -> (x x);
+
+  ycomb : (? -> ?) -> ?
+  ycomb = \(f : ? -> ?) -> omega (\(x:?) -> f (x x));
+
+  fix : forall (X <: Simple).((X -> X) -> X)
+  fix = \(X <: Simple) -> \(f:X -> X) -> unbox<X> (ycomb f);
+\end{lstlisting}
+The previous example defines the Y combinator and a polymorphic fix
+point operator.  This example is gradually typed, for example, in the
+definition of \ginline{omega} we are applying \ginline{x} to itself
+without an explicit cast.  However, there is one explicit cast in the
+definition of \ginline{fix} which applies \ginline{unbox} to the
+result of the Y combinator.  If we did not have this explicit cast,
+then \ginline{fix} would not type check for the reasons outlines
+above.  Thus, pointing out the explicit casts in the surface language
+increases the number of valid programs.  We will use \ginline{fix} to
+develop quite a few interesting examples including a full library of
+operations on lists.
+
+Being able to define the typed fix point operator makes Grady very
+expressive.  Combing \ginline{fix} with the eliminators for natural
+numbers and lists results in typed terminating recursion.  We now give
+several examples in Surface Grady that illustrate this\footnote{Please
+  see the following example file for the complete list library:
+  \url{https://github.com/ct-gradual-typing/Grady/blob/master/Examples/Gradual/List.gry}}:
 \begin{lstlisting}[language=Haskell]
   append : forall (A <: Simple).([A] -> [A] -> [A])
   append = \(A <: Simple) ->

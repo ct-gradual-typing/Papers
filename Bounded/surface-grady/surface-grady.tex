@@ -251,6 +251,22 @@
 }}
 
 
+\newcommand{\ottdruleCXXSplitName}[0]{\ottdrulename{C\_Split}}
+\newcommand{\ottdruleCXXSplit}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash  \ottsym{\mbox{?}}  \sim  \ottnt{S} }{%
+{\ottdruleCXXSplitName}{}%
+}}
+
+
+\newcommand{\ottdruleCXXSquashName}[0]{\ottdrulename{C\_Squash}}
+\newcommand{\ottdruleCXXSquash}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash  \ottnt{S}  \sim  \ottsym{\mbox{?}} }{%
+{\ottdruleCXXSquashName}{}%
+}}
+
+
 \newcommand{\ottdruleCXXListName}[0]{\ottdrulename{C\_List}}
 \newcommand{\ottdruleCXXList}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{A}  \sim  \ottnt{B} }%
@@ -290,6 +306,8 @@
 \ottusedrule{\ottdruleCXXRefl{}}
 \ottusedrule{\ottdruleCXXBox{}}
 \ottusedrule{\ottdruleCXXUnbox{}}
+\ottusedrule{\ottdruleCXXSplit{}}
+\ottusedrule{\ottdruleCXXSquash{}}
 \ottusedrule{\ottdruleCXXList{}}
 \ottusedrule{\ottdruleCXXArrow{}}
 \ottusedrule{\ottdruleCXXProd{}}
@@ -303,6 +321,14 @@
 }{
  \ottnt{A}  \sqsubseteq  \ottsym{\mbox{?}} }{%
 {\ottdrulePXXUName}{}%
+}}
+
+
+\newcommand{\ottdrulePXXskeletonName}[0]{\ottdrulename{P\_skeleton}}
+\newcommand{\ottdrulePXXskeleton}[1]{\ottdrule[#1]{%
+}{
+ \ottnt{S}  \sqsubseteq  \ottsym{\mbox{?}} }{%
+{\ottdrulePXXskeletonName}{}%
 }}
 
 
@@ -351,6 +377,7 @@
 
 \newcommand{\ottdefntypepre}[1]{\begin{ottdefnblock}[#1]{$ \ottnt{A}  \sqsubseteq  \ottnt{B} $}{}
 \ottusedrule{\ottdrulePXXU{}}
+\ottusedrule{\ottdrulePXXskeleton{}}
 \ottusedrule{\ottdrulePXXrefl{}}
 \ottusedrule{\ottdrulePXXarrow{}}
 \ottusedrule{\ottdrulePXXprod{}}
@@ -526,12 +553,19 @@
 }}
 
 
-\newcommand{\ottdruleSXXUSLName}[0]{\ottdrulename{S\_USL}}
-\newcommand{\ottdruleSXXUSL}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
+\newcommand{\ottdruleSXXSplitName}[0]{\ottdrulename{S\_Split}}
+\newcommand{\ottdruleSXXSplit}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash  \ottsym{\mbox{?}}  \lesssim   \mathbb{S}  }{%
-{\ottdruleSXXUSLName}{}%
+ \Gamma  \vdash  \ottsym{\mbox{?}}  \lesssim  \ottnt{S} }{%
+{\ottdruleSXXSplitName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXSquashName}[0]{\ottdrulename{S\_Squash}}
+\newcommand{\ottdruleSXXSquash}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash  \ottnt{S}  \lesssim  \ottsym{\mbox{?}} }{%
+{\ottdruleSXXSquashName}{}%
 }}
 
 
@@ -621,7 +655,8 @@
 \ottusedrule{\ottdruleSXXTop{}}
 \ottusedrule{\ottdruleSXXBox{}}
 \ottusedrule{\ottdruleSXXUnbox{}}
-\ottusedrule{\ottdruleSXXUSL{}}
+\ottusedrule{\ottdruleSXXSplit{}}
+\ottusedrule{\ottdruleSXXSquash{}}
 \ottusedrule{\ottdruleSXXNatSL{}}
 \ottusedrule{\ottdruleSXXUnitSL{}}
 \ottusedrule{\ottdruleSXXListSL{}}
@@ -643,21 +678,39 @@
 }}
 
 
-\newcommand{\ottdruleTXXBoxName}[0]{\ottdrulename{T\_Box}}
-\newcommand{\ottdruleTXXBox}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
+\newcommand{\ottdruleTXXboxName}[0]{\ottdrulename{T\_box}}
+\newcommand{\ottdruleTXXbox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t}  :  \ottnt{A} }%
 }{
- \Gamma  \vdash_{\mathsf{SG} }   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
-{\ottdruleTXXBoxName}{}%
+ \Gamma  \vdash_{\mathsf{SG} }   \mathsf{box}_{ \ottnt{A} }  \, \ottnt{t}  :  \ottsym{\mbox{?}} }{%
+{\ottdruleTXXboxName}{}%
 }}
 
 
-\newcommand{\ottdruleTXXUnboxName}[0]{\ottdrulename{T\_Unbox}}
-\newcommand{\ottdruleTXXUnbox}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
+\newcommand{\ottdruleTXXunboxName}[0]{\ottdrulename{T\_unbox}}
+\newcommand{\ottdruleTXXunbox}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t}  :  \ottnt{A} }%
 }{
- \Gamma  \vdash_{\mathsf{SG} }   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
-{\ottdruleTXXUnboxName}{}%
+ \Gamma  \vdash_{\mathsf{SG} }   \mathsf{unbox}_{ \ottnt{A} }  \, \ottnt{t}  :  \ottnt{A} }{%
+{\ottdruleTXXunboxName}{}%
+}}
+
+
+\newcommand{\ottdruleTXXsquashName}[0]{\ottdrulename{T\_squash}}
+\newcommand{\ottdruleTXXsquash}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t}  :  \ottnt{S} }%
+}{
+ \Gamma  \vdash_{\mathsf{SG} }   \mathsf{squash}_{ \ottnt{S} }  \, \ottnt{t}  :  \ottsym{\mbox{?}} }{%
+{\ottdruleTXXsquashName}{}%
+}}
+
+
+\newcommand{\ottdruleTXXsplitName}[0]{\ottdrulename{T\_split}}
+\newcommand{\ottdruleTXXsplit}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t}  :  \ottsym{\mbox{?}} }%
+}{
+ \Gamma  \vdash_{\mathsf{SG} }   \mathsf{split}_{ \ottnt{S} }  \, \ottnt{t}  :  \ottnt{S} }{%
+{\ottdruleTXXsplitName}{}%
 }}
 
 
@@ -800,8 +853,10 @@
 
 \newcommand{\ottdefntype}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t}  :  \ottnt{A} $}{}
 \ottusedrule{\ottdruleTXXvarP{}}
-\ottusedrule{\ottdruleTXXBox{}}
-\ottusedrule{\ottdruleTXXUnbox{}}
+\ottusedrule{\ottdruleTXXbox{}}
+\ottusedrule{\ottdruleTXXunbox{}}
+\ottusedrule{\ottdruleTXXsquash{}}
+\ottusedrule{\ottdruleTXXsplit{}}
 \ottusedrule{\ottdruleTXXunitP{}}
 \ottusedrule{\ottdruleTXXzeroP{}}
 \ottusedrule{\ottdruleTXXsucc{}}
@@ -826,24 +881,6 @@
 }{
  \Gamma  \vdash  \ottmv{x}  \Rightarrow  \ottmv{x}  :  \ottnt{A} }{%
 {\ottdruleciXXvarName}{}%
-}}
-
-
-\newcommand{\ottdruleciXXBoxName}[0]{\ottdrulename{ci\_Box}}
-\newcommand{\ottdruleciXXBox}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash   \mathsf{box}   \Rightarrow   \mathsf{box}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottmv{X}  \rightarrow  \ottsym{\mbox{?}}  \ottsym{)}  }{%
-{\ottdruleciXXBoxName}{}%
-}}
-
-
-\newcommand{\ottdruleciXXUnboxName}[0]{\ottdrulename{ci\_Unbox}}
-\newcommand{\ottdruleciXXUnbox}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma \,\text{Ok} }%
-}{
- \Gamma  \vdash   \mathsf{unbox}   \Rightarrow   \mathsf{unbox}   :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \mathbb{S}  ).  \ottsym{(}  \ottsym{\mbox{?}}  \rightarrow  \ottmv{X}  \ottsym{)}  }{%
-{\ottdruleciXXUnboxName}{}%
 }}
 
 
@@ -1043,8 +1080,6 @@
 
 \newcommand{\ottdefncastIn}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \Rightarrow  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A} $}{}
 \ottusedrule{\ottdruleciXXvar{}}
-\ottusedrule{\ottdruleciXXBox{}}
-\ottusedrule{\ottdruleciXXUnbox{}}
 \ottusedrule{\ottdruleciXXzero{}}
 \ottusedrule{\ottdruleciXXtriv{}}
 \ottusedrule{\ottdruleciXXsuccU{}}
@@ -1084,7 +1119,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        95 good    0 bad
-Definition rule clauses: 191 good    0 bad
+Definition rules:        99 good    0 bad
+Definition rule clauses: 194 good    0 bad
 \end{verbatim}
 \end{document}

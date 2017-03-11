@@ -1,3 +1,22 @@
+We now turn to Grady's metatheory.  Specifically, we show that the
+gradual guarantee -- see Theorem~\ref{thm:gradual_guarantee} -- holds
+for Grady.  This is the defining property of every gradual type
+system.  In fact, Siek et al.~\cite{Siek:2015} argue that the gradual
+guarantee is what separates type systems that simply combine dynamic
+and static typing from systems that not only combine dynamic and
+static typing, but also allow the programmer to program in dynamic
+style without the need to insert explicit casts.  Intuitively, the
+gradual guarantee states that a gradually typed program should
+preserve its type and behavior when explicit casts are either inserted
+or removed.
+
+First, we have some basic facts about Grady.  Notice that if we remove
+the unknown type, $[[box]]$, and $[[unbox]]$ from Grady, then we are
+left with Bounded System F.  Suppose $[[G |-F t : A]]$ holds if
+$[[t]]$ and $[[A]]$ are a Bounded System F -- for its definition
+please see Pierce\cite{Pierce:2002:TPL:509043} -- term and type
+respectively.  We call a type $[[A]]$, static, if it does not contain
+the unknown type.
 \begin{lemma}[Inclusion of Bounded System F]
   \label{lemma:F-inclusion}
   Suppose $t$ is fully annotated and does not contain any applications
@@ -29,43 +48,51 @@
   since $[[t]]$ in Surface Grady is the exact same program as $[[t]]$
   in bounded system F, then we know $[[t F~>* t']]$ will hold.
 \end{proof}
-
-\begin{lemma}[Inclusion of DTLC]
+The call-by-name untyped $\lambda$-calculus is a fragment of Grady.
+We now show that one can strictly program in this fragment.  In fact,
+the untyped fragment of Grady is the call-by-name unitype
+$\lambda$-calculus.  The translation of the untyped $\lambda$-calculus
+into Grady is as follows:
+\[
+\begin{array}{lll}
+  [[ | x | ]]     & = & [[x]]\\
+  [[ | \x.t | ]]  & = & [[\x:?.|t|]]\\
+  [[ | t1 t2 | ]] & = & [[ ((\x:? -> ?.x) |t1|) |t2| ]]\\
+\end{array}
+\]
+In the last case of the previous definition the annotation on $[[x]]$
+will force the $[[ |t1 | ]]$ to be split into $[[? -> ?]]$, and thus,
+after the final application we will have a term of type $[[?]]$.  We
+now have the following result.
+\begin{lemma}[Inclusion of the Untyped $\lambda$-Calculus]
   \label{lemma:inclusion_of_dtlc}
-  Suppose $[[t]]$ is a closed term of DTLC. Then
+  Suppose $[[t]]$ is a closed term of of the untyped
+  $\lambda$-calculus. Then
   \begin{itemize}
   \item[i.] $[[. |- |t| : ?]]$, and
   \item[ii.] $[[t D~>* t']]$ if and only if $[[|t| ~>* |t'|]]$.
   \end{itemize}
 \end{lemma}
 \begin{proof}
-  In this case DTLC is embedded into the simply typed fragment of
-  Grady, and hence, this proof is the same result proven by
-  \cite{Siek:2006}, and \cite{Siek:2015}.
+  This proof is the same result proven by \cite{Siek:2006}, and
+  \cite{Siek:2015}.
 \end{proof}
+Another basic fact is that type preservation holds for Core Grady.
+\begin{lemma}[Type Preservation]
+  \label{lemma:type_preservation}
+  If $<<G |- t1 : A>>$ and $<<t1 ~> t2>>$, then $<<G |- t2 : A>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $<<G |- t1 : A>>$ with further case
+  analysis on the structure the derivation $<<t1 ~> t2>>$.
+\end{proof}
+This result is needed in the proof of the gradual guarantee,
+specifically, in the proof of simulation of more precise programs
+(Lemma~\ref{lemma:simulation_of_more_precise_programs}).
 
-
-\renewcommand{\SGradydrulePXXUName}{[[?]]}
-\renewcommand{\SGradydrulePXXreflName}{\text{refl}}
-\renewcommand{\SGradydrulePXXarrowName}{\to}
-\renewcommand{\SGradydrulePXXprodName}{\times}
-\renewcommand{\SGradydrulePXXlistName}{\mathsf{List}}
-\renewcommand{\SGradydrulePXXforallName}{\forall}
-\begin{figure}
-  \begin{mdframed}
-    \begin{mathpar}
-      \SGradydrulePXXU{} \and
-      \SGradydrulePXXrefl{} \and
-      \SGradydrulePXXarrow{} \and
-      \SGradydrulePXXprod{} \and
-      \SGradydrulePXXlist{} \and
-      \SGradydrulePXXforall{}      
-    \end{mathpar}
-  \end{mdframed}
-  \caption{Type Precision}
-  \label{fig:type-pre}
-\end{figure}
-
+We claimed that consistent subtyping is the combination of both
+standard subtyping and type consistency. The following results makes
+this precise. 
 \begin{lemma}[Left-to-Right Consistent Subtyping]
   \label{lemma:consistent-subtyping-1}
   Suppose $[[G |- A <~ B]]$.
@@ -79,11 +106,9 @@
   Appendix~\ref{subsec:proof_of_left-to-right_consistent_subtyping_lemma:consistent-subtyping-1}
   for the complete proof.
 \end{proof}
-
 \begin{corollary}[Consistent Subtyping]
   \label{corollary:consistent_subtyping}
   \begin{enumR}
-  \item[]
   \item $[[G |- A <~ B]]$ if and only if $[[G |- A ~ A']]$ and $<<G |- A' <: B>>$ for some $[[A']]$.
   \item $[[G |- A <~ B]]$ if and only if $[[G |- B' ~ B]]$ and $<<G |- A <: B'>>$ for some $[[B']]$.
   \end{enumR}
@@ -94,7 +119,24 @@
   direction of both cases follows from induction on the subtyping
   derivation and Lemma~\ref{lemma:simply_typed_consistent_types_are_subtypes}.
 \end{proof}
+The previous two results are similar to those proved by Siek and
+Taha~\cite{Siek:2007} and Garcia~\cite{Garcia:2016}.
 
+\begin{figure}
+  \begin{mdframed}
+    \begin{mathpar}
+      \SGradydrulePXXU{} \and
+      \SGradydrulePXXskeleton{} \and
+      \SGradydrulePXXrefl{} \and
+      \SGradydrulePXXarrow{} \and
+      \SGradydrulePXXprod{} \and
+      \SGradydrulePXXlist{} \and
+      \SGradydrulePXXforall{}      
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Type Precision}
+  \label{fig:type-pre}
+\end{figure}
 
 \begin{lemma}[Gradual Guarantee Part One]
   \label{lemma:gradual_guarantee_part_one}
@@ -119,15 +161,6 @@
   except in the case of type application.  Please see
   Appendix~\ref{subsec:proof_of_type_preservation_for_cast_insertion}
   for the complete proof.
-\end{proof}
-
-\begin{lemma}[Type Preservation]
-  \label{lemma:type_preservation}
-  If $<<G |- t1 : A>>$ and $<<t1 ~> t2>>$, then $<<G |- t2 : A>>$.
-\end{lemma}
-\begin{proof}
-  This proof holds by induction on $<<G |- t1 : A>>$ with further case
-  analysis on the structure the derivation $<<t1 ~> t2>>$.
 \end{proof}
 
 \begin{lemma}[Simulation of More Precise Programs]
