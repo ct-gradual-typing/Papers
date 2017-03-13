@@ -150,7 +150,12 @@ Note that the type consistency rules $\SGradydruleCXXBoxName{}$ and
 $\SGradydruleCXXUnboxName{}$ embody boxing and unboxing, and splitting
 and squashing.  The remainder of the rules simply are congruence
 rules.  We will use this intuition when translating Surface Grady to
-Core Grady.
+Core Grady.  Note that the type consistency, subtyping, and typing
+judgments for both Surface Grady and Core Grady all depend on kinding,
+denoted $[[G |- A : *]]$, and well-formed contexts, denoted $[[G
+    Ok]]$, but these are standard, and in the interest of saving space
+we do not define them here.  They simply insure that all type
+variables in types in and out of contexts are accounted for.
 
 Consistent subtyping, denoted $[[G |- A <~ B]]$, was proposed by Siek
 and Taha~\cite{Siek:2007} in their work extending gradual type systems

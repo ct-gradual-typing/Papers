@@ -92,7 +92,20 @@ then we can instantiate $[[t]]$ with any type at all.  This seems very
 flexible, but it turns out that it does nothing more than what Core
 Grady allows when adding explicit casts.
 
-\paragraph{Contributions.} TODO
+\paragraph{Contributions.} This paper offers the following contributions:
+\begin{itemize}
+\item The first gradual type system with bounded quantification.  The
+  core casting calculus is based on Simply Typed Grady \cite{Eades:17}
+  and Bounded System F \cite{Pierce:2002:TPL:509043}.  We show that
+  the bounds on types can be used to restrict which types can be cast
+  to the unknown type and vice versa.
+
+\item We prove the gradual guarantee for our gradual type system.
+
+\item We show that explicit casting in the surface language of gradual
+  type systems are derivable, and making use of these explicit casts
+  increases the expressiveness of the language.
+\end{itemize}
 
 %%% Local Variables: ***
 %%% mode:latex ***
