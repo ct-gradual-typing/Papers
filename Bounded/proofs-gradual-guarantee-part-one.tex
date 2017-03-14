@@ -456,12 +456,12 @@ hypothesis.
   In this case $<<t1>> = <<case t : Nat of 0 -> t3, (succ x) -> t4>>$.  Suppose
   $<<G |- t1' : A'>>$. 
   Then inversion of term precision implies that one of the following must hold:
-  \begin{itemize}
-  \item $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$, $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$,
+  \begin{enumR}
+    \item $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$, $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$,
     and $<<G, x : Nat |- t4 <= t4'>>$
   \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
   \item $<<t1'>> = <<squash K t1>>$, $<<G |- t1 : K>>$, and $<<A>> = <<K>>$
-  \end{itemize}
+  \end{enumR}
 
   \ \\
   \noindent
@@ -507,11 +507,11 @@ hypothesis.
   \end{center}
   In this case $<<t1>> = <<fst t>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
   Then inversion for term precision implies that one of the following must hold:
-  \begin{itemize}
+  \begin{enumR}
   \item $<<t'1>> = <<fst t'>>$ and $<<G |- t <= t'>>$
   \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
   \item $<<t1'>> = <<squash K t1>>$, $<<G |- t1 : K>>$, and $<<A>> = <<K>>$
-  \end{itemize}
+  \end{enumR}
 
   We only consider the proof of part i, because the others follow similarly to
   the previous case. Case split over $<<t1 ~> t2>>$.
@@ -537,11 +537,11 @@ hypothesis.
   In this case $<<t1>> = <<\x:A1.t>>$ and $<<A>> = <<A1 -> A2>>$.
   Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
   Then inversion of term precision implies that one of the following must hold:
-  \begin{itemize}
+  \begin{enumR}
   \item $<<t'1>> = <<\x:A'1.t'>>$
   \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
   \item $<<t1'>> = <<squash K t1>>$, $<<G |- t1 : K>>$, and $<<A>> = <<K>>$
-  \end{itemize}
+  \end{enumR}
 
   We only consider the proof of part i. The reduction relation does not reduce under
   $\lambda$-expressions.  Hence, $<<t2>> = <<t1>>$, and thus, choose $<<t'2>> = <<t'1>>$, and
