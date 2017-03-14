@@ -1,4 +1,4 @@
-In a previous paper the authors \cite{Eades:2017} have shown that
+In a previous paper the authors \cite{Eades:2017} show that
 static and dynamic typing can be combined in a very simple and
 intuitive way by combining the work of Scott~\cite{Scott:1980} and
 Lambek~\cite{Lambek:1980} on categorical models of the untyped and
@@ -43,21 +43,24 @@ difference between the surface and the core is that the former is
 gradually typed while the latter is statically typed. Gradual typing
 is the combination of static and dynamic typing in such a way that one
 can program in dynamic style.  That is, the programmer should not have
-to introduce explicit casts. The first functional gradually typed
-language is due to Siek and Taha \cite{Siek:2006} where they extend
-the typed $\lambda$-calculus with the unknown type $[[?]]$ and a new
-relation on types, called the type consistency relation, that indicated
-when types should be considered as being castable or not.  For
-example, consider the function application rule of Surface Grady:
+to introduce explicit casts.
+
+The first functional gradually typed language is due to Siek and Taha
+\cite{Siek:2006}. They extended the typed $\lambda$-calculus with the
+unknown type $[[?]]$ and a new relation on types, called the type
+consistency relation, that indicates when types should be considered
+as being castable or not.  Then they used this relation to generalize
+function application.  Consider the function application rule of
+Surface Grady:
 \[\small
 \SGradydruleTXXapp{}
 \]
-This rule depends on the relation $[[G |- A2 ~ A1]]$ which is the type
-consistency relation.  It is reflexive and symmetric, but not
-transitive, or one could prove that any type is consistent with any
-other type.  Thus, type consistency indicates exactly where explicit
-casts need to be inserted.  This rule also depends on the partial
-function $\mathsf{fun}$ which is defined in
+This rule depends on the type consistency relation denoted $[[G |- A2
+    ~ A1]]$.  It is reflexive and symmetric, but not transitive, or
+one could prove that any type is consistent with -- and hence castable
+to -- any other type.  Type consistency is used to indicate exactly
+where explicit casts need to be inserted.  This rule also depends on
+the partial function $\mathsf{fun}$ which is defined in
 Fig.~\ref{fig:syntax-surface-grady}.
 %% \[\small
 %% \begin{array}{lll}
@@ -66,13 +69,13 @@ Fig.~\ref{fig:syntax-surface-grady}.
 %% \end{array}
 %% \]
 
-As we will see below $[[G |- ? ~ A]]$ holds for any type $[[A]]$.  As an
-example, suppose $[[G |- t1 : ?]]$ and $[[G |- t2 : Nat]]$.  In addition, we know
-$[[G |- ? ~ Nat]]$, and $[[fun(?) = ? -> ?]]$.
-Then
-based on the rule above $[[G |- t1 t2 : ?]]$ is typable.  Notice
-there are no explicit casts.  Using $<<split>>$ and $<<box Nat>>$ we
-can translate this application into Core Grady by adding the casts:
+Consider an example.  Suppose $[[G |- t1 : ?]]$ and $[[G |- t2 :
+    Nat]]$.  As we will see below $[[G |- ? ~ A]]$ holds for any type
+$[[A]]$, and hence, we know $[[G |- ? ~ Nat]]$. Additionally,
+$[[fun(?) = ? -> ?]]$ holds by definition.  Then based on the rule
+above $[[G |- t1 t2 : ?]]$ is typable.  Notice there are no explicit
+casts.  Using $<<split>>$ and $<<box Nat>>$ we can translate this
+application into Core Grady by inserting the casts:
 $<<G |- (split (? -> ?) t1) (box Nat t2) : ?>>$.
 
 Subtyping in Core Grady is standard subtyping for bounded system F
