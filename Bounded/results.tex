@@ -57,13 +57,13 @@ into Grady is as follows:
 \begin{array}{lll}
   [[ | x | ]]     & = & [[x]]\\
   [[ | \x.t | ]]  & = & [[\x:?.|t|]]\\
-  [[ | t1 t2 | ]] & = & [[ ((\x:? -> ?.x) |t1|) |t2| ]]\\
+  [[ | t1 t2 | ]] & = & [[ (split (? -> ?) |t1|) |t2| ]]\\
 \end{array}
 \]
-In the last case of the previous definition the annotation on $[[x]]$
-will force the $[[ |t1 | ]]$ to be split into $[[? -> ?]]$, and thus,
-after the final application we will have a term of type $[[?]]$.  We
-now have the following result.
+In the last case of the previous definition the annotation we use
+$[[split]]$ to cast the time of $[[ |t1 | ]]$ to $[[? -> ?]]$, and
+thus, after the final application we will have a term of type $[[?]]$.
+We now have the following result.
 \begin{lemma}[Inclusion of the Untyped $\lambda$-Calculus]
   \label{lemma:inclusion_of_dtlc}
   Suppose $[[t]]$ is a closed term of the untyped
@@ -74,7 +74,7 @@ now have the following result.
   \end{itemize}
 \end{lemma}
 \begin{proof}
-  This proof is the same result proven by \cite{Siek:2006}, and
+  This proof is the same result proven by \cite{Siek:2006} and
   \cite{Siek:2015}.
 \end{proof}
 Another basic fact is that type preservation holds for Core Grady.
@@ -128,9 +128,9 @@ proof of the gradual guarantee for the gradual simply typed
 $\lambda$-calculus.  That is, we prove the exact same results as they
 do.
 
-Cast insertion preserves type up to type consistency.  This is fairly
-straightforward to show.  The only interesting case is the one for
-type application.
+Cast insertion preserves the type up to type consistency.  This is
+fairly straightforward to show.  The only interesting case is the one
+for type application.
 \begin{lemma}[Type Preservation for Cast Insertion]
   \label{lemma:type_preservation_for_cast_insertion}
   If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : B]]$, then $<<G |- t2 : B>>$ and $[[G |- A ~ B]]$.

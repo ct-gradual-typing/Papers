@@ -2,8 +2,8 @@ The aim of the gradual typing is to allow the programmer to program
 either statically and catch as many errors at compile time as
 possible, or to program in dynamic style and leave some error checking
 to run time, but the programmer should not be burdened by having to
-explicitly insert casts.  Surface Grady is gradually typed and in this
-section we give the details of the language.
+explicitly insert casts.  Thus, Surface Grady is gradually typed, and
+in this section we give the details of the language.
 
 Surface Grady's syntax is defined in
 Fig.~\ref{fig:syntax-surface-grady}.  
@@ -81,16 +81,7 @@ thought of as the universe of untyped terms.
 %% Skeletons are the bare bones structure of types.  The skeleton,
 %% $[[S]]$, of a type $[[A]]$ is $[[A]]$ where every atomic type as been
 %% replaced with $[[?]]$.  
-Syntax for terms and typing contexts are fairly standard.  One thing
-to note is that we do allow explicit boxing and unboxing, but not
-splitting and squashing, the latter are a purely core language
-feature.  This is because any use of splitting or squashing can be
-algorithmically inserted, and so the programmer never has to worry
-about inserting those explicitly.  Keep in mind that even though we
-allow explicitly boxing and unboxing in the surface language most
-places where boxing and unboxing would be used can be algorithmically
-inserted, and so the programmer should only use explicit boxing and
-unboxing in places where the algorithm fails.
+Syntax for terms and typing contexts are fairly standard.  
 
 The rules defining type consistency and consistent subtyping can be
 found in Fig.~\ref{fig:subtyping-surface-grady}.  
@@ -199,28 +190,31 @@ It follows the formulation of the Gradual Simply Typed
 $\lambda$-calculus given by Siek et al.~\cite{Siek:2015} pretty
 closely.  The most interesting rules are the elimination rules,
 because this is where type consistency -- and hence casting -- comes
-into play.  Consider the elimination for lists, rule
-$\SGradydruleTXXlcaseName{}$, from
-Fig.~\ref{fig:syntax-surface-grady}.  The type $[[C]]$ can be either
-$[[?]]$ or $[[List A]]$.  If it is the former, then $[[C]]$ will be
-split into $[[List ?]]$.  In addition, we allow the type of the
-branches to be cast to other types as well, just as long as, they are
-consistent with $[[B]]$.  For example, if $[[t1]]$ was a boolean and
-$[[t2]]$ was a natural number, then type checking will fail, because
-the types are not consistent, and hence, we cannot cast between them.
-The other rules are setup similarly.
+into play.  Consider the elimination for lists:
+\[\small
+\SGradydruleTXXlcase{}
+\]
+The type $[[C]]$ can be either $[[?]]$ or $[[List A]]$.  If it is the
+former, then $[[C]]$ will be split into $[[List ?]]$.  In addition, we
+allow the type of the branches to be cast to other types as well, just
+as long as, they are consistent with $[[B]]$.  For example, if
+$[[t1]]$ was a boolean and $[[t2]]$ was a natural number, then type
+checking will fail, because the types are not consistent, and hence,
+we cannot cast between them.  The other rules are setup similarly.
 
 One non-obvious feature of gradual typing is the ability to use
 explicit casts in the surface language without having the explicit
 casts as primitive features of the language.  This realization
 actually increases the expressivity of the language.  Consider the
-application, rule $\SGradydruleTXXappName{}$, from
-Fig.~\ref{fig:syntax-surface-grady}. Notice that this rule does not
-apply any implicit casts to the result of the application.  Thus, if
-one needs to cast the result, then on first look, it would seem they
-are out of luck.  However, if we push the cast into the argument
-position then this rule will insert the appropriate cast.  This leads
-us to the following definitions:
+rule for function application:
+\[\small
+\SGradydruleTXXapp{}
+\]
+Notice that this rule does not apply any implicit casts to the result
+of the application.  Thus, if one needs to cast the result, then on
+first look, it would seem they are out of luck.  However, if we push
+the cast into the argument position then this rule will insert the
+appropriate cast.  This leads us to the following definitions:
 \[
 \begin{array}{lll}
   \begin{array}{lll}
@@ -269,7 +263,7 @@ definition of \ginline{omega} we are applying \ginline{x} to itself
 without an explicit cast.  However, there is one explicit cast in the
 definition of \ginline{fix} which applies \ginline{unbox} to the
 result of the Y combinator.  If we did not have this explicit cast,
-then \ginline{fix} would not type check for the reasons outlines
+then \ginline{fix} would not type check for the reasons outlined
 above.  Thus, pointing out the explicit casts in the surface language
 increases the number of valid programs.  We will use \ginline{fix} to
 develop quite a few interesting examples including a full library of

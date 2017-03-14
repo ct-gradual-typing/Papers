@@ -114,7 +114,7 @@ These casts are enough to do everything the surface language can
 do. In addition, the general casting rule used in the casting calculi
 found in the gradual typing literature, e.g.
 \cite{Siek:2007,Siek:2006,Ahmed:2011:BLA:1926385.1926409,Siek:2015},
-denoted $[[t]] : [[A]] \Rightarrow [[B]]$ can be modeled by these four
+denoted $[[t]] : [[A]] \Rightarrow [[B]]$, can be modeled by these four
 operations \cite{Eades:2017}.
 
 Unlike Surface Grady, Core Grady has a reduction relation.  The
@@ -141,7 +141,7 @@ Fig.~\ref{fig:reduction-core-grady}.
   \caption{Reduction rules for Core Grady}
   \label{fig:reduction-core-grady}
 \end{figure}
-Reduction is a extended version of call-by-name.  We omit congruence
+Reduction is an extended version of call-by-name.  We omit congruence
 rules for brevity.  Reduction will not reduce under
 $\lambda$-abstractions or arguments to $[[box]]$ or $[[squash]]$.
 However, it will reduce arguments to $[[unbox]]$ and $[[split]]$ in
