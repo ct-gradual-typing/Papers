@@ -105,8 +105,6 @@ found in Fig.~\ref{fig:subtyping-surface-grady}.
         \SGradydruleSXXVar{} \and
         \SGradydruleSXXBox{} \and    
         \SGradydruleSXXUnbox{} \and
-        \SGradydruleSXXBox{} \and    
-        \SGradydruleSXXUnbox{} \and
         \SGradydruleSXXSplit{} \and    
         \SGradydruleSXXSquash{} \and                
         \SGradydruleSXXNatSL{} \and
@@ -201,34 +199,28 @@ It follows the formulation of the Gradual Simply Typed
 $\lambda$-calculus given by Siek et al.~\cite{Siek:2015} pretty
 closely.  The most interesting rules are the elimination rules,
 because this is where type consistency -- and hence casting -- comes
-into play.  Consider the elimination for lists:
-\[
-\SGradydruleTXXlcase{}
-\]
-The type $[[C]]$ can be either $[[?]]$ or $[[List A]]$.  If it is the
-former, then $[[C]]$ will be split into $[[List ?]]$.  In addition, we
-allow the type of the branches to be cast to other types as well, just
-as long as, they are consistent with $[[B]]$.  The idea is, the
-branches of a case expression, whether for lists or natural numbers,
-can have different types only when they can be cast to the same type.
-For example, if $[[t1]]$ was a boolean and $[[t2]]$ was a natural
-number, then a type checking will fail, because the types are not
-consistent, and hence, we cannot cast between them.  The other rules
-are setup similarly.
+into play.  Consider the elimination for lists, rule
+$\SGradydruleTXXlcaseName{}$, from
+Fig.~\ref{fig:syntax-surface-grady}.  The type $[[C]]$ can be either
+$[[?]]$ or $[[List A]]$.  If it is the former, then $[[C]]$ will be
+split into $[[List ?]]$.  In addition, we allow the type of the
+branches to be cast to other types as well, just as long as, they are
+consistent with $[[B]]$.  For example, if $[[t1]]$ was a boolean and
+$[[t2]]$ was a natural number, then type checking will fail, because
+the types are not consistent, and hence, we cannot cast between them.
+The other rules are setup similarly.
 
 One non-obvious feature of gradual typing is the ability to use
 explicit casts in the surface language without having the explicit
 casts as primitive features of the language.  This realization
 actually increases the expressivity of the language.  Consider the
-application rule for Surface Grady:
-\[
-\SGradydruleTXXapp{}
-\]
-Notice that this rule does not apply any implicit casts to the result
-of the application.  Thus, if one needs to cast the result, then on
-first look, it would seem they are out of luck.  However, if we push
-the cast into the argument position then this rule will insert the
-appropriate cast.  This leads us to the following definitions:
+application, rule $\SGradydruleTXXappName{}$, from
+Fig.~\ref{fig:syntax-surface-grady}. Notice that this rule does not
+apply any implicit casts to the result of the application.  Thus, if
+one needs to cast the result, then on first look, it would seem they
+are out of luck.  However, if we push the cast into the argument
+position then this rule will insert the appropriate cast.  This leads
+us to the following definitions:
 \[
 \begin{array}{lll}
   \begin{array}{lll}
@@ -250,7 +242,7 @@ definition.  We now have the following result.
 \begin{lemma}[Explicit Casts Typing]
   \label{lemma:explicit_casts_typing}
   The following rules are derivable in Surface Grady:
-  \begin{mathpar}
+  \begin{mathpar}\small
     \SGradydruleTXXbox{} \and
     \SGradydruleTXXunbox{} \and
     \SGradydruleTXXsplit{} \and
@@ -312,14 +304,6 @@ several examples in Surface Grady that illustrate this\footnote{Please
                    case l of
                      [] -> b,
                      (a :: as) -> (f a (r as)));
-
-  foldl : forall (A <: Simple).
-         (forall (B <: Simple).((B -> A -> B) -> (B -> [A] -> B)))
-  foldl = \(A <: Simple) -> \(B <: Simple) -> \(f : B -> A -> B) ->
-          ([B -> [A] -> B]fix) (\(r : B -> [A] -> B) -> \(b : B) -> \(l : [A]) ->
-                   case l of
-                     [] -> b,
-                     (a :: as) -> r (f b a) as);
 
   zipWith : forall (A <: Simple).(forall (B <: Simple).(forall (C <: Simple).
                ((A -> B -> C) -> ([A] -> [B] -> [C]))))

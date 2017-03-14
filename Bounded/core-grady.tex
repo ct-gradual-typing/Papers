@@ -11,12 +11,12 @@ Fig.~\ref{fig:syntax-core-grady}.
     %% \item[] \textbf{Syntax:}
       \[
       \begin{array}{cl}
-        \begin{array}{l}
-          \text{(skeletons)}
-        \end{array}     &
-        \begin{array}{lcl}
-          [[S]], [[K]], [[U]] & ::= & [[?]] \mid [[List S]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
-        \end{array}\\\\
+        %% \begin{array}{l}
+        %%   \text{(skeletons)}
+        %% \end{array}     &
+        %% \begin{array}{lcl}
+        %%   [[S]], [[K]], [[U]] & ::= & [[?]] \mid [[List S]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
+        %% \end{array}\\\\
                 
         \begin{array}{l}
           \text{(terms)}
@@ -151,7 +151,7 @@ order to insure the retract rules apply as much as possible.
 \label{subsec:cast_insertion}
 
 Surface Grady is translated into Core Grady by the cast insertion
-algorithm.  Any where type consistency or one of the metafunctions
+algorithm.  Anywhere type consistency or one of the metafunctions
 defined in Fig.~\ref{fig:syntax-surface-grady} are used a cast must be
 inserted.
 

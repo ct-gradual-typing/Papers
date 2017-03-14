@@ -49,7 +49,7 @@ the typed $\lambda$-calculus with the unknown type $[[?]]$ and a new
 relation on types, called the type consistency relation, that indicated
 when types should be considered as being castable or not.  For
 example, consider the function application rule of Surface Grady:
-\[
+\[\small
 \SGradydruleTXXapp{}
 \]
 This rule depends on the relation $[[G |- A2 ~ A1]]$ which is the type
@@ -57,14 +57,16 @@ consistency relation.  It is reflexive and symmetric, but not
 transitive, or one could prove that any type is consistent with any
 other type.  Thus, type consistency indicates exactly where explicit
 casts need to be inserted.  This rule also depends on the partial
-function:
-\[
-\begin{array}{lll}
-  [[fun(?) = ? -> ?]]\\
-  [[fun(A1 -> B1) = A1 -> B1]]
-\end{array}
-\]
-As we will see below $[[G |- ? ~ A]]$ for any type $[[A]]$.  As an
+function $\mathsf{fun}$ which is defined in
+Fig.~\ref{fig:syntax-surface-grady}.
+%% \[\small
+%% \begin{array}{lll}
+%%   [[fun(?) = ? -> ?]]\\
+%%   [[fun(A1 -> B1) = A1 -> B1]]
+%% \end{array}
+%% \]
+
+As we will see below $[[G |- ? ~ A]]$ holds for any type $[[A]]$.  As an
 example, suppose $[[G |- t1 : ?]]$ and $[[G |- t2 : Nat]]$.  In addition, we know
 $[[G |- ? ~ Nat]]$, and $[[fun(?) = ? -> ?]]$.
 Then
