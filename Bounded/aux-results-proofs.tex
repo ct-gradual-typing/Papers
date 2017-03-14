@@ -3,7 +3,6 @@
 \begin{lemma}[Kinding]
   \label{lemma:kinding}
   \begin{enumR}
-  \item[]
   \item If $[[G |- A ~ B]]$, then $[[G |- A : *]]$ and $[[G |- B : *]]$.
   \item If $[[G |- A <~ B]]$, then $[[G |- A : *]]$ and $[[G |- B : *]]$.
   \item If $[[G |- t : A]]$, then $[[G |- A : *]]$.
@@ -44,7 +43,7 @@
 \begin{lemma}[Surface Grady Inversion for Term Precision]
   \label{lemma:inversion_of_term_precision}
   Suppose $[[t <= t']]$. Then:
-  \begin{enumR}
+  \begin{enumR}\small
   \item if $[[t]] = [[succ t1]]$, then $[[t']] = [[succ t2]]$ and $[[t1 <= t2]]$.
   \item if $[[t]] = [[(case t1 of 0 -> t2, (succ x) -> t3)]]$, then
     $[[t']] = [[(case t1' of 0 -> t2', (succ x) -> t3')]]$, $[[t1 <= t1']]$, $[[t2 <= t2']]$, and $[[t3 <= t3']]$.
@@ -87,7 +86,7 @@
 \begin{lemma}[Inversion for Consistent Subtyping]
   \label{lemma:inversion_of_consistent_subtyping}
   Suppose $[[G |- A <~ B]]$. Then:
-  \begin{enumR}
+  \begin{enumR}\small
   \item if $[[A]] = [[?]]$, then
     $[[B]] = [[A]]$ and $[[G |- A : *]]$, $[[B]] = [[Top]]$ or $[[G |- B <~ SL]]$.
   \item if $[[A]] = [[X]]$, then
@@ -248,7 +247,6 @@
 \begin{lemma}[Type Precision Preserves $[[SL]]$]
   \label{lemma:type_precision_preserves_SL}
   \begin{enumR}
-  \item[]
   \item If $[[G |- B : *]]$, $[[G |- A <~ SL]]$ and $[[A <= B]]$, then $[[G |- B <~ SL]]$.
   \item If $[[G |- A : *]]$, $[[G |- B <~ SL]]$ and $[[A <= B]]$, then $[[G |- A <~ SL]]$.
   \end{enumR}
@@ -262,7 +260,6 @@
 \begin{lemma}[Congruence of Type Consistency Along Type Precision]
   \label{lemma:congruence_of_type_consistency_along_type_precision}
   \begin{enumR}
-  \item[] 
   \item If $[[A1 <= A1']]$ and $[[G |- A1 ~ A2]]$ then
     $[[G |- A1' ~ A2]]$.
     
@@ -366,7 +363,6 @@
 \begin{lemma}[Typeability Inversion]
   \label{lemma:typeability_inversion}
   \begin{enumR}
-  \item[] 
   \item If $<<G |- succ t : A>>$, then $<<G |- t : A'>>$ for some $<<A'>>$.
   \item If $<<G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$,
     and $<<G,x : Nat |- t2 : A3>>$ for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
@@ -389,7 +385,6 @@
   \label{lemma:inversion_for_term_precision_for_core_grady}
   Suppose $<<G |- t1 <= t2>>$.
   \begin{enumR}
-  \item[]
   \item If $<<t1>> = <<x>>$, then one of the following is true:
     \begin{enumA}
     \item $<<t2>> = <<x>>$, $<<x : A elem G>>$, and $<<G Ok>>$

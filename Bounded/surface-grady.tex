@@ -96,8 +96,7 @@ found in Fig.~\ref{fig:subtyping-surface-grady}.
         \SGradydruleSXXVar{} \and
         \SGradydruleSXXBox{} \and    
         \SGradydruleSXXUnbox{} \and
-        \SGradydruleSXXSplit{} \and    
-        \SGradydruleSXXSquash{} \and                
+        \SGradydruleSXXUSL{} \and                
         \SGradydruleSXXNatSL{} \and
         \SGradydruleSXXUnitSL{} \and    
         \SGradydruleSXXListSL{} \and
@@ -114,8 +113,6 @@ found in Fig.~\ref{fig:subtyping-surface-grady}.
       \SGradydruleCXXRefl{} \and
       \SGradydruleCXXBox{} \and
       \SGradydruleCXXUnbox{} \and
-      \SGradydruleCXXSplit{} \and
-      \SGradydruleCXXSquash{} \and      
       \SGradydruleCXXList{} \and
       \SGradydruleCXXArrow{} \and
       \SGradydruleCXXProd{} \and
@@ -132,10 +129,8 @@ cast between each other \cite{Siek:2006}.  This relation is called
 type consistency, and is denoted by $[[G |- A ~ B]]$.
 Non-transitivity prevents the system from being able to cast between
 arbitrary types.  The type $[[SL]]$ stands for ``simple types'' and is
-a super type whose subtypes are all non-polymorphic types that do not
-contain the unknown type.  Thus, by the definition of type consistency
-the only types that can be boxed or unboxed are non-polymorphic types.
-Note that the type consistency rules $\SGradydruleCXXBoxName{}$ and
+a super type whose subtypes are all non-polymorphic types.  Note that
+the type consistency rules $\SGradydruleCXXBoxName{}$ and
 $\SGradydruleCXXUnboxName{}$ embody boxing and unboxing, and splitting
 and squashing.  The remainder of the rules simply are congruence
 rules.  We will use this intuition when translating Surface Grady to
