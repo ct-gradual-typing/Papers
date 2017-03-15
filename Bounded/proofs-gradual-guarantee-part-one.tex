@@ -1,6 +1,10 @@
 \subsection{Proof of Left-to-Right Consistent Subtyping (Lemma~\ref{lemma:consistent-subtyping-1})}
 \label{subsec:proof_of_left-to-right_consistent_subtyping_lemma:consistent-subtyping-1}
-This is a proof by induction on $[[G |- A <~ B]]$.  We only show a
+
+\conSubOne*
+
+\begin{proof}
+  This is a proof by induction on $[[G |- A <~ B]]$.  We only show a
 few of the most interesting cases.
 \begin{itemize}
 \item[] Case.\ \\ 
@@ -63,11 +67,15 @@ few of the most interesting cases.
   premise, and then the second part to the second premise.
   
 \end{itemize}
-
+\end{proof}
 % subsection proof_of_left-to-right_consistent_subtyping_lemma:consistent-subtyping-1 (end)
 
 \subsection{Proof of Congruence of Type Consistency Along Type Precision (Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision})}
 \label{subsec:proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision}
+
+\conTypeConTypePre*
+\begin{proof}
+  
 The proofs of both parts are similar, and so we only show a few
 cases of the first part, but the omitted cases follow similarly.
 
@@ -120,10 +128,15 @@ of $[[A1 <= A1']]$.
   and $[[G |- D ~ B']]$. By symmetry the former implies $[[G |- A ~ C]]$ and
   we obtain our result.
 \end{itemize}  
+\end{proof}
 % subsection proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision (end)
 
 \subsection{Proof of Congruence of Subtyping Along Type Precision (Lemma~\ref{lemma:congruence_of_subtyping_along_type_precision})}
 \label{subsec:proof_of_congruence_of_subtyping_along_type_precision_lemma:congruence_of_subtyping_along_type_precision}
+
+\conSubTypePre*
+\begin{proof}
+  
 This is a proof by induction on the form of $[[A <= B]]$.  The proof
 of part two follows similarly to part one.  We only give the most interesting cases.  All others follow similarly.
 
@@ -160,11 +173,15 @@ because all others are similar.
   that $[[G |- A1' <~ A2]]$ and $[[G |- B2 <~ B1']]$.  Thus, by reapplying the rule above
   we may now conclude that $[[G |- (A2 -> B2) <~ (A1' -> B2')]]$ to obtain our result.
 \end{itemize}
+\end{proof}
 % subsection proof_of_congruence_of_subtyping_along_type_precision_lemma:congruence_of_subtyping_along_type_precision (end)  
 
 \subsection{Proof of Gradual Guarantee Part One (Lemma~\ref{lemma:gradual_guarantee_part_one})}
 \label{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
-This is a proof by induction on $[[G |- t : A]]$.  We only show the
+
+\gradGuarOne*
+\begin{proof}
+  This is a proof by induction on $[[G |- t : A]]$.  We only show the
 most interesting cases, because the others follow similarly.
 
 \begin{itemize}
@@ -363,11 +380,15 @@ most interesting cases, because the others follow similarly.
   So choose $[[B]] = [[B1']]$. Then reapply the rule above and the result follows, because
   $[[B1 <= B1']]$.
 \end{itemize}
+\end{proof}
 % subsection proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one (end)
 
 \subsection{Proof of Type Preservation for Cast Insertion (Lemma~\ref{lemma:type_preservation_for_cast_insertion})}
 \label{subsec:proof_of_type_preservation_for_cast_insertion}
-The cast insertion algorithm is type directed and with respect to every term $[[t1]]$
+
+\typePresCastIns*
+\begin{proof}
+  The cast insertion algorithm is type directed and with respect to every term $[[t1]]$
 it will produce a term $[[t2]]$ of the core language with the type $[[A]]$ --
 this is straightforward to show by induction on the form of $[[G |- t1 : A]]$ making
 use of typing for casting morphisms Lemma~\ref{lemma:typing_casting_morphisms} -- except in
@@ -402,11 +423,15 @@ $[[G, X <: B1 |- B2 ~ B2']]$ by inversion for type consistency.  If $[[G, X <: B
 $[[G |- [A1/X]B2 ~ [A2/X]B2']]$ when $[[G |- A1 ~ A2]]$ by substitution for type consistency (Lemma~\ref{lemma:substitution_for_type_consistency}).
 Since we know $<<G |- t2' : Forall (X <: B1).B2'>>$ by the induction hypothesis and $<<G |- A2 <: B1>>$ by assumption,
 then we know $<<G |- [A2]t2' : [A2/X]B2'>>$ by applying the Core Grady typing rule $\CGradydruleTXXtypeAppName{}$.
+\end{proof}
 % subsection proof_of_type_preservation_for_cast_insertion (end)
 
 \subsection{Proof of Simulation of More Precise Programs (Lemma~\ref{lemma:simulation_of_more_precise_programs})}
 \label{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
-This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the
+
+\simMorePrecPro*
+\begin{proof}
+  This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the
 most interesting cases.  All others follow similarly.  Throughout the
 proof we implicitly make use of typability inversion
 (Lemma~\ref{lemma:typeability_inversion}) when applying the induction
@@ -680,4 +705,5 @@ hypothesis.
   $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$, thus, we obtain our result.
 
 \end{itemize}
+\end{proof}
 % subsection proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs (end)

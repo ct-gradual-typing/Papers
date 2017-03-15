@@ -92,15 +92,15 @@ specifically, in the proof of simulation of more precise programs
 
 We claimed that consistent subtyping is the combination of both
 standard subtyping and type consistency. The following results makes
-this precise. 
-\begin{lemma}[Left-to-Right Consistent Subtyping]
+this precise.
+\begin{restatable}[Left-to-Right Consistent Subtyping]{lemma}{conSubOne}
   \label{lemma:consistent-subtyping-1}
   Suppose $[[G |- A <~ B]]$.
   \begin{enumR}
     \item $[[G |- A ~ A']]$ and $<<G |- A' <: B>>$ for some $[[A']]$.
     \item $[[G |- B' ~ B]]$ and $<<G |- A <: B'>>$ for some $[[B']]$.
   \end{enumR}   
-\end{lemma}
+\end{restatable}
 \begin{proof}
   This is a proof by induction on $[[G |- A <~ B]]$.  See
   Appendix~\ref{subsec:proof_of_left-to-right_consistent_subtyping_lemma:consistent-subtyping-1}
@@ -131,10 +131,10 @@ do.
 Cast insertion preserves the type up to type consistency.  This is
 fairly straightforward to show.  The only interesting case is the one
 for type application.
-\begin{lemma}[Type Preservation for Cast Insertion]
+\begin{restatable}[Type Preservation for Cast Insertion]{lemma}{typePresCastIns}
   \label{lemma:type_preservation_for_cast_insertion}
   If $[[G |- t1 : A]]$ and $[[G |- t1 => t2 : B]]$, then $<<G |- t2 : B>>$ and $[[G |- A ~ B]]$.
-\end{lemma}
+\end{restatable}
 \begin{proof}
   The cast insertion algorithm is type directed and with respect to
   every term $[[t1]]$ it will produce a term $[[t2]]$ of the core
@@ -235,10 +235,10 @@ Part one states that one may insert casts into a closed gradual
 program, $[[t]]$, yielding a less precise program, $[[t']]$, and the
 program will remain typable, but at a less precise type.  This part
 follows from the following generalization:
-\begin{lemma}[Gradual Guarantee Part One]
+\begin{restatable}[Gradual Guarantee Part One]{lemma}{gradGuarOne}
   \label{lemma:gradual_guarantee_part_one}
   If $[[G |- t : A]]$, $[[t <= t']]$, and $[[G <= G']]$ then $[[G' |- t' : B]]$ and $[[A <= B]]$.
-\end{lemma}
+\end{restatable}
 \begin{proof}
   This is a proof by induction on $[[G |- t : A]]$; see
   Appendix~\ref{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
@@ -250,11 +250,11 @@ straightforward extension of type precision.
 
 The remaining parts of the gradual guarantee follow from the next
 result.
-\begin{lemma}[Simulation of More Precise Programs]
+\begin{restatable}[Simulation of More Precise Programs]{lemma}{simMorePrecPro}
   \label{lemma:simulation_of_more_precise_programs}
   Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, $<<G |- t'1 : A'>>$, and $<<t1 ~> t2>>$.
   Then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
-\end{lemma}
+\end{restatable}
 \begin{proof}
   This proof holds by induction on $<<G |- t1 : A1>>$.  See
   Appendix~\ref{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
