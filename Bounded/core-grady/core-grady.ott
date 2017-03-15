@@ -157,8 +157,6 @@ grammar
     {{tex [[A]] \neq [[B]] }}
     | t ~>* t'            :: M :: Rd
     {{tex [[t]] \rightsquigarrow^* [[t']] }}
-    | G <= G'             :: M :: CtxPre
-    {{tex [[G]] \sqsubseteq [[G']] }}
     | t ^                :: M :: Div
     {{tex [[t]] \uparrow }}    
 
@@ -272,6 +270,18 @@ defn
     G, X <: A |- B1 <: B2
     ----------------------------------------- :: Forall
     G |- Forall (X <: A).B1 <: Forall (X <: A).B2
+
+defn
+    G1 <= G2 :: :: ctxpre :: 'CtxP_'
+    {{tex [[G1]] \sqsubseteq [[G2]] }}
+by
+
+ ------ :: refl
+ G <= G
+
+ (G1 <= G2 && A <= A') && G3 <= G4
+ --------------------------------- :: ext
+ G1,x : A,G3 <= G2,x : A',G4
 
 defn
     A <= B :: :: typepre :: 'P_'

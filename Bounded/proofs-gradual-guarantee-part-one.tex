@@ -125,7 +125,7 @@ of $[[A1 <= A1']]$.
     \end{tabular}
   \end{center}
   Now by two applications of the induction hypothesis we obtain $[[G |- C ~ A']]$
-  and $[[G |- D ~ B']]$. By symmetry the former implies $[[G |- A ~ C]]$ and
+  and $[[G |- D ~ B']]$. By symmetry the former implies $[[G |- A' ~ C]]$ and
   we obtain our result.
 \end{itemize}  
 \end{proof}
@@ -239,7 +239,7 @@ most interesting cases, because the others follow similarly.
   By assumption we know that $[[G |- A1 ~ A]]$, $[[G |- A2 ~ A]]$, and $[[G <= G']]$,
   hence, by Lemma~\ref{lemma:type_cons_ctx_pre} we know $[[G' |- A1 ~ A]]$ and $[[G' |- A2 ~ A]]$.  
   By the induction hypothesis we know that $[[A1 <= A1']]$ and $[[A2 <= A2']]$, so
-  by using Lemma~\ref{lemma:type_cons_type_pre_2} we may obtain that
+  by using Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision} we may obtain that
   $[[G' |- A1' ~ A]]$ and $[[G' |- A2' ~ A]]$.  At this point choose $[[B]] = [[A]]$
   and we obtain our result by reapplying the rule.
   
@@ -262,7 +262,7 @@ most interesting cases, because the others follow similarly.
     \end{tabular}
   \end{center}
   By Lemma~\ref{lemma:fun_type_pre} $[[list(A2') = List A3']]$ where $[[A3 <= A3']]$.
-  Now by Lemma~\ref{lemma:type_cons_ctx_pre} and Lemma~\ref{lemma:type_cons_type_pre_2} we know that
+  Now by Lemma~\ref{lemma:type_cons_ctx_pre} and Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision} we know that
   $[[G' |- A1' ~ A3]]$, and by using the same lemma again, $[[G' |- A1' ~ A3']]$
   because $[[G' |- A3 ~ A1']]$ holds by symmetry.  Choose $[[B]] = [[List A3']]$
   and the result follows.

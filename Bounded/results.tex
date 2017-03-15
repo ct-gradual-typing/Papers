@@ -149,10 +149,12 @@ for type application.
 The proof of the gradual guarantee will be phrased in terms of
 precision for types and terms.  A type $[[B]]$ is less precise than a
 type $[[A]]$, denoted $[[A <= B]]$, if $[[B]]$ replaces some
-subexpression(s) of $[[A]]$ with the unknown type.  Type precision is
-defined by the rules in Fig.~\ref{fig:type-pre}.
+subexpression(s) of $[[A]]$ with the unknown type.  Type and context
+precision are defined by the rules in Fig.~\ref{fig:type-pre}.
 \begin{figure}
   \begin{mdframed}
+  \begin{itemize}
+  \item[] \textbf{Type Precision:}    
     \begin{mathpar}
       \SGradydrulePXXU{} \and
       \SGradydrulePXXrefl{} \and
@@ -160,9 +162,16 @@ defined by the rules in Fig.~\ref{fig:type-pre}.
       \SGradydrulePXXprod{} \and
       \SGradydrulePXXlist{} \and
       \SGradydrulePXXforall{}      
+    \end{mathpar}    
+
+  \item[] \textbf{Context Precision:}
+    \begin{mathpar}
+      \CGradydruleCtxPXXrefl{} \and
+      \CGradydruleCtxPXXext{}
     \end{mathpar}
+    \end{itemize}
   \end{mdframed}
-  \caption{Type Precision}
+  \caption{Type and Context Precision}
   \label{fig:type-pre}
 \end{figure}
 Term precision, which is defined for both the surface language and the
@@ -244,9 +253,6 @@ follows from the following generalization:
   Appendix~\ref{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
   for the complete proof.
 \end{proof}
-The previous result depends on context precision, denoted $[[G <=
-    G']]$, but we omit its definition, because it is the
-straightforward extension of type precision.
 
 The remaining parts of the gradual guarantee follow from the next
 result.
