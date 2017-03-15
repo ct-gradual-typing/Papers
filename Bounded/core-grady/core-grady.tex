@@ -35,7 +35,7 @@
 \newcommand{\ottafterlastrule}{\\}
 \newcommand{\ottmetavars}{
 \ottmetavartabular{
- $ \ottmv{termvar} ,\, \ottmv{x} ,\, \ottmv{y} ,\, \ottmv{z} ,\, \ottmv{f} $ &  \\
+ $ \ottmv{termvar} ,\, \ottmv{x} ,\, \ottmv{y} ,\, \ottmv{z} ,\, \ottmv{f} ,\, \ottmv{r} ,\, \ottmv{ys} $ &  \\
  $ \ottmv{typevar} ,\, \ottmv{X} ,\, \ottmv{Y} ,\, \ottmv{Z} $ &  \\
  $ \ottmv{index} ,\, \ottmv{i} ,\, \ottmv{j} ,\, \ottmv{k} $ &  \\
 }}
@@ -87,7 +87,7 @@
 \ottfirstprodline{|}{ \star }{}{}{}{}}
 
 \newcommand{\ottA}{
-\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}}{::=}{}\ottprodnewline
+\ottrulehead{\ottnt{A}  ,\ \ottnt{B}  ,\ \ottnt{C}  ,\ \ottnt{D}  ,\ \ottnt{E}  ,\ \ottnt{S}  ,\ \ottnt{U}  ,\ \ottnt{K}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{\ottmv{X}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \top }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{List}\, \ottnt{A} }{}{}{}{}\ottprodnewline
@@ -257,6 +257,15 @@
 }}
 
 
+\newcommand{\ottdruleSXXTopSLName}[0]{\ottdrulename{S\_TopSL}}
+\newcommand{\ottdruleSXXTopSL}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma \,\text{Ok} }%
+}{
+ \Gamma  \vdash   \top   <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXTopSLName}{}%
+}}
+
+
 \newcommand{\ottdruleSXXNatSLName}[0]{\ottdrulename{S\_NatSL}}
 \newcommand{\ottdruleSXXNatSL}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma \,\text{Ok} }%
@@ -341,6 +350,7 @@
 \ottusedrule{\ottdruleSXXRefl{}}
 \ottusedrule{\ottdruleSXXTop{}}
 \ottusedrule{\ottdruleSXXVar{}}
+\ottusedrule{\ottdruleSXXTopSL{}}
 \ottusedrule{\ottdruleSXXNatSL{}}
 \ottusedrule{\ottdruleSXXUnitSL{}}
 \ottusedrule{\ottdruleSXXListSL{}}
@@ -1146,7 +1156,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        100 good    0 bad
-Definition rule clauses: 186 good    0 bad
+Definition rules:        101 good    0 bad
+Definition rule clauses: 188 good    0 bad
 \end{verbatim}
 \end{document}

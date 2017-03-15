@@ -232,7 +232,11 @@ defn
     X <: A elem G && G Ok
     ---------------------:: Var
     G |- X <: A
-    
+
+    G Ok
+    -------------- :: TopSL
+    G |- Top <: SL
+
     G Ok
     -------------- :: NatSL
     G |- Nat <: SL

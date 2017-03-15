@@ -187,11 +187,9 @@
   If $[[G |- A <~ B]]$ and $[[A <= A']]$, then $[[B <= A']]$ or $[[A' <= B]]$.
 \end{lemma}
 \begin{proof}
-  Suppose $[[G |- A <~ B]]$ and $[[A <= A']]$.  The former implies
-  that $[[A <= B]]$ or $[[B <= A]]$ by
-  Lemma~\ref{lemma:consistent-subtyping-1} and
-  Lemma~\ref{lemma:type_consistency_to_type_precision}.  At this
-  point the result easily follows.
+  This proof holds by induction on $[[G |- A <~ B]]$ making use of
+  inversion for type prevision
+  (Lemma~\ref{lemma:inversion_of_type_precision}).
 \end{proof}
 
 \begin{lemma}
