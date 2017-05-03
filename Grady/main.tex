@@ -1,12 +1,7 @@
-%% Submission instructions:
-%%
-%% 15 pages max
-\documentclass{entcs}
+\documentclass{article}
 
-\usepackage{preentcsmacro}
-\usepackage{graphicx}
-
-\usepackage{amssymb,amsmath}
+\usepackage{amssymb,amsmath, amsthm}
+\usepackage{fullpage}
 \usepackage{hyperref}
 \usepackage{mathpartir}
 \usepackage[barr]{xy}
@@ -137,13 +132,14 @@
 \newcommand{\interp}[1]{[\negthinspace[#1]\negthinspace]}
 \newcommand{\Hom}[3]{\mathsf{Hom}_{\cat{#1}}(#2,#3)}
 
-%% \newtheorem{theorem}{Theorem}
-%% \newtheorem{lemma}[theorem]{Lemma}
-%% \newtheorem{corollary}[theorem]{Corollary}
-%% \newtheorem{definition}[theorem]{Definition}
-%% \newtheorem{proposition}[theorem]{Proposition}
-%% \newtheorem{example}[theorem]{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}[theorem]{Example}
 
+\newenvironment{ack}{\textbf{Acknowledgments.}}{}
 %% Ott includes:
 \input{sl-grady-inc}
 \renewcommand{\SLGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SLGradydrulename{#4}}}
@@ -218,48 +214,42 @@
 \newcommand{\GSTLC}{\lambda^?_\to}
 \newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to} 
 
-\def\lastname{Eades III and Townsend}
+\title{The Combination of Dynamic and Static Typing from a Categorical Perspective}
+\author{Harley Eades III and Michael Townsend}
+
+%%  \\ Computer and Information Sciences\\ Augusta University\\ Augusta, USA \\ \href{mailto:harley.eades@gmail.com} and \href{mailto:mitownsend@augusta.edu}
+
+%% \thanks[ALL]{Thanks: Both authors where supported by the National
+%%   Science Foundation CRII CISE Research Initiation grant,
+%%   ``CRII:SHF: A New Foundation for Attack Trees Based on Monoidal
+%%   Categories``, under Grant No. 1565557.}
+%% \thanks[myemail]{Email:\href{mailto:heades@augusta.edu}
+%%   {\texttt{\normalshape heades@augusta.edu}}}
+%% \thanks[coemail]{Email: \href{mailto:mitownsend@augusta.edu}
+%%   {\texttt{\normalshape mitownsend@augusta.edu}}}
+
+%% \begin{keyword}  
+%%     static typing, dynamic typing, gradual typing, categorical
+%%     semantics, retract,typed lambda-calculus, untyped lambda-calculus,
+%%     functional programming
+%%   \end{keyword}
 
 \begin{document}
 
-\begin{frontmatter}
-  \title{The Combination of Dynamic and Static Typing from a Categorical Perspective}
-  \author{Harley Eades III\thanksref{ALL}\thanksref{myemail}}
-  \address{Computer and Information Sciences\\ Augusta University\\
-    Augusta, USA}
-  \author{Michael Townsend\thanksref{coemail}}
-  \address{Computer and Information Sciences\\ Augusta University\\
-    Augusta, USA}
+\maketitle
 
-  \thanks[ALL]{Thanks: Both authors where supported by the National
-    Science Foundation CRII CISE Research Initiation grant,
-    ``CRII:SHF: A New Foundation for Attack Trees Based on Monoidal
-    Categories``, under Grant No. 1565557.}
-  \thanks[myemail]{Email:\href{mailto:heades@augusta.edu}
-    {\texttt{\normalshape heades@augusta.edu}}}
-  \thanks[coemail]{Email: \href{mailto:mitownsend@augusta.edu}
-    {\texttt{\normalshape mitownsend@augusta.edu}}}
-  \begin{abstract} 
-    This paper is part one of a two part series.  In this paper we
-    introduce a new categorical model based on retracts that combines
-    static and dynamic typing.  This model is initially based on the
-    seminal work of Scott who showed that the untyped
-    $\lambda$-calculus can be considered as typed using retracts.  We
-    then show that our model gives rise to a new and simple type
-    system which combines static and dynamic typing.  We then show
-    that Siek and Taha's gradually typed $\lambda$-calculus can be
-    interpreted into our new model.  Finally, we set the stage for a
-    followup paper that greatly extends our type system with bounded
-    quantification and lists, and then develops a gradually typed
-    surface language that uses our new type system as a core casting
-    calculus.
-  \end{abstract}
-  \begin{keyword}  
-    static typing, dynamic typing, gradual typing, categorical
-    semantics, retract,typed lambda-calculus, untyped lambda-calculus,
-    functional programming
-  \end{keyword}
-\end{frontmatter}
+\begin{abstract} 
+  In this paper we introduce a new categorical model based on retracts
+  that combines static and dynamic typing.  This model is initially
+  based on the seminal work of Scott who showed that the untyped
+  $\lambda$-calculus can be considered as typed using retracts.  We
+  then show that Siek and Taha's gradually typed $\lambda$-calculus
+  can be interpreted into our new model.  Following this we define a
+  new simple type system which combines static and dynamic typing
+  called Grady that corresponds to our model.  Finally, we prove the
+  gradually guarantee after combining Siek and Taha's gradually typed
+  surface language with Grady.
+\end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
@@ -293,7 +283,7 @@
 % section conclusion (end)
 
 
-\bibliographystyle{entcs}
+\bibliographystyle{plain}
 \bibliography{references}
 
 \appendix

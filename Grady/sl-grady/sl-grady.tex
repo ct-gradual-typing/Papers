@@ -58,6 +58,7 @@
 \ottprodline{|}{\mathsf{succ} \, \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{0}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{case}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} , (\mathsf{succ}\, \ottmv{x} ) \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathsf{error} \, \ottnt{A} \, \ottnt{B}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{t}  \ottsym{)}} {\textsf{S}}{}{}{}}
 
 \newcommand{\ottn}{
@@ -74,6 +75,21 @@
 \ottprodline{|}{ \mathsf{squash}_{ \ottnt{U} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{box}_{ \ottnt{C} } }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{unbox}_{ \ottnt{C} } }{}{}{}{}}
+
+\newcommand{\ottCX}{
+\ottrulehead{\mathcal{C}}{::=}{}\ottprodnewline
+\ottfirstprodline{|}{ \Box }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \lambda  \ottmv{x}  :  \ottnt{A}  .  \mathcal{C} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathcal{C} \, \ottnt{t_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottnt{t_{{\mathrm{1}}}} \, \mathcal{C}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottsym{(}  \mathcal{C}  \ottsym{,}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottsym{(}  \ottnt{t_{{\mathrm{1}}}}  \ottsym{,}  \mathcal{C}  \ottsym{)}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathsf{fst} \, \mathcal{C}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathsf{snd} \, \mathcal{C}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathsf{succ} \, \mathcal{C}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{case}\, \mathcal{C} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} , (\mathsf{succ}\, \ottmv{x} ) \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{case}\, \ottnt{t} \,\mathsf{of}\,0 \to  \mathcal{C} , (\mathsf{succ}\, \ottmv{x} ) \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{case}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} , (\mathsf{succ}\, \ottmv{x} ) \to  \mathcal{C} }{}{}{}{}}
 
 \newcommand{\ottT}{
 \ottrulehead{\ottnt{T}}{::=}{}\ottprodnewline
@@ -98,6 +114,7 @@
 \ottt\ottinterrule
 \ottn\ottinterrule
 \ottv\ottinterrule
+\ottCX\ottinterrule
 \ottT\ottinterrule
 \ottA\ottinterrule
 \ottG\ottafterlastrule
@@ -258,6 +275,14 @@
 {\ottdruleappName}{}%
 }}
 
+
+\newcommand{\ottdruleerrorName}[0]{\ottdrulename{error}}
+\newcommand{\ottdruleerror}[1]{\ottdrule[#1]{%
+}{
+ \Gamma  \vdash  \mathsf{error} \, \ottnt{A} \, \ottnt{B}  :  \ottnt{B} }{%
+{\ottdruleerrorName}{}%
+}}
+
 \newcommand{\ottdefntype}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{t}  :  \ottnt{A} $}{}
 \ottusedrule{\ottdrulevar{}}
 \ottusedrule{\ottdruleBox{}}
@@ -277,6 +302,7 @@
 \ottusedrule{\ottdrulesnd{}}
 \ottusedrule{\ottdrulelam{}}
 \ottusedrule{\ottdruleapp{}}
+\ottusedrule{\ottdruleerror{}}
 \end{ottdefnblock}}
 
 
@@ -300,6 +326,23 @@
 }{
 \Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{T} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}  \ottsym{:}  \ottnt{T}}{%
 {\ottdrulerdXXretracTName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXretractEName}[0]{\ottdrulename{rd\_retractE}}
+\newcommand{\ottdrulerdXXretractE}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{t}  :  \ottnt{T_{{\mathrm{1}}}}   \quad   \ottnt{T_{{\mathrm{1}}}}  \neq  \ottnt{T_{{\mathrm{2}}}}  }%
+}{
+\Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T_{{\mathrm{2}}}} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{T_{{\mathrm{1}}}} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \mathsf{error} \, \ottnt{T_{{\mathrm{1}}}} \, \ottnt{T_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{T_{{\mathrm{2}}}}}{%
+{\ottdrulerdXXretractEName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXerrorName}[0]{\ottdrulename{rd\_error}}
+\newcommand{\ottdrulerdXXerror}[1]{\ottdrule[#1]{%
+}{
+\Gamma  \vdash  \mathcal{C}  \ottsym{[}  \mathsf{error} \, \ottnt{T_{{\mathrm{1}}}} \, \ottnt{T_{{\mathrm{2}}}}  \ottsym{]}  \rightsquigarrow  \mathsf{error} \, \ottnt{T_{{\mathrm{1}}}} \, \ottnt{T_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{T_{{\mathrm{2}}}}}{%
+{\ottdrulerdXXerrorName}{}%
 }}
 
 
@@ -469,6 +512,8 @@
 \newcommand{\ottdefnred}[1]{\begin{ottdefnblock}[#1]{$\Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \rightsquigarrow  \ottnt{t_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{A}$}{}
 \ottusedrule{\ottdrulerdXXvar{}}
 \ottusedrule{\ottdrulerdXXretracT{}}
+\ottusedrule{\ottdrulerdXXretractE{}}
+\ottusedrule{\ottdrulerdXXerror{}}
 \ottusedrule{\ottdrulerdXXunbox{}}
 \ottusedrule{\ottdrulerdXXretracTG{}}
 \ottusedrule{\ottdrulerdXXretracTSG{}}
@@ -506,7 +551,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        38 good    0 bad
-Definition rule clauses: 69 good    0 bad
+Definition rules:        41 good    0 bad
+Definition rule clauses: 73 good    0 bad
 \end{verbatim}
 \end{document}

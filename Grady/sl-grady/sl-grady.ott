@@ -47,6 +47,7 @@ grammar
     | 0                   ::   :: zero         
     | case t of 0 -> t1 , ( succ x ) -> t2 :: :: natElim
     {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,0 \to [[t1]], (\mathsf{succ}\,[[x]]) \to [[t2]] }}
+    | error A B           ::   :: error
     | ( t )               :: S :: parens
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
@@ -60,6 +61,7 @@ grammar
     | [| t |]             :: M :: Interp
     {{tex \interp{[[t]]} }}
     | n                   :: M :: nat
+    | CX [ t ]            :: M :: plug
 
   n :: 'n_' ::=
     | 0        :: :: zero
@@ -73,6 +75,26 @@ grammar
     | squash U :: :: squash
     | box C    :: :: box
     | unbox C  :: :: unbox    
+  
+  CX {{tex \mathcal{C} }} :: 'ectx_' ::=
+    | -                   ::   :: hole
+    {{tex \Box }}    
+    | \ x : A . CX        ::   :: abs          
+    {{tex \lambda [[x]] : [[A]] . [[CX]] }}
+    | CX t2               ::   :: appL
+    | t1 CX               ::   :: appR          
+    | ( CX , t2 )         ::   :: pairL
+    | ( t1 , CX )         ::   :: pairR         
+    | fst CX              ::   :: proj1        
+    | snd CX              ::   :: proj2        
+    | succ CX             ::   :: successor    
+    | case CX of 0 -> t1 , ( succ x ) -> t2 :: :: natElim1
+    {{tex \mathsf{case}\,[[CX]]\,\mathsf{of}\,0 \to [[t1]], (\mathsf{succ}\,[[x]]) \to [[t2]] }}
+    | case t of 0 -> CX , ( succ x ) -> t2 :: :: natElim2
+    {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,0 \to [[CX]], (\mathsf{succ}\,[[x]]) \to [[t2]] }}
+    | case t of 0 -> t1 , ( succ x ) -> CX :: :: natElim3
+    {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,0 \to [[t1]], (\mathsf{succ}\,[[x]]) \to [[CX]] }}
+  
 
   % S :: 'S_' ::=
   %   | ?             ::   :: U
@@ -123,7 +145,7 @@ grammar
     | G , G'              :: M :: append       
     | ( G )               :: M :: parens
 
-  terminals :: 'terminals_' ::=
+  terminals :: 'terminals_' ::=    
     |  ->                 ::   :: arrow
     {{tex \rightarrow }}
     | |-                  ::   :: turnstile
@@ -148,6 +170,8 @@ grammar
     {{tex \mathsf{fst} }}
     | snd        :: :: snd
     {{tex \mathsf{snd} }}                
+    | error      :: :: error
+    {{tex \mathsf{error} }}
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
@@ -176,6 +200,8 @@ grammar
     {{tex [[G]] \vdash [[t1]] \rightsquigarrow^* [[t2]] : [[A]] }}
     | [| G |- t : A |]    :: M :: interpJdg
     {{tex \interp{[[G]] \vdash [[t]] : [[A]]} }}
+    | A neq B             :: M :: Neq
+    {{tex [[A]] \neq [[B]] }}
 
 subrules
   T <:: A
@@ -253,21 +279,29 @@ defn
     ---------------------------------- :: app
     G |- t1 t2 : B
 
+    ------------------ :: error
+    G |- error A B : B
+
 defns
   Reduction :: '' ::=
 
 defn
     G |- t1 ~> t2  : A :: :: red :: rd_ 
 by
-
-
     x : A elem G
     --------------- :: var
     G |- x ~> x : A
 
-    G |- t : T
+    G |- t : A
     ------------------------------- :: retracT
-    G |- unbox T (box T t) ~> t : T
+    G |- unbox A (box A t) ~> t : A
+
+    G |- t : A && A neq B
+    --------------------------------------- :: retractE
+    G |- unbox B (box A t) ~> error A B : B
+
+    ---------------------------------------- :: error
+    G |- CX[error A B] ~> error A B : A -> B
 
     G |- t1 ~> t2 : T
     --------------------------------- :: unbox
