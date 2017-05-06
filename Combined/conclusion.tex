@@ -1,0 +1,36 @@
+We have given a new categorical model that combines static and dynamic
+typing using the theory of retracts.  Our model is an extension of
+Scott's~\cite{Scott:1980} model of the untyped $\lambda$-calculus.
+Then we showed that Siek and Taha's gradually typed $\lambda$-calculus
+\cite{Siek:2015} can be soundly interpreted into our model.  Finally,
+we define the corresponding typed $\lambda$-calculus called Grady that
+corresponds to our model through the Curry-Howard-Lambek
+correspondence.
+
+\textbf{Future work.}  Gradual typing reduces the number of explicit
+casts into the untyped fragment substantially for the programmer.
+However, one open question is how can gradual typing be extended with
+polymorphism?  In a follow up paper we show how to extend gradual
+typing with bounded quantification.  The bounds can be used to limit
+which types are castable to the unknown type.  For example, we will
+not allow the programmer to cast a polymorphic type to the unknown
+type, because we do not have a good model for this, and we are not yet
+sure how this will affect gradual typing.  The core language of the
+gradual type system is Grady.  Finally, we show that this system
+satisfies the gradual guarantee as laid out by Siek et
+al.~\cite{Siek:2015}.  Adding bounded quantification is a non-trivial
+extension, and thus, proving the gradual guarantee was quite
+laborious. The proofs found in the literature for the gradual
+guarantee usually make heavy use of inversion for typing, but for a
+system with polymorphism and subtyping this can be difficult.  Instead
+of using inversion for typing we show that one can often use inversion
+for other judgments and make the proof effort more tractable.
+
+\begin{acks}
+  The authors thank Jeremy Siek for his feedback on previous drafts of
+  this paper.  The first author thanks Ronald Garcia for his wonderful
+  invited talk at Trends in Functional Programming 2016 which
+  introduced the first author to gradual typing and its open problems.
+  This paper was typeset with the help of the amazing Ott tool
+  \cite{Sewell:2010}.
+\end{acks}

@@ -58,7 +58,7 @@
 \ottprodline{|}{\mathsf{succ} \, \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{0}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{case}\, \ottnt{t} \,\mathsf{of}\,0 \to  \ottnt{t_{{\mathrm{1}}}} , (\mathsf{succ}\, \ottmv{x} ) \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
-\ottprodline{|}{\mathsf{error} \, \ottnt{A} \, \ottnt{B}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{error}\, \ottnt{B} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{t}  \ottsym{)}} {\textsf{S}}{}{}{}}
 
 \newcommand{\ottn}{
@@ -279,7 +279,7 @@
 \newcommand{\ottdruleerrorName}[0]{\ottdrulename{error}}
 \newcommand{\ottdruleerror}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash  \mathsf{error} \, \ottnt{A} \, \ottnt{B}  :  \ottnt{B} }{%
+ \Gamma  \vdash   \mathsf{error}\, \ottnt{B}   :  \ottnt{B} }{%
 {\ottdruleerrorName}{}%
 }}
 
@@ -322,26 +322,27 @@
 
 \newcommand{\ottdrulerdXXretracTName}[0]{\ottdrulename{rd\_retracT}}
 \newcommand{\ottdrulerdXXretracT}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash  \ottnt{t}  :  \ottnt{T} }%
+\ottpremise{ \Gamma  \vdash  \ottnt{t}  :  \ottnt{A} }%
 }{
-\Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{T} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}  \ottsym{:}  \ottnt{T}}{%
+\Gamma  \vdash   \mathsf{unbox}_{ \ottnt{A} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{A} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \ottnt{t}  \ottsym{:}  \ottnt{A}}{%
 {\ottdrulerdXXretracTName}{}%
 }}
 
 
 \newcommand{\ottdrulerdXXretractEName}[0]{\ottdrulename{rd\_retractE}}
 \newcommand{\ottdrulerdXXretractE}[1]{\ottdrule[#1]{%
-\ottpremise{  \Gamma  \vdash  \ottnt{t}  :  \ottnt{T_{{\mathrm{1}}}}   \quad   \ottnt{T_{{\mathrm{1}}}}  \neq  \ottnt{T_{{\mathrm{2}}}}  }%
+\ottpremise{  \Gamma  \vdash  \ottnt{t}  :  \ottnt{A}   \quad   \ottnt{A}  \neq  \ottnt{B}  }%
 }{
-\Gamma  \vdash   \mathsf{unbox}_{ \ottnt{T_{{\mathrm{2}}}} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{T_{{\mathrm{1}}}} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow  \mathsf{error} \, \ottnt{T_{{\mathrm{1}}}} \, \ottnt{T_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{T_{{\mathrm{2}}}}}{%
+\Gamma  \vdash   \mathsf{unbox}_{ \ottnt{B} }  \, \ottsym{(}   \mathsf{box}_{ \ottnt{A} }  \, \ottnt{t}  \ottsym{)}  \rightsquigarrow   \mathsf{error}\, \ottnt{B}   \ottsym{:}  \ottnt{B}}{%
 {\ottdrulerdXXretractEName}{}%
 }}
 
 
 \newcommand{\ottdrulerdXXerrorName}[0]{\ottdrulename{rd\_error}}
 \newcommand{\ottdrulerdXXerror}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{B}  \vdash  \mathcal{C}  \ottsym{[}  \ottmv{x}  \ottsym{]}  :  \ottnt{A} }%
 }{
-\Gamma  \vdash  \mathcal{C}  \ottsym{[}  \mathsf{error} \, \ottnt{T_{{\mathrm{1}}}} \, \ottnt{T_{{\mathrm{2}}}}  \ottsym{]}  \rightsquigarrow  \mathsf{error} \, \ottnt{T_{{\mathrm{1}}}} \, \ottnt{T_{{\mathrm{2}}}}  \ottsym{:}  \ottnt{T_{{\mathrm{2}}}}}{%
+\Gamma  \vdash  \mathcal{C}  \ottsym{[}   \mathsf{error}\, \ottnt{B}   \ottsym{]}  \rightsquigarrow   \mathsf{error}\, \ottnt{A}   \ottsym{:}  \ottnt{A}}{%
 {\ottdrulerdXXerrorName}{}%
 }}
 
@@ -552,6 +553,6 @@
 
 \begin{verbatim}
 Definition rules:        41 good    0 bad
-Definition rule clauses: 73 good    0 bad
+Definition rule clauses: 74 good    0 bad
 \end{verbatim}
 \end{document}

@@ -1,0 +1,221 @@
+Just as the simply typed $\lambda$-calculus corresponds to cartesian
+closed categories our categorical model has a corresponding type
+theory we call Core Grady.  It consists of all of the structure found
+in the model.  To move from the model to Core Grady we apply the
+Curry-Howard-Lambek
+correspondence~\cite{Wadler:2015:PT:2847579.2699407,Lambek:1980}.
+Objects become types, and morphisms, $t : [[G]] \mto A$, become
+programs in context usually denoted by $[[G |- t : A]]$ which
+corresponds to Core Grady's type checking judgment.  We will discuss
+this correspondence in detail in
+Section~\ref{subsec:interpreting_surface_grady_in_the_model}.
+
+The syntax for Core Grady is defined in
+Figure~\ref{fig:syntax-core-grady}.
+\begin{figure}
+  \scriptsize
+  \begin{mdframed}
+    \[
+    \setlength{\arraycolsep}{3pt}
+    \begin{array}{cl}      
+        \begin{array}{l}
+          \text{(types)}\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[A]],[[B]],[[C]] & ::= & [[Unit]] \mid [[Nat]] \mid [[?]] \mid [[A x B]] \mid [[A -> B]] \\
+        \end{array}\\\\
+        
+        \begin{array}{lll}
+          \text{(skeletons)}\\
+        \end{array} &
+        \begin{array}{lcl}
+          [[S]],[[K]],[[U]] & ::= & [[?]] \mid [[S1 x S2]] \mid [[S1 -> S2]]\\
+        \end{array}\\\\
+        
+        \begin{array}{l}
+          \text{(terms)}\\\\\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[t]] & ::= & [[x]] \mid [[triv]] \mid [[0]] \mid [[succ t]] \mid [[(t1 , t2)]] \mid [[fst t]] \mid [[snd t]] \\ & \mid & [[\x : A.t]] \mid [[t1 t2]] \mid [[case t : Nat of 0 -> t1, (succ x) -> t2]]\\ & \mid & [[box A]] \mid [[unbox A]] \mid [[squash S]] \mid [[split S]] \mid [[error A]]\\\\
+        \end{array}\\\\
+        
+        \begin{array}{lll}
+          \text{(contexts)}\\
+        \end{array}  &
+        \begin{array}{lcl}
+          [[G]] & ::= & [[.]] \mid [[x : A]] \mid [[G1,G2]]\\
+        \end{array}\\
+      \end{array}
+      \]    
+  \end{mdframed}
+  \caption{Syntax for Core Grady}
+  \label{fig:syntax-core-grady}
+\end{figure}
+The syntax is a straightforward extension of the simply typed
+$\lambda$-calculus.  Natural numbers are denoted by $[[0]]$ and
+$[[succ t]]$ where the latter is the successor of $[[t]]$.  The
+non-recursive natural number eliminator is denoted by $[[case t : Nat
+    of 0 -> t1, (succ x) -> t2]]$.  The most interesting aspect of the
+syntax is that $[[box A]]$ and $[[unbox A]]$ are not restricted to
+atomic types, but actually correspond to $[[Box A]]$ and $[[Unbox A]]$
+from Lemma~\ref{lemma:casting_morphisms}.  The categorical model shows
+that these can actually be defined in terms of $[[box A]]$ and
+$[[unbox A]]$ when $[[A]]$ is atomic, but we take the general versions
+as primitive, because they are the most useful from a programming
+perspective.  The case is similar for $[[split S]]$ and $[[squash
+    S]]$.
+
+Multisets of pairs of variables and types, denoted by $[[x : A]]$,
+called a typing context or just a context is denoted by $[[G]]$.  The
+empty context is denoted by $[[.]]$, and the union of contexts
+$[[G1]]$ and $[[G2]]$ is denoted by $[[G1,G2]]$.  Typing contexts are
+used to keep track of the types of free variables during type
+checking.
+
+The typing judgment is denoted by $[[G |- t : A]]$, and is read ``the
+term $[[t]]$ has type $[[A]]$ in context $[[G]]$.''  The typing
+judgment is defined by the type checking rules in
+Figure~\ref{fig:typing-core-grady}.
+\begin{figure} \scriptsize
+  \begin{mdframed}
+    \begin{mathpar}
+      \CGradydruleTXXvar{} \and
+      \CGradydruleTXXBox{} \and
+      \CGradydruleTXXUnbox{} \and
+      \CGradydruleTXXsquash{} \and
+      \CGradydruleTXXsplit{} \and
+      \CGradydruleTXXunitP{} \and
+      \CGradydruleTXXzeroP{} \and
+      \CGradydruleTXXsucc{} \and
+      \CGradydruleTXXncase{} \and
+      \CGradydruleTXXpair{} \and
+      \CGradydruleTXXfst{} \and
+      \CGradydruleTXXsnd{} \and
+      \CGradydruleTXXlam{} \and
+      \CGradydruleTXXapp{} \and
+      \CGradydruleTXXerror{} 
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Typing rules for Core Grady}
+  \label{fig:typing-core-grady}
+\end{figure}
+\begin{figure} 
+  \begin{mdframed} \scriptsize
+    \begin{mathpar}
+      \CGradydrulerdXXretracT{} \and
+      \CGradydrulerdXXretracTE{} \and      
+      \CGradydrulerdXXunbox{} \and
+      \CGradydrulerdXXretractU{} \and      
+      \CGradydrulerdXXsplit{} \and
+      \CGradydrulerdXXsucc{} \and
+      \CGradydrulerdXXncaseZero{} \and
+      \CGradydrulerdXXncaseSucc{} \and
+      \CGradydrulerdXXncase{} \and
+      \CGradydrulerdXXprojOne{} \and
+      \CGradydrulerdXXprojTwo{} \and
+      \CGradydrulerdXXfst{} \and
+      \CGradydrulerdXXsnd{} \and
+      \CGradydrulerdXXpairOne{} \and
+      \CGradydrulerdXXpairTwo{} \and
+      \CGradydrulerdXXbeta{} \and
+      \CGradydrulerdXXapp{} \and
+      \CGradydrulerdXXappTwo{}           
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Reduction rules for Core Grady}
+  \label{fig:reduction-core-grady}
+\end{figure}
+The type checking rules are an extension of the typing rules for the
+simply typed $\lambda$-calculus.  The casting terms are all typed as
+axioms with their expected types.
+
+Computing with terms is achieved by defining a reduction relation
+denoted by $[[t1 ~> t2]]$ and is read as ``the term $[[t1]]$ reduces
+in one step to the term $[[t2]]$.''  The reduction relation is defined
+in Figure~\ref{fig:reduction-core-grady}.  Reduction for Core Grady
+differs from the simply typed $\lambda$-calculus in that it is an
+extended formulation of call-by-name.  We only allow reduction under
+$[[unbox]]$ and $[[split]]$, and we do not allow reduction under the
+branches of case.  The former insures that when casting progress
+towards applying the retract rules, $\CGradydrulerdXXretracTName{}$
+and $\CGradydrulerdXXretractUName{}$, is always possible.  Disallowing
+reduction in arguments and in the branches of case expressions
+prevents infinite reductions from occurring without the overall
+program diverging. 
+
+Just as Abadi et al.~\cite{Abadi:1989} argue it is quite useful to
+have access to the untyped $\lambda$-calculus.  We give some example
+Core Grady programs utilizing this powerful feature.  We have a full
+implementation of every language in this paper
+available\footnote{Please see
+  \url{https://ct-gradual-typing.github.io/Grady/} for access to the
+  implementation as well as full documentation on how to install and
+  use it.}.  All examples in this section can be typed and ran in the
+implementation, and thus, we make use of Core Grady's concrete syntax
+which is very similar to Haskell's and does not venture too far from
+the mathematical syntax given above.
+
+Core Grady does not have a primitive notion of recursion, but it is
+well-known that we can define the Y combinator in the untyped
+$\lambda$-calculus.  Its definition in Core Grady is as follows:
+\begin{lstlisting}[language=Haskell]
+  omega : (? -> ?) -> ?
+  omega = \(x : ? -> ?) -> (x (squash (? -> ?) x));
+  
+  fix : (? -> ?) -> ?
+  fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((split (? -> ?) x) x));
+\end{lstlisting}
+Using $\lstinline{fix}$ we can define the usual arithmetic operations
+in Core Grady, but we use a typed version of $\lstinline{fix}$.
+\begin{lstlisting}[language=Haskell]
+  fixNat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
+  fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat)) ->
+     unbox{Nat -> Nat} (fix (\(y:?)->box{Nat -> Nat} (f (unbox{Nat -> Nat} y))));
+  
+  pred : Nat -> Nat
+  pred = \(n:Nat) -> case n of 0 -> 0, (succ n') -> n';
+
+  add : Nat -> Nat -> Nat
+  add = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
+
+  sub : Nat -> Nat -> Nat
+  sub = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));        
+        
+  mult : Nat -> Nat -> Nat
+  mult = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 0, (succ n') -> add m (r n'));
+\end{lstlisting}
+The function $\lstinline{fixNat}$ is defined so that it does recursion
+on the type $[[Nat -> Nat]]$, thus, it must take in an argument,
+$f : [[(Nat -> Nat) -> (Nat -> Nat)]]$, and
+produce a function of type $[[Nat -> Nat]]$.  However, we
+already have $\lstinline{fix}$ defined in the untyped fragment, and
+so, we can define $\lstinline{fixNat}$ using $\lstinline{fix}$ by
+boxing up the typed data.  This means we must cast $[[f]] : [[(Nat -> Nat) -> (Nat -> Nat)]]$ into a function of type
+$[[(? -> ?) -> ?]]$ and we do this by $\eta$-expanding
+$[[f]]$ and casting the input and output using $[[box]]$ and
+$[[unbox]]$ to arrive at the function
+$[[\y:?.H(box (Nat -> Nat) (f (unbox (Nat -> Nat) y)))]] : [[? -> ?]]$.  Finally, we can apply $\lstinline{fix}$, and then unbox its output to the type $[[Nat -> Nat]]$.
+
+Extending Grady with polymorphism would allow for the definition of
+$\lstinline{fixNat}$ to be abstracted, and then we could do statically
+typed recursion at any type.  We extend Core Grady with bounded
+polymorphism in Section~\ref{sec:bounded_quantification}.
+
+From a programming perspective Core Grady has a lot going for it, but
+it is unfortunate the programmer is required to insert explicit casts
+when wanting to program dynamically.  This implies that it is not
+possible to program in dynamic style when using Core Grady.  In the
+next section we fix this problem by developing a gradually typed
+surface language for Core Grady in the spirit of Siek and Taha's
+gradually typed $\lambda$-calculus \cite{Siek:2006}.
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

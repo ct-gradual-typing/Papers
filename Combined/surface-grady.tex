@@ -1,0 +1,94 @@
+
+
+\begin{figure}
+  \scriptsize
+  \begin{mdframed}
+    \textbf{Syntax:}\\
+      \[
+    \setlength{\arraycolsep}{1pt}
+    \begin{array}{cl}      
+        \begin{array}{l}
+          \text{(terms)}\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[t]] & ::= & [[x]] \mid [[triv]] \mid [[0]] \mid [[succ t]] \mid [[(t1 , t2)]] \mid [[fst t]] \mid [[snd t]] \\ & \mid & [[\x : A.t]] \mid [[t1 t2]] \mid [[case t of 0 -> t1, (succ x) -> t2]]\\
+        \end{array}\\\\
+        
+      \end{array}
+      \]    
+    \textbf{Metafunctions:}\\
+      \[
+      \begin{array}{lll}
+        \begin{array}{lll}
+          [[nat(?) = Nat]]\\
+          [[nat(Nat) = Nat]]\\
+        \end{array}
+        & \quad & 
+        \begin{array}{lll}
+          [[list(?) = List ?]]\\
+          [[list(List A) = List A]]\\
+        \end{array}\\\\                       
+        \begin{array}{lll}
+          [[prod(?) = ? x ?]]\\
+          [[prod(A x B) = A x B]]\\
+        \end{array}
+        & \quad &
+        \begin{array}{lll}
+          [[fun(?) = ? -> ?]]\\
+          [[fun(A -> B) = A -> B]]\\
+        \end{array}
+      \end{array}
+      \]
+  \end{mdframed}
+  \caption{Syntax and Metafunctions for Surface Grady}
+  \label{fig:syntax-surface-grady}
+\end{figure}
+
+\begin{figure}
+  \scriptsize
+  \begin{mdframed}
+    \textbf{Typing Rules:}\\
+    \begin{mathpar}
+      \SGradydruleTXXvarP{} \and
+      \SGradydruleTXXunitP{} \and
+      \SGradydruleTXXzeroP{} \and
+      \SGradydruleTXXsucc{} \and
+      \SGradydruleTXXncase{} \and
+      \SGradydruleTXXpair{} \and
+      \SGradydruleTXXfst{} \and
+      \SGradydruleTXXsnd{} \and      
+      \SGradydruleTXXlam{} \and
+      \SGradydruleTXXapp{}
+    \end{mathpar}
+
+    \textbf{Type Consistency:}\\
+    \begin{mathpar}
+      \SGradydruleCXXRefl{} \and
+      \SGradydruleCXXBox{} \and
+      \SGradydruleCXXUnbox{} \and
+      \SGradydruleCXXArrow{} \and
+      \SGradydruleCXXProd{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Typing rules for Surface Grady}
+  \label{fig:typing-surface-grady}
+\end{figure}
+
+
+\subsection{Interpreting Surface Grady in the Model}
+\label{subsec:interpreting_surface_grady_in_the_model}
+%% Interpreting a programming language into a categorical model requires
+%% three steps.  First, the types are interpreted as objects.  Then
+%% programs are interpreted as morphisms in the category, but this is a
+%% simplification.  Every morphism, $f$, in a category has a source
+%% object and a target object, we usually denote this by $f : A \mto B$.
+%% Thus, in order to interpret programs as morphisms the program must
+%% have a source and target.  So instead of interpreting raw terms as
+%% morphisms we interpret terms in their typing context.  That is, we
+%% must show how to interpret every $[[G |- t : A]]$ as a morphism $[[t]]
+%% : \interp{[[G]]} \mto \interp{[[A]]}$.  The third step is to show that
+%% whenever one program reduces to another their interpretations are
+%% isomorphic in the model. This means that whenever $[[G |- t1 ~> t2 : A]]$, then $[[ [|t1|] ]] = [[ [|t2|] ]] : [[ [| G |] --> [| A |] ]]$.
+%% This is the reason why we defined our reduction in a
+%% typed fashion to aid us in understanding how it relates to the model.
+% subsection interpreting_surface_grady_in_the_model (end)

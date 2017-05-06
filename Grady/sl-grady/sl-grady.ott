@@ -47,7 +47,8 @@ grammar
     | 0                   ::   :: zero         
     | case t of 0 -> t1 , ( succ x ) -> t2 :: :: natElim
     {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,0 \to [[t1]], (\mathsf{succ}\,[[x]]) \to [[t2]] }}
-    | error A B           ::   :: error
+    | error B              ::   :: error
+    {{tex \mathsf{error}\,[[B]] }}
     | ( t )               :: S :: parens
     | [ t1 / x ] t2       :: M :: subst
     | H( t )              :: M :: hparens
@@ -169,9 +170,7 @@ grammar
     | fst        :: :: fst
     {{tex \mathsf{fst} }}
     | snd        :: :: snd
-    {{tex \mathsf{snd} }}                
-    | error      :: :: error
-    {{tex \mathsf{error} }}
+    {{tex \mathsf{snd} }}                       
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
@@ -279,8 +278,8 @@ defn
     ---------------------------------- :: app
     G |- t1 t2 : B
 
-    ------------------ :: error
-    G |- error A B : B
+    ---------------- :: error
+    G |- error B : B
 
 defns
   Reduction :: '' ::=
@@ -297,11 +296,12 @@ by
     G |- unbox A (box A t) ~> t : A
 
     G |- t : A && A neq B
-    --------------------------------------- :: retractE
-    G |- unbox B (box A t) ~> error A B : B
+    ------------------------------------- :: retractE
+    G |- unbox B (box A t) ~> error B : B
 
-    ---------------------------------------- :: error
-    G |- CX[error A B] ~> error A B : A -> B
+    G, x : B |- CX[x] : A
+    -------------------------------- :: error
+    G |- CX[error B] ~> error A : A
 
     G |- t1 ~> t2 : T
     --------------------------------- :: unbox

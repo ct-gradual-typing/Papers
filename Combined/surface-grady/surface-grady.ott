@@ -1,0 +1,521 @@
+metavar termvar, x, y , z, f ::=
+metavar typevar, X, Y , Z ::=
+indexvar index, i , j, k ::=
+
+grammar
+  t, c, v, s, n :: 't_' ::=                    
+    | x                   ::   :: var          
+    | triv                ::   :: unit         
+    {{tex \mathsf{triv} }}
+    | squash U            :: M  :: inj          
+    {{tex \mathsf{squash}_{[[U]]} }}
+    | split U             :: M  :: surj         
+    {{tex \mathsf{split}_{[[U]]} }}
+    | squash            :: M  :: inj2
+    {{tex \mathsf{squash} }}
+    | split             :: M  :: surj2
+    {{tex \mathsf{split} }}            
+    | box                 ::   :: gen          
+    {{tex \mathsf{box} }}
+    | box A               :: M :: genA
+    {{tex \mathsf{box}_{[[A]]} }}        
+    | unbox A             :: M :: specA         
+    {{tex \mathsf{unbox}_{[[A]]} }}
+    | unbox               ::   :: spec
+    {{tex \mathsf{unbox} }}
+    | Lam X <: A . t      ::    :: TypeLam
+    {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
+    | [ A ] t             ::   :: TypeApp
+    {{tex [ [[A]] ] [[t]] }}    
+    | \ x : A . t         ::   :: abs          
+    {{tex \lambda ([[x]] : [[A]]) . [[t]] }}
+    | t1 t2               ::   :: app          
+    | ( t1 , t2 )         ::   :: pair         
+    | fst t               ::   :: proj1        
+    | snd t               ::   :: proj2        
+    | succ t              ::   :: successor    
+    | 0                   ::   :: zero         
+    | case t of t3 -> t1 , t4 -> t2 :: :: natElim
+    {{tex \mathsf{case}\,[[t]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
+    | []                  ::   :: emptylist
+    | t : : t'            ::   :: cons
+    {{tex [[t]] :: [[t']] }}
+    | ( t )               :: S :: parens
+    | [ t1 / x ] t2       :: M :: subst
+    | H( t )              :: M :: hparens
+    {{tex [[t]] }}    
+    | [ A / X ] t         :: M :: TypeSub
+    | | t |               :: M :: DEnc
+    {{tex \lceil [[t]] \rceil }}
+    | \ x . t             :: M :: UntypedLam
+    {{tex \lambda [[x]].[[t]] }}
+
+  K :: 'K_' ::=
+    | *                   ::   :: TypeOfTypes
+    {{tex \star }}
+
+  A, B, C, D, E, S, U :: 'A_' ::=
+    | Top                 ::   :: Top
+    {{tex \top }}
+    | SL                  ::   :: SL
+    {{tex \mathbb{S} }}
+    | X                   ::   :: Var
+    | List A              ::   :: List
+    {{tex \mathsf{List}\,[[A]] }}
+    | Forall ( X <: A ) . B   ::   :: Forall
+    {{tex \forall ([[X]] <\hspace{-2px}\colon [[A]]). [[B]]}}
+    | Unit                ::   :: term    
+    {{tex \mathsf{Unit} }}
+    | Nat                 ::   :: nat     
+    {{tex \mathsf{Nat} }}    
+    | ?                   ::   :: unitype 
+    | A1 -> A2            ::   :: arrow   
+    | A1 x A2             ::   :: pair    
+    {{tex [[A1]] \times [[A2]] }}     
+    | ( A )               :: S :: paren
+    | H( A )              :: M :: hparen
+    {{tex [[A]] }}
+    | [ A / X ] B         :: M :: TypeSub
+    | i( A )              :: M :: CTToST
+
+  G {{ tex \Gamma }} :: G_ ::=            
+    | .                   ::   :: emptyCtx
+    {{tex \cdot }}
+    | G , X <: A           ::   :: tvn
+    {{tex [[G]],[[X]] <\hspace{-2px}\colon [[A]] }}
+    | G , x : A           ::   :: vn      
+    | G , G'              :: M :: append  
+    | ( G )               :: M :: parens
+
+  terminals :: 'terminals_' ::=
+    |  ->                 ::   :: arrow
+    {{tex \rightarrow }}
+    | |-                  ::   :: turnstile
+    {{tex \vdash }}
+    | succ                ::   :: succ
+    {{tex \mathsf{succ} }}
+    | ?                   ::   :: unitype
+    | ~                   ::   :: cons
+    {{tex \sim }}
+    | ~U                  ::   :: conv
+    {{tex \sim_U }}    
+    | elem                ::   :: elem
+    {{tex \in }}
+    | ~>                  ::   :: red
+    {{tex \rightsquigarrow }}
+    | box        :: :: box
+    {{tex \mathsf{box} }}
+    | unbox        :: :: unbox
+    {{tex \mathsf{unbox} }}
+    | fst        :: :: fst
+    {{tex \mathsf{fst} }}
+    | snd        :: :: snd
+    {{tex \mathsf{snd} }}                
+
+  formula :: 'formula_' ::=
+    | judgement           ::   :: judgement
+    | x nin FV( t )       ::   :: NinFV
+    {{tex [[x]] \not\in \mathsf{FV}([[t]]) }}
+    | x : A elem G        ::   :: xTelemG
+    | X <: A elem G        ::   :: XTelemG
+    {{tex [[X]] <\hspace{-2px}\colon [[A]] \in [[G]] }}
+    | formula1 && formula2 ::  :: Quad
+    {{tex [[formula1]] \quad [[formula2]] }}
+    | ( formula )         :: S :: parens
+    {{tex [[formula]] }}    
+    | t : A               :: M :: TermHasType
+    | list( A ) = B       :: M :: listFun
+    {{tex \mathsf{list}([[A]]) = [[B]] }}
+    | nat( A ) = B        :: M :: natFun
+    {{tex \mathsf{nat}([[A]]) = [[B]] }}
+    | fun( A ) = B        :: M :: funFun
+    {{tex \mathsf{fun}([[A]]) = [[B]] }}
+    | prod( A ) = B       :: M :: prodFun
+    {{tex \mathsf{prod}([[A]]) = [[B]] }}
+    | A != B              :: M :: NeqTy
+    {{tex [[A]] \neq [[B]] }}
+    | caster( A , B ) = c :: M :: caster
+    {{tex \mathsf{caster}([[A]],[[B]]) = [[c]] }}
+    | G |-F t : A         :: M :: Fj
+    {{tex [[G]] \vdash_F [[t]] : [[A]] }}
+    | t F~>* t'            :: M :: Fr1
+    {{tex [[t]] \rightsquigarrow^*_F [[t']] }}
+    | t D~>* t'            :: M :: Dr
+    {{tex [[t]] \rightsquigarrow^*_{\lambda} [[t']] }}    
+    | t ~>* t'            :: M :: Rd
+    {{tex [[t]] \rightsquigarrow^* [[t']] }}
+    | t \|/ t'           :: M :: Join
+    {{tex [[t]] \downarrow [[t']] }}
+    | t \|/F t'          :: M :: Join2
+    {{tex [[t]] \downarrow_F [[t']] }}
+    | t ^                :: M :: Div
+    {{tex [[t]] \uparrow }}
+    | G <= G'            :: M :: CtxPre
+    {{tex [[G]] \sqsubseteq [[G']] }}
+    | G |- A <: B        :: M :: CST
+    {{tex [[G]] \vdash [[A]] <\hspace{-2px}\colon [[B]] }}
+  
+defns
+  Typing :: '' ::=
+
+defn
+    G |- A ~ B :: :: typecons :: 'C_'
+    {{tex [[G]] \vdash [[A]] \sim [[B]] }} by
+
+   ---------- :: Refl
+   G |- A ~ A
+   
+   G |- A <~ SL
+   ------------ :: BoxP
+   G |- A ~ ?
+
+   G |- A <~ SL
+   ------------ :: UnboxP
+   G |- ? ~ A
+
+   ------------ :: Box
+   G |- A ~ ?
+
+   ------------ :: Unbox
+   G |- ? ~ A
+
+   G |- A ~ B
+   ------------------------ :: List
+   G |- (List A) ~ (List B)
+
+   G |- A2 ~ A1 && G |- B1 ~ B2
+   ---------------------------- :: Arrow
+   G |- (A1 -> B1) ~ (A2 -> B2)
+
+   G |- A1 ~ A2 && G |- B1 ~ B2
+   ---------------------------- :: Prod
+   G |- (A1 x B1) ~ (A2 x B2)
+
+   G, X <: A |- B1 ~ B2
+   ------------------------------------------------ :: Forall
+   G |- (Forall (X <: A).B1) ~ (Forall (X <: A).B2)
+
+defn
+    A <= B :: :: typepre :: 'P_'
+    {{tex [[A]] \sqsubseteq [[B]] }}
+by
+
+   G |- A <~ SL
+   ------------ :: UP
+   A <= ?
+
+   ------ :: U
+   A <= ?
+
+   ------ :: refl
+   A <= A
+
+   A <= C && B <= D
+   -------------------- :: arrow
+   (A -> B) <= (C -> D)
+
+   A <= C && B <= D
+   ------------------ :: prod
+   (A x B) <= (C x D)
+
+   A <= B
+   ------------------------- :: list
+   (List A) <= (List B)
+
+   B1 <= B2
+   ------------------------------------------- :: forall
+  (Forall (X <: A).B1) <= (Forall (X <: A).B2)
+
+defn
+    t <= t' :: :: termpre :: 'TP_'
+    {{tex [[t]] \sqsubseteq [[t']] }}
+by
+
+  ------ :: refl
+  t <= t
+
+  t1 <= t2
+  ---------------------- :: succ
+  (succ t1) <= (succ t2)
+
+  (t1 <= t4 && t2 <= t5) && t3 <= t6
+  ---------------------------------------------------------------------------- :: Nate
+  (case t1 of 0 -> t2, (succ x) -> t3) <= (case t4 of 0 -> t5, (succ x) -> t6)
+
+  t1 <= t3 && t2 <= t4
+  -------------------- :: pair
+  (t1,t2) <= (t3,t4)
+
+  t1 <= t2
+  -------------------- :: fst
+  (fst t1) <= (fst t2)
+
+  t1 <= t2
+  -------------------- :: snd
+  (snd t1) <= (snd t2)
+
+  t1 <= t3 && t2 <= t4
+  -------------------- :: cons
+  (t1::t2) <= (t3::t4)
+
+  (t1 <= t4 && t2 <= t5) && t3 <= t6
+  ------------------------------------------------------------------------- :: Liste
+  (case t1 of [] -> t2, (x::y) -> t3) <= (case t4 of 0 -> t5, (x::y) -> t6)
+
+  t1 <= t2 && A1 <= A2
+  ----------------------- :: Fun
+  (\x:A1.t) <= (\x:A2.t2)
+
+  t1 <= t3 && t2 <= t4
+  -------------------- :: app
+  (t1 t2) <= (t3 t4)
+
+  t1 <= t2 
+  ---------------------------------- :: tfun
+  (Lam X <: A.t1) <= (Lam X <: A.t2)
+
+  t1 <= t2 && A <= B
+  ------------------ :: tapp
+  [A]t1 <= [B]t2
+
+defn
+    G |- A <~ B :: :: subtype :: 'S_'
+    {{tex [[G]] \vdash [[A]] \lesssim [[B]] }} by
+
+    ----------- :: Refl
+    G |- A <~ A
+
+    X <: A' elem G && G |- A' ~ A
+    ----------------------------- :: Var
+    G |- X <~ A
+
+    ------------- :: Top
+    G |- A <~ Top
+
+    G |- A <~ SL
+    ------------ :: Box
+    G |- A <~ ?
+
+    G |- A <~ SL
+    ----------- :: Unbox
+    G |- ? <~ A
+
+    -------------- :: TopSL
+    G |- Top <~ SL
+
+    ------------ :: USL
+    G |- ? <~ SL
+
+    -------------- :: NatSL
+    G |- Nat <~ SL
+
+    --------------- :: UnitSL
+    G |- Unit <~ SL
+
+    G |- A <~ SL
+    ----------------- :: ListSL
+    G |- List A <~ SL
+
+    G |- A <~ SL && G |- B <~ SL
+    ---------------------------- :: ArrowSL
+    G |- A -> B <~ SL
+
+    G |- A <~ SL && G |- B <~ SL
+    ---------------------------- :: ProdSL
+    G |- A x B <~ SL
+
+    G |- A <~ B
+    --------------------- :: List
+    G |- (List A) <~ (List B)
+
+    G |- A1 <~ A2 && G |- B1 <~ B2
+    ------------------------------ :: Prod
+    G |- (A1 x B1) <~ (A2 x B2)
+
+    G |- A2 <~ A1 && G |- B1 <~ B2
+    ------------------------------ :: Arrow
+    G |- (A1 -> B1) <~ (A2 -> B2)
+
+    G, X <: A |- B1 <~ B2
+    ------------------------------------------------- :: Forall
+    G |- (Forall (X <: A).B1) <~ (Forall (X <: A).B2)
+
+defn
+    G |- t : A :: :: type :: 'T_'
+    {{tex [[G]] \vdash_{\mathsf{SG} } [[t]] : [[A]] }} by
+    
+    x : A elem G 
+    -------------------- :: varP
+    G |- x : A
+
+    G |- t : A
+    ---------------- :: box
+    G |- box A t : ?
+
+    G |- t : A
+    ------------------ :: unbox
+    G |- unbox A t : A
+
+    G |- t : S
+    ------------------- :: squash
+    G |- squash S t : ?
+
+    G |- t : ?
+    ------------------ :: split
+    G |- split S t : S
+
+    ---------------- :: unitP
+    G |- triv : Unit
+
+    ------------- :: zeroP
+    G |- 0 : Nat
+
+    G |- t : A && nat(A) = Nat
+    -------------------------- :: succ
+    G |- succ t : Nat    
+
+    (G |- t : C  && nat(C) = Nat) && G |- A1 ~ A
+    (G |- t1 : A1 && G, x : Nat |- t2 : A2) && G |- A2 ~ A
+    ------------------------------------------------------- :: ncase
+    G |- case t of 0 -> t1, (succ x) -> t2 : A
+
+    ---------------------------------- :: empty
+    G |- [] : Forall (X <: Top).List X
+    
+    ((G |- t1 : A1 && G |- t2 : A2) && list(A2) = List A3) && G |- A1 ~ A3
+    ---------------------------------------------------------------------- :: cons
+    G |- t1 :: t2 : List A3
+   
+    G |- t1 : A1 && G |- t2 : A2
+    ---------------------------- :: pair
+    G |- (t1,t2) : A1 x A2
+
+    G, x : A |- t : B
+    -------------------- :: lam
+    G |- \x:A.t : A -> B
+
+    G, X <: A |- t : B
+    ------------------------------------ :: Lam
+    G |- Lam X <: A. t : Forall (X <: A).B
+
+    G |- t : Forall (X<:B).C && G |- A <~ B
+    --------------------------------------- :: typeApp
+    G |- [A]t : [A/X]C
+
+    G |- t : A && G |- A <~ B
+    ------------------------- :: Sub
+    G |- t : B
+
+    G |- t : C  && list(C) = List A
+    ((G |- t1 : B1 && G, x : A, y : List A |- t2 : B2) && G |- B1 ~ B) && G |- B2 ~ B
+    --------------------------------------------------------------------------------- :: lcase
+    G |- case t of [] -> t1, (x :: y) -> t2 : B       
+    
+    G |- t1 : C 
+    (G |-t2 : A2 && G |- A2 ~ A1) && fun(C) = A1 -> B1
+    -------------------------------------------------- :: app
+    G |- t1 t2 : B1
+
+    (G |- t : B && prod(B) = A1 x A2)
+    --------------------------------- :: fst
+    G |- fst t : A1
+
+    (G |- t : B && prod(B) = A1 x A2)
+    -------------------------------- :: snd
+    G |- snd t : A2
+
+defn
+     G |- t1 => t2 : A :: :: castIn :: ci_
+    {{tex [[G]] \vdash [[t1]] \Rightarrow [[t2]] : [[A]] }}
+by
+
+    x : A elem G
+    -------------------- :: var
+    G |- x => x : A
+
+    ----------------- :: zero
+    G |- 0 => 0 : Nat
+
+    ------------------------ :: triv
+    G |- triv => triv : Unit
+
+    G |- t1 => t2 : ?
+    ----------------------------------------- :: succU
+    G |- succ t1 => succ (unbox Nat t2) : Nat
+
+    G |- t1 => t2 : Nat
+    ----------------------------- :: succ
+    G |- succ t1 => succ t2 : Nat
+
+    (G |- t => t' : ?    && G |- A1 ~ A) && caster(A1,A) = c1
+    ((G |- t1 => t'1 : A1 && G, x : Nat |- t2 => t'2 : A2) && G |- A2 ~ A) && caster(A2,A) = c2
+    ------------------------------------------------------------------------------------------------------------ :: ncaseU
+    G |- (case t of 0 -> t1, (succ x) -> t2) => (case (unbox Nat t') of 0 -> (c1 t'1), (succ x) -> (c2 t'2)) : A
+
+    (G |- t => t' : Nat && G |- A1 ~ A) && caster(A1,A) = c1
+    ((G |- t1 => t'1 : A1 && G, x : Nat |- t2 => t'2 : A2) && G |- A2 ~ A) && caster(A2,A) = c2
+    ------------------------------------------------------------------------------------------- :: ncase
+    G |- (case t of 0 -> t1, (succ x) -> t2) => (case t' of 0 -> t'1, (succ x) -> t'2) : A
+
+    G |- t1 => t3 : A1 && G |- t2 => t4 : A2
+    ---------------------------------------- :: pair
+    G |- (t1,t2) => (t3,t4) : A1 x A2
+
+    G |- t1 => t2 : ?
+    ----------------------------------------- :: fstU
+    G |- fst t1 => fst (split (? x ?) t2) : ?
+
+    G |- t1 => t2 : A1 x A2
+    -------------------------- :: fst
+    G |- fst t1 => fst t2 : A1
+
+    G |- t1 => t2 : ?
+    ----------------------------------------- :: sndU
+    G |- snd t1 => snd (split (? x ?) t2) : ?
+
+    G |- t1 => t2 : A x B
+    ------------------------- :: snd
+    G |- snd t1 => snd t2 : B
+
+    ---------------------------------------- :: Empty
+    G |- [] => [] : Forall (X <: Top).List X
+
+    G |- t1 => t'1 : A1 && G |- t2 => t'2 : ?
+    ---------------------------------------------------------------------------------------- :: consU
+    G |- (t1 :: t2) => ((box A1 t'1) :: (split (List ?) t'2)) : List ?
+
+    ((G |- t1 => t'1 : A1 && G |- t2 => t'2 : List A2) && G |- A1 <~ A2) && caster(A1,A2) = c
+    ---------------------------------------------------------------------------------------- :: cons
+    G |- (t1 :: t2) => ((c t'1) :: t'2) : List A2
+
+    (G |- t => t' : ? && caster(B1,B) = c1) && caster(B2,B) = c2
+    ((G |- t1 => t'1 : B1 && G, x : ?, y : List ? |- t2 => t'2 : B2) && G |- B1 ~ B) && G |- B2 ~ B
+    ------------------------------------------------------------------------------------------------------------------- :: lcaseU
+    G |- (case t of [] -> t1, (x :: y) -> t2) => (case (split (List ?) t') of [] -> (c1 t'1), (x :: y) -> (c2 t'2)) : B
+
+    (G |- t => t : List A && caster(B1,B) = c1) && caster(B2,B) = c2
+    ((G |- t1 => t'1 : B1 && G, x : A, y : List A |- t2 => t'2 : B2) && G |- B1 ~ B) && G |- B2 ~ B
+    ----------------------------------------------------------------------------------------------- :: lcase
+    G |- (case t of [] -> t1, (x :: y) -> t2) => (case t' of [] -> (c1 t'1), (x :: y) -> (c2 t'2)) : B
+
+    G, x : A1 |- t1 => t2 : A2
+    ------------------------------------ :: lam
+    G |- \x:A1.t1 => \x:A1.t2 : A1 -> A2
+
+    G |- t1 => t'1 : ?      
+    G |- t2 => t'2 : A2 && caster(A2,?) = c
+    -------------------------------------------------------- :: appU
+    G |- t1 t2 => (split (? -> ?) t'1) (c t'2) : ?
+
+     G |- t2 => t'2 : A2    
+    (G |- t1 => t'1 : A1 -> B && G |- A2 ~ A1) && caster(A2,A1) = c
+    ---------------------------------------------------------------- :: app
+    G |- t1 t2 => t'1 (c t'2) : B
+
+    G , X <: A |- t1 => t2 : B
+    ------------------------------------------------------------- :: Lam
+    G |- (Lam X <: A. t1) => (Lam X <: A. t2) : Forall (X <: A).B
+
+    (G |- t1 => t2 : Forall (X <: B).C && G |- A ~ A') && G |- A' <: B
+    ------------------------------------------------------------------ :: typeApp
+    G |- ([A]t1) => ([A']t2) : [A'/X]C

@@ -1,0 +1,148 @@
+Next we show how to interpret $\GSTLC$ and $\CGSTLC$ into a gradual
+$\lambda$-model. We will show how to interpret the typing of the
+former into the model, and then show how to do the same for the
+latter, furthermore, we show that reduction can be interpreted into
+the model as well, thus concluding soundness for $\CGSTLC$.
+
+First, we must give the interpretation of types and contexts, but this
+interpretation is obvious, because we have been making sure to match
+the names of types and objects throughout this paper.
+\begin{definition}
+  \label{def:interpretation-of-gradual-types}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split, \squash, \bx, \unbox)$ is
+  a gradual $\lambda$-model.  Then we define the interpretation of
+  types into $\cat{C}$ as follows:
+  \[
+  \begin{array}{cccccccc}
+    \begin{array}{lll}
+      [[ [| ? |] ]] & = & [[?]]\\
+      \\
+      \\
+    \end{array}
+    & \quad & 
+    \begin{array}{lll}
+      [[ [| Unit |] ]] & = & 1\\
+      [[ [| Nat |] ]] & = & [[Nat]]\\
+      \\
+    \end{array}
+    & \quad &
+    \begin{array}{lll}
+      [[ [| A1 -> A2 |] ]] & = & [[ [| A1 |] -> [| A2 |] ]]\\
+      [[ [| A1 x A2 |] ]] & = & [[ [| A1 |] x [| A2 |] ]]\\\\
+    \end{array}
+  \end{array}
+  \]
+  We extend this interpretation to typing contexts as follows:
+  \[
+  \begin{array}{lll}
+    \begin{array}{lll}
+      [[ [| . |] ]] & = & 1      
+    \end{array}
+    & \quad &
+    \begin{array}{lll}
+      [[ [| G,x : A |] ]] & = & [[ [| G |] x [| A |] ]]
+    \end{array}
+  \end{array}
+  \]
+\end{definition}
+\noindent Throughout the remainder of this paper we will drop the
+interpretation symbols around types.
+
+Before we can interpret the typing rules of $\GSTLC$ and
+$\CGSTLC$ we must show how to interpret
+the consistency relation from Figure~\ref{fig:GSTLC}.
+These will correspond to casting morphisms.
+\begin{lemma}[Type Consistency in the Model]
+  \label{lemma:type_consistency_in_the_model}
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, $\\ $\squash, \bx, \unbox)$ is
+  a gradual $\lambda$-model, and $<<A ~ B>>$ for some types $[[A]]$
+  and $[[B]]$.  Then there are two casting morphisms $c_1 : [[ A --> B ]]$ and $c_2 : [[ B --> A ]]$.
+\end{lemma}
+\begin{proof}
+This proof holds by induction on the form $<<A ~ B>>$ using the
+morphisms $[[Box A]] : [[A --> ?]]$ and $[[Unbox A]] : [[? --> A]]$.
+Please see
+Appendix~\ref{subsec:proof_of_type_consistency_in_the_model} for the
+complete proof.
+\end{proof}
+\noindent
+Showing that both $c_1$ and $c_2$ exist corresponds to the fact that
+$<<A ~ B>>$ is symmetric.  
+
+At this point we have everything we need to show our main result which
+is that typing in both $\GSTLC$ and $\CGSTLC$, and evaluation in
+$\CGSTLC$ can be interpreted into the categorical model.  The
+interpretation of terms used in the following proofs is summarized in
+Figure~\ref{fig:interp-terms}.
+\begin{figure}
+  \small  
+    \begin{center}
+      \begin{math}
+          \begin{array}{|l|}
+            \hline
+            << [| G1 , x : Ai , G2 |-S x : Ai |] >> = \pi_i\\
+            \hline
+            << [| G |-S triv : Unit |] >> = \diamond_{<< [| G |] >>}\\
+            \hline
+            << [| G |-S 0 : Nat |] >> = \diamond_{<< [| G |] >>};\z\\
+            \hline
+            << [| G |-S succ t : Nat |] >> = << [| t |] >>;c;<<succ>>\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : A>>\text{ and }c : <<A --> Nat>>\\
+            \hline
+            << [| G |-S (t1,t2) : A1 x A2 |] >> = \langle << [| t1 |] >> , << [| t2 |] >> \rangle\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t1 : A1>>\text{ and } <<G |-S t2 : A2>>\\
+            \hline
+            << [| G |-S fst t : A1 |] >> = << [| t |] >>;c;\pi_1\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : B>>\text{ and }c : <<B --> (A1 x A2)>>\\
+            \hline
+            << [| G |-S snd t : A2 |] >> = << [| t |] >>;c;\pi_2\\           
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : B>>\text{ and }c : <<B --> (A1 x A2)>>\\
+            \hline
+            << [| G |-S \x:A.t : A -> B |] >> = \curry{<< [| t |] >>}\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G, x : A |-S t : B>>\\
+            \hline
+            << [| G |-S t1 t2 : B1 |] >> = \langle << [| t1 |] >>;c_1, << [| t2 |] >>;c_2\rangle;\app_{[[A1]],[[B1]]}\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t1 : C>>\text{, }<<G |-S t2 : A2>>, c_1 : <<C --> (A1 -> B1)>>, \text{ and }c_2 : <<A2 --> A1>>\\
+            \hline
+            << [| G |-C t : {A} => {B} : B |] >> = << [| t |] >>;c\\
+            \,\,\,\,\,\,\,\,\,\,\,\text{ where } <<G |-S t : A>> \text{ and }c : <<A --> B>>\\
+            \hline
+          \end{array}
+      \end{math}
+    \end{center}
+  \caption{Interpretation of Terms}
+  \label{fig:interp-terms}
+\end{figure}
+\begin{theorem}[Interpretation of Typing]
+  \label{thm:interpretation_of_typing}
+  Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx,$\\$ \unbox)$
+  is a gradual $\lambda$-model. If $<<G |-S t : A>>$ or $<<G |-C t : A>>$, then
+  there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.  
+\end{theorem}
+\begin{proof}
+  Both parts of the proof hold by induction on the form of the assumed
+  typing derivation, and uses most of the results we have developed up
+  to this point.  Please see
+  Appendix~\ref{subsec:proof_of_interpretation_of_types} for the
+  complete proof.
+\end{proof}
+
+\begin{theorem}[Interpretation of Evaluation]
+  \label{thm:interpretation_of_evaluation}
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash,$\\$\bx, \unbox)$
+  is a gradual $\lambda$-model.  If $<<G |- t1 ~> t2 : A>>$, then
+  $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
+\end{theorem}
+\begin{proof}
+  This proof holds by induction on the form of $[[G |- t1 ~> t2 : A]]$,
+  and uses Theorem~\ref{thm:interpretation_of_typing},
+  Lemma~\ref{lemma:type_consistency_in_the_model}, and
+  Corollary~\ref{corollary:type_consist_coro}.  Please see
+  Appendix~\ref{subsec:proof_of_interpretation_of_evaluation} for the
+  complete proof.  
+\end{proof}
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***
