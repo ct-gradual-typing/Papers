@@ -49,6 +49,8 @@ grammar
     {{tex \lceil [[t]] \rceil }}
     | \ x . t             :: M :: UntypedLam
     {{tex \lambda [[x]].[[t]] }}
+    | 3                   :: M :: Three
+    {{tex 3 }}
 
   K :: 'K_' ::=
     | *                   ::   :: TypeOfTypes
@@ -77,6 +79,10 @@ grammar
     {{tex [[A]] }}
     | [ A / X ] B         :: M :: TypeSub
     | i( A )              :: M :: CTToST
+    | Bool                :: M :: Bool
+    {{tex \mathsf{Bool} }}
+    | A --> B            :: M :: Mor
+    {{tex [[A]] \mto [[B]] }}
 
   G {{ tex \Gamma }} :: G_ ::=            
     | .                   ::   :: emptyCtx
@@ -132,6 +138,12 @@ grammar
     {{tex \mathsf{fun}([[A]]) = [[B]] }}
     | prod( A ) = B       :: M :: prodFun
     {{tex \mathsf{prod}([[A]]) = [[B]] }}
+    | nat( A )            :: M :: natFun2
+    {{tex \mathsf{nat}([[A]]) }}
+    | fun( A )            :: M :: funFun2
+    {{tex \mathsf{fun}([[A]]) }}
+    | prod( A )           :: M :: prodFun2
+    {{tex \mathsf{prod}([[A]]) }}    
     | A != B              :: M :: NeqTy
     {{tex [[A]] \neq [[B]] }}
     | caster( A , B ) = c :: M :: caster
@@ -154,6 +166,7 @@ grammar
     {{tex [[G]] \sqsubseteq [[G']] }}
     | G |- A <: B        :: M :: CST
     {{tex [[G]] \vdash [[A]] <\hspace{-2px}\colon [[B]] }}
+    | t1 = t2            :: M :: TEq
   
 defns
   Typing :: '' ::=
@@ -446,14 +459,15 @@ by
     G |- t1 => t2 : Nat
     ----------------------------- :: succ
     G |- succ t1 => succ t2 : Nat
-
-    (G |- t => t' : ?    && G |- A1 ~ A) && caster(A1,A) = c1
-    ((G |- t1 => t'1 : A1 && G, x : Nat |- t2 => t'2 : A2) && G |- A2 ~ A) && caster(A2,A) = c2
+    
+    ((G |- A1 ~ A && G |- A2 ~ A)  && caster(A2,A) = c2) && caster(A1,A) = c1
+    (G |- t => t' : ? && (G |- t1 => t'1 : A1  && G, x : Nat |- t2 => t'2 : A2))
+    (t'' = (unbox Nat t') && t''1 = (c1 t'1)) && t''2 = (c2 t'2)
     ------------------------------------------------------------------------------------------------------------ :: ncaseU
-    G |- (case t of 0 -> t1, (succ x) -> t2) => (case (unbox Nat t') of 0 -> (c1 t'1), (succ x) -> (c2 t'2)) : A
+    G |- (case t of 0 -> t1, (succ x) -> t2) => (case t'' of 0 -> t''1, (succ x) -> t''2) : A
 
-    (G |- t => t' : Nat && G |- A1 ~ A) && caster(A1,A) = c1
-    ((G |- t1 => t'1 : A1 && G, x : Nat |- t2 => t'2 : A2) && G |- A2 ~ A) && caster(A2,A) = c2
+    G |- t => t' : Nat && G |- A1 ~ A 
+    ((G |- t1 => t'1 : A1 && G, x : Nat |- t2 => t'2 : A2) && G |- A2 ~ A)
     ------------------------------------------------------------------------------------------- :: ncase
     G |- (case t of 0 -> t1, (succ x) -> t2) => (case t' of 0 -> t'1, (succ x) -> t'2) : A
 
@@ -463,7 +477,7 @@ by
 
     G |- t1 => t2 : ?
     ----------------------------------------- :: fstU
-    G |- fst t1 => fst (split (? x ?) t2) : ?
+    G |- fst t1 => fst (unbox (? x ?) t2) : ?
 
     G |- t1 => t2 : A1 x A2
     -------------------------- :: fst
@@ -471,7 +485,7 @@ by
 
     G |- t1 => t2 : ?
     ----------------------------------------- :: sndU
-    G |- snd t1 => snd (split (? x ?) t2) : ?
+    G |- snd t1 => snd (unbox (? x ?) t2) : ?
 
     G |- t1 => t2 : A x B
     ------------------------- :: snd
@@ -482,7 +496,7 @@ by
 
     G |- t1 => t'1 : A1 && G |- t2 => t'2 : ?
     ---------------------------------------------------------------------------------------- :: consU
-    G |- (t1 :: t2) => ((box A1 t'1) :: (split (List ?) t'2)) : List ?
+    G |- (t1 :: t2) => ((box A1 t'1) :: (unbox (List ?) t'2)) : List ?
 
     ((G |- t1 => t'1 : A1 && G |- t2 => t'2 : List A2) && G |- A1 <~ A2) && caster(A1,A2) = c
     ---------------------------------------------------------------------------------------- :: cons
@@ -491,7 +505,7 @@ by
     (G |- t => t' : ? && caster(B1,B) = c1) && caster(B2,B) = c2
     ((G |- t1 => t'1 : B1 && G, x : ?, y : List ? |- t2 => t'2 : B2) && G |- B1 ~ B) && G |- B2 ~ B
     ------------------------------------------------------------------------------------------------------------------- :: lcaseU
-    G |- (case t of [] -> t1, (x :: y) -> t2) => (case (split (List ?) t') of [] -> (c1 t'1), (x :: y) -> (c2 t'2)) : B
+    G |- (case t of [] -> t1, (x :: y) -> t2) => (case (unbox (List ?) t') of [] -> (c1 t'1), (x :: y) -> (c2 t'2)) : B
 
     (G |- t => t : List A && caster(B1,B) = c1) && caster(B2,B) = c2
     ((G |- t1 => t'1 : B1 && G, x : A, y : List A |- t2 => t'2 : B2) && G |- B1 ~ B) && G |- B2 ~ B
@@ -505,7 +519,7 @@ by
     G |- t1 => t'1 : ?      
     G |- t2 => t'2 : A2 && caster(A2,?) = c
     -------------------------------------------------------- :: appU
-    G |- t1 t2 => (split (? -> ?) t'1) (c t'2) : ?
+    G |- t1 t2 => (unbox (? -> ?) t'1) (c t'2) : ?
 
      G |- t2 => t'2 : A2    
     (G |- t1 => t'1 : A1 -> B && G |- A2 ~ A1) && caster(A2,A1) = c

@@ -484,6 +484,42 @@ from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
   raise dynamic type errors holds by Lemma~\ref{lemma:lifted_retract}
   and Lemma~\ref{lemma:lifted_retract_for_?}.
 \end{proof}
+The previous result has a number of implications.  It completely
+brings together the static and dynamic fragments of the gradual
+$\lambda$-model, and thus, fully relating the combination of dynamic
+and static typing to the past work of Lambek and Scott
+\cite{Scott:1980,Lambek:1980}.  It will allow for the definition of
+casting morphisms between arbitrary objects; see the next result.
+Finally, from a practical perspective it will simplify our
+corresponding type systems derived from this model, because $[[Box S]]
+= [[lsquash S]]$ and $[[Unbox S]] = [[lsplit S]]$ when $[[S]]$ is a
+skeleton, and hence, we will only need a single retract in the
+corresponding type systems.
+
+\begin{corollary}[Arbitrary Casting Morphisms]
+  \label{corollary:arbitrary_casting_morphisms}
+  Suppose $(\cat{T}, $ $ \cat{C}, ?, \T, \split, \squash, \bx, \unbox,
+  \error)$ is a gradual $\lambda$-model, and $[[A]]$ and $[[B]]$ are
+  objects of $\cat{C}$.  Then there exists casting morphisms from
+  $[[c1]] : [[A --> B]]$ and $[[c2]] : [[B --> A]]$.
+\end{corollary}
+\begin{proof}
+  The two morphisms are as follows:
+  \[
+  \begin{array}{lll}
+    [[c1]] := [[Box A]];[[Unbox B]] : [[A --> B]]\\
+    [[c2]] := [[Box B]];[[Unbox A]] : [[B --> A]]\\
+  \end{array}
+  \]    
+\end{proof}
+\noindent
+Note that $[[c1]]$ and $[[c2]]$ do not form an isomorphism, nor
+retracts, but when combined with other casting morphisms will evaluate
+away using the retracts in the model. This result will be used in
+Section~\ref{sec:surface_grady} and
+Section~\ref{subsec:interpreting_surface_grady_in_the_model} when
+inserting explicit casts during the cast insertion algorithm for
+gradual typing.
 % subsection the_categorical_model (end)
 
 %%% Local Variables: ***

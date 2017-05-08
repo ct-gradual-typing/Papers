@@ -1,5 +1,41 @@
+Programming in dynamic style requires the ability to implicitly cast
+data between types during eliminations. For example, $[[(\x:?.(succ
+    (succ x))) 3]]$ should type check with type $[[Nat]]$ even though
+$[[3]]$ has type $[[Nat]]$ and $[[x]]$ has type $[[?]]$. Now not every
+cast should work, for example, $[[(\x:Bool.t) 3]]$ should not type check,
+because it is inconsistent to allow different atomic types to be cast
+between each other.  Therefore, we must be able to decide when casts
+are consistent and which are not.
 
+Gradual type systems are the combination of static and dynamic typing
+with the ability to implicitly cast data between consistent types in
+such a way that the gradual guarantee is satisfied.  A gradually typed
+programming language consists of two languages: a core language and a
+surface language.  The core language contains explicit casts and an
+operational semantics, while the surface language is the gradual type
+system that allows casts to be left implicit.  Programs are written
+and then translated into the core language by inserting the explicit
+casts.  The gradual guarantee states the following:
+\begin{itemize}
+\item Adding or removing casts to/from any well-typed surface language
+  program remains typeable at a potentially less precise type.
+\item Adding explicit casts to a terminating well-typed core language
+  program also terminates at a related value, adding explicit casts to
+  a diverging well-typed core language program diverges, and removing
+  explicit casts from a terminating or diverging well-type core
+  language programs either terminates, diverges, or raises a dynamic
+  type error.
+\end{itemize}
+Briefly, the gradual guarantee states that any well-typed program can
+slide between more statically typed and more dynamically typed by
+inserting or removing casts without changing the meaning or the
+behavior of the program. The formal statement of the gradual guarantee
+is given in Section~\ref{sec:the_gradual_guarantee}.  This property
+was first proposed by Siek et al.~\cite{Siek:2015} to set apart
+systems that simply combine dynamic and static typing and gradual type
+systems.
 
+Now we introduce the gradually typed surface language Surface Grady.  
 \begin{figure}
   \scriptsize
   \begin{mdframed}
@@ -17,33 +53,49 @@
       \end{array}
       \]    
     \textbf{Metafunctions:}\\
-      \[
+    \begin{mathpar}
       \begin{array}{lll}
-        \begin{array}{lll}
-          [[nat(?) = Nat]]\\
-          [[nat(Nat) = Nat]]\\
-        \end{array}
-        & \quad & 
-        \begin{array}{lll}
-          [[list(?) = List ?]]\\
-          [[list(List A) = List A]]\\
-        \end{array}\\\\                       
-        \begin{array}{lll}
-          [[prod(?) = ? x ?]]\\
-          [[prod(A x B) = A x B]]\\
-        \end{array}
-        & \quad &
-        \begin{array}{lll}
-          [[fun(?) = ? -> ?]]\\
-          [[fun(A -> B) = A -> B]]\\
-        \end{array}
+        [[nat(?) = Nat]]\\
+        [[nat(Nat) = Nat]]\\
       \end{array}
-      \]
+      \and
+      \begin{array}{lll}
+        [[prod(?) = ? x ?]]\\
+        [[prod(A x B) = A x B]]\\
+      \end{array}\\
+      \and
+      \begin{array}{lll}
+        [[fun(?) = ? -> ?]]\\
+        [[fun(A -> B) = A -> B]]\\
+      \end{array}
+    \end{mathpar}
   \end{mdframed}
   \caption{Syntax and Metafunctions for Surface Grady}
   \label{fig:syntax-surface-grady}
 \end{figure}
+Surface Grady is a small extension of the surface language given by
+Siek et al.~\cite{Siek:2015}.  We have added natural numbers with their
+eliminator as well as cartesian products.  The Surface Grady syntax is
+defined in Figure~\ref{fig:syntax-surface-grady}, and it corresponds
+to Core Grady's syntax (Figure~\ref{fig:syntax-core-grady}), but
+without the explicit casts.  The syntax for types and typing contexts
+do not change, and so we do not repeat them here.
 
+The metafunctions $[[nat(A)]]$, $[[prod(A)]]$, and $[[fun(A)]]$ are
+partial functions that will be used to determine when to use either
+$[[box]]$ or $[[split]]$ in the elimination type checking rules for
+natural numbers, cartesian products, and function applications
+respectively.  For example, if $[[nat(A) = Nat]]$, then the type
+$[[A]]$ must have been either $[[?]]$ or $[[Nat]]$, and if it were the
+former then we know we can cast $[[A]]$ to $[[Nat]]$ via $[[box
+    Nat]]$.  If $[[prod(A) = B x C]]$, then either $[[A]] = [[?]]$ and
+$[[B x C]] = [[? x ?]]$ or $[[A]] = [[B x C]]$ for some other types
+$[[B]]$ and $[[C]]$.  This implies that if the former is true, then we
+can cast $[[A]]$ to $[[B x C]]$ via $[[split (? x ?)]]$.  The case is
+similar for $[[fun(A)]]$.
+
+The type checking and type consistency rules are given in
+Figure~\ref{fig:typing-surface-grady}.
 \begin{figure}
   \scriptsize
   \begin{mdframed}
@@ -73,6 +125,98 @@
   \caption{Typing rules for Surface Grady}
   \label{fig:typing-surface-grady}
 \end{figure}
+Similarly to Core Grady the typing judgment is denoted by $[[G |- t :
+    A]]$.  Type checking depends on the notion of type consistency;
+first proposed by Siek and Taha~\cite{Siek:2006}.  This is a reflexive
+and symmetric, but non-transitive, relation on types denoted by $[[G
+    |- A ~ B]]$ which can be read as ``the type $[[A]]$ is consistent
+with the type $[[B]]$ in context $[[G]]$.''  Note that the typing
+context $[[G]]$ does not yet play a role in the definition of type
+consistency, but it will when we add bounded quantification in
+Section~\ref{sec:bounded_quantification}.  Non-transitivity is
+important, because if type consistency were transitive, then all types
+would be consistent, but this is too general.
+
+Type consistency states when two types are safely castable between
+each other when inserting explicit casts.  From semantical perspective
+if $[[G |- A ~ B]]$ holds, then there are casting morphisms
+(Definition~\ref{def:casting-mor}) $[[c1]] : [[A --> B]]$ and $[[c2]]
+: [[B --> A]]$.  This follows from
+Corollary~\ref{corollary:arbitrary_casting_morphisms}.  We make use of
+this fact in the next section. Consider an example, type consistency
+is responsible for the function application $[[(\x:?.(succ x)) 3]]$
+being typable in the surface language, because type $[[Nat]]$ is
+consistent with the type $[[3]]$.  This implies that the elimination
+rule for function types must be extended with type consistency.
+
+The typing rules for Surface Grady are a conservative extension of the
+typing rules for Core Grady (Figure~\ref{fig:typing-core-grady}). The
+extension is the removal of explicit casts and the addition of type
+consistency and the metafunctions from
+Figure~\ref{fig:syntax-surface-grady}.  Each rule is modified in
+positions where casting is likely to occur which is all of the
+elimination rules as well as the typing rule for successor, because it
+is a type of application.  Consider the elimination rule for function
+applications:
+\[
+\SGradydruleTXXapp{}
+\]
+This rule has been extended with type consistency.  The type of
+$[[t1]]$ is allowed to be either $[[?]]$ or a function type $[[A1 ->
+    B1]]$, by the definition of $[[fun(C)]]$, if the former is true,
+then $[[A1 -> B1]] = [[? -> ?]]$ and $[[A2]]$ can be any type at all,
+but if $[[C]] = [[A1 -> B1]]$, then $[[A2]]$ must be consistent with
+$[[A1]]$.  Notice that if $[[C]] = [[A1 -> B1]]$ and $[[A2]] =
+[[A1]]$, then this rule is equivalent to the usual rule for function
+application. We can now see that our example program $[[(\x:?.(succ
+    x)) 3]]$ is typable in Surface Grady.  Similar reasoning can be
+used to understand the other typing rules as well.
+
+\begin{figure}
+  \scriptsize
+  \begin{mdframed}
+    \begin{mathpar}
+      \SGradydruleciXXvar{}    \and
+      \SGradydruleciXXzero{}   \and
+      \SGradydruleciXXtriv{}   \and
+      \SGradydruleciXXsuccU{}  \and
+      \SGradydruleciXXsucc{}   \and      
+      \inferrule* [flushleft] {
+        { 
+          \begin{array}{llllllllllllll}
+                                         & [[G |- A1 ~ A]]        &                    \\
+        [[G |- t => t' : ?]]             & [[G |- A2 ~ A]]        & [[t''1 = (c1 t'1)]]\\[1px]
+        [[G |- t1 => t'1 : A1]]          & [[caster(A1,A) = c1]]  & [[t''2 = (c2 t'2)]]\\[1px]
+        [[G, x : Nat |- t2 => t'2 : A2]] & [[caster(A2,A) = c2]]  & [[t'' = (unbox Nat t')]]
+          \end{array}
+        }
+      }{[[G |- (case t of 0 -> t1, (succ x) -> t2) => (case t'' of 0 -> t''1, (succ x) -> t''2) : A]]}
+      \and
+      \inferrule* [right=] {
+        {
+          \begin{array}{llllllllll}
+            [[G |- t => t' : Nat]]                               \\
+            [[G |- t1 => t'1 : A1]]          & [[G |- A1 ~ A ]]  \\
+            [[G, x : Nat |- t2 => t'2 : A2]] & [[G |- A2 ~ A]]   \\
+          \end{array}
+        }
+      }{[[G |- (case t of 0 -> t1, (succ x) -> t2) => (case t' of 0 -> t'1, (succ x) -> t'2) : A]]}
+      \and
+      \SGradydruleciXXpair{}   \and
+      \SGradydruleciXXfstU{}   \and
+      \SGradydruleciXXfst{}    \and
+      \SGradydruleciXXsndU{}   \and
+      \SGradydruleciXXsnd{}    \and
+      \SGradydruleciXXlam{}    \and
+      \SGradydruleciXXappU{}   \and
+      \SGradydruleciXXapp{} 
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Cast Insertion Algorithm}
+  \label{fig:cast-insert}
+\end{figure}
+
+
 
 
 \subsection{Interpreting Surface Grady in the Model}

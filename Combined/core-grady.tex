@@ -58,12 +58,15 @@ non-recursive natural number eliminator is denoted by $[[case t : Nat
     of 0 -> t1, (succ x) -> t2]]$.  The most interesting aspect of the
 syntax is that $[[box A]]$ and $[[unbox A]]$ are not restricted to
 atomic types, but actually correspond to $[[Box A]]$ and $[[Unbox A]]$
-from Lemma~\ref{lemma:casting_morphisms}.  The categorical model shows
-that these can actually be defined in terms of $[[box A]]$ and
-$[[unbox A]]$ when $[[A]]$ is atomic, but we take the general versions
-as primitive, because they are the most useful from a programming
-perspective.  The case is similar for $[[split S]]$ and $[[squash
-    S]]$.
+from Lemma~\ref{lemma:casting_morphisms}.  That result shows that
+these can actually be defined in terms of $[[lbox A]]$, $[[lunbox A]]$,
+$[[lsplit S]]$, and $[[lsquash S]]$ when $[[A]]$ is any type and $[[S]]$
+is a skeleton, but we take the general versions as primitive, because
+they are the most useful from a programming perspective.  In addition,
+as we mentioned above $[[Box A]]$ and $[[Unbox A]]$ divert to
+$[[lsquash A]]$ and $[[lsplit A]]$ respectively when $[[A]]$ is a
+skeleton.  This implies that we no longer need two retracts, and
+hence, simplifies the language.
 
 Multisets of pairs of variables and types, denoted by $[[x : A]]$,
 called a typing context or just a context is denoted by $[[G]]$.  The
@@ -82,8 +85,6 @@ Figure~\ref{fig:typing-core-grady}.
       \CGradydruleTXXvar{} \and
       \CGradydruleTXXBox{} \and
       \CGradydruleTXXUnbox{} \and
-      \CGradydruleTXXsquash{} \and
-      \CGradydruleTXXsplit{} \and
       \CGradydruleTXXunitP{} \and
       \CGradydruleTXXzeroP{} \and
       \CGradydruleTXXsucc{} \and
@@ -105,8 +106,6 @@ Figure~\ref{fig:typing-core-grady}.
       \CGradydrulerdXXretracT{} \and
       \CGradydrulerdXXretracTE{} \and      
       \CGradydrulerdXXunbox{} \and
-      \CGradydrulerdXXretractU{} \and      
-      \CGradydrulerdXXsplit{} \and
       \CGradydrulerdXXsucc{} \and
       \CGradydrulerdXXncaseZero{} \and
       \CGradydrulerdXXncaseSucc{} \and
@@ -135,13 +134,11 @@ in one step to the term $[[t2]]$.''  The reduction relation is defined
 in Figure~\ref{fig:reduction-core-grady}.  Reduction for Core Grady
 differs from the simply typed $\lambda$-calculus in that it is an
 extended formulation of call-by-name.  We only allow reduction under
-$[[unbox]]$ and $[[split]]$, and we do not allow reduction under the
-branches of case.  The former insures that when casting progress
-towards applying the retract rules, $\CGradydrulerdXXretracTName{}$
-and $\CGradydrulerdXXretractUName{}$, is always possible.  Disallowing
-reduction in arguments and in the branches of case expressions
-prevents infinite reductions from occurring without the overall
-program diverging. 
+$[[unbox]]$, and we do not allow reduction under the branches of case.
+The former insures that when casting terms progress towards applying
+the retract rule is always possible.  Disallowing reduction in
+arguments and in the branches of case expressions prevents infinite
+reductions from occurring without the overall program diverging.
 
 Just as Abadi et al.~\cite{Abadi:1989} argue it is quite useful to
 have access to the untyped $\lambda$-calculus.  We give some example
@@ -160,10 +157,10 @@ well-known that we can define the Y combinator in the untyped
 $\lambda$-calculus.  Its definition in Core Grady is as follows:
 \begin{lstlisting}[language=Haskell]
   omega : (? -> ?) -> ?
-  omega = \(x : ? -> ?) -> (x (squash (? -> ?) x));
+  omega = \(x : ? -> ?) -> (x (box (? -> ?) x));
   
   fix : (? -> ?) -> ?
-  fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((split (? -> ?) x) x));
+  fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((unbox (? -> ?) x) x));
 \end{lstlisting}
 Using $\lstinline{fix}$ we can define the usual arithmetic operations
 in Core Grady, but we use a typed version of $\lstinline{fix}$.
@@ -213,7 +210,7 @@ when wanting to program dynamically.  This implies that it is not
 possible to program in dynamic style when using Core Grady.  In the
 next section we fix this problem by developing a gradually typed
 surface language for Core Grady in the spirit of Siek and Taha's
-gradually typed $\lambda$-calculus \cite{Siek:2006}.
+gradually typed $\lambda$-calculus \cite{Siek:2006,Siek:2015}.
 
 %%% Local Variables: ***
 %%% mode:latex ***
