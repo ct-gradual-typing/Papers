@@ -51,6 +51,8 @@ grammar
     {{tex \lambda [[x]].[[t]] }}
     | 3                   :: M :: Three
     {{tex 3 }}
+    | [| t |]             :: M :: Interp
+    {{tex \interp{[[t]]} }}
 
   K :: 'K_' ::=
     | *                   ::   :: TypeOfTypes
@@ -83,6 +85,8 @@ grammar
     {{tex \mathsf{Bool} }}
     | A --> B            :: M :: Mor
     {{tex [[A]] \mto [[B]] }}
+    | [| A |]            :: M :: Interp
+    {{tex \interp{[[A]]} }}
 
   G {{ tex \Gamma }} :: G_ ::=            
     | .                   ::   :: emptyCtx
@@ -92,6 +96,10 @@ grammar
     | G , x : A           ::   :: vn      
     | G , G'              :: M :: append  
     | ( G )               :: M :: parens
+    | [| G |]             :: M :: Interp
+    {{tex \interp{[[G]]} }}
+    | [| G |] x A         :: M :: Cart
+    {{tex \interp{[[G]]} \times [[A]] }}
 
   terminals :: 'terminals_' ::=
     |  ->                 ::   :: arrow
@@ -120,6 +128,8 @@ grammar
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
+    | [| judgement |]     :: M :: Interp
+    {{tex \interp{[[judgement]]} }}
     | x nin FV( t )       ::   :: NinFV
     {{tex [[x]] \not\in \mathsf{FV}([[t]]) }}
     | x : A elem G        ::   :: xTelemG

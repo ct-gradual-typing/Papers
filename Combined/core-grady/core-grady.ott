@@ -67,7 +67,9 @@ grammar
     | Box C               :: M  :: lGen
     {{tex \mathsf{Box}_{[[C]]} }}    
     | Unbox C             :: M  :: lSpec
-    {{tex \mathsf{Unbox}_{[[C]]} }}    
+    {{tex \mathsf{Unbox}_{[[C]]} }}
+    | [| t |]             :: M :: Interp
+    {{tex \interp{[[t]]} }}
 
   n, m :: 'n_' ::=
     | 0 :: :: zero
