@@ -172,6 +172,8 @@ application. We can now see that our example program $[[(\x:?.(succ
     x)) 3]]$ is typable in Surface Grady.  Similar reasoning can be
 used to understand the other typing rules as well.
 
+Surface Grady is translated into Core Grady using the cast insertion
+algorithm detailed in Figure~\ref{fig:cast-insert}.
 \begin{figure}
   \scriptsize
   \begin{mdframed}
@@ -215,8 +217,48 @@ used to understand the other typing rules as well.
   \caption{Cast Insertion Algorithm}
   \label{fig:cast-insert}
 \end{figure}
+The cast insertion judgment is denoted by $[[G |- t1 => t2 : A]]$
+which is read as ``the Surface Grady program $[[t1]]$ of type $[[A]]$
+is translated into the Core Grady program $[[t2]]$ of type $[[A]]$ in
+context $[[G]]$.''  This algorithm is type directed, and is dependent
+on the metafunction $[[caster(A,B) = \x:A.H(unbox B (box A x))]]$ that
+constructs the casting morphism of type $[[A -> B]]$.  Notice that for
+each typing rule that uses one of the metafunctions from
+Figure~\ref{fig:syntax-surface-grady} there are two cast insertion
+rules corresponding to the typing rule.
 
+The cast insertion algorithm is designed around where explict casts
+need to be inserted.  This is accomplished by case splitting on the
+input to each metafunction from Figure~\ref{fig:syntax-surface-grady}
+resulting in two rules per elimination rule.  The first is the case
+where the input to the metafunction is $[[?]]$, and the second is the
+case where the input to the metafunction is a type of the appropriate
+structure.  For example, in the case of the elimination rule for
+function application, $\SGradydruleTXXappName{}$, from
+Figure~\ref{fig:typing-surface-grady}, there are two cast insertion
+rules, the last two in Figure~\ref{fig:cast-insert}, where the first
+is when the type of the function, $[[t1]]$, is $[[?]]$, and the second
+when the type of $[[t1]]$ is an arrow type.  The former requires the
+type $[[?]]$ to be split into $[[? -> ?]]$ using $[[unbox (? -> ?)]]$,
+and a casting morphism to cast the argument to the appropriate input
+type.  The second cast insertion rule only needs to cast the argument
+type, because $[[t1]]$ already has a function type.
 
+The cast insertion algorithm preserves the type of the program.
+\begin{lemma}[Cast Insertion Preserves the Type]
+  \label{lemma:cast_insertion_preserves_the_type}
+  If $\,[[G |- t1 : A]]$ and $[[G |- t1 => t2 : A]]$, then $<<G |- t2 : A>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[G |- t1 : A]]$ which will
+  determine which of the cast insertion rules need to be considered.
+  At that point, a case split over the input to any metafunctions from
+  Figure~\ref{fig:syntax-surface-grady} used in the typing rule may be
+  necessary.  We omit the proof in the interest of brevity.
+\end{proof}
+\noindent
+Finally, cast insertion also plays a role when interpreting Surface
+Grady into the categorical model.  The next section gives the details.
 
 
 \subsection{Interpreting Surface Grady in the Model}
@@ -232,7 +274,7 @@ used to understand the other typing rules as well.
 %% must show how to interpret every $[[G |- t : A]]$ as a morphism $[[t]]
 %% : \interp{[[G]]} \mto \interp{[[A]]}$.  The third step is to show that
 %% whenever one program reduces to another their interpretations are
-%% isomorphic in the model. This means that whenever $[[G |- t1 ~> t2 : A]]$, then $[[ [|t1|] ]] = [[ [|t2|] ]] : [[ [| G |] --> [| A |] ]]$.
+%% isomorphic in the model. This means that whenever $<<t1 ~> t2>>$, then $[|t1|] = [|t2|] : [| G |] --> [| A |]$.
 %% This is the reason why we defined our reduction in a
 %% typed fashion to aid us in understanding how it relates to the model.
 % subsection interpreting_surface_grady_in_the_model (end)

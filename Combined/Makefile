@@ -51,7 +51,10 @@ pdf : $(PDF)
 
 surface-grady-ott.tex : surface-grady.tex surface-grady/surface-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
-		-tex_filter surface-grady.tex surface-grady-ott.tex
+		-tex_filter surface-grady.tex surface-grady-ott1.tex
+	scripts/prepr_double_ott.sh surface-grady-ott1.tex
+	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
+		-tex_filter surface-grady-ott1.tex surface-grady-ott.tex
 
 core-grady-ott.tex : core-grady.tex core-grady/core-grady.ott surface-grady/surface-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
@@ -84,7 +87,7 @@ bounded-ott.tex : bounded.tex core-grady/core-grady.ott surface-grady/surface-gr
 proofs-ott.tex : proofs.tex surface-grady/surface-grady.ott core-grady/core-grady.ott 
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
 		-tex_filter proofs.tex proofs-ott1.tex
-	scripts/prepr_double_ott.sh introduction-ott1.tex
+	scripts/prepr_double_ott.sh proofs-ott1.tex
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott -o core-grady-inc.tex -tex_name_prefix CGrady \
 		-tex_filter proofs-ott1.tex proofs-ott.tex
 
