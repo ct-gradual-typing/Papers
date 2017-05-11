@@ -688,8 +688,8 @@
 
 \newcommand{\ottdruleTXXappName}[0]{\ottdrulename{T\_app}}
 \newcommand{\ottdruleTXXapp}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C} }%
-\ottpremise{    \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}     \quad   \mathsf{fun}( \ottnt{C} ) =  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}  }%
+\ottpremise{  \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C}   \quad   \Gamma  \vdash  \ottnt{A_{{\mathrm{2}}}}  \sim  \ottnt{A_{{\mathrm{1}}}}  }%
+\ottpremise{   \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{A_{{\mathrm{2}}}}   \quad   \mathsf{fun}( \ottnt{C} ) =  \ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{B_{{\mathrm{1}}}}   }%
 }{
  \Gamma  \vdash_{\mathsf{SG} }  \ottnt{t_{{\mathrm{1}}}} \, \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B_{{\mathrm{1}}}} }{%
 {\ottdruleTXXappName}{}%

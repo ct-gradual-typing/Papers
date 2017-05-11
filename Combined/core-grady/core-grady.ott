@@ -170,6 +170,8 @@ grammar
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
+    | [| judgement |]     :: M :: interp
+    {{tex \interp{[[judgement]]} }}
     | x nin FV( t )       ::   :: NinFV
     {{tex [[x]] \not\in \mathsf{FV}([[t]]) }}
     | x : A elem G        ::   :: xTelemG

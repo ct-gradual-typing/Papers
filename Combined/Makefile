@@ -113,11 +113,11 @@ introduction-ott.tex : introduction.tex core-grady/core-grady.ott surface-grady/
 # 		-tex_filter related-work-ott1.tex related-work-ott.tex
 
 ott : main.tex introduction-ott.tex core-grady-ott.tex \
-      surface-grady-ott.tex gradual-guarantee-ott.tex bounded-ott.tex categorical-model-ott.tex \
+      surface-grady-ott.tex gradual-guarantee-ott.tex bounded-ott.tex categorical-model-ott.tex proofs-ott.tex \
       Makefile $(References)
 
 $(PDF) : main.tex introduction-ott.tex core-grady-ott.tex \
-	surface-grady-ott.tex conclusion.tex gradual-guarantee-ott.tex bounded-ott.tex categorical-model-ott.tex \
+	surface-grady-ott.tex conclusion.tex gradual-guarantee-ott.tex bounded-ott.tex categorical-model-ott.tex proofs-ott.tex \
 	Makefile $(References)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)

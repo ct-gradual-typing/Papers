@@ -53,6 +53,7 @@ grammar
     {{tex 3 }}
     | [| t |]             :: M :: Interp
     {{tex \interp{[[t]]} }}
+    | t1 ; t2             :: M :: Comp
 
   K :: 'K_' ::=
     | *                   ::   :: TypeOfTypes
@@ -87,6 +88,10 @@ grammar
     {{tex [[A]] \mto [[B]] }}
     | [| A |]            :: M :: Interp
     {{tex \interp{[[A]]} }}
+    | [| G |]             :: M :: InterpCTX
+    {{tex \interp{[[G]]} }}
+    | [| G |] x [| A |]        :: M :: Cart
+    {{tex \interp{[[G]]} \times \interp{[[A]]} }}
 
   G {{ tex \Gamma }} :: G_ ::=            
     | .                   ::   :: emptyCtx
@@ -95,11 +100,7 @@ grammar
     {{tex [[G]],[[X]] <\hspace{-2px}\colon [[A]] }}
     | G , x : A           ::   :: vn      
     | G , G'              :: M :: append  
-    | ( G )               :: M :: parens
-    | [| G |]             :: M :: Interp
-    {{tex \interp{[[G]]} }}
-    | [| G |] x A         :: M :: Cart
-    {{tex \interp{[[G]]} \times [[A]] }}
+    | ( G )               :: M :: parens    
 
   terminals :: 'terminals_' ::=
     |  ->                 ::   :: arrow
@@ -435,7 +436,7 @@ defn
     G |- case t of [] -> t1, (x :: y) -> t2 : B       
     
     G |- t1 : C 
-    (G |-t2 : A2 && G |- A2 ~ A1) && fun(C) = A1 -> B1
+    (G |-t2 : A2 && fun(C) = A1 -> B1) && G |- A2 ~ A1
     -------------------------------------------------- :: app
     G |- t1 t2 : B1
 
