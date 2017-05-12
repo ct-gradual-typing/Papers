@@ -70,6 +70,9 @@ grammar
     {{tex \mathsf{Unbox}_{[[C]]} }}
     | [| t |]             :: M :: Interp
     {{tex \interp{[[t]]} }}
+    | EC [ t ]            :: M :: Plug
+    | caster( A , B )     :: M :: CMor
+    {{tex \mathsf{caster}([[A]],[[B]]) }}
 
   n, m :: 'n_' ::=
     | 0 :: :: zero
@@ -79,12 +82,6 @@ grammar
     | triv                ::   :: unit         
     {{tex \mathsf{triv} }}
     | []                ::   :: Empty
-    | squash S          ::   :: inj          
-    {{tex \mathsf{squash}_{[[S]]} }}
-    | split S           ::   :: surj         
-    {{tex \mathsf{split}_{[[S]]} }}    
-    | box A             ::   :: genA
-    {{tex \mathsf{box}_{[[A]]} }}        
     | unbox A           ::   :: specA         
     {{tex \mathsf{unbox}_{[[A]]} }}
     | Lam X <: A . t      ::    :: TypeLam
@@ -95,9 +92,17 @@ grammar
     | case t : A of t3 -> t1 , t4 -> t2 :: :: natElim
     {{tex \mathsf{case}\,[[t]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
 
-  Kd :: 'Kd_' ::=
-    | *                   ::   :: TypeOfTypes
-    {{tex \star }}
+  EC {{tex \mathcal{E} }} :: 'EC_' ::=
+    | HL         :: :: Hole
+    {{tex \Box }}
+    | v EC       :: :: App
+    | succ EC    :: :: Succ
+    | fst EC     :: :: Fst
+    | snd EC     :: :: Snd
+    | ( EC , t ) :: :: Pair1
+    | ( t , EC ) :: :: Pair2
+    | case EC : A of t3 -> t1 , t4 -> t2 :: :: Case
+    {{tex \mathsf{case}\,[[EC]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
 
   % U ::= ? -> ? | ? x ? | List ?
   % T is atomic
@@ -137,7 +142,8 @@ grammar
     {{tex \cdot }}
     | G , X <: A           ::   :: tvn
     {{tex [[G]],[[X]] <\hspace{-2px}\colon [[A]] }}
-    | G , x : A           ::   :: vn      
+    | G , x : A           ::   :: vn
+    | x : A               ::   :: El
     | G , G'              :: M :: append  
     | ( G )               :: M :: parens
 
@@ -492,9 +498,9 @@ by
     ------------------------- :: retractU
     split S (squash S t) ~> t
 
-    t ~> t'
-    ----------------- :: succ
-    succ t ~> succ t'
+    x : B |- EC[x] : A
+    ---------------------- :: error
+    EC[error B] ~> error A
 
     --------------------------------------------- :: ncase0
     case 0 : Nat of 0 -> t1, (succ x) -> t2 ~> t1
@@ -502,27 +508,11 @@ by
     --------------------------------------------------------- :: ncaseSucc
     case (succ t) : Nat of 0 -> t1, (succ x) -> t2 ~> [t/x]t2
 
-    t ~> t'
-    ----------------------------------------------------------------------------------- :: ncase
-    case t : Nat of 0 -> t1, (succ x) -> t2 ~> case t' : Nat of 0 -> t1, (succ x) -> t2
-
     -------------------------------------------------- :: lcaseEmpty
     case [] : List A of [] -> t1, (x :: y) -> t2 ~> t1
 
     ---------------------------------------------------------------------- :: lcaseCons
     case (t1 :: t2) : List A of [] -> t3, (x :: y) -> t4 ~> [t1/x][t2/y]t4
-
-    t1 ~> t'1
-    --------------------- :: head
-    t1 :: t2 ~> t'1 :: t2
-
-    t2 ~> t'2
-    --------------------- :: tail
-    t1 :: t2 ~> t1 :: t'2
-
-    t ~> t'
-    ------------------------------------------------------------------------------------------ :: lcase
-    case t : List A of [] -> t1, (x :: y) -> t2 ~> case t' : List A of [] -> t1, (x :: y) -> t2
 
     ------------------------- :: beta
     (\x:A1.t2) t1 ~> [t1/x]t2
@@ -533,41 +523,13 @@ by
     ------------------ :: proj2
     snd (t1, t2) ~> t2
     
-    t1 ~> t'1
-    --------------- :: app
-    t1 t2 ~> t'1 t2
-
-    t2 ~> t'2
-    --------------- :: app2
-    v t2 ~> v t'2
-
-    t ~> t'
-    ----------------------- :: split
-    split S t ~> split S t'
-
-    t ~> t'
-    ----------------------- :: unbox
-    unbox A t ~> unbox A t'
-
-    t ~> t'
-    --------------- :: fst
-    fst t ~> fst t'
-
-    t ~> t'
-    --------------- :: snd
-    snd t ~> snd t'
-
-    t1 ~> t'1
-    ------------------- :: pair1
-    (t1,t2) ~> (t'1,t2)
-
-    t2  ~> t'2
-    ------------------- :: pair2
-    (t1,t2) ~> (t1,t'2)
-
     ----------------------------- :: typeBeta
     [A](Lam X <: B . t) ~> [A/X]t
 
     t1 ~> t2
     -------------- :: typeApp
     [A]t1 ~> [A]t2
+
+    t1 ~> t2
+    ---------------- :: Cong
+    EC[t1] ~> EC[t2]

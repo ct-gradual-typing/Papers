@@ -8,7 +8,7 @@ Objects become types, and morphisms, $t : [[G]] \mto A$, become
 programs in context usually denoted by $[[G |- t : A]]$ which
 corresponds to Core Grady's type checking judgment.  We will discuss
 this correspondence in detail in
-Section~\ref{subsec:interpreting_surface_grady_in_the_model}.
+Section~\ref{sec:interpreting_surface_grady_in_the_model}.
 
 The syntax for Core Grady is defined in
 Figure~\ref{fig:syntax-core-grady}.
@@ -16,8 +16,8 @@ Figure~\ref{fig:syntax-core-grady}.
   \scriptsize
   \begin{mdframed}
     \[
-    \setlength{\arraycolsep}{3pt}
-    \begin{array}{cl}      
+      \setlength{\arraycolsep}{0.6pt}
+      \begin{array}{cl}      
         \begin{array}{l}
           \text{(types)}\\
         \end{array}     &
@@ -33,10 +33,24 @@ Figure~\ref{fig:syntax-core-grady}.
         \end{array}\\\\
         
         \begin{array}{l}
-          \text{(terms)}\\\\\\\\
+          \text{(terms)}\\\\\\
         \end{array}     &
         \begin{array}{lcl}
-          [[t]] & ::= & [[x]] \mid [[triv]] \mid [[0]] \mid [[succ t]] \mid [[(t1 , t2)]] \mid [[fst t]] \mid [[snd t]] \\ & \mid & [[\x : A.t]] \mid [[t1 t2]] \mid [[case t : Nat of 0 -> t1, (succ x) -> t2]]\\ & \mid & [[box A]] \mid [[unbox A]] \mid [[squash S]] \mid [[split S]] \mid [[error A]]\\\\
+          [[t]] & ::= & [[x]] \mid [[triv]] \mid [[0]] \mid [[succ t]] \mid [[(t1 , t2)]] \mid [[fst t]] \mid [[snd t]] \\ & \mid & [[\x : A.t]] \mid [[t1 t2]] \mid [[case t : Nat of 0 -> t1, (succ x) -> t2]]\\ & \mid & [[box A]] \mid [[unbox A]] \mid [[error A]]\\
+        \end{array}
+        \\\\
+        \begin{array}{l}
+          \text{(values)}\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[v]] & ::= & [[\x : A.t]] \mid [[unbox A]] \\
+        \end{array}
+        \\\\
+        \begin{array}{lll}
+          \text{(evaluation contexts)}\\\\
+        \end{array}  &
+        \begin{array}{lcl}
+          [[EC]] & ::= & [[v HL]] \mid [[succ HL]] \mid [[fst HL]] \mid [[snd HL]] \mid [[(HL, t)]] \\ & \mid & [[(t, HL)]] \mid [[case HL : Nat of 0 -> t1, (succ x) -> t2]]\\
         \end{array}\\\\
         
         \begin{array}{lll}
@@ -47,26 +61,28 @@ Figure~\ref{fig:syntax-core-grady}.
         \end{array}\\
       \end{array}
       \]    
-  \end{mdframed}
-  \caption{Syntax for Core Grady}
-  \label{fig:syntax-core-grady}
+    \end{mdframed}
+    \caption{Syntax for Core Grady}
+    \label{fig:syntax-core-grady}
 \end{figure}
 The syntax is a straightforward extension of the simply typed
-$\lambda$-calculus.  Natural numbers are denoted by $[[0]]$ and
-$[[succ t]]$ where the latter is the successor of $[[t]]$.  The
-non-recursive natural number eliminator is denoted by $[[case t : Nat
-    of 0 -> t1, (succ x) -> t2]]$.  The most interesting aspect of the
-syntax is that $[[box A]]$ and $[[unbox A]]$ are not restricted to
-atomic types, but actually correspond to $[[Box A]]$ and $[[Unbox A]]$
-from Lemma~\ref{lemma:casting_morphisms}.  That result shows that
-these can actually be defined in terms of $[[lbox A]]$, $[[lunbox A]]$,
-$[[lsplit S]]$, and $[[lsquash S]]$ when $[[A]]$ is any type and $[[S]]$
-is a skeleton, but we take the general versions as primitive, because
-they are the most useful from a programming perspective.  In addition,
-as we mentioned above $[[Box A]]$ and $[[Unbox A]]$ divert to
-$[[lsquash A]]$ and $[[lsplit A]]$ respectively when $[[A]]$ is a
-skeleton.  This implies that we no longer need two retracts, and
-hence, simplifies the language.
+$\lambda$-calculus.  Arbitrary programs or terms are denoted by
+$[[t]]$ and values by $[[v]]$. The later are used to influence the
+evaluation strategy used by Core Grady.  Natural numbers are denoted
+by $[[0]]$ and $[[succ t]]$ where the latter is the successor of
+$[[t]]$.  The non-recursive natural number eliminator is denoted by
+$[[case t : Nat of 0 -> t1, (succ x) -> t2]]$.  The most interesting
+aspect of the syntax is that $[[box A]]$ and $[[unbox A]]$ are not
+restricted to atomic types, but actually correspond to $[[Box A]]$ and
+$[[Unbox A]]$ from Lemma~\ref{lemma:casting_morphisms}.  That result
+shows that these can actually be defined in terms of $[[lbox A]]$,
+$[[lunbox A]]$, $[[lsplit S]]$, and $[[lsquash S]]$ when $[[A]]$ is
+any type and $[[S]]$ is a skeleton, but we take the general versions
+as primitive, because they are the most useful from a programming
+perspective.  In addition, as we mentioned above $[[Box A]]$ and
+$[[Unbox A]]$ divert to $[[lsquash A]]$ and $[[lsplit A]]$
+respectively when $[[A]]$ is a skeleton.  This implies that we no
+longer need two retracts, and hence, simplifies the language.
 
 Multisets of pairs of variables and types, denoted by $[[x : A]]$,
 called a typing context or just a context is denoted by $[[G]]$.  The
@@ -104,21 +120,14 @@ Figure~\ref{fig:typing-core-grady}.
   \begin{mdframed} \scriptsize
     \begin{mathpar}
       \CGradydrulerdXXretracT{} \and
-      \CGradydrulerdXXretracTE{} \and      
-      \CGradydrulerdXXunbox{} \and
-      \CGradydrulerdXXsucc{} \and
+      \CGradydrulerdXXretracTE{} \and
+      \CGradydrulerdXXerror{} \and
       \CGradydrulerdXXncaseZero{} \and
       \CGradydrulerdXXncaseSucc{} \and
-      \CGradydrulerdXXncase{} \and
+      \CGradydrulerdXXbeta{} \and
       \CGradydrulerdXXprojOne{} \and
       \CGradydrulerdXXprojTwo{} \and
-      \CGradydrulerdXXfst{} \and
-      \CGradydrulerdXXsnd{} \and
-      \CGradydrulerdXXpairOne{} \and
-      \CGradydrulerdXXpairTwo{} \and
-      \CGradydrulerdXXbeta{} \and
-      \CGradydrulerdXXapp{} \and
-      \CGradydrulerdXXappTwo{}           
+      \CGradydrulerdXXCong{}
     \end{mathpar}
   \end{mdframed}
   \caption{Reduction rules for Core Grady}
@@ -126,19 +135,62 @@ Figure~\ref{fig:typing-core-grady}.
 \end{figure}
 The type checking rules are an extension of the typing rules for the
 simply typed $\lambda$-calculus.  The casting terms are all typed as
-axioms with their expected types.
+axioms with their expected types.  This implies that applying either
+$[[box A]]$ or $[[unbox A]]$ to some other term corresponds to
+function application as opposed to $[[succ t]]$ which cannot be used
+without its argument. This fact is used in the definition of the
+evaluation strategy.
 
 Computing with terms is achieved by defining a reduction relation
 denoted by $[[t1 ~> t2]]$ and is read as ``the term $[[t1]]$ reduces
-in one step to the term $[[t2]]$.''  The reduction relation is defined
-in Figure~\ref{fig:reduction-core-grady}.  Reduction for Core Grady
-differs from the simply typed $\lambda$-calculus in that it is an
-extended formulation of call-by-name.  We only allow reduction under
-$[[unbox]]$, and we do not allow reduction under the branches of case.
-The former insures that when casting terms progress towards applying
-the retract rule is always possible.  Disallowing reduction in
-arguments and in the branches of case expressions prevents infinite
-reductions from occurring without the overall program diverging.
+(or evaluates) in one step to the term $[[t2]]$.''  The reduction
+relation is defined in Figure~\ref{fig:reduction-core-grady}.  Core
+Grady's reduction strategy is an extended version of call-by-name.  It
+is specified using evaluation contexts that are denoted by $[[EC]]$
+and are defined in Figure~\ref{fig:syntax-core-grady}.
+
+An evaluation contexts is essentially a term with a hole, denoted by
+$[[HL]]$, in it.  The hole can be filled (or plugged) with a term and
+is denoted by $[[EC[t] ]]$.  Note that plugging the hole of an
+evaluation context results in a term.  Evaluation contexts are used to
+give a compact definition of an evaluation strategy by first specifying
+the reduction axioms (Figure~\ref{fig:reduction-core-grady}), then
+defining the evaluation contexts by placing a hole within the syntax
+of terms that specifies where evaluation is allowed to take place
+(Figure~\ref{fig:syntax-core-grady}), finally, the following reduction
+rule is then added:
+\begin{center}\small
+  \begin{math}
+    \CGradydrulerdXXCong{}
+  \end{math}
+\end{center}
+This rule states that evaluation can take place in the locations of
+the holes given in the definition of evaluation contexts
+(Figure~\ref{fig:syntax-core-grady}).
+
+How we define the syntax of values and evaluation contexts, and the
+evaluation rules determines the evaluation strategy.  We consider as
+values $\lambda$-abstractions and $[[unbox A]]$. In addition, the
+expression $\lambda (x:A).[[HL]]$ is not an evaluation context, and
+hence, there is no evaluation under $\lambda$-abstractions.  The
+evaluation context $[[v HL]]$ stipulates that the only time an argument
+to a function can be evaluated is if the term in the function position
+is a value.  Thus, $[[v]]$ is allowed to be a $\lambda$-abstraction or
+$[[unbox A]]$.  We do not allow reduction under $[[box A]]$.
+Similarly, we have no evaluation contexts which allow evaluation under
+the branches of a case-expression.  Both of these restrictions are
+used to prevent infinite reduction from occurring in those positions.
+We want evaluation to make as much overall progress as possible.
+
+Perhaps the most interesting reduction rules from
+Figure~\ref{fig:reduction-core-grady} are the first three: retract,
+raise, and error.  The first two handle dynamic type casts and the
+third preserves dynamic type errors that have been raised in an
+evaluation position.  The error reduction rule depends on typing which
+is necessary to insure that the type annotation is correct.  This
+insures that type preservation will hold.  Practically speaking, this
+dependency on typing is not significant, because we only evaluate
+closed well-typed programs anyway.
 
 Just as Abadi et al.~\cite{Abadi:1989} argue it is quite useful to
 have access to the untyped $\lambda$-calculus.  We give some example
