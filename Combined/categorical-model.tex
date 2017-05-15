@@ -92,9 +92,9 @@ model of the untyped $\lambda$-calculus.
 \end{theorem}
 
 So far we know how to model static types (typed $\lambda$-calculus)
-and unknown types (the untyped $\lambda$-calculus).  The to make the
-Grady languages a bit more interesting we add natural numbers, but we
-will need a way to model these in a cartesian closed category.
+and unknown types (the untyped $\lambda$-calculus).  To make the Grady
+language a bit more interesting we add natural numbers, but we will
+need a way to model these in a cartesian closed category.
 
 We model the natural numbers with their (non-recursive) eliminator
 using what we call a non-recursive natural number object.  This is a
@@ -135,11 +135,11 @@ At this point we can model both static and unknown types with natural
 numbers in a cartesian closed category, but we do not have any way of
 moving typed data into the untyped part and vice versa to obtain
 dynamic typing.  To accomplish this we add two new morphisms $[[box C
-    : C --> ?]]$ and $[[unbox C : ?  --> C]]$ such that each atomic
-type, $[[C]]$, is a retract of $[[?]]$.  This enforces that the only
-time we can cast $[[?]]$ to another type is if it were boxed up in the
-first place.  Combining all of these insights we obtain the complete
-categorical model.
+    : C --> ?]]$ and $[[unbox C : ?  --> C]]$ such that for each
+atomic type, $[[C]]$, is a retract of $[[?]]$.  This enforces that the
+only time we can cast $[[?]]$ to another type is if it were boxed up
+in the first place.  Combining all of these insights we obtain the
+complete categorical model.
 \begin{definition}
   \label{def:gradual-lambda-model}
   A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?,
@@ -268,7 +268,7 @@ definition is by mutual recursion on the input type.
   skeleton is $[[S]]$ we define the morphisms $[[lbox A]] : [[A -->
       S]]$ and $[[lunbox A]] : [[S --> A]]$ by mutual recursion on
   $[[A]]$ as follows:
-  \[\footnotesize
+  \[\small
   \setlength{\arraycolsep}{1pt}
   \begin{array}{ll|ll}
     \begin{array}{lll}
@@ -278,7 +278,9 @@ definition is by mutual recursion on the input type.
     [[lbox (A1 -> A2)]] = [[lunbox A1]] \to [[lbox A2]]\\
     [[lbox (A1 x A2)]] = [[lbox A1]] \times [[lbox A2]]\\        
     \end{array}
-    & & \quad & 
+    \\[25px]
+    \hline
+    \\[-6px]
     \begin{array}{lll}
     [[lunbox A]] = [[unbox A]]\\
     \,\,\,\,\text{when } [[A]]\text{ is atomic}\\
@@ -291,7 +293,7 @@ definition is by mutual recursion on the input type.
 \end{definition}
 \noindent
 The definition of both $\widehat{[[box]]}$ or $\widehat{[[unbox]]}$
-uses the functor $- \to - : \catop{C} \times \cat{C} \mto \cat{C}$
+use the functor $- \to - : \catop{C} \times \cat{C} \mto \cat{C}$
 which is contravariant in its first argument, and thus, in that
 contravariant position we must make a recursive call to the opposite
 function, and hence, they must be mutually defined. Every call to
@@ -302,9 +304,9 @@ $\widehat{[[unbox]]}$ form a retract between $[[A]]$ and $[[S]]$.
 \begin{lemma}[Boxing and Unboxing Lifted Retract]
   \label{lemma:lifted_retract}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$ $\squash, \bx,$ $\unbox,
-  \error)$ is a gradual $\lambda$-model.  Then for any object $[[A]]$,
+  \error)$ is a gradual \\ $\lambda$-model.  Then for any object $[[A]]$,
   $[[lbox A]];[[lunbox A]] = \id_A : [[A --> A]]$.  Furthermore, for
-  any objects $[[A]]$ and $[[B]]$ such that $[[A]] \neq [[B]]$,
+  any objects $[[A]]$ and $[[B]]$ such that $[[A]] \neq [[B]]$, \\
   $[[lbox A]];[[lunbox B]] = \error_{A,B}$.
 \end{lemma}
 \begin{proof}  
@@ -399,7 +401,7 @@ above and lift $[[split]]$ and $[[squash]]$ to arbitrary skeletons.
   skeletons.  Then for any skeleton $[[S]]$ we define the morphisms
   $[[lsquash S]] : [[S --> ?]]$ and $[[lsplit S]] : [[? --> S]]$ by
   mutual recursion on $[[S]]$ as follows:
-  \[ \footnotesize
+  \[ \small
     \begin{array}{l}
       \begin{array}{lll}
         [[lsquash ?]] = \id_?\\
@@ -489,12 +491,11 @@ brings together the static and dynamic fragments of the gradual
 $\lambda$-model, and thus, fully relating the combination of dynamic
 and static typing to the past work of Lambek and Scott
 \cite{Scott:1980,Lambek:1980}.  It will allow for the definition of
-casting morphisms between arbitrary objects; see the next result.
-Finally, from a practical perspective it will simplify our
-corresponding type systems derived from this model, because $[[Box S]]
-= [[lsquash S]]$ and $[[Unbox S]] = [[lsplit S]]$ when $[[S]]$ is a
-skeleton, and hence, we will only need a single retract in the
-corresponding type systems.
+casting morphisms between arbitrary objects.  Finally, from a
+practical perspective it will simplify our corresponding type systems
+derived from this model, because $[[Box S]] = [[lsquash S]]$ and
+$[[Unbox S]] = [[lsplit S]]$ when $[[S]]$ is a skeleton, and hence, we
+will only need a single retract in the corresponding type systems.
 
 % subsection the_categorical_model (end)
 

@@ -430,7 +430,7 @@ defn
     G |- succ t : Nat    
 
     G |- t : Nat
-    G |- t1 : A && G, x : Nat |- t2 : A
+    G |- t1 : A  && G, x : Nat |- t2 : A
     ------------------------------------------------ :: ncase
     G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A
 

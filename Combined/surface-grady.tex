@@ -27,13 +27,13 @@ casts.  The gradual guarantee states the following:
   type error.
 \end{itemize}
 Briefly, the gradual guarantee states that any well-typed program can
-slide between more statically typed and more dynamically typed by
-inserting or removing casts without changing the meaning or the
-behavior of the program. The formal statement of the gradual guarantee
-is given in Section~\ref{sec:the_gradual_guarantee}.  This property
-was first proposed by Siek et al.~\cite{Siek:2015} to set apart
-systems that simply combine dynamic and static typing and gradual type
-systems.
+slide between being more statically typed or being more dynamically
+typed by inserting or removing casts without changing the meaning or
+the behavior of the program. The formal statement of the gradual
+guarantee is given in Section~\ref{sec:the_gradual_guarantee}.  This
+property was first proposed by Siek et al.~\cite{Siek:2015} to set
+apart systems that simply combine dynamic and static typing and
+gradual type systems.
 
 Now we introduce the gradually typed surface language Surface Grady.  
 \begin{figure}
@@ -210,12 +210,13 @@ algorithm detailed in Figure~\ref{fig:cast-insert}.
       \inferrule* [right=] {
         {
           \begin{array}{llllllllll}
-            [[G |- t => t' : Nat]]                               \\
-            [[G |- t1 => t'1 : A1]]          & [[G |- A1 ~ A ]]  \\
-            [[G, x : Nat |- t2 => t'2 : A2]] & [[G |- A2 ~ A]]   \\
+                                             & [[G |- A1 ~ A ]]     \\
+            [[G |- t => t' : Nat]]           & [[G |- A2 ~ A]]      \\
+            [[G |- t1 => t'1 : A1]]          & [[caster(A1,A) = c1]] & [[t''1 = (c1 t'1)]]\\[1px]
+            [[G, x : Nat |- t2 => t'2 : A2]] & [[caster(A2,A) = c2]] & [[t''2 = (c2 t'2)]]\\[1px]
           \end{array}
         }
-      }{[[G |- (case t of 0 -> t1, (succ x) -> t2) => (case t' of 0 -> t'1, (succ x) -> t'2) : A]]}
+      }{[[G |- (case t of 0 -> t1, (succ x) -> t2) => (case t' of 0 -> t''1, (succ x) -> t''2) : A]]}
       \and
       \SGradydruleciXXpair{}   \and
       \SGradydruleciXXfstU{}   \and
@@ -486,12 +487,13 @@ identity morphism.
   $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
 \end{theorem}
 \begin{proof}
-  This proof holds by induction on the form of $<<t1 ~> t2>>$,
-  and uses Theorem~\ref{thm:interpretation_of_typing},
-  Lemma~\ref{lemma:type_consistency_in_the_model}, and
-  Corollary~\ref{corollary:type_consist_coro}.  Please see
+  This proof holds by induction on the form of $<<t1 ~> t2>>$, and
+  uses Theorem~\ref{thm:interpretation_of_typing},
+  Lemma~\ref{lemma:type_consistency_in_the_model},
+  Corollary~\ref{corollary:type_consist_coro}, and
+  Lemma~\ref{lemma:inversion_for_typing}.  Please see
   Appendix~\ref{subsec:proof_of_interpretation_of_evaluation} for the
-  complete proof.  
+  complete proof.
 \end{proof}
 
 One can see a direct connection between the proof of interpretation of

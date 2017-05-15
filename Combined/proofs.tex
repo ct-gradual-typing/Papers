@@ -390,7 +390,8 @@ This is a proof by induction on $[[G |- t : A]]$.
 \subsection{Proof of Interpretation of Evaluation (Theorem~\ref{thm:interpretation_of_evaluation})}
 \label{subsec:proof_of_interpretation_of_evaluation}
 This proof requires the following corollary to
-Lemma~\ref{lemma:type_consistency_in_the_model}.
+Lemma~\ref{lemma:type_consistency_in_the_model}, and the following
+lemma called inversion for typing.
 \begin{corollary}
   \label{corollary:type_consist_coro}
   Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
@@ -442,16 +443,97 @@ Lemma~\ref{lemma:type_consistency_in_the_model}.
   consistency rules are unique for each type.
 \end{proof}
 
-This proof holds by induction on the form of $[[G |- t1 : A]]$ with a
-case split over $<<t1 ~> t2>>$.  We only show the cases for the the
-retract rules, and the error rule, because the others are well-known
-to hold within any cartesian closed category; see \cite{Lambek:1980}
-or \cite{Crole:1994}.  We will routinely use the interpretation given
-in the proof of Theorem~\ref{thm:interpretation_of_typing} and
-summarized in Figure~\ref{fig:interp-terms} throughout this proof
-without mention.
+\begin{lemma}[Inversion for Typing]
+  \label{lemma:inversion_for_typing}
+  \begin{enumerate}[label=\roman*.]
+  \item[]
+  \item If $<<G |- succ t : A>>$, then $<<A>> = <<Nat>>$ and $<<G |- t : Nat>>$.
+  \item If $<<G |- case t : Nat of x -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : Nat>>$, $<<G |- t1 : A>>$, and $<<G, x : Nat |- t2 : A>>$.
+  \item If $<<G |- (t1, t2) : A>>$, then there are types $<<B>>$ and $<<C>>$, such that, $<<A>> = <<B x C>>$, $<<G |- t1 : B>>$, and $<<G |- t2 : C>>$.
+  \item If $<<G |- fst t : A>>$, then there is a type $<<B>>$, such that, $<<G |- t : A x B>>$.
+  \item If $<<G |- snd t : A>>$, then there is a type $<<B>>$, such that, $<<G |- t : B x A>>$.
+  \item If $<<G |- \x:A.t : A>>$, then there are types $<<B>>$ and $<<C>>$, such that, $<<A>> = <<B -> C>>$ and $<<G, x : B |- t : C>>$.
+  \item If $<<G |- t1 t2 : A>>$, then there is a type $<<B>>$, such that, $<<G |- t1 : B -> A>>$ and $<<G |- t2 : B>>$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  Each case of this proof holds trivially by induction on the assumed
+  typing derivation, because there is only one typing rule per term
+  constructor.
+\end{proof}
 
+This proof holds by induction on the form of $<<t1 ~> t2>>$ with an
+appeal to inversion for typing on $[[G |- t1 : A]]$ and $[[G |- t2 :
+    A]]$.  We only show the cases for the retract rules, and the error
+rule, because the others are well-known to hold within any cartesian
+closed category; see \cite{Lambek:1980} or \cite{Crole:1994}.  We will
+routinely use the interpretation given in the proof of
+Theorem~\ref{thm:interpretation_of_typing} and summarized in
+Figure~\ref{fig:interp-terms} throughout this proof without mention.
 
+The cases to follow will make use of the following result, essentially
+the semantic equivalent to an instance of the $\beta$-rule, that holds
+in any cartesian closed category:
+\begin{center}
+  \begin{math} \footnotesize
+    \begin{array}{lll}        
+      \langle [[triv]]_{[[C]]};\curry{g}, f\rangle;\app_{[[A]],[[B]]}\\
+      = \langle [[triv]]_{[[C]]}, f\rangle;(\curry{g} \times \id_A);\app_{[[A]],[[B]]}\\
+      = \langle [[triv]]_{[[C]]}, f\rangle;[[snd]];g\\
+      = f;g\\
+    \end{array}
+  \end{math}
+\end{center}
+where $g : [[A --> B]]$ and $f : [[C --> A]]$.  Note that
+$\app_{[[A]],[[B]]} : [[H((A -> B) x A) --> B]]$ exists, because
+$\cat{C}$ is a cartesian closed category.
+\begin{description}
+\item Case: $\quad \CGradydrulerdXXretracT{}$\\
+
+  \ \\
+  \noindent
+  We know by assumption that $<<G |- unbox A (box A t) : A>>$ and $<<G |- t : A>>$.
+  By interpretation for typing (Theorem~\ref{thm:interpretation_of_typing}) and using the above
+  equation we obtain the following morphisms:
+  \begin{center}
+    \begin{math}\footnotesize
+      \begin{array}{lll}
+        << [| box A t |] >>\\
+        = \langle [[triv]]_{[[ [| G |] ]]};\curry{<<Box A>>}, [[ [| t |] ]]\rangle;\app_{[[A]],[[?]]}\\
+        = [[ [| t |] ]];<<Box A>>\\
+        : [[ [| G |] --> ? ]]\\
+        \\
+        << [| unbox A (box A t) |] >> \\
+        = \langle [[triv]]_{[[ [| G |] ]]};\curry{<<Unbox A>>}, << [| box A t |] >>\rangle;\app_{[[?]],[[A]]} \\
+        = << [| box A t |] >>;<<Unbox A>> \\
+        = [[ [| t |] ]];<<Box A>>;<<Unbox A>> \\
+        : [[ [| G |] --> A ]]\\
+      \end{array}
+    \end{math}
+  \end{center}
+  where $[[ [| t |] ]] : [[ [| G |] --> A]]$.  At this point it is
+  easy to see that $[[ [| t |] ]];<<Box A>>;<<Unbox A>> = [[ [| t |]
+  ]];\id_A = [[ [| t |] ]]$. Thus, we obtain our result.
+  
+
+\item Case: $\quad \CGradydrulerdXXretracTE{}$\\
+
+  \ \\
+  \noindent
+  This case follows similarly to the previous case.  Using the semantic $\beta$-equation given above,
+  then we will obtain $[[ [| t |] ]];<<Box B>>;<<Unbox A>> = <<error>>_{[[ [| G |] ]], [[ A ]]}$ using
+  the error axioms from the definition of the gradual $\lambda$-model (Definition~\ref{def:gradual-lambda-model}).
+  \ \\
+
+\item Case: $\quad \CGradydrulerdXXerror{}$\\
+
+  \ \\
+  \noindent
+  This case follows from a case analysis over the structure of $<<EC>>$, and then using the error axioms
+  from the definition of the gradual $\lambda$-model (Definition~\ref{def:gradual-lambda-model}).
+  \ \\  
+
+\end{description}
 %% % subsection proof_of_interpretation_of_evaluation (end)
 % section proofs (end)
 
