@@ -56,8 +56,8 @@ grammar
     | t1 ; t2             :: M :: Comp
     | Box A               :: M :: Box
     {{tex \mathsf{Box}\,[[A]] }}
-    | Unbox A               :: M :: Unbox
-    {{tex \mathsf{Unbox}\,[[A]] }}    
+    | Unbox A             :: M :: Unbox
+    {{tex \mathsf{Unbox}\,[[A]] }}
 
   K :: 'K_' ::=
     | *                   ::   :: TypeOfTypes

@@ -71,11 +71,11 @@ categorical-model-ott.tex : categorical-model.tex core-grady/core-grady.ott surf
 	-tex_filter categorical-model-ott1.tex categorical-model-ott.tex
 
 gradual-guarantee-ott.tex : gradual-guarantee.tex core-grady/core-grady.ott surface-grady/surface-grady.ott
-	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
-		-tex_filter gradual-guarantee.tex gradual-guarantee-ott1.tex
-	scripts/prepr_double_ott.sh gradual-guarantee-ott1.tex
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
-	-tex_filter gradual-guarantee-ott1.tex gradual-guarantee-ott.tex
+	-tex_filter gradual-guarantee.tex gradual-guarantee-ott1.tex
+	scripts/prepr_double_ott.sh gradual-guarantee-ott1.tex
+	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
+		-tex_filter gradual-guarantee-ott1.tex gradual-guarantee-ott.tex
 
 bounded-ott.tex : bounded.tex core-grady/core-grady.ott surface-grady/surface-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \

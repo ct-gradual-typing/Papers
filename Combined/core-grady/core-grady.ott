@@ -73,6 +73,7 @@ grammar
     | EC [ t ]            :: M :: Plug
     | caster( A , B )     :: M :: CMor
     {{tex \mathsf{caster}([[A]],[[B]]) }}
+    | | t |               :: M :: UtoG
 
   n, m :: 'n_' ::=
     | 0 :: :: zero
