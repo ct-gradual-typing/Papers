@@ -1,9 +1,153 @@
-\[
-\begin{array}{lll}
-  <<list(?) = List ?>>\\
-  <<list(List A) = List A>>\\
-        \end{array}\\\\                       
-\]
+The design of Core Grady is very simple.  We simply started with a
+purely static programming language, in this case the simply typed
+$\lambda$-calculus, and then added the unknown type, $[[?]]$, and
+$<<box A>>$, $<<unbox A>>$, and $<<error A>>$ to the syntax of types
+and terms respectively.  Unlike other casting calculi for gradual type
+systems found in the literature \cite{Siek:2006,Siek:2015,Garcia:2016}
+Core Grady does not depend on type consistency.  These facts imply
+that Core Grady should be more amenable to extension.
+
+We now extend Surface and Core Grady with bounded quantification.  We
+show that the bounds on quantifiers can be used to control which types
+are castable and which are not to offer more fine grain control of
+casting.  For example, here we will not allow a polymorphic type to be
+cast to the unknown type.  We do this as an illustration, but it also
+simplifies the metatheory.
+
+\begin{figure}
+  \begin{mdframed} \footnotesize
+    \textbf{Extended Syntax of Core Grady:}\\
+    \[
+      \setlength{\arraycolsep}{0.6pt}
+      \begin{array}{cl}      
+        \begin{array}{l}
+          \text{(types)}\\
+        \end{array}     &
+        \begin{array}{lcl}
+          <<A>>,<<B>>,<<C>> & ::= & \cdots \mid <<Top>> \mid <<SL>> \mid <<List A>> \mid <<Forall (X <: A).B>> \\
+        \end{array}\\\\
+                
+        \begin{array}{l}
+          \text{(terms)}\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          <<t>> & ::= & \cdots \mid <<Lam X <: A .t >> \mid << [A]t >> \mid [] \mid <<t1 :: t2>> \\
+                & \mid & <<case t : List A of [] -> t1, (x :: y) -> t2>>\\
+        \end{array}
+        \\\\
+        \begin{array}{l}
+          \text{(values)}\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          <<v>> & ::=  & \cdots \mid <<Lam X <: A.t>>\\                
+        \end{array}
+        \\\\
+        \begin{array}{lll}
+          \text{(evaluation contexts)}\\\\
+        \end{array}  &
+        \begin{array}{lcl}
+          <<EC>> & ::=  & \cdots \mid << [A]HL >> \mid << HL :: t2>> \mid <<t1 :: HL>>\\
+                 & \mid & <<case HL : List A of [] -> t1, (x::y) -> t2>>\\
+        \end{array}\\\\
+        
+        \begin{array}{lll}
+          \text{(contexts)}\\
+        \end{array}  &
+        \begin{array}{lcl}
+          <<G>> & ::= & <<.>> \mid <<x : A>> \mid <<X <: A>> \mid <<G1,G2>>\\
+        \end{array}\\
+      \end{array}
+      \]    
+      \\
+      \textbf{Extended Syntax of Surface Grady:}\\
+      \[
+    \setlength{\arraycolsep}{1pt}
+    \begin{array}{cl}      
+        \begin{array}{l}
+          \text{(terms)}\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[t]] & ::=  & \cdots \mid [[Lam X <: A.t]] \mid [[ [A]t ]] \mid [[ [] ]] \mid [[t1 :: t2]] \\
+                & \mid & [[case t of [] -> t1, (x::y) -> t2]]\\
+        \end{array}\\\\
+        
+      \end{array}
+      \]    
+    \textbf{Extended Metafunctions for Surface Grady:}\\
+    \begin{mathpar}
+      \cdots
+      \and
+      \begin{array}{lll}
+        [[list(?) = List ?]]\\
+        [[list(List A) = List A]]\\
+      \end{array}
+    \end{mathpar}
+    
+    \textbf{Extended Typing for Core Grady:}\\
+    \begin{mathpar}
+      \cdots
+      \and
+      \CGradydruleTXXBoxP{}
+      \and
+      \CGradydruleTXXUnboxP{}
+      \and
+      \CGradydruleTXXempty{}
+      \and
+      \CGradydruleTXXcons{}
+      \and
+      \CGradydruleTXXlcase{}
+      \and
+      \CGradydruleTXXLam{}
+      \and
+      \CGradydruleTXXtypeApp{}
+      \and
+      \CGradydruleTXXSub{}
+    \end{mathpar}  
+
+  \textbf{Extended Typing for Surface Grady:}\\
+  \begin{mathpar}
+    \cdots
+    \and
+    \SGradydruleTXXempty{}
+    \and
+    \SGradydruleTXXcons{}
+    \and
+    \inferrule* [flushleft,right=$\mathsf{List}_e$] {
+      {
+        \begin{array}{lll}
+          [[G |- t : C]]            & [[list(C) = List A]]\\
+          [[G |- t1 : B1]]          & [[G |- B1 ~ B]]\\
+          [[G, x : A, y : List A |- t2 : B2]] & [[G |- B2 ~ B]]
+        \end{array}
+      }
+      }{[[G |- case t of [] -> t1, (x::y) -> t2 : B]]}
+    \and
+    \SGradydruleTXXLam{}
+    \and
+    \SGradydruleTXXtypeApp{}
+    \and
+    \SGradydruleTXXSub{}
+  \end{mathpar}  
+  \end{mdframed}
+  \caption{Bounded Grady}
+  \label{fig:bounded-grady}
+\end{figure}
+\begin{figure}
+  \begin{mdframed}\footnotesize
+    \textbf{Extended Reduction Rules for Core Grady:}\\
+    \begin{mathpar}
+      \cdots
+      \and
+      \CGradydrulerdXXlcaseEmpty{}
+      \and
+      \CGradydrulerdXXlcaseCons{}
+      \and
+      \CGradydrulerdXXtypeBeta{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Bounded Grady Continued}
+  \label{fig:bounded-grady-cont}
+\end{figure}
 
 \begin{figure}
   \begin{mdframed}\scriptsize

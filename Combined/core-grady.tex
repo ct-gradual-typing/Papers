@@ -43,14 +43,14 @@ Figure~\ref{fig:syntax-core-grady}.
           \text{(values)}\\
         \end{array}     &
         \begin{array}{lcl}
-          [[v]] & ::= & [[\x : A.t]] \mid [[unbox A]] \\
+          [[v]] & ::= & [[\x : A.t]]\\
         \end{array}
         \\\\
         \begin{array}{lll}
           \text{(evaluation contexts)}\\\\
         \end{array}  &
         \begin{array}{lcl}
-          [[EC]] & ::= & [[v HL]] \mid [[succ HL]] \mid [[fst HL]] \mid [[snd HL]] \mid [[(HL, t)]] \\ & \mid & [[(t, HL)]] \mid [[case HL : Nat of 0 -> t1, (succ x) -> t2]]\\
+          [[EC]] & ::= & [[HL t2]] \mid [[unbox A HL]] \mid [[succ HL]] \mid [[fst HL]] \mid [[snd HL]] \mid [[(HL, t)]] \\ & \mid & [[(t, HL)]] \mid [[case HL : Nat of 0 -> t1, (succ x) -> t2]]\\
         \end{array}\\\\
         
         \begin{array}{lll}
@@ -170,17 +170,16 @@ the holes given in the definition of evaluation contexts
 
 How we define the syntax of values and evaluation contexts, and the
 evaluation rules determines the evaluation strategy.  We consider as
-values $\lambda$-abstractions and $[[unbox A]]$. In addition, the
-expression $\lambda (x:A).[[HL]]$ is not an evaluation context, and
-hence, there is no evaluation under $\lambda$-abstractions.  The
-evaluation context $[[v HL]]$ stipulates that the only time an argument
-to a function can be evaluated is if the term in the function position
-is a value.  Thus, $[[v]]$ is allowed to be a $\lambda$-abstraction or
-$[[unbox A]]$.  We do not allow reduction under $[[box A]]$.
-Similarly, we have no evaluation contexts which allow evaluation under
-the branches of a case-expression.  Both of these restrictions are
-used to prevent infinite reduction from occurring in those positions.
-We want evaluation to make as much overall progress as possible.
+values $\lambda$-abstractions. Thus, the expression $\lambda
+(x:A).[[HL]]$ is not an evaluation context, and hence, there is no
+evaluation under $\lambda$-abstractions.  Similarly, we have no
+evaluation contexts which allow evaluation under the branches of a
+case-expression.  In addition, the evaluation context $[[unbox A HL]]$
+allows for reduction in the argument position of an application of
+$[[unbox A]]$, but we do not allow reduction in the argument position
+of an application of $[[box A]]$. These restrictions are used to
+prevent infinite reduction from occurring in those positions.  We want
+evaluation to make as much overall progress as possible.
 
 Perhaps the most interesting reduction rules from
 Figure~\ref{fig:reduction-core-grady} are the first three: retract,

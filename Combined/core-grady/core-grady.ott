@@ -96,7 +96,9 @@ grammar
   EC {{tex \mathcal{E} }} :: 'EC_' ::=
     | HL         :: :: Hole
     {{tex \Box }}
-    | v EC       :: :: App
+    | EC t2       :: :: App
+    | unbox A EC  :: :: unbox
+    {{tex \mathsf{unbox}_{[[A]]}\,[[EC]] }}
     | succ EC    :: :: Succ
     | fst EC     :: :: Fst
     | snd EC     :: :: Snd
@@ -104,6 +106,11 @@ grammar
     | ( t , EC ) :: :: Pair2
     | case EC : A of t3 -> t1 , t4 -> t2 :: :: Case
     {{tex \mathsf{case}\,[[EC]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
+    | EC : : t2  :: :: Cons1
+    {{tex [[EC]] :: [[t2]] }}
+    | t1 : : EC  :: :: Cons2
+    {{tex [[t1]] :: [[EC]] }}
+    | [ A ] EC   :: :: TApp
 
   % U ::= ? -> ? | ? x ? | List ?
   % T is atomic
@@ -141,10 +148,9 @@ grammar
   G {{ tex \Gamma }} :: G_ ::=            
     | .                   ::   :: emptyCtx
     {{tex \cdot }}
-    | G , X <: A           ::   :: tvn
-    {{tex [[G]],[[X]] <\hspace{-2px}\colon [[A]] }}
     | G , x : A           ::   :: vn
     | x : A               ::   :: El
+    | X <: A              ::   :: El2
     | G , G'              :: M :: append  
     | ( G )               :: M :: parens
 
@@ -435,15 +441,15 @@ defn
     ------------------------------------------------ :: ncase
     G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A
 
-    -------------------------------- :: empty
-    G |- [] : Forall (X <: ?).List X
+    ---------------------------------- :: empty
+    G |- [] : Forall (X <: Top).List X
 
     G |- t1 : A && G |- t2 : List A
     ------------------------------- :: cons
     G |- t1 :: t2 : List A
 
-    G |- t : List A
-    G |- t1 : B && G, x : A, y : List A |- t2 : B
+    G |- t1 : B
+    G, x : A, y : List A |- t2 : B && G |- t : List A
     --------------------------------------------------- :: lcase
     G |- case t : List A of [] -> t1, (x :: y) -> t2 : B
 
