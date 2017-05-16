@@ -148,19 +148,23 @@ result.
 This result simply states that programs may become less precise by
 adding or removing casts, but they will behave in an expected manner.
 
-%% The results given here are the main results in the proof of the
-%% gradual guarantee, but they depend on a number of auxiliary results.
-%% Unfortunately, they are too numerous to list here, but they are all
-%% given in Appedix~\ref{sec:auxiliary_results_with_proofs}.  Previous
-%% proofs of the gradual guarantee, e.g. \cite{Siek:2015} and
-%% \cite{Garcia:2016}, make heavy use of inversion for typing.  However,
-%% as type systems become more complex inversion for typing is harder to
-%% obtain.  Instead of using inversion for typing we proved inversion
-%% principles for the other judgments.  This turned out to be a lot
-%% easier, because judgments like type and term precision, consistent
-%% subtyping, etc, have less complex definitions.  All of the inversion
-%% principles we used can be found in
-%% Appedix~\ref{sec:auxiliary_results_with_proofs}.
+The proofs of the previous results require a number of auxiliary
+lemmas that are too numerous to include in this section, but they can
+all be found in Appendix~\ref{sec:auxiliary_metatheoretic_results},
+but we omit most of their proofs in the interest of space.  Each of
+the proofs of the previous results take great care in pointing out
+where these auxiliary results are used.
+
+The most interesting aspect of the previous proofs are that they do
+not depend on inversion for Surface and Core Grady, but they depend on
+inversion principles for type and term precision; this differs from
+Siek et al.'s proof \cite{Siek:2015}. Currently, inversion holds for
+Surface and Core Grady, but when this language is extended with new
+features, e.g. bounded quantification in the next section, this may
+not always be the case.  Thus, it is necessary to find a more
+tractable means of proving the results.  We found that inversion for
+the other judgments hold, and can be used to obtain the necessary
+results when extended to include bounded quantification.
 
 %%% Local Variables: ***
 %%% mode:latex ***

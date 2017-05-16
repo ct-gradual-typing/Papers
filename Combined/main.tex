@@ -3,7 +3,7 @@
 \setcopyright{none}
 
 \usepackage{amssymb,amsmath, amsthm}
-\usepackage{thmtools, thm-restate}
+\usepackage{thm-restate}
 \usepackage{fullpage}
 \usepackage{hyperref}
 \usepackage{mathpartir}
@@ -300,6 +300,10 @@
 \renewcommand{\CGradydruleCtxPXXreflName}{\text{refl}}
 \renewcommand{\CGradydruleCtxPXXextName}{\text{ext}}
 
+\newenvironment{typeProofCase}
+               {\setlength{\tabcolsep}{1px}\begin{tabular}{cc}\begin{tabular}{l}Case:\\\\\end{tabular}&\begin{math}}
+               {\end{math}\end{tabular}}
+
 \newenvironment{ack}{\textbf{Acknowledgments.}}{}
 
 \begin{document}
@@ -419,6 +423,8 @@
 \bibliography{references}
 
 \appendix
+
+\input{aux-results-ott}
 
 \input{proofs-ott}
 

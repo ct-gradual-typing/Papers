@@ -535,6 +535,430 @@ $\cat{C}$ is a cartesian closed category.
 
 \end{description}
 %% % subsection proof_of_interpretation_of_evaluation (end)
+
+\subsection{Proof of Congruence of Type Consistency Along Type Precision (Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision})}
+\label{subsec:proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision}
+
+\begin{proof}
+  
+The proofs of both parts are similar, and so we only show a few
+cases of the first part, but the omitted cases follow similarly.
+
+\noindent
+\textbf{Proof of part one.} This is a proof by induction on the form
+of $[[A1 <= A1']]$.
+\begin{description}
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydrulePXXUName{}$] {
+        \,
+      }{[[A1 <= ?]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A1']] = [[?]]$.  Suppose $[[G |- A1 ~ A2]]$.  Then
+  it suffices to show that $[[G |- ? ~ A2]]$, but this easily follows.
+  
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydrulePXXarrowName{}$] {
+        [[A <= C && B <= D]]
+      }{[[(A -> B) <= (C -> D)]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A1]] = [[A -> B]]$ and $[[A1']] = [[C -> D]]$.  Suppose
+  $[[G |- A1 ~ A2]]$.  Then by inversion for type consistency it must
+  be the case that either $[[A2]] = [[?]]$, or
+  $[[A2]] = [[A' -> B']]$, $[[G |- A ~ A']]$, and $[[G |- B ~ B']]$.
+  
+  Consider the former.  Then it suffices to show that $[[G |- A1' ~ ?]]$,
+  but this easily follows.
+
+  Consider the case when $[[A2]] = [[A' -> B']]$, $[[G |- A ~ A']]$, and $[[G |- B ~ B']]$.
+  It suffices to show that $[[G |- (C -> D) ~ (A' -> B')]]$ which follows from
+  $[[G |- A' ~ C]]$ and $[[G |- D ~ B']]$.  Thus, it suffices to show that latter.
+  By assumption we know the following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[A <= C]]$ and $[[G |- A ~ A']]$\\
+      $[[B <= D]]$ and $[[G |- B ~ B']]$
+    \end{tabular}
+  \end{center}
+  Now by two applications of the induction hypothesis we obtain $[[G |- C ~ A']]$
+  and $[[G |- D ~ B']]$. By symmetry the former implies $[[G |- A' ~ C]]$ and
+  we obtain our result.
+\end{description}  
+\end{proof}
+% subsection proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision (end)
+
+\subsection{Proof of Gradual Guarantee Part One (Lemma~\ref{lemma:gradual_guarantee_part_one})}
+\label{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
+
+  This is a proof by induction on $[[G |- t : A]]$.  We only show the
+most interesting cases, because the others follow similarly.
+
+\begin{description}
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXvarPName{}$] {
+      [[x : A elem G]]
+    }{[[G |- x : A]]}
+  \end{typeProofCase}
+
+\noindent
+In this case $[[t]] = [[x]]$.  Suppose $[[t <= t']]$.  Then
+it must be the case that $[[t']] = [[x]]$.  If $[[x : A elem G]]$,
+then there is a type $[[A']]$ such that $[[x : A' elem G']]$ and
+$[[A <= A']]$.  Thus, choose $[[B]] = [[A']]$ and the result follows.
+
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydruleTXXsuccName{}$] {
+        [[G |- t1 : A' && nat(A') = Nat]]
+      }{[[G |- succ t1 : Nat]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A]] = [[Nat]]$ and $[[t]] = [[succ t1]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+  Then by definition it must be the case that $[[t']] = [[succ t2]]$ where $[[t1 <= t2]]$.
+  By the induction hypothesis $[[G' |- t2 : B']]$ where $[[A' <= B']]$.  Since $[[nat(A') = Nat]]$
+  and $[[A' <= B']]$, then it must be the case that $[[nat(B') = Nat]]$ by Lemma~\ref{lemma:fun_type_pre}.
+  At this point we obtain our result by choosing $[[B]] = [[Nat]]$, and reapplying the rule above.
+
+\item[]
+\item
+  \begin{typeProofCase}
+    \inferrule* [flushleft,right=$\mathsf{Nat}_e$] {
+      {
+        \begin{array}{lll}
+          [[G |- t1 : C]]            & [[nat(C) = Nat]]\\
+          [[G |- t2 : A1]]          & [[G |- A1 ~ A]]\\
+          [[G, x : Nat |- t3 : A2]] & [[G |- A2 ~ A]]
+        \end{array}
+      }
+      }{[[G |- case t1 of 0 -> t2, (succ x) -> t3 : A]]}
+  \end{typeProofCase}
+      
+  \noindent
+  In this case $[[t]] = [[case t1 of 0 -> t2, (succ x) -> t3]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.  This
+  implies that \\ $[[t']] = [[case t1' of 0 -> t2', (succ x) -> t3']]$ such that
+  $[[t1 <= t1']]$, $[[t2 <= t2']]$, and $[[t3 <= t3']]$.  Since $[[G <= G']]$ then $[[(G,x:Nat) <= (G',x:Nat)]]$.
+  By the induction hypothesis we know the following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G' |- t1' : C']]$ for $[[C <= C']]$\\
+      $[[G' |- t2 : A1']]$ for $[[A1 <= A1']]$\\
+      $[[G', x : Nat |- t3 : A2']]$ for $[[A2 <= A2']]$
+    \end{tabular}
+  \end{center}
+  By assumption we know that $[[G |- A1 ~ A]]$, $[[G |- A2 ~ A]]$, and $[[G <= G']]$,
+  hence, by Lemma~\ref{lemma:type_cons_ctx_pre} we know $[[G' |- A1 ~ A]]$ and $[[G' |- A2 ~ A]]$.  
+  By the induction hypothesis we know that $[[A1 <= A1']]$ and $[[A2 <= A2']]$, so
+  by using Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision} we may obtain that
+  $[[G' |- A1' ~ A]]$ and $[[G' |- A2' ~ A]]$.  At this point choose $[[B]] = [[A]]$
+  and we obtain our result by reapplying the rule.
+  
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXpairName{}$] {
+      [[G |- t1 : A1 && G |- t2 : A2]]
+    }{[[G |- (t1,t2) : A1 x A2]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A]] = [[A1 x A2]]$ and $[[t]] = [[(t1,t2)]]$. Suppose
+  $[[t <= t']]$ and $[[G <= G']]$.  This implies that $[[t']] = [[(t1',t2')]]$ where
+  $[[t1 <= t1']]$ and $[[t2 <= t2']]$.
+  
+  By the induction hypothesis we know:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G' |- t1' : A1']]$ and $[[A1 <= A1']]$\\
+      $[[G' |- t2' : A2']]$ and $[[A2 <= A2']]$\\
+    \end{tabular}
+  \end{center}
+  Then choose $[[B]] = [[A1' x A2']]$ and the result follows by reapplying
+  the rule above and the fact that $[[(A1 x A2) <= (A1' x A2')]]$.  
+
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXlamName{}$] {
+      [[G, x : A1 |- t1 : B1]]
+    }{[[G |- \x:A1.t1 : A1 -> B1]]}
+  \end{typeProofCase}
+  \noindent
+  In this case $[[A1 -> B2]]$ and $[[t]] = [[\x:A1.t1]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+  Then it must be the case that $[[t']] = [[\x:A2.t2]]$, $[[t1 <= t2]]$, and $[[A1 <= A2]]$.
+  Since $[[G <= G']]$ and $[[A1 <= A2]]$, then $[[(G, x : A1) <= (G', x : A2)]]$ by definition.
+  Thus, by the induction hypothesis we know the following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G', x : A2 |- t1' : B2]]$ and $[[B1 <= B2]]$
+    \end{tabular}
+  \end{center} 
+  Choose $[[B]] = [[A2 -> B2]]$ and the result follows by reapplying the rule above
+  and the fact that $[[(A1 -> B1) <= (A2 -> B2)]]$.
+
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXappName{}$] {
+      [[G |- t1 : C && fun(C) = A1 -> B1]]
+      \\\\
+          [[G |-t2 : A2 && G |- A2 ~ A1]]
+    }{[[G |- t1 t2 : B1]]}
+  \end{typeProofCase}
+  
+  \noindent
+  In this case $[[A]] = [[B1]]$ and $[[t]] = [[t1 t2]]$.  Suppose $[[t <= t']]$
+  and $[[G <= G']]$.  The former implies that $[[t']] = [[t1' t2']]$ such that
+  $[[t1 <= t1']]$ and $[[t2 <= t2']]$.  By the induction hypothesis we know the
+  following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G' |- t1' : C']]$ for $[[C <= C']]$\\
+      $[[G' |- t2' : A2']]$ for $[[A2 <= A2']]$\\
+    \end{tabular}
+  \end{center}
+  We know by assumption that $[[G |- A2 ~ A1]]$ and hence $[[G' |- A2 ~ A1]]$ by Lemma~\ref{lemma:type_cons_ctx_pre}.  
+  Since $[[C <= C']]$ and $[[fun(C) = A1 -> B1]]$, then $[[fun(C') = A1' -> B1']]$
+  where $[[A1 <= A1']]$ and $[[B1 <= B1']]$ by Lemma~\ref{lemma:fun_type_pre}.
+  Furthermore, we know $[[G' |- A2 ~ A1]]$ and $[[A2 <= A2']]$ and $[[A1 <= A1']]$, then
+  we know $[[G' |- A2' ~ A1']]$ by Corollary~\ref{corollary:congruence_of_type_consistency_along_type_precision}.
+  So choose $[[B]] = [[B1']]$. Then reapply the rule above and the result follows, because
+  $[[B1 <= B1']]$.
+\end{description}
+% subsection proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one (end)
+
+\subsection{Proof of Simulation of More Precise Programs (Lemma~\ref{lemma:simulation_of_more_precise_programs})}
+\label{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
+
+  This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the
+most interesting cases.  All others follow similarly.  Throughout the
+proof we implicitly make use of typability inversion
+(Lemma~\ref{lemma:typeability_inversion}) when applying the induction
+hypothesis.
+
+\begin{description}
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXsuccName{}$] {
+      <<G |- t : Nat>>
+    }{<<G |- succ t : Nat>>}
+  \end{typeProofCase}
+  
+  \noindent
+  In this case $<<t1>> = <<succ t>>$ and $<<A>> = <<Nat>>$.  Suppose $<<G |- t1' : A'>>$.
+  By inversion for term precision we must consider the following cases:
+  \begin{enumR}
+  \item $<<t1'>> = <<succ t'>>$ and $<<G |- t <= t'>>$
+  \item $<<t1'>> = <<box Nat t1>>$ and $<<G |- t1 : Nat>>$    
+  \end{enumR}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<succ t'>>$, $<<G |- t <= t'>>$, and $<<t1 ~> t2>>$.
+  Then $<<t2>> = <<succ t''>>$ and $<<t ~> t''>>$.  Then by the induction hypothesis
+  we know that there is some $<<t'''>>$ such that $<<t' ~>* t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
+  $<<t2'>> = <<succ t'''>>$ and the result follows.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.} Suppose $<<t1'>> = <<box Nat t1>>$, $<<G |- t1 : Nat>>$, and $<<t1 ~> t2>>$.
+  Then choose $<<t'2>> = <<box Nat t2>>$, and the result follows, because we know by type preservation
+  that $<<G |- t2 : Nat>>$, and hence, $<<G |- t2 <= t2'>>$.
+
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXncaseName{}$] {
+      <<G |- t : Nat>>
+      \\\\
+      <<G |- t3 : A && G, x : Nat |- t4 : A>>
+    }{<<G |- case t : Nat of 0 -> t3, (succ x) -> t4 : A>>}  
+  \end{typeProofCase}
+  
+  \noindent
+  In this case $<<t1>> = <<case t : Nat of 0 -> t3, (succ x) -> t4>>$.  Suppose
+  $<<G |- t1' : A'>>$. 
+  Then inversion of term precision implies that one of the following must hold:
+  \begin{enumR}
+    \item $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$, $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$,
+    and $<<G, x : Nat |- t4 <= t4'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \end{enumR}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$,
+  $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$, and $<<G, x : Nat |- t4 <= t4'>>$.
+
+  \ \\
+  \noindent
+  We case split over $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case.  Suppose $<<t>> = <<0>>$ and $<<t2>> = <<t3>>$.  Since $<<G |- t1 <= t1'>>$ we know that
+    it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$ by inversion for term precision
+    or $<<t1'>>$ would not be typable which is a contradiction.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
+    
+  \item[] Case.  Suppose $<<t>> = <<succ t''>>$ and $<<t2>> = << [t''/x]t4>>$.  Since $<<G |- t1 <= t1'>>$
+    we know that $<<t'>> = <<succ t'''>>$, or $<<t1'>>$ would not be typable,
+    and $<<G |- t'' <= t'''>>$ by inversion for term precision. In addition,
+    $<<t'1 ~> [t'''/x]t'4>>$. Choose $<<t2>> = << [t'''/x]t'4>>$.  Then it suffices to show that
+    $<<G |- [t''/x]t4 <= [t'''/x]t'4>>$ by substitution for term precision (Lemma~\ref{lemma:substitution_for_term_precision}).    
+    
+  \item[] Case.  Suppose a congruence rule was used.  Then $<<t2>> = <<case t'' : Nat of 0 -> t3'', (succ x) -> t4''>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.    
+  \end{itemize}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.}  Suppose $<<t1'>> = <<box A t1>>$, $<<G |- t1 : A>>$, and $<<t1 ~> t2>>$.
+  Then choose $<<t'2>> = <<box A t2>>$, and the result follows, because we know by type preservation
+  that $<<G |- t2 : A>>$, and hence, $<<G |- t2 <= t2'>>$.
+
+\item[] 
+\item
+  \begin{typeProofCase}
+     $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXfstName{}$] {
+        <<G |- t : A x B>>
+      }{<<G |- fst t : A>>}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $<<t1>> = <<fst t>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then inversion for term precision implies that one of the following must hold:
+  \begin{enumR}
+  \item $<<t'1>> = <<fst t'>>$ and $<<G |- t <= t'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \end{enumR}
+
+  We only consider the proof of part i, because the other follows similarly to
+  the previous case. Case split over $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case. Suppose $<<t>> = <<(t'3,t''3)>>$ and $<<t2>> = <<t'3>>$.  By inversion for term precision it must be the case
+    that $<<t'>> = <<(t'4,t''4)>>$ because $<<G |- t1 <= t'1>>$ or else $<<t1'>>$ would not be typable.  In addition,
+    this implies that $<<G |- t'3 <= t'4>>$ and $<<G |- t''3 <= t''4>>$.
+    Thus, $<<t'1 ~> t'4>>$. Thus, choose $<<t2'>> = <<t'4>>$ and the result follows.
+
+  \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<fst t''>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+  \end{itemize}
+
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXlamName{}$] {
+      <<G, x : A1 |- t : A2>>
+    }{<<G |- \x:A1.t : A1 -> A2>>}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $<<t1>> = <<\x:A1.t>>$ and $<<A>> = <<A1 -> A2>>$.
+  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then inversion of term precision implies that one of the following must hold:
+  \begin{enumR}
+  \item $<<t'1>> = <<\x:A'1.t'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \end{enumR}
+  
+  \noindent
+  We only consider the proof of part i. The reduction relation does not reduce under
+  $\lambda$-expressions.  Hence, $<<t2>> = <<t1>>$, and thus, choose $<<t'2>> = <<t'1>>$, and
+  the case trivially follows.  
+  
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXappName{}$] {
+      <<G |- t3 : A1 -> A2 && G |- t4 : A1>>
+    }{<<G |- t3 t4 : A2>>}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $<<t1>> = <<t3 t4>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then by inversion for term prevision we know one of the following is true:
+  \begin{enumR}
+  \item $<<t1'>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
+  \item $<<t'1>> = <<box A2 t1>>$ and $<<G |- t1 : A>>$
+  \item $<<t3>> = <<unbox A2>>$, $<<t'1>> = <<t4>>$, and $<<G |- t4 : ?>>$
+  \end{enumR}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$.
+
+  We case split on the from of $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case.  Suppose $<<t3>> = <<\x:A1.t5>>$ and $<<t2>> = << [t4/x]t5>>$.
+    Then by inversion for term precision we know that
+    $<<t'3>> = <<\x:A1'.t'5>>$ and $<<G, x : A2' |- t5 <= t'5>>$,
+    because $<<G |- t3 <= t'3>>$ and the requirement that $<<t1'>>$ is typable. Choose $<<t'2>> = << [t'4/x]t'5>>$
+    and it is easy to see that $<<t'1 ~> [t'4/x]t'4>>$.
+    We know that $<<G, x : A2' |- t5 <= t'5>>$ and $<<G |- t4 <= t'4>>$, and hence,
+    by Lemma~\ref{lemma:substitution_for_term_precision} we know that
+    $<<G |- [t4/x]t5 <= [t'4/x]t'5>>$, and we obtain our result.
+    
+  \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box A t5>>$, and $<<t2>> = <<t5>>$.
+    Then by inversion for term prevision $<<t'3>> = <<unbox A>>$, $<<t'4>> = <<box A t'5>>$, and $<<G |- t5 <= t'5>>$.
+    Note that $<<t'4>> = <<box A t'5>>$ and $<<G |- t5 <= t'5>>$ hold even though there are two potential rules
+    that could have been used to construct $<<G |- t4 <= t4'>>$. 
+    Choose $<<t'2>> = <<t'5>>$ and it is easy to see that $<<t'1 ~> t'5>>$.  Thus, we obtain our result.    
+
+  \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box B t5>>$, $<<A != B>>$,
+    and $<<t2>> = <<error B>>$.  Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box B t'5>>$.
+    Choose $<<t'2>> = <<error B>>$ and it is easy to see that $<<t'1 ~> t'5>>$.  Finally,
+    we can see that $<<G |- t2 <= t'2>>$ by reflexivity.
+    
+  \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<t'5 t'6>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+  \end{itemize}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.} We know that $<<t1>> = <<t3 t4>>$.  Suppose $<<t'1>> = <<box A2 t1>>$ and $<<G |- t1 : A>>$.
+  If $<<t1 ~> t2>>$, then $<<t'1>> = <<(box A2 t1) ~> (box A2 t2)>>$.  Thus, choose $<<t2'>> = <<box A2 t2>>$.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part iii.} We know that $<<t1>> = <<t3 t4>>$. Suppose
+  $<<t3>> = <<unbox A2>>$, $<<t'1>> = <<t4>>$, and $<<G |- t4 : ?>>$.  Then $<<t1>> = <<unbox A2 t4>>$.  We
+  case split over $<<t1 ~> t2>>$.  We have three cases to consider.
+
+  \ \\
+  \noindent
+  Suppose $<<t4>> = <<box A2 t5>>$ and $<<t2>> = <<t5>>$.  Then choose $<<t2'>> = <<t4>> = <<t'1>>$, and we
+  obtain our result.
+
+  \ \\
+  \noindent
+  Suppose $<<t4>> = <<box A3 t5>>$, $<<A2>> \neq <<A3>>$, and $<<t2>> = <<error A2>>$. Then choose $<<t2'>> = <<t4>> = <<t'1>>$,
+  and we obtain our result.
+
+  \ \\
+  \noindent
+  Suppose a congruence rule was used.  Then $<<t2>> = <<t3 t'4>>$. This case will follow straightforwardly by induction.
+\end{description}
+% subsection proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs (end)
+
 % section proofs (end)
 
 %%% Local Variables: ***
