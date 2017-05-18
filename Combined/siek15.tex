@@ -1,0 +1,50 @@
+In this section we show that Siek and Taha's gradual
+$\lambda$-calculus \cite{Siek:2006,Siek:2015} can be modeled in a
+gradual $\lambda$-model. Thus showing that other gradual type systems
+can benefit from our semantics.
+
+We only consider Siek and Taha's casting calculus, called $\CGSTLC$,
+because their surface language is essentially Surface Grady.
+\begin{figure}
+  \begin{mdframed} \footnotesize
+    \textbf{Syntax:}
+    \[ \small
+    \begin{array}{cccccc}
+      \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+        \text{(Atomic Types)}  & [[T]] & ::= & [[Unit]] \mid [[Nat]]\\
+        \text{(Ground Types)}  & [[R]] & ::= & [[T]] \mid [[?]] \to [[?]]\\    
+        \text{(values)}        & [[v]] & ::= & [[\x:A.t]]\\
+        \text{(terms)}         & [[t]] & ::= & \ldots \mid [[t : {A} => {B}]]\\
+      \end{array}
+    \end{array}
+    \]
+
+    \textbf{Typing Rules:}
+    \begin{mathpar}
+      \cdots \and
+      \GSiekdruleCXXcast{}
+    \end{mathpar}  
+
+    \textbf{Reduction Relation:}
+    \begin{mathpar}
+      \cdots                       \and
+      \GSiekdrulerdAXXcastId{}     \and
+      \GSiekdrulerdAXXcastU{}      \and
+      \GSiekdrulerdAXXsucceed{}    \and
+      \GSiekdrulerdAXXfail{}       \and
+      \GSiekdrulerdAXXcastArrow{}  \and
+      \GSiekdrulerdAXXcastGround{} \and
+      \GSiekdrulerdAXXcastExpand{}       
+    \end{mathpar}
+  \end{mdframed}
+  \caption{The core casting calculus: $\CGSTLC$}
+  \label{fig:CGSTLC}
+\end{figure}
+The complete language specification is summarized in
+Figure~\ref{fig:CGSTLC}.  The casting calculus $\CGSTLC$ is Core Grady
+where $\mathsf{box}\,[[A]]$ and $\mathsf{unbox}\,[[A]]$ have been
+replaced with the explicit cast $[[t : {A} => {B}]]$.  In addition,
+the typing rules for $\mathsf{box}\,[[A]]$ and $\mathsf{unbox}\,[[A]]$
+have been replaced with the \text{cast} typing rule. We do not
+consider cartesian products in $\CGSTLC$, but they can be added to
+$\CGSTLC$ in the same way that they are defined for Core Grady.  

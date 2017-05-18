@@ -55,19 +55,16 @@ categorical-model-ott.tex : categorical-model.tex core-grady/core-grady.ott surf
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
 	-tex_filter categorical-model-ott1.tex categorical-model-ott.tex
 
+siek15-ott.tex : siek15.tex siek15-gradual/siek-gradual.ott
+	@$(OTT) $(OTT_FLAGS) -i siek15-gradual/siek-gradual.ott -o siek15-gradual-inc.tex -tex_name_prefix GSiek \
+	-tex_filter siek15.tex siek15-ott.tex
+
 gradual-guarantee-ott.tex : gradual-guarantee.tex core-grady/core-grady.ott surface-grady/surface-grady.ott
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
 	-tex_filter gradual-guarantee.tex gradual-guarantee-ott1.tex
 	scripts/prepr_double_ott.sh gradual-guarantee-ott1.tex
 	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
 		-tex_filter gradual-guarantee-ott1.tex gradual-guarantee-ott.tex
-
-bounded-ott.tex : bounded.tex core-grady/core-grady.ott surface-grady/surface-grady.ott
-	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott -o surface-grady-inc.tex -tex_name_prefix SGrady \
-	-tex_filter bounded.tex bounded-ott1.tex
-	scripts/prepr_double_ott.sh bounded-ott1.tex
-	@$(OTT) $(OTT_FLAGS) -i core-grady/core-grady.ott  -o core-grady-inc.tex -tex_name_prefix CGrady \
-		-tex_filter bounded-ott1.tex bounded-ott.tex
 
 proofs-ott.tex : proofs.tex surface-grady/surface-grady.ott core-grady/core-grady.ott 
 	@$(OTT) $(OTT_FLAGS) -i surface-grady/surface-grady.ott  -o surface-grady-inc.tex -tex_name_prefix SGrady \
@@ -98,12 +95,12 @@ introduction-ott.tex : introduction.tex core-grady/core-grady.ott surface-grady/
 # 		-tex_filter related-work-ott1.tex related-work-ott.tex
 
 ott : main.tex introduction-ott.tex core-grady-ott.tex \
-      surface-grady-ott.tex gradual-guarantee-ott.tex bounded-ott.tex categorical-model-ott.tex proofs-ott.tex aux-results-ott.tex \
-      Makefile $(References)
+      surface-grady-ott.tex gradual-guarantee-ott.tex categorical-model-ott.tex proofs-ott.tex aux-results-ott.tex \
+      Makefile $(References) siek15-ott.tex
 
 $(PDF) : main.tex introduction-ott.tex core-grady-ott.tex \
-	surface-grady-ott.tex conclusion.tex gradual-guarantee-ott.tex bounded-ott.tex categorical-model-ott.tex proofs-ott.tex aux-results-ott.tex \
-	Makefile $(References)
+	surface-grady-ott.tex conclusion.tex gradual-guarantee-ott.tex categorical-model-ott.tex proofs-ott.tex aux-results-ott.tex \
+	Makefile $(References) siek15-ott.tex
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)
 	$(BIBTEX) $(TexFileName)
 	$(PDFLATEX) -jobname=$(TexFileName) $(OTTOutputFile)

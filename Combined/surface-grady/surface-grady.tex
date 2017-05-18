@@ -102,6 +102,15 @@
 }}
 
 
+\newcommand{\ottdruleCXXVarName}[0]{\ottdrulename{C\_Var}}
+\newcommand{\ottdruleCXXVar}[1]{\ottdrule[#1]{%
+\ottpremise{\texttt{\textcolor{red}{<<no parses (char 11):    X <: A i***n G >>}}}%
+}{
+ \Gamma  \vdash  \ottmv{X}  \sim  \ottmv{X} }{%
+{\ottdruleCXXVarName}{}%
+}}
+
+
 \newcommand{\ottdruleCXXBoxPName}[0]{\ottdrulename{C\_BoxP}}
 \newcommand{\ottdruleCXXBoxP}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{A}  \lesssim   \mathbb{S}  }%
@@ -173,6 +182,7 @@
 
 \newcommand{\ottdefntypecons}[1]{\begin{ottdefnblock}[#1]{$ \Gamma  \vdash  \ottnt{A}  \sim  \ottnt{B} $}{}
 \ottusedrule{\ottdruleCXXRefl{}}
+\ottusedrule{\ottdruleCXXVar{}}
 \ottusedrule{\ottdruleCXXBoxP{}}
 \ottusedrule{\ottdruleCXXUnboxP{}}
 \ottusedrule{\ottdruleCXXBox{}}
@@ -982,7 +992,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        86 good    0 bad
-Definition rule clauses: 167 good    0 bad
+Definition rules:        86 good    1 bad
+Definition rule clauses: 168 good    1 bad
 \end{verbatim}
 \end{document}

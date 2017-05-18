@@ -302,11 +302,50 @@
 \renewcommand{\CGradydruleCtxPXXreflName}{\text{refl}}
 \renewcommand{\CGradydruleCtxPXXextName}{\text{ext}}
 
+\input{siek15-gradual-inc}
+\renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\GSiekdrulename{#4}}}
+\renewcommand{\GSiekdrulename}[1]{#1}
+\renewcommand{\GSiekdruleSXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleSXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleSXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleSXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleSXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleSXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleSXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleSXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleSXXappName}[0]{\to_e}
+
+\renewcommand{\GSiekdruleCXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleCXXerrorName}[0]{\text{error}}
+\renewcommand{\GSiekdruleCXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleCXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleCXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleCXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleCXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleCXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleCXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleCXXappName}[0]{\to_e}
+\renewcommand{\GSiekdruleCXXcastName}[0]{\text{cast}}
+\renewcommand{\GSiekdrulerdAXXcastIdName}{\text{id-atom}}
+\renewcommand{\GSiekdrulerdAXXcastUName}{\text{id-U}}
+\renewcommand{\GSiekdrulerdAXXsucceedName}{\text{succeed}}
+\renewcommand{\GSiekdrulerdAXXfailName}{\text{fail}}
+\renewcommand{\GSiekdrulerdAXXcastArrowName}{\to_\Rightarrow}
+\renewcommand{\GSiekdrulerdAXXcastGroundName}{\text{expand}_1}
+\renewcommand{\GSiekdrulerdAXXcastExpandName}{\text{expand}_2}
+\renewcommand{\GSiekdrulereflName}[0]{\text{refl}}
+\renewcommand{\GSiekdruleboxName}[0]{\text{box}}
+\renewcommand{\GSiekdruleunboxName}[0]{\text{unbox}}
+\renewcommand{\GSiekdrulearrowName}[0]{\to}
+\renewcommand{\GSiekdruleprodName}[0]{\times}
+
 \newenvironment{typeProofCase}
                {\setlength{\tabcolsep}{1px}\begin{tabular}{cc}\begin{tabular}{l}Case:\\\\\end{tabular}&\begin{math}}
                {\end{math}\end{tabular}}
 
 \newenvironment{ack}{\textbf{Acknowledgments.}}{}
+
+\newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to} 
 
 \begin{document}
 
@@ -399,15 +438,21 @@
 \input{surface-grady-ott}
 % section surface_grady (end)
 
+\section{Modeling Siek and Taha's Gradual $\lambda$-Calculus}
+\label{sec:modeling_siek_and_taha's_gradual_lambda-calculus}
+\input{siek15-ott}
+% section modeling_siek_and_taha's_gradual_lambda-calculus (end)
+
 \section{The Gradual Guarantee}
 \label{sec:the_gradual_guarantee}
 \input{gradual-guarantee-ott}
 % section the_gradual_guarantee (end)
 
-\section{Bounded Quantification}
-\label{sec:bounded_quantification}
-\input{bounded-ott}
-% section bounded_quantification (end)
+\section{Programming in Gradual Type Systems}
+\label{sec:programming_in_gradual_type_systems}
+
+% section programming_in_gradual_type_systems (end)
+
 
 \section{Related Work}
 \label{sec:related_work}

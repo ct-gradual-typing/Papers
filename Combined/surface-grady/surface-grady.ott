@@ -190,9 +190,9 @@ defn
     G |- A ~ B :: :: typecons :: 'C_'
     {{tex [[G]] \vdash [[A]] \sim [[B]] }} by
 
-   ---------- :: Refl
+   ----------- :: Refl
    G |- A ~ A
-   
+
    G |- A <~ SL
    ------------ :: BoxP
    G |- A ~ ?
