@@ -82,8 +82,8 @@ without the explicit casts.  The syntax for types and typing contexts
 do not change, and so we do not repeat them here.
 
 The metafunctions $[[nat(A)]]$, $[[prod(A)]]$, and $[[fun(A)]]$ are
-partial functions that will be used to determine when to use either
-$[[box]]$ or $[[split]]$ in the elimination type checking rules for
+partial functions that will be used to determine when to use
+$[[box]]$ in the elimination type checking rules for
 natural numbers, cartesian products, and function applications
 respectively.  For example, if $[[nat(A) = Nat]]$, then the type
 $[[A]]$ must have been either $[[?]]$ or $[[Nat]]$, and if it were the
@@ -91,7 +91,7 @@ former then we know we can cast $[[A]]$ to $[[Nat]]$ via $[[box
     Nat]]$.  If $[[prod(A) = B x C]]$, then either $[[A]] = [[?]]$ and
 $[[B x C]] = [[? x ?]]$ or $[[A]] = [[B x C]]$ for some other types
 $[[B]]$ and $[[C]]$.  This implies that if the former is true, then we
-can cast $[[A]]$ to $[[B x C]]$ via $[[split (? x ?)]]$.  The case is
+can cast $[[A]]$ to $[[B x C]]$ via $[[box (? x ?)]]$.  The case is
 similar for $[[fun(A)]]$.
 
 The type checking and type consistency rules are given in
@@ -109,8 +109,8 @@ Figure~\ref{fig:typing-surface-grady}.
       {
         \begin{array}{lll}
           [[G |- t : C]]            & [[nat(C) = Nat]]\\
-          [[G |- t1 : A1]]          & [[G |- A1 ~ A]]\\
-          [[G, x : Nat |- t2 : A2]] & [[G |- A2 ~ A]]
+          [[G |- t1 : A1]]          & [[A1 ~ A]]\\
+          [[G, x : Nat |- t2 : A2]] & [[A2 ~ A]]
         \end{array}
       }
       }{[[G |- case t of 0 -> t1, (succ x) -> t2 : A]]}
@@ -120,7 +120,7 @@ Figure~\ref{fig:typing-surface-grady}.
       \SGradydruleTXXsnd{} \and      
       \SGradydruleTXXlam{} \and
       \inferrule* [flushleft,right=$\to_e$] {
-      [[G |- t1 : C]] \\ \,\,\,[[G |- A2 ~ A1]]\\\\    
+      [[G |- t1 : C]] \\ \,\,\,[[A2 ~ A1]]\\\\    
       [[G |-t2 : A2]] \\ [[fun(C) = A1 -> B1]]
     }{[[G |- t1 t2 : B1]]}
     \end{mathpar}
@@ -137,26 +137,23 @@ Figure~\ref{fig:typing-surface-grady}.
   \caption{Typing rules for Surface Grady}
   \label{fig:typing-surface-grady}
 \end{figure}
-Similarly to Core Grady the typing judgment is denoted by $[[G |- t :
-    A]]$.  Type checking depends on the notion of type consistency;
+Similarly to Core Grady the typing judgment is denoted by
+$[[G |- t : A]]$.  Type checking depends on the notion of type consistency;
 first proposed by Siek and Taha~\cite{Siek:2006}.  This is a reflexive
-and symmetric, but non-transitive, relation on types denoted by $[[G
-    |- A ~ B]]$ which can be read as ``the type $[[A]]$ is consistent
-with the type $[[B]]$ in context $[[G]]$.''  Note that the typing
-context $[[G]]$ does not yet play a role in the definition of type
-consistency, but it will when we add bounded quantification in
-Section~\ref{sec:bounded_quantification}.  Non-transitivity is
-important, because if type consistency were transitive, then all types
-would be consistent, but this is too general. Consider
-an example, type consistency is responsible for the function
-application $[[(\x:?.(succ x)) 3]]$ being typable in the surface
-language, because type $[[Nat]]$ is consistent with the type $[[3]]$.
-This implies that the elimination rule for function types must be
-extended with type consistency.
+and symmetric, but non-transitive, relation on types denoted by
+$[[A ~ B]]$ which can be read as ``the type $[[A]]$ is consistent with
+the type $[[B]]$.''  The lack of transitivity is important, because
+if type consistency were transitive, then all types would be
+consistent, but this is too general. Consider an example, type
+consistency is responsible for the function application $[[(\x:?.(succ
+    x)) 3]]$ being typable in the surface language, because type
+$[[Nat]]$ is consistent with the type $[[3]]$.  This implies that the
+elimination rule for function types must be extended with type
+consistency.
 
 Type consistency states when two types are safely castable between
 each other when inserting explicit casts, and so, from a semantical
-perspective if $[[G |- A ~ B]]$ holds, then there are casting
+perspective if $[[A ~ B]]$ holds, then there are casting
 morphisms (Definition~\ref{def:casting-mor}) $[[c1]] : [[A --> B]]$
 and $[[c2]] : [[B --> A]]$; see
 Lemma~\ref{lemma:type_consistency_in_the_model} in
@@ -199,8 +196,8 @@ algorithm detailed in Figure~\ref{fig:cast-insert}.
       \inferrule* [flushleft] {
         { 
           \begin{array}{llllllllllllll}
-                                         & [[G |- A1 ~ A]]        &                    \\
-        [[G |- t => t' : ?]]             & [[G |- A2 ~ A]]        & [[t''1 = (c1 t'1)]]\\[1px]
+                                         & [[A1 ~ A]]        &                    \\
+        [[G |- t => t' : ?]]             & [[A2 ~ A]]        & [[t''1 = (c1 t'1)]]\\[1px]
         [[G |- t1 => t'1 : A1]]          & [[caster(A1,A) = c1]]  & [[t''2 = (c2 t'2)]]\\[1px]
         [[G, x : Nat |- t2 => t'2 : A2]] & [[caster(A2,A) = c2]]  & [[t'' = (unbox Nat t')]]
           \end{array}
@@ -210,8 +207,8 @@ algorithm detailed in Figure~\ref{fig:cast-insert}.
       \inferrule* [right=] {
         {
           \begin{array}{llllllllll}
-                                             & [[G |- A1 ~ A ]]     \\
-            [[G |- t => t' : Nat]]           & [[G |- A2 ~ A]]      \\
+                                             & [[A1 ~ A ]]     \\
+            [[G |- t => t' : Nat]]           & [[A2 ~ A]]      \\
             [[G |- t1 => t'1 : A1]]          & [[caster(A1,A) = c1]] & [[t''1 = (c1 t'1)]]\\[1px]
             [[G, x : Nat |- t2 => t'2 : A2]] & [[caster(A2,A) = c2]] & [[t''2 = (c2 t'2)]]\\[1px]
           \end{array}
@@ -279,10 +276,10 @@ The definition of $<<caster(A,B)>>$ is based on the definition of type
 consistency.
 \begin{lemma}[Type Consistency and Caster]
   \label{lemma:type_consistency_and_caster}
-  If $[[G |- A ~ B]]$, then $<<G |- caster(A,B) : A -> B>>$.
+  If $[[A ~ B]]$, then $<<G |- caster(A,B) : A -> B>>$.
 \end{lemma}
 \begin{proof}
-  This proof holds by induction on $[[G |- A ~ B]]$, but is vary
+  This proof holds by induction on $[[A ~ B]]$, but is vary
   routine, and so we omit its proof.
 \end{proof}
 \noindent
@@ -374,7 +371,7 @@ the names of types and objects throughout this paper.
   \[
   \begin{array}{lll}
     \begin{array}{lll}
-      [[ [| . |] ]] = 1      
+      [[ [| . |] ]] = [[Unit]]
     \end{array}
     & \quad &
     \begin{array}{lll}
@@ -387,18 +384,18 @@ the names of types and objects throughout this paper.
 interpretation symbols around types.
 
 Before we can interpret the typing rules of Surface and Core Grady we
-must show how to interpret the consistency relation from
+must show how to interpret the type consistency relation from
 Figure~\ref{fig:syntax-surface-grady}.  These will correspond to
 casting morphisms (Definition~\ref{def:casting-mor}).
 \begin{lemma}[Type Consistency in the Model]
   \label{lemma:type_consistency_in_the_model}
   Suppose $(\cat{T}, $ $ \cat{C}, ?, \T, \split, \squash, \bx,
-  \unbox, \error)$ is a gradual $\lambda$-model, and $[[G |- A ~ B]]$ for
+  \unbox, \error)$ is a gradual $\lambda$-model, and $[[A ~ B]]$ for
   some types $[[A]]$ and $[[B]]$.  Then there are two casting
   morphisms $c_1 : [[ A --> B ]]$ and $c_2 : [[ B --> A ]]$.
 \end{lemma}
 \begin{proof}
-This proof holds by induction on the form $[[G |- A ~ B]]$ using the
+This proof holds by induction on the form $[[A ~ B]]$ using the
 morphisms $<<Box A>> : [[A --> ?]]$ and $<<Unbox A>> : [[? --> A]]$
 from Lemma~\ref{lemma:casting_to_?}.  Please see
 Appendix~\ref{subsec:proof_of_type_consistency_in_the_model} for the
@@ -406,7 +403,7 @@ complete proof.
 \end{proof}
 \noindent
 Showing that both $c_1$ and $c_2$ exist corresponds to the fact that
-$[[G |- A ~ B]]$ is symmetric.  
+$[[A ~ B]]$ is symmetric.  
 
 At this point we have everything we need to show our main result which
 is that typing in both Surface and Core Grady, and evaluation in Core

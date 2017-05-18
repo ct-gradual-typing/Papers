@@ -67,7 +67,7 @@ Figure~\ref{fig:syntax-core-grady}.
 \end{figure}
 The syntax is a straightforward extension of the simply typed
 $\lambda$-calculus.  Arbitrary programs or terms are denoted by
-$[[t]]$ and values by $[[v]]$. The later are used to influence the
+$[[t]]$ and values by $[[v]]$. The latter are used to influence the
 evaluation strategy used by Core Grady.  Natural numbers are denoted
 by $[[0]]$ and $[[succ t]]$ where the latter is the successor of
 $[[t]]$.  The non-recursive natural number eliminator is denoted by
@@ -218,8 +218,9 @@ in Core Grady, but we use a typed version of $\lstinline{fix}$.
 \begin{lstlisting}[language=Haskell]
   fixNat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
   fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat)) ->
-     unbox{Nat -> Nat} (fix (\(y:?)->box{Nat -> Nat} (f (unbox{Nat -> Nat} y))));
-  
+     unbox{Nat -> Nat} (fix (\(y:?)->box{Nat -> Nat} 
+                               (f (unbox{Nat -> Nat} y))));
+
   pred : Nat -> Nat
   pred = \(n:Nat) -> case n of 0 -> 0, (succ n') -> n';
 
@@ -252,8 +253,7 @@ $[[\y:?.H(box (Nat -> Nat) (f (unbox (Nat -> Nat) y)))]] : [[? -> ?]]$.  Finally
 
 Extending Grady with polymorphism would allow for the definition of
 $\lstinline{fixNat}$ to be abstracted, and then we could do statically
-typed recursion at any type.  We extend Core Grady with bounded
-polymorphism in Section~\ref{sec:bounded_quantification}.
+typed recursion at any type, but we leave this for future work.
 
 From a programming perspective Core Grady has a lot going for it, but
 it is unfortunate the programmer is required to insert explicit casts

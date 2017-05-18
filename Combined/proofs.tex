@@ -115,7 +115,7 @@ Lemma~\ref{lemma:lifted_retract}.
 
 \subsection{Proof of Type Consistency in the Model (Lemma~\ref{lemma:type_consistency_in_the_model})}
 \label{subsec:proof_of_type_consistency_in_the_model}
-This is a proof by induction on the form of $[[G |- A ~ B]]$.
+This is a proof by induction on the form of $[[A ~ B]]$.
 \begin{description}
 \item Case: $\quad \SGradydruleCXXRefl{}$\\
   \ \\
@@ -202,8 +202,8 @@ This is a proof by induction on $[[G |- t : A]]$.
       {
         \begin{array}{lll}
           [[G |- t : C]]            & [[nat(C) = Nat]]\\
-          [[G |- t1 : A1]]          & [[G |- A1 ~ A]]\\
-          [[G, x : Nat |- t2 : A2]] & [[G |- A2 ~ A]]
+          [[G |- t1 : A1]]          & [[A1 ~ A]]\\
+          [[G, x : Nat |- t2 : A2]] & [[A2 ~ A]]
         \end{array}
       }
     }{[[G |- case t of 0 -> t1, (succ x) -> t2 : A]]}
@@ -220,7 +220,7 @@ This is a proof by induction on $[[G |- t : A]]$.
         \end{array}
       \end{math}
     \end{center}
-    In addition, we know $[[G |- A1 ~ A]]$ and $[[G |- A2 ~ A]]$ by
+    In addition, we know $[[A1 ~ A]]$ and $[[A2 ~ A]]$ by
     assumption, and hence, by type consistency in the model
     (Lemma~\ref{lemma:type_consistency_in_the_model}) we know there are
     casting morphisms $[[c1]] : [[A1 --> A]]$ and $[[c2 : A2 --> A]]$.
@@ -306,7 +306,7 @@ This is a proof by induction on $[[G |- t : A]]$.
     \ \\
   \item Case: $\quad {
     \inferrule* [flushleft,right=$\to_e$] {
-      [[G |- t1 : C]] \\ \,\,\,[[G |- A2 ~ A1]]\\\\    
+      [[G |- t1 : C]] \\ \,\,\,[[A2 ~ A1]]\\\\    
       [[G |-t2 : A2]] \\ [[fun(C) = A1 -> B1]]
     }{[[G |- t1 t2 : B1]]}
   }$\\
@@ -315,7 +315,7 @@ This is a proof by induction on $[[G |- t : A]]$.
     By the induction hypothesis there are two morphisms
     $[[ [| t1 |] ]] : [[ [| G |] --> C ]]$ and
     $[[ [| t2 |] ]] : [[ [| G |] --> A2 ]]$.  In addition, by assumption we know that
-    $[[G |- A2 ~ A1]]$, and hence, by type consistency in the model (Lemma~\ref{lemma:type_consistency_in_the_model})
+    $[[A2 ~ A1]]$, and hence, by type consistency in the model (Lemma~\ref{lemma:type_consistency_in_the_model})
     there are casting morphisms $c_1 : [[A2 --> A1]]$ and $c_2 : [[A1 --> A2]]$.  We have two cases to consider,
     one when $[[C]] = [[?]]$ and one when $[[C]] = [[A1 -> B1]]$.  Consider
     the former. Then we have the interpretation:
@@ -397,9 +397,9 @@ lemma called inversion for typing.
   Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
   a gradual $\lambda$-model.  Then we know the following:
   \begin{enumR}
-  \item If $[[G |- A ~ A]]$, then $c_1 = c_2 = \id_{[[A]]} : [[A --> A]]$.
+  \item If $[[A ~ A]]$, then $c_1 = c_2 = \id_{[[A]]} : [[A --> A]]$.
 
-  \item If $[[G |- A ~ ?]]$, then there are casting morphisms:
+  \item If $[[A ~ ?]]$, then there are casting morphisms:
     \[
     \begin{array}{lll}
       c_1 & = & [[Box A]] : [[A --> ?]]  \\    
@@ -407,7 +407,7 @@ lemma called inversion for typing.
     \end{array}
     \]
 
-    \item If $[[G |- ? ~ A]]$, then there are casting morphisms:
+    \item If $[[? ~ A]]$, then there are casting morphisms:
     \[
     \begin{array}{lll}
       c_1 & = & [[Unbox A]] : [[? --> A]]\\
@@ -415,7 +415,7 @@ lemma called inversion for typing.
       \end{array}
     \]
     
-  \item If $[[G |- A1 -> B1 ~ A2 -> B2]]$, then there are casting morphisms:
+  \item If $[[A1 -> B1 ~ A2 -> B2]]$, then there are casting morphisms:
     \[
     \begin{array}{lllll}
       c & = & c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]\\
@@ -425,7 +425,7 @@ lemma called inversion for typing.
     where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
     [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
     
-  \item If $[[G |- A1 x B1 ~ A2 x B2]]$, then there are casting
+  \item If $[[A1 x B1 ~ A2 x B2]]$, then there are casting
     morphisms:
     \[
     \begin{array}{lll}
@@ -557,8 +557,8 @@ of $[[A1 <= A1']]$.
   \end{typeProofCase}
 
   \noindent
-  In this case $[[A1']] = [[?]]$.  Suppose $[[G |- A1 ~ A2]]$.  Then
-  it suffices to show that $[[G |- ? ~ A2]]$, but this easily follows.
+  In this case $[[A1']] = [[?]]$.  Suppose $[[A1 ~ A2]]$.  Then
+  it suffices to show that $[[? ~ A2]]$, but this easily follows.
   
 \item[]
 \item
@@ -571,25 +571,25 @@ of $[[A1 <= A1']]$.
 
   \noindent
   In this case $[[A1]] = [[A -> B]]$ and $[[A1']] = [[C -> D]]$.  Suppose
-  $[[G |- A1 ~ A2]]$.  Then by inversion for type consistency it must
+  $[[A1 ~ A2]]$.  Then by inversion for type consistency it must
   be the case that either $[[A2]] = [[?]]$, or
-  $[[A2]] = [[A' -> B']]$, $[[G |- A ~ A']]$, and $[[G |- B ~ B']]$.
+  $[[A2]] = [[A' -> B']]$, $[[A ~ A']]$, and $[[B ~ B']]$.
   
-  Consider the former.  Then it suffices to show that $[[G |- A1' ~ ?]]$,
+  Consider the former.  Then it suffices to show that $[[A1' ~ ?]]$,
   but this easily follows.
 
-  Consider the case when $[[A2]] = [[A' -> B']]$, $[[G |- A ~ A']]$, and $[[G |- B ~ B']]$.
-  It suffices to show that $[[G |- (C -> D) ~ (A' -> B')]]$ which follows from
-  $[[G |- A' ~ C]]$ and $[[G |- D ~ B']]$.  Thus, it suffices to show that latter.
+  Consider the case when $[[A2]] = [[A' -> B']]$, $[[A ~ A']]$, and $[[B ~ B']]$.
+  It suffices to show that $[[(C -> D) ~ (A' -> B')]]$ which follows from
+  $[[A' ~ C]]$ and $[[D ~ B']]$.  Thus, it suffices to show that latter.
   By assumption we know the following:
   \begin{center}
     \begin{tabular}{lll}
-      $[[A <= C]]$ and $[[G |- A ~ A']]$\\
-      $[[B <= D]]$ and $[[G |- B ~ B']]$
+      $[[A <= C]]$ and $[[A ~ A']]$\\
+      $[[B <= D]]$ and $[[B ~ B']]$
     \end{tabular}
   \end{center}
-  Now by two applications of the induction hypothesis we obtain $[[G |- C ~ A']]$
-  and $[[G |- D ~ B']]$. By symmetry the former implies $[[G |- A' ~ C]]$ and
+  Now by two applications of the induction hypothesis we obtain $[[C ~ A']]$
+  and $[[D ~ B']]$. By symmetry the former implies $[[A' ~ C]]$ and
   we obtain our result.
 \end{description}  
 \end{proof}
@@ -640,8 +640,8 @@ $[[A <= A']]$.  Thus, choose $[[B]] = [[A']]$ and the result follows.
       {
         \begin{array}{lll}
           [[G |- t1 : C]]            & [[nat(C) = Nat]]\\
-          [[G |- t2 : A1]]          & [[G |- A1 ~ A]]\\
-          [[G, x : Nat |- t3 : A2]] & [[G |- A2 ~ A]]
+          [[G |- t2 : A1]]          & [[A1 ~ A]]\\
+          [[G, x : Nat |- t3 : A2]] & [[A2 ~ A]]
         \end{array}
       }
       }{[[G |- case t1 of 0 -> t2, (succ x) -> t3 : A]]}
@@ -659,11 +659,10 @@ $[[A <= A']]$.  Thus, choose $[[B]] = [[A']]$ and the result follows.
       $[[G', x : Nat |- t3 : A2']]$ for $[[A2 <= A2']]$
     \end{tabular}
   \end{center}
-  By assumption we know that $[[G |- A1 ~ A]]$, $[[G |- A2 ~ A]]$, and $[[G <= G']]$,
-  hence, by Lemma~\ref{lemma:type_cons_ctx_pre} we know $[[G' |- A1 ~ A]]$ and $[[G' |- A2 ~ A]]$.  
+  By assumption we know that $[[A1 ~ A]]$, $[[A2 ~ A]]$, and $[[G <= G']]$.
   By the induction hypothesis we know that $[[A1 <= A1']]$ and $[[A2 <= A2']]$, so
   by using Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision} we may obtain that
-  $[[G' |- A1' ~ A]]$ and $[[G' |- A2' ~ A]]$.  At this point choose $[[B]] = [[A]]$
+  $[[A1' ~ A]]$ and $[[A2' ~ A]]$.  At this point choose $[[B]] = [[A]]$
   and we obtain our result by reapplying the rule.
   
 \item[]
@@ -718,7 +717,7 @@ $[[A <= A']]$.  Thus, choose $[[B]] = [[A']]$ and the result follows.
     \inferrule* [right=$\SGradydruleTXXappName{}$] {
       [[G |- t1 : C && fun(C) = A1 -> B1]]
       \\\\
-          [[G |-t2 : A2 && G |- A2 ~ A1]]
+          [[G |-t2 : A2 && A2 ~ A1]]
     }{[[G |- t1 t2 : B1]]}
   \end{typeProofCase}
   
@@ -733,11 +732,11 @@ $[[A <= A']]$.  Thus, choose $[[B]] = [[A']]$ and the result follows.
       $[[G' |- t2' : A2']]$ for $[[A2 <= A2']]$\\
     \end{tabular}
   \end{center}
-  We know by assumption that $[[G |- A2 ~ A1]]$ and hence $[[G' |- A2 ~ A1]]$ by Lemma~\ref{lemma:type_cons_ctx_pre}.  
+  We know by assumption that $[[A2 ~ A1]]$.  
   Since $[[C <= C']]$ and $[[fun(C) = A1 -> B1]]$, then $[[fun(C') = A1' -> B1']]$
   where $[[A1 <= A1']]$ and $[[B1 <= B1']]$ by Lemma~\ref{lemma:fun_type_pre}.
-  Furthermore, we know $[[G' |- A2 ~ A1]]$ and $[[A2 <= A2']]$ and $[[A1 <= A1']]$, then
-  we know $[[G' |- A2' ~ A1']]$ by Corollary~\ref{corollary:congruence_of_type_consistency_along_type_precision}.
+  Furthermore, we know $[[A2 ~ A1]]$ and $[[A2 <= A2']]$ and $[[A1 <= A1']]$, then
+  we know $[[A2' ~ A1']]$ by Corollary~\ref{corollary:congruence_of_type_consistency_along_type_precision}.
   So choose $[[B]] = [[B1']]$. Then reapply the rule above and the result follows, because
   $[[B1 <= B1']]$.
 \end{description}

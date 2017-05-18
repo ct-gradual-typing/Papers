@@ -57,7 +57,7 @@
   breaklines=false,
   %
   % Default style fors listings
-  basicstyle=\scriptsize,
+  basicstyle=\footnotesize,
   %
   % Position of captions is bottom
   captionpos=b,
@@ -149,23 +149,6 @@
 \renewcommand{\SGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SGradydrulename{#4}}}
 \renewcommand{\SGradydrulename}[1]{#1}
 
-\renewcommand{\SGradydruleSXXReflName}{\text{refl}}
-\renewcommand{\SGradydruleSXXVarName}{\text{var}}
-\renewcommand{\SGradydruleSXXBoxName}{\mathsf{box}}
-\renewcommand{\SGradydruleSXXUnboxName}{\mathsf{unbox}}
-\renewcommand{\SGradydruleSXXUSLName}{?_\mathcal{S}}
-\renewcommand{\SGradydruleSXXTopSLName}{\top_\mathcal{S}}
-\renewcommand{\SGradydruleSXXListName}{\mathsf{List}}
-\renewcommand{\SGradydruleSXXProdName}{\times}
-\renewcommand{\SGradydruleSXXArrowName}{\to}
-\renewcommand{\SGradydruleSXXForallName}{\forall}
-\renewcommand{\SGradydruleSXXTopName}{\text{top}}
-\renewcommand{\SGradydruleSXXNatSLName}{\mathsf{Nat}_\mathcal{S}}
-\renewcommand{\SGradydruleSXXUnitSLName}{\mathsf{Unit}_\mathcal{S}}
-\renewcommand{\SGradydruleSXXListSLName}{\mathsf{List}_\mathcal{S}}
-\renewcommand{\SGradydruleSXXArrowSLName}{\to_\mathcal{S}}
-\renewcommand{\SGradydruleSXXProdSLName}{\times_\mathcal{S}}
-
 \renewcommand{\SGradydruleCXXReflName}{\text{refl}}
 \renewcommand{\SGradydruleCXXBoxName}{\mathsf{box}}
 \renewcommand{\SGradydruleCXXUnboxName}{\mathsf{unbox}}
@@ -182,17 +165,11 @@
 \renewcommand{\SGradydruleTXXunitPName}{\mathsf{Unit}}
 \renewcommand{\SGradydruleTXXzeroPName}{\mathsf{zero}}
 \renewcommand{\SGradydruleTXXsuccName}{\mathsf{succ}}
-\renewcommand{\SGradydruleTXXemptyName}{\text{empty}}
-\renewcommand{\SGradydruleTXXconsName}{\mathsf{List}_i}
-\renewcommand{\SGradydruleTXXlcaseName}{\mathsf{List}_e}
 \renewcommand{\SGradydruleTXXpairName}{\times_i}
 \renewcommand{\SGradydruleTXXfstName}{\times_{e_1}}
 \renewcommand{\SGradydruleTXXsndName}{\times_{e_2}}
 \renewcommand{\SGradydruleTXXlamName}{\to_i}
 \renewcommand{\SGradydruleTXXappName}{\to_e}
-\renewcommand{\SGradydruleTXXLamName}{\forall_i}
-\renewcommand{\SGradydruleTXXtypeAppName}{\forall_e}
-\renewcommand{\SGradydruleTXXSubName}{\text{sub}}
 
 \renewcommand{\SGradydruleciXXvarName}{}
 \renewcommand{\SGradydruleciXXzeroName}{}
@@ -206,15 +183,9 @@
 \renewcommand{\SGradydruleciXXfstName}{}
 \renewcommand{\SGradydruleciXXsndUName}{}
 \renewcommand{\SGradydruleciXXsndName}{}
-\renewcommand{\SGradydruleciXXEmptyName}{}
-\renewcommand{\SGradydruleciXXconsName}{}
-\renewcommand{\SGradydruleciXXlcaseUName}{}
-\renewcommand{\SGradydruleciXXlcaseName}{}
 \renewcommand{\SGradydruleciXXlamName}{}
 \renewcommand{\SGradydruleciXXappUName}{}
 \renewcommand{\SGradydruleciXXappName}{}
-\renewcommand{\SGradydruleciXXLamName}{}
-\renewcommand{\SGradydruleciXXtypeAppName}{}
 
 \renewcommand{\SGradydrulePXXUName}{?}
 \renewcommand{\SGradydrulePXXreflName}{\text{refl}}
@@ -407,13 +378,17 @@
   based on the seminal work of Scott who showed that the untyped
   $\lambda$-calculus can be considered as typed using retracts.
   Following this we define a new simple type system which combines
-  static and dynamic typing called Grady that corresponds to our
-  model.  Then we develop a gradually typed surface language for
-  Grady, and show that it can be translated into Grady such that the
-  gradual guarantee holds.  Finally, to illustrate how this system can
-  be extended with new features we extend both the surface and the
-  core languages with bounded quantification such that the gradual
-  guarantee is preserved.
+  static and dynamic typing called Core Grady that corresponds to our
+  model.  Then we develop a gradually typed surface language for Core
+  Grady, and show that it can be translated into Core Grady such that
+  the gradual guarantee holds. In addition, we show that Siek and
+  Taha's gradual simply typed $\lambda$-calculus can be modeled by the
+  proposed semantics.  Finally, while a gradual type system allows for
+  type casts to be left implicit we show that explicit casts can be
+  derived, and using the explicit casts we show that more programs can
+  be typed.  For example, we define a typed fixpoint operator for the
+  natural numbers that can only be defined due to the explicit casts
+  in the gradual type system.
 \end{abstract}
 
 \maketitle
@@ -448,11 +423,10 @@
 \input{gradual-guarantee-ott}
 % section the_gradual_guarantee (end)
 
-\section{Programming in Gradual Type Systems}
-\label{sec:programming_in_gradual_type_systems}
-
-% section programming_in_gradual_type_systems (end)
-
+\section{Explicit Casts in Gradual Type Systems}
+\label{sec:explicit_casts_in_gradual_type_systems}
+\input{explicit-casts-ott}
+% section explicit_casts_in_gradual_type_systems (end)
 
 \section{Related Work}
 \label{sec:related_work}

@@ -1,0 +1,28 @@
+In this section we introduce something that is seemingly small, but
+very useful when programming in gradual type systems.  First, recall
+the untyped Y combinator defined in Core Grady:
+\begin{lstlisting}[language=Haskell]
+  omega : (? -> ?) -> ?
+  omega = \(x : ? -> ?) -> (x (box (? -> ?) x));
+  
+  fix : (? -> ?) -> ?
+  fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((unbox (? -> ?) x) x));
+\end{lstlisting}
+In Surface Grady we obtain a much cleaner definition without explicit
+casts:
+\begin{lstlisting}[language=Haskell]
+  omega : (? -> ?) -> ?
+  omega = \(x : ? -> ?) -> (x x);
+  
+  fix : (? -> ?) -> ?
+  fix = \(f : ? -> ?) -> omega (\(x:?) -> f (x x));
+\end{lstlisting}
+The previous definition is in the style of programming in the untyped
+$\lambda$-calculus.
+
+Now suppose we added polymorphism to Grady, then we might want to
+define a typed version of $\lstinline{fix}$ like the following:
+\begin{lstlisting}[language=Haskell]
+  fixT : (X -> X) -> X
+  fixT = \(f:X -> X) -> fix (\(y:?)-> (f y)));
+\end{lstlisting}
