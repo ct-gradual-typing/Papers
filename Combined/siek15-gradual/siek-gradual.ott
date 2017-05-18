@@ -31,7 +31,11 @@ grammar
     | H( t )              :: M :: hparens
     {{tex [[t]] }}
     | [| t |]             :: M :: Interp
-    {{tex \interp{[[t]]} }}    
+    {{tex \interp{[[t]]} }}
+    | Box A               :: M :: Box
+    {{tex \mathsf{Box}_{[[A]]} }}
+    | Unbox A               :: M :: Unbox
+    {{tex \mathsf{Unbox}_{[[A]]} }}    
     
   % T :: 'T_' ::=                                
   %   | Unit                ::   :: unit         
@@ -134,7 +138,7 @@ grammar
     | [| G |-S t : A |]    :: M :: interpJdgS
     {{tex \interp{[[G]] \vdash_{\mathsf{S} } [[t]] : [[A]]} }}
     | [| G |-C t : A |]    :: M :: interpJdgC
-    {{tex \interp{[[G]] \vdash_{\mathsf{C} } [[t]] : [[A]]} }}
+    {{tex \interp{[[G]] \vdash [[t]] : [[A]]} }}
     
 defns
   Typing :: '' ::=
@@ -201,7 +205,7 @@ defn
 
 defn
     G |-C t : A :: :: ctype :: 'C_' 
-    {{tex [[G]] \vdash_{\mathsf{C} } [[t]] : [[A]] }} by
+    {{tex [[G]] \vdash [[t]] : [[A]] }} by
     
     x : A elem G
     ------------ :: var
