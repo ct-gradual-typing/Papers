@@ -374,21 +374,25 @@
 
 \begin{abstract} 
   In this paper we introduce a new categorical model based on retracts
-  that combines static and dynamic typing.  This model is initially
-  based on the seminal work of Scott who showed that the untyped
-  $\lambda$-calculus can be considered as typed using retracts.
-  Following this we define a new simple type system which combines
-  static and dynamic typing called Core Grady that corresponds to our
-  model.  Then we develop a gradually typed surface language for Core
-  Grady, and show that it can be translated into Core Grady such that
-  the gradual guarantee holds. In addition, we show that Siek and
-  Taha's gradual simply typed $\lambda$-calculus can be modeled by the
-  proposed semantics.  Finally, while a gradual type system allows for
-  type casts to be left implicit we show that explicit casts can be
-  derived, and using the explicit casts we show that more programs can
-  be typed.  For example, we define a typed fixpoint operator for the
-  natural numbers that can only be defined due to the explicit casts
-  in the gradual type system.
+  that combines static and dynamic typing.  In addition, this model
+  formally connects gradual typing to the seminal work of Scott and
+  Lambek who showed that the untyped $\lambda$-calculus can be
+  considered as typed using retracts, and that the type
+  $\lambda$-calculus can be modeled in a cartesian closed category
+  respectively.  Following this we extract from our model a new simple
+  type system which combines static and dynamic typing called Core
+  Grady.  Then we develop a gradually typed surface language for Core
+  Grady, and show that it can be translated into the core such that
+  the gradual guarantee holds. In addition, to show that the wider
+  area of gradual type systems can benefit from our model we show that
+  Siek and Taha's gradual simply typed $\lambda$-calculus can be
+  modeled by the proposed semantics.  Finally, while a gradual type
+  system allows for type casts to be left implicit we show that
+  explicit casts can be derived in the gradually typed surface
+  language, and using the explicit casts we show that more programs
+  can be typed.  For example, we define a typed fixpoint operator that
+  can only be defined due to the explicit casts in the gradually typed
+  surface language.
 \end{abstract}
 
 \maketitle
