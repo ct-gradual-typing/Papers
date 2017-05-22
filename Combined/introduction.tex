@@ -42,13 +42,15 @@ are a number of programming languages that combine static and dynamic
 typing with implicit casting to and from the unknown type, for
 example, Boo \cite{?}, Bigloo \cite{?,?}, Cecil \cite{?}, extensions
 of Visual Basic .Net, C\#, and Java \cite{?,?}, Professor J \cite{?},
-and many more.  In addition, there are languages that combine static
-and dynamic typing with explicit casting only. Abadi et
-al.~\cite{Abadi:1989} combine dynamic and static typing by adding a
-new type called $\mathsf{Dynamic}$ along with a new case construct for
-pattern matching on types, and Henglein~\cite{Henglein:1994} defines
-the dynamic $\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to
-the simply typed $\lambda$-calculus and then adding primitive casting
+and many more.
+
+In addition, there are languages that combine static and dynamic
+typing with explicit casting only. Abadi et al.~\cite{Abadi:1989}
+combine dynamic and static typing by adding a new type called
+$\mathsf{Dynamic}$ along with a new case construct for pattern
+matching on types, and Henglein~\cite{Henglein:1994} defines the
+dynamic $\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to the
+simply typed $\lambda$-calculus and then adding primitive casting
 operations called tagging and check-and-untag. Please see the
 introduction to Siek et al.~\cite{Siek:2015} for a more complete
 list. However, not every language that combines static and dynamic
@@ -76,15 +78,20 @@ property was first proposed by Siek et al.~\cite{Siek:2015} to set
 apart systems that simply combine dynamic and static typing and
 gradual type systems.
 
-Expanding gradual type systems with new features is an increasingly
-important line of research \cite{Siek:2006,Siek:2007,Garcia:2016,
+Since gradual typing is beginning to influence both industry and
+academia expanding gradual type systems with new features is an
+increasingly important line of research
+\cite{Siek:2006,Siek:2007,Garcia:2016,
   Lehmann:2017:GRT:3009837.3009856,
   Jafery:2017:SUR:3093333.3009865}\footnote{There are even more
   examples in the list of accepted papers for ICFP 2017, for example,
   extending gradual type systems with session types and
-  polymorphism.}.  However, there are no categorical models, in fact,
-not many mathematical models at all to aid in the design of new
-gradual type systems.
+  polymorphism.}.  Therefore, it is of the utmost importance that we
+be able to formally reason about gradual type systems so that to
+insure new designs and extensions are correct.  However, there are no
+categorical models, in fact not many mathematical models at all, to
+aid in the design of new gradual type systems or their extensions, but
+how would gradual typing benefit from a categorical semantics?
 
 One strength and main motivation for giving a categorical model to a
 programming language is that it can expose the fundamental structure
@@ -137,16 +144,13 @@ In this paper we propose a new categorical model of the core casting
 calculus of gradual type systems based on the seminal work of
 Scott~\cite{Sewell:2010} and Lambek~\cite{Lambek:1988}.  Our
 categorical model leads to a new and simple type theory that combines
-dynamic and static typing with explicit casts called Core Grady.  In
-addition, it gives a rigorous framework that can be used while
-developing new gradual type systems or extensions of existing gradual
-type systems.
-
-In addition, to show that Core Grady can be used as the core casting
-calculus of gradual type systems we develop a gradually typed surface
-language called Surface Grady that translates to Core Grady using a
-cast insertion algorithm.  We then show that the gradual guarantee
-holds for Surface and Core Grady.
+dynamic and static typing with explicit casts called Core Grady.
+Furthermore, it is has a less complex language design compared to
+existing core languages for gradual typing, for example, Siek and
+Taha's system \cite{Siek:2007}, because it does not depend on type
+consistency where theirs does.  Our new model also gives a rigorous
+framework that can be used while developing new gradual type systems
+or extensions of existing gradual type systems.
 
 \subsection{Overview}
 \label{subsec:main_ideas}
