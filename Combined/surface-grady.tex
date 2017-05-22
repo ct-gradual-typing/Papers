@@ -1,41 +1,5 @@
-Programming in dynamic style requires the ability to implicitly cast
-data between types during eliminations. For example, $[[(\x:?.(succ
-    (succ x))) 3]]$ should type check with type $[[Nat]]$ even though
-$[[3]]$ has type $[[Nat]]$ and $[[x]]$ has type $[[?]]$. Now not every
-cast should work, for example, $[[(\x:Bool.t) 3]]$ should not type check,
-because it is inconsistent to allow different atomic types to be cast
-between each other.  Therefore, we must be able to decide when casts
-are consistent and which are not.
-
-Gradual type systems are the combination of static and dynamic typing
-with the ability to implicitly cast data between consistent types in
-such a way that the gradual guarantee is satisfied.  A gradually typed
-programming language consists of two languages: a core language and a
-surface language.  The core language contains explicit casts and an
-operational semantics, while the surface language is the gradual type
-system that allows casts to be left implicit.  Programs are written
-and then translated into the core language by inserting the explicit
-casts.  The gradual guarantee states the following:
-\begin{itemize}
-\item Adding or removing casts to/from any well-typed surface language
-  program remains typeable at a potentially less precise type.
-\item Adding explicit casts to a terminating well-typed core language
-  program also terminates at a related value, adding explicit casts to
-  a diverging well-typed core language program diverges, and removing
-  explicit casts from a terminating or diverging well-type core
-  language programs either terminates, diverges, or raises a dynamic
-  type error.
-\end{itemize}
-Briefly, the gradual guarantee states that any well-typed program can
-slide between being more statically typed or being more dynamically
-typed by inserting or removing casts without changing the meaning or
-the behavior of the program. The formal statement of the gradual
-guarantee is given in Section~\ref{sec:the_gradual_guarantee}.  This
-property was first proposed by Siek et al.~\cite{Siek:2015} to set
-apart systems that simply combine dynamic and static typing and
-gradual type systems.
-
-Now we introduce the gradually typed surface language Surface Grady.  
+In this section we introduce the gradually typed surface language
+Surface Grady.
 \begin{figure}
   \scriptsize
   \begin{mdframed}

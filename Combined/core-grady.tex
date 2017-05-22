@@ -195,7 +195,7 @@ Just as Abadi et al.~\cite{Abadi:1989} argue it is quite useful to
 have access to the untyped $\lambda$-calculus.  We give some example
 Core Grady programs utilizing this powerful feature.  We have a full
 implementation of every language in this paper
-available\footnote{Please see
+available\footnote{\label{fn:impl} Please see
   \url{https://ct-gradual-typing.github.io/Grady/} for access to the
   implementation as well as full documentation on how to install and
   use it.}.  All examples in this section can be typed and ran in the
@@ -214,25 +214,19 @@ $\lambda$-calculus.  Its definition in Core Grady is as follows:
   fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((unbox (? -> ?) x) x));
 \end{lstlisting}
 Using $\lstinline{fix}$ we can define the usual arithmetic operations
-in Core Grady, but we use a typed version of $\lstinline{fix}$.
+in Core Grady, but we use a typed version of $\lstinline{fix}$ -- we
+have developed many more examples in Core Grady please see the
+implementation (Footnote~\ref{fn:impl}).
 \begin{lstlisting}[language=Haskell]
   fixNat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
   fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat)) ->
      unbox{Nat -> Nat} (fix (\(y:?)->box{Nat -> Nat} 
                                (f (unbox{Nat -> Nat} y))));
 
-  pred : Nat -> Nat
-  pred = \(n:Nat) -> case n of 0 -> 0, (succ n') -> n';
-
   add : Nat -> Nat -> Nat
   add = \(m:Nat) -> fixNat
        (\(r:Nat -> Nat) ->
         \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
-
-  sub : Nat -> Nat -> Nat
-  sub = \(m:Nat) -> fixNat
-       (\(r:Nat -> Nat) ->
-        \(n:Nat) -> case n of 0 -> m, (succ n') -> pred (r n'));        
         
   mult : Nat -> Nat -> Nat
   mult = \(m:Nat) -> fixNat

@@ -122,7 +122,7 @@ Definition~\ref{def:interpretation-of-gradual-types}.
   Corollary~\ref{corollary:type_consist_coro}, and inversion for
   typing whose definition we omit in the interest of space.
 
-  We show only two of the most interesting cases here, but please see
+  We show only one of the most interesting cases here, but please see
   Appendix~\ref{subsec:CGSTLC-proof_of_interpretation_of_evaluation} for the
   complete proof.
   \begin{description}
@@ -137,7 +137,7 @@ Definition~\ref{def:interpretation-of-gradual-types}.
   By inversion for typing the typing derivation for $[[v : h({R} =>
       {?}) => {R}]]$ is as follows:
   \begin{center}
-    \begin{math}
+    \begin{math} \small
       $$\mprset{flushleft}
       \inferrule* [right=] {
         $$\mprset{flushleft}
@@ -153,56 +153,56 @@ Definition~\ref{def:interpretation-of-gradual-types}.
   $[[ [| v : h({R} => {?}) => {R} |] ]] = [[ [| v |] ]];[[Box R]];[[Unbox R]] = [[ [| v |] ]]$,
   because $[[ Box R ]]$ and $[[ Unbox R ]]$ form a retract (Lemma~\ref{lemma:casting_morphisms}).
 
-\item[] 
-\item
-  \begin{typeProofCase}    
-    \inferrule* [flushleft,right=$\to_\Rightarrow$] {
-      [[A]] = [[(A1 -> B1)]] \\ [[B]] = [[(A2 -> B2)]]
-    }{[[H((v1 : {A} => {B}) v2) ~> H(H(v1 (v2 : {A2} => {A1})) : {B1} => {B2})]]}
-  \end{typeProofCase}
+%% \item[] 
+%% \item
+%%   \begin{typeProofCase}    
+%%     \inferrule* [flushleft,right=$\to_\Rightarrow$] {
+%%       [[A]] = [[(A1 -> B1)]] \\ [[B]] = [[(A2 -> B2)]]
+%%     }{[[H((v1 : {A} => {B}) v2) ~> H(H(v1 (v2 : {A2} => {A1})) : {B1} => {B2})]]}
+%%   \end{typeProofCase}
 
-  \ \\
-  \noindent
-  First, by inversion for typing we know $[[G |-C v1 : A1 -> B1]]$, $[[G |-C v2 : A2]]$, and $[[(A1 -> B1) ~ (A2 -> B2)]]$.
-  Then by the induction hypothesis and Corollary~\ref{corollary:type_consist_coro}
-  we have the following morphisms:
-  \[ \small
-  \begin{array}{lll}
-    [[ [| v1 |] ]] : [[ [| G |] --> (A1 -> B1)]]\\
-    [[ [| v2 |] ]] : [[ [| G |] --> A2]]\\
-    c_1 : [[ A2 --> A1 ]]\\
-    c_2 : [[ B1 --> B2 ]]\\
-  \end{array}
-  \]
-  \noindent
-  We must show the following:
-  \[ \small
-  \begin{array}{llllll}
-    [[ [| H((v1 : {(A1 -> B1)} => {(A2 -> B2)}) v2) |] ]]\\
-    = \langle [[ [| v1 |] ]];(c_1 \rightarrow c_2),[[ [| v_2 |] ]] \rangle;\app_{[[A2]],[[B2]]} \\
-    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]};c_2
-  \end{array}
-  \]
-  \noindent
-  The previous equation holds as follows where we give properties in
-  between the equations for the reason why they hold:
-  \[ \small
-  \begin{array}{lllllllll}
-    \langle [[ [| v1 |] ]],[[ [| v_2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]};c_2 \\
-    \text{(Cartesian Products)}\\
-    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\id_{[[A1 -> B1]]} \times c_1);\app_{[[A1]],[[B1]]};c_2 \\
-    \text{(Naturality)}\\
-    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\id_{[[A1 -> B1]]} \times c_1);\\
-      \,\,\,\,\,\,\,\,\,\,((\id_{[[A1]]} \to c_2) \times \id_{[[A1]]});\app_{[[A1]],[[B2]]}\\
-    \text{(Closure)}\\
-    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\curry{(\id_{[[A1 -> B1]]} \times c_1);\\      
-      \,\,\,\,\,\,\,\,\,\,((\id_{[[A1]]} \to c_2) \times \id_{[[A1]]});\app_{[[A1]],[[B2]]}} \times \id_{[[A2]]});\app_{[[A2]],[[B2]]}\\
-    \text{(Closure)}\\
-    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;((c_1 \to c_2) \times \id_{[[A2]]});\app_{[[A2]],[[B2]]}\\
-    \text{(Cartesian Products)}\\
-    = \langle [[ [| v1 |] ]];(c_1 \to c_2),[[ [| v_2 |] ]];\id_{[[A2]]} \rangle;\app_{[[A2]],[[B2]]} \\
-    = \langle [[ [| v1 |] ]];(c_1 \to c_2),[[ [| v_2 |] ]] \rangle;\app_{[[A2]],[[B2]]}\\
-  \end{array}
-  \]
-  \end{description}
+%%   \ \\
+%%   \noindent
+%%   First, by inversion for typing we know $[[G |-C v1 : A1 -> B1]]$, $[[G |-C v2 : A2]]$, and $[[(A1 -> B1) ~ (A2 -> B2)]]$.
+%%   Then by the induction hypothesis and Corollary~\ref{corollary:type_consist_coro}
+%%   we have the following morphisms:
+%%   \[ \small
+%%   \begin{array}{lll}
+%%     [[ [| v1 |] ]] : [[ [| G |] --> (A1 -> B1)]]\\
+%%     [[ [| v2 |] ]] : [[ [| G |] --> A2]]\\
+%%     c_1 : [[ A2 --> A1 ]]\\
+%%     c_2 : [[ B1 --> B2 ]]\\
+%%   \end{array}
+%%   \]
+%%   \noindent
+%%   We must show the following:
+%%   \[ \small
+%%   \begin{array}{llllll}
+%%     [[ [| H((v1 : {(A1 -> B1)} => {(A2 -> B2)}) v2) |] ]]\\
+%%     = \langle [[ [| v1 |] ]];(c_1 \rightarrow c_2),[[ [| v_2 |] ]] \rangle;\app_{[[A2]],[[B2]]} \\
+%%     = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]};c_2
+%%   \end{array}
+%%   \]
+%%   \noindent
+%%   The previous equation holds as follows where we give properties in
+%%   between the equations for the reason why they hold:
+%%   \[ \small
+%%   \begin{array}{lllllllll}
+%%     \langle [[ [| v1 |] ]],[[ [| v_2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]};c_2 \\
+%%     \text{(Cartesian Products)}\\
+%%     = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\id_{[[A1 -> B1]]} \times c_1);\app_{[[A1]],[[B1]]};c_2 \\
+%%     \text{(Naturality)}\\
+%%     = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\id_{[[A1 -> B1]]} \times c_1);\\
+%%       \,\,\,\,\,\,\,\,\,\,((\id_{[[A1]]} \to c_2) \times \id_{[[A1]]});\app_{[[A1]],[[B2]]}\\
+%%     \text{(Closure)}\\
+%%     = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\curry{(\id_{[[A1 -> B1]]} \times c_1);\\      
+%%       \,\,\,\,\,\,\,\,\,\,((\id_{[[A1]]} \to c_2) \times \id_{[[A1]]});\app_{[[A1]],[[B2]]}} \times \id_{[[A2]]});\app_{[[A2]],[[B2]]}\\
+%%     \text{(Closure)}\\
+%%     = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;((c_1 \to c_2) \times \id_{[[A2]]});\app_{[[A2]],[[B2]]}\\
+%%     \text{(Cartesian Products)}\\
+%%     = \langle [[ [| v1 |] ]];(c_1 \to c_2),[[ [| v_2 |] ]];\id_{[[A2]]} \rangle;\app_{[[A2]],[[B2]]} \\
+%%     = \langle [[ [| v1 |] ]];(c_1 \to c_2),[[ [| v_2 |] ]] \rangle;\app_{[[A2]],[[B2]]}\\
+%%   \end{array}
+%%   \]
+   \end{description}
 \end{proof}

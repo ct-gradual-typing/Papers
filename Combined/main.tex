@@ -399,7 +399,7 @@
 
 \section{Introduction}
 \label{sec:introduction}
-%% \input{introduction-ott}
+\input{introduction-ott}
 % section introduction (end)
 
 \section{The Categorical Model}
@@ -434,7 +434,48 @@
 
 \section{Related Work}
 \label{sec:related_work}
+We now give a brief summary of related
+work. Each of the articles discussed below can be consulted for
+further references.
+%% - Combing static and dynamic typing
+%% - Gradual Typing
+%%    - Polymorphism
+\begin{itemize}
+\item Abadi et al.~\cite{Abadi:1989} combine dynamic and static typing
+  by adding a new type called $\mathsf{Dynamic}$ along with a new case
+  construct for pattern matching on types.  We do not add such a case
+  construct, and as a result, show that we can obtain a surprising
+  amount of expressivity without it.  They also provide denotational
+  models.
 
+\item Henglein~\cite{Henglein:1994} defines the dynamic
+  $\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to the simply
+  typed $\lambda$-calculus and then adding primitive casting
+  operations called tagging and check-and-untag.  These new operations
+  tag type constructors with their types.  Then untagging checks to
+  make sure the target tag matches the source tag, and if not, returns
+  a dynamic type error.  These operations can be used to build casting
+  coercions which are very similar to our casting morphisms. We can
+  also define $[[split]]$, $[[squash]]$, $[[box]]$, and $[[unbox]]$ in
+  terms of Henglein's casting coercions.  We consider this paper as a
+  clarification of Henglein's system.  His core casting calculus can
+  be interpreted into our setting where we require retracts instead of
+  full isomorphisms.
+
+\item As we mentioned in the introduction Siek and
+  Taha~\cite{Siek:2006} were the first to define gradual typing
+  especially for functional languages.  We show that their language
+  can be given a straightforward categorical model in cartesian closed
+  categories.  Since their original paper introducing gradual types
+  lots of languages have adopted it, but the term ``gradual typing''
+  started to become a catch all phrase for any language combining
+  dynamic and static typing.  As a result of this Siek et
+  al.~\cite{Siek:2015} later refine what it means for a language to
+  support gradual typing by specifying the necessary metatheoretic
+  properties a gradual type system must satisfy called the gradual
+  guarantee.
+
+\end{itemize}
 % section related_work (end)
 
 

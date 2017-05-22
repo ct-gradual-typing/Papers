@@ -1,15 +1,9 @@
 In this section we introduce something that is seemingly small, but
-very useful when programming in gradual type systems.  First, recall
-the untyped Y combinator defined in Core Grady:
-\begin{lstlisting}[language=Haskell]
-  omega : (? -> ?) -> ?
-  omega = \(x : ? -> ?) -> (x (box (? -> ?) x));
-  
-  fix : (? -> ?) -> ?
-  fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((unbox (? -> ?) x) x));
-\end{lstlisting}
-In Surface Grady we obtain a much cleaner definition without explicit
-casts:
+very useful when programming in gradual type systems.  In addition,
+the authors are not aware of this being pointed out in the literature.
+
+First, the untyped Y combinator can be defined in Surface Grady as
+follows:
 \begin{lstlisting}[language=Haskell]
   omega : (? -> ?) -> ?
   omega = \(x : ? -> ?) -> (x x);
@@ -17,8 +11,8 @@ casts:
   fix : (? -> ?) -> ?
   fix = \(f : ? -> ?) -> omega (\(x:?) -> f (x x));
 \end{lstlisting}
-The previous definition is in the style of programming in the untyped
-$\lambda$-calculus.
+The previous definition is a lot cleaner without the explicit casts,
+and in the style of programming in the untyped $\lambda$-calculus.
 
 Now suppose we added polymorphism -- in Haskell style -- to Grady,
 then we might want to define a typed version of $\lstinline{fix}$ like
@@ -35,7 +29,7 @@ implicitly cast.
 We can better understand the issue by examining the function
 application typing rule:
 \begin{center}
-  \begin{math}
+  \begin{math} \small
     \inferrule* [flushleft,right=$\to_e$] {
       [[G |- t1 : C]] \\ \,\,\,[[A2 ~ A1]]\\\\    
       [[G |-t2 : A2]] \\ [[fun(C) = A1 -> B1]]
