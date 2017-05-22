@@ -142,15 +142,18 @@ new language designs and features can be hugely beneficial.
 
 In this paper we propose a new categorical model of the core casting
 calculus of gradual type systems based on the seminal work of
-Scott~\cite{Sewell:2010} and Lambek~\cite{Lambek:1988}.  Our
-categorical model leads to a new and simple type theory that combines
-dynamic and static typing with explicit casts called Core Grady.
-Furthermore, it is has a less complex language design compared to
-existing core languages for gradual typing, for example, Siek and
-Taha's system \cite{Siek:2007}, because it does not depend on type
-consistency where theirs does.  Our new model also gives a rigorous
-framework that can be used while developing new gradual type systems
-or extensions of existing gradual type systems.
+Scott~\cite{Sewell:2010} and Lambek~\cite{Lambek:1988}, thus merging
+the categorical model of statically typed $\lambda$-calculus with the
+categorical model the untyped $\lambda$-calculus into a categorical
+model that combines the two.  Our categorical model leads to a new and
+simple type theory that combines dynamic and static typing with
+explicit casts called Core Grady.  Furthermore, it is has a less
+complex language design compared to existing core languages for
+gradual typing, for example, Siek and Taha's system \cite{Siek:2007},
+because it does not depend on type consistency where theirs does.  Our
+new model also gives a rigorous framework that can be used while
+developing new gradual type systems or extensions of existing gradual
+type systems.
 
 \subsection{Overview}
 \label{subsec:main_ideas}
@@ -162,7 +165,7 @@ the unknown type, $[[?]]$, and two functions $[[squash]] : [[(? -> ?)
 $\lambda$-calculus with the natural numbers.  Furthermore, we require
 that for any program, $[[t]]$, of type $[[? -> ?]]$, we have $[[split
     (squash t)]] \rightsquigarrow t$.  Categorically $[[split]]$ and
-$[[squash]]$ define was is called a retract.  Scott \cite{Scott:1980}
+$[[squash]]$ define what is called a retract.  Scott \cite{Scott:1980}
 showed that this is enough to encode the untyped $\lambda$-calculus
 into a statically typed setting:
 \begin{center}
