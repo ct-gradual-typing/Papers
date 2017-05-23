@@ -144,10 +144,12 @@ evaluation strategy.
 Computing with terms is achieved by defining a reduction relation
 denoted by $[[t1 ~> t2]]$ and is read as ``the term $[[t1]]$ reduces
 (or evaluates) in one step to the term $[[t2]]$.''  The reduction
-relation is defined in Figure~\ref{fig:reduction-core-grady}.  Core
-Grady's reduction strategy is an extended version of call-by-name.  It
-is specified using evaluation contexts that are denoted by $[[EC]]$
-and are defined in Figure~\ref{fig:syntax-core-grady}.
+relation is defined in Figure~\ref{fig:reduction-core-grady}, and we
+denote the least reflexive and transitive closure of
+$\rightsquigarrow$ as $\rightsquigarrow^*$.  Core Grady's reduction
+strategy is an extended version of call-by-name.  It is specified
+using evaluation contexts that are denoted by $[[EC]]$ and are defined
+in Figure~\ref{fig:syntax-core-grady}.
 
 An evaluation contexts is essentially a term with a hole, denoted by
 $[[HL]]$, in it.  The hole can be filled (or plugged) with a term and

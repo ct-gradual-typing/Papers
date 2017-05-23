@@ -4,12 +4,12 @@ Lambek~\cite{Lambek:1980} showed that the typed $\lambda$-calculus can
 be modeled by a cartesian closed category.  In the same volume as
 Lambek, Scott essentially showed that the untyped $\lambda$-calculus
 is actually typed.  That is, typed theories are more fundamental than
-untyped ones.  He accomplished this by adding a single type, $[[?]]$,
-and two functions $[[squash : (? -> ?) -> ?]]$ and $[[split : ? -> (?
-    -> ?)]]$, such that, $[[squash]];[[split]] = \id : [[(? -> ?) ->
-    (?  -> ?)]]$, to a cartesian closed category. At this point he was
-able to translate the untyped $\lambda$-calculus into this unityped
-one.
+untyped ones.  He accomplished this by adding a single object -- or
+type -- $[[?]]$, and two morphisms $[[squash : (? -> ?) -> ?]]$ and
+$[[split : ? -> (?  -> ?)]]$, such that, $[[squash]];[[split]] = \id :
+[[(? -> ?) -> (?  -> ?)]]$, to a cartesian closed category. At this
+point he was able to translate the untyped $\lambda$-calculus into
+this unityped one.
 
 Categorically, Scott modeled $[[split]]$ and $[[squash]]$ as the
 morphisms in a retract within a cartesian closed category -- the same
@@ -88,7 +88,7 @@ At this point we can model both static and unknown types with natural
 numbers in a cartesian closed category, but we do not have any way of
 moving typed data into the untyped part and vice versa to obtain
 dynamic typing.  To accomplish this we add two new morphisms $[[box C
-    : C --> ?]]$ and $[[unbox C : ?  --> C]]$ such that for each
+    : C --> ?]]$ and $[[unbox C : ?  --> C]]$ such that each
 atomic type, $[[C]]$, is a retract of $[[?]]$.  This enforces that the
 only time we can cast $[[?]]$ to another type is if it were boxed up
 in the first place.  Combining all of these insights we obtain the
@@ -98,7 +98,7 @@ complete categorical model.
   A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?,
   \T,\split,$\\ $ \squash, \bx, \unbox, \error)$, where $\cat{T}$ is a
   discrete category with at least two objects $[[Nat]]$ and
-  $[[Unit]]$, $\cat{C}$ is a cartesian closed category with a NRNO,
+  $[[Unit]]$, $\cat{C}$ is a cartesian closed category with an NRNO,
   $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model, $\T :
   \cat{T} \mto \cat{C}$ is an embedding -- a full and faithful functor
   that is injective on objects -- and for every object $A$ of
@@ -418,7 +418,7 @@ Getting back the typed information is harder.  There is no nice
 functor from $\cat{U}$ to $\cat{C}$, because we need more information.
 However, given a type $[[A]]$ we can always obtain a casting morphism
 from $[[?]]$ to $[[A]]$ by $[[(lsplit (skeleton A))]];([[lunbox A]]) :
-[[? --> A]]$.  Finally, we have the following result.
+[[? --> A]]$.  Therefore, we have the following result.
 \begin{lemma}[Casting Morphisms to $[[?]]$]
   \label{lemma:casting_morphisms}
   Suppose $(\cat{T}, \cat{C}, ?, \T, $ $\split, \squash, \bx, \unbox, \error)$ is

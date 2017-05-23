@@ -1,0 +1,172 @@
+This proof holds by induction on the form of $[[t1 ~> t2]]$, but must
+appeal to inversion for typing.  We only show the cases for the
+casting rules, because the others are well-known to hold within any
+cartesian closed category; see \cite{Lambek:1980} or
+\cite{Crole:1994}.  We will routinely use
+Theorem~\ref{thm:interpretation_of_typing} throughout this proof
+without mention.
+
+\begin{description}
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\GSiekdrulerdAXXcastIdName{}$] {
+        \,
+      }{[[v : {T} => {T} ~> v]]}
+    \end{math}
+  \end{center}
+  We know by assumption that $[[G |-C v : T]]$, in addition, we always know
+  that $[[T ~ T]]$.  Thus, We have a morphism $[[ [| v : {T} => {T} |] ]] = [[ [| v |] ]] ; c_1 : [[ [| G |] --> T]]$
+  based on the interpretation of typing. It must be the case that
+  $c_1 = \id_{[[T]]} : [[T --> T]]$ by Corollary~\ref{corollary:type_consist_coro}.
+  Therefore, $[[ [| v : {T} => {T} |] ]] = [[ [| v |] ]] ; c_1  = [[ [| v |] ]] : [[ [| G |] --> T]]$.
+
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\GSiekdrulerdAXXcastUName{}$] {
+        \,
+      }{[[v : {?} => {?} ~> v]]}
+    \end{math}
+  \end{center}
+  Similar to the previous case.
+
+\item[]
+  \item 
+  \begin{typeProofCase}
+    \GSiekdrulerdAXXsucceed{}
+  \end{typeProofCase}
+
+  \ \\
+  \noindent
+  By inversion for typing the typing derivation for $[[v : h({R} =>
+      {?}) => {R}]]$ is as follows:
+  \begin{center}
+    \begin{math} \small
+      $$\mprset{flushleft}
+      \inferrule* [right=] {
+        $$\mprset{flushleft}
+        \inferrule* [right=] {
+          [[G |-C v : R && R ~ ?]]
+        }{[[G |-C v : {R} => {?} : ?]]} \quad [[? ~ R]]
+      }{[[G |-C v : h({R} => {?}) => {R} : R]]}
+    \end{math}
+  \end{center}
+  By the induction hypothesis we have the morphism $[[ [| v |] ]] : [[ [| G |] --> R]]$.  
+  As we can see we will first use $[[ Box R ]]$ and then $[[ Unbox R ]]$ based on
+  Corollary~\ref{corollary:type_consist_coro}.  Thus,
+  $[[ [| v : h({R} => {?}) => {R} |] ]] = [[ [| v |] ]];[[Box R]];[[Unbox R]] = [[ [| v |] ]]$,
+  because $[[ Box R ]]$ and $[[ Unbox R ]]$ form a retract (Lemma~\ref{lemma:casting_morphisms}).
+
+\item[] 
+\item
+  \begin{typeProofCase}    
+    \inferrule* [flushleft,right=$\to_\Rightarrow$] {
+      [[A]] = [[(A1 -> B1)]] \\ [[B]] = [[(A2 -> B2)]]
+    }{[[H((v1 : {A} => {B}) v2) ~> H(H(v1 (v2 : {A2} => {A1})) : {B1} => {B2})]]}
+  \end{typeProofCase}
+
+  \ \\
+  \noindent
+  First, by inversion for typing we know $[[G |-C v1 : A1 -> B1]]$, $[[G |-C v2 : A2]]$, and $[[(A1 -> B1) ~ (A2 -> B2)]]$.
+  Then by the induction hypothesis and Corollary~\ref{corollary:type_consist_coro}
+  we have the following morphisms:
+  \[ \small
+  \begin{array}{lll}
+    [[ [| v1 |] ]] : [[ [| G |] --> (A1 -> B1)]]\\
+    [[ [| v2 |] ]] : [[ [| G |] --> A2]]\\
+    c_1 : [[ A2 --> A1 ]]\\
+    c_2 : [[ B1 --> B2 ]]\\
+  \end{array}
+  \]
+  \noindent
+  We must show the following:
+  \[ \small
+  \begin{array}{llllll}
+    [[ [| H((v1 : {(A1 -> B1)} => {(A2 -> B2)}) v2) |] ]]\\
+    = \langle [[ [| v1 |] ]];(c_1 \rightarrow c_2),[[ [| v_2 |] ]] \rangle;\app_{[[A2]],[[B2]]} \\
+    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]};c_2
+  \end{array}
+  \]
+  \noindent
+  The previous equation holds as follows where we give properties in
+  between the equations for the reason why they hold:
+  \[ \small
+  \begin{array}{lllllllll}
+    \langle [[ [| v1 |] ]],[[ [| v_2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]};c_2 \\
+    \text{(Cartesian Products)}\\
+    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\id_{[[A1 -> B1]]} \times c_1);\app_{[[A1]],[[B1]]};c_2 \\
+    \text{(Naturality)}\\
+    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\id_{[[A1 -> B1]]} \times c_1);\\
+      \,\,\,\,\,\,\,\,\,\,((\id_{[[A1]]} \to c_2) \times \id_{[[A1]]});\app_{[[A1]],[[B2]]}\\
+    \text{(Closure)}\\
+    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;(\curry{(\id_{[[A1 -> B1]]} \times c_1);\\      
+      \,\,\,\,\,\,\,\,\,\,((\id_{[[A1]]} \to c_2) \times \id_{[[A1]]});\app_{[[A1]],[[B2]]}} \times \id_{[[A2]]});\app_{[[A2]],[[B2]]}\\
+    \text{(Closure)}\\
+    = \langle [[ [| v1 |] ]],[[ [| v_2 |] ]] \rangle;((c_1 \to c_2) \times \id_{[[A2]]});\app_{[[A2]],[[B2]]}\\
+    \text{(Cartesian Products)}\\
+    = \langle [[ [| v1 |] ]];(c_1 \to c_2),[[ [| v_2 |] ]];\id_{[[A2]]} \rangle;\app_{[[A2]],[[B2]]} \\
+    = \langle [[ [| v1 |] ]];(c_1 \to c_2),[[ [| v_2 |] ]] \rangle;\app_{[[A2]],[[B2]]}\\
+  \end{array}
+  \]
+
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\GSiekdrulerdAXXcastGroundName{}$] {
+        [[(A ~ R && A != R) && A != ?]]
+      }{[[v : {A} => {?} ~> v : h({A} => {R}) => {?}]]}
+    \end{math}
+  \end{center}
+  We know by assumption that $[[G |-C v : A]]$.
+  By the induction hypothesis and Lemma~\ref{lemma:type_consistency_in_the_model}
+  we have the following morphisms:
+  \[
+  \begin{array}{lll}
+    [[ [| v |] ]] : [[ [| G |] --> A ]]\\
+    c_1 : [[ A --> R ]]\\
+  \end{array}
+  \]
+  We must show the following:
+  \[
+  \begin{array}{lll}
+    [[ [| v : {A} => {?} |] ]]
+  & = & [[ [| v |] ]] ; [[Box A]]\\
+  & = & [[ [| v |] ]] ; c_1 ; [[Box R]]\\
+  \end{array}
+  \]
+  However, notice that given the constraints above, it must be the case
+  that $[[R]] = [[T]]$ or $[[R]] = [[? -> ?]]$.  If the former is true,
+  then $[[A]] = [[T]]$ by the definition of consistency and the constraints above,
+  but this implies that $c_1 = \id_T$ by Corollary~\ref{corollary:type_consist_coro},
+  and the result follows.  However, consider the case when $[[R]] = [[? -> ?]]$.  Then
+  given the constraints above $[[A]] = [[A1 -> A2]]$.  Thus, $c_1 = ([[unbox A1]] \to [[box A2]])$
+  by Corollary~\ref{corollary:type_consist_coro}.  In addition, it must be the case that
+  $[[Box R]] = [[squash (? -> ?)]]$ by the definition of $[[Box R]]$, but by inspection of the
+  definition of $[[Box A]]$ we have the following:
+  \[
+    \begin{array}{lll}
+      [[Box A]] & = & [[Box (A1 -> A2)]] \\
+      & = & ([[unbox A1]] \to [[box A2]]);[[squash (? -> ?)]]\\
+      & = & c_1;[[squash (? -> ?)]]\\
+      & = & c_1;[[Box R]]
+    \end{array}
+  \]
+  Thus, we obtain our result.
+
+\item[] Case.\ \\ 
+  \begin{center}
+    \begin{math}
+      $$\mprset{flushleft}
+      \inferrule* [right=$\GSiekdrulerdAXXcastExpandName{}$] {
+        [[(A ~ R && A != R) && A != ?]]
+      }{[[v : {?} => {A} ~> v : h({?} => {R}) => {A}]]}
+    \end{math}
+  \end{center}
+  This case is similar to the previous case, except that the interpretation uses
+  $[[Unbox A]]$ and $[[Unbox R]]$ instead of $[[Box A]]$ and $[[Box R]]$.
+
+\end{description}

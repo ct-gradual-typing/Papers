@@ -35,7 +35,15 @@ grammar
     | Box A               :: M :: Box
     {{tex \mathsf{Box}_{[[A]]} }}
     | Unbox A               :: M :: Unbox
-    {{tex \mathsf{Unbox}_{[[A]]} }}    
+    {{tex \mathsf{Unbox}_{[[A]]} }}
+    | box A               :: M :: box
+    {{tex \mathsf{box}_{[[A]]} }}
+    | unbox A               :: M :: unbox
+    {{tex \mathsf{unbox}_{[[A]]} }}
+    | split A               :: M :: split
+    {{tex \mathsf{split}_{[[A]]} }}
+    | squash A               :: M :: squash
+    {{tex \mathsf{squash}_{[[A]]} }}        
     
   % T :: 'T_' ::=                                
   %   | Unit                ::   :: unit         

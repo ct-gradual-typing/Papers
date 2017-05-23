@@ -37,26 +37,7 @@ with a binary relation called \emph{type consistency} which determines
 which types are castable between each other, e.g. every type will be
 consistent with the unknown type.
 
-Just as Siek et al. report \cite{Siek:2006,Siek:2007,Siek:2015} there
-are a number of programming languages that combine static and dynamic
-typing with implicit casting to and from the unknown type, for
-example, Boo \cite{?}, Bigloo \cite{?,?}, Cecil \cite{?}, extensions
-of Visual Basic .Net, C\#, and Java \cite{?,?}, Professor J \cite{?},
-and many more.
-
-In addition, there are languages that combine static and dynamic
-typing with explicit casting only. Abadi et al.~\cite{Abadi:1989}
-combine dynamic and static typing by adding a new type called
-$\mathsf{Dynamic}$ along with a new case construct for pattern
-matching on types, and Henglein~\cite{Henglein:1994} defines the
-dynamic $\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to the
-simply typed $\lambda$-calculus and then adding primitive casting
-operations called tagging and check-and-untag. Please see the
-introduction to Siek et al.~\cite{Siek:2015} for a more complete
-list. However, not every language that combines static and dynamic
-typing corresponds to a gradual type system.
-
-Every gradual type system must satisfy the metatheoretic property
+Gradual type systems must satisfy the metatheoretic property
 called the \emph{gradual guarantee}.  The gradual guarantee states
 that any well-typed program can slide between being more statically
 typed or being more dynamically typed by inserting or removing casts
@@ -66,8 +47,26 @@ Section~\ref{sec:the_gradual_guarantee}.  This property was first
 proposed by Siek et al.~\cite{Siek:2015} to set apart systems that
 simply combine dynamic and static typing and gradual type systems.
 
-Since gradual typing is beginning to influence both industry and
-academia expanding gradual type systems with new features is an
+Just as Siek et al. report \cite{Siek:2006,Siek:2007,Siek:2015} there
+are a number of programming languages that combine static and dynamic
+typing with implicit casting to and from the unknown type, for
+example, Boo \cite{Oliveira:2005}, Bigloo
+\cite{Bres:2004,Serrano:2002}, Cecil \cite{Chambers:2004}, Visual
+Basic .Net, C\# \cite{Meijer:2004}, Professor J
+\cite{Gray:2005:FIT:1103845.1094830}, and many more.  In addition,
+there are languages that combine static and dynamic typing with
+explicit casting only. Abadi et al.~\cite{Abadi:1989} combine dynamic
+and static typing by adding a new type called $\mathsf{Dynamic}$ along
+with a new case construct for pattern matching on types, and
+Henglein~\cite{Henglein:1994} defines the dynamic $\lambda$-calculus
+by adding a new type $\mathsf{Dyn}$ to the simply typed
+$\lambda$-calculus and then adding primitive casting operations called
+tagging and check-and-untag. Please see the introduction to Siek et
+al.~\cite{Siek:2015} for a more complete list.
+
+As we can see the combination of dynamic and static typing, as well as
+gradual type systems, are important to both industry and academia.
+Thus, expanding gradual type systems with new features is an
 increasingly important line of research
 \cite{Siek:2006,Siek:2007,Garcia:2016,
   Lehmann:2017:GRT:3009837.3009856,
@@ -75,8 +74,8 @@ increasingly important line of research
   examples in the list of accepted papers for ICFP 2017, for example,
   extending gradual type systems with session types and
   polymorphism.}.  Therefore, it is of the utmost importance that we
-be able to formally reason about gradual type systems so that to
-insure new designs and extensions are correct.  However, there are no
+be able to formally reason about gradual type systems so as to insure
+new designs and extensions are correct.  However, there are no
 categorical models, in fact not many mathematical models at all, to
 aid in the design of new gradual type systems or their extensions.
 
@@ -126,7 +125,8 @@ the model we use it to push us toward the correct language design.
 Reynolds \cite{Brookes:2013} was a big advocate for the use of
 category theory in programming language research for this reason.  We
 agree with Brookes et al. (from p. 3 of \cite{Brookes:2013}) that the
-following quote, originally from \cite{?}, makes this point nicely:
+following quote, originally from
+\cite{Reynolds:1995:UFC:199448.199452}, makes this point nicely:
 \begin{center}
   \parbox{170pt}{
     \emph{Programming language semanticists should be the obstetricians
@@ -138,7 +138,7 @@ Categorical semantics provides a powerful tool to study language
 extensions.  For example, purely functional programming in Haskell
 would not be where it is without the seminal work of Moggi and Wadler
 \cite{Moggi:1989,Wadler:1995} on using monads -- a purely categorical
-notion -- to add side effects to to pure functional programming
+notion -- to add side effects to pure functional programming
 languages.  Thus, we believe that developing these types of models for
 new language designs and features can be hugely beneficial.
 
@@ -206,7 +206,8 @@ available\footnote{\label{fn:impl} Please see
   use it.}. All examples in this paper can be typed and ran in the
 implementation, and thus, we make use of Core Grady's concrete syntax
 which is very similar to Haskell's and does not venture too far from
-the mathematical syntax given above.
+the mathematical syntax we will introduce in
+Section~\ref{sec:core_grady}.
 
 The definition of the Y combinator in Core Grady is as follows:
 \begin{lstlisting}[language=Haskell]
@@ -223,8 +224,8 @@ implementation (Footnote~\ref{fn:impl}).
 \begin{lstlisting}[language=Haskell]
   fixNat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
   fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat)) ->
-     unbox{Nat -> Nat} (fix (\(y:?)->box{Nat -> Nat} 
-                               (f (unbox{Nat -> Nat} y))));
+     unbox (Nat -> Nat) (fix (\(y:?)->box (Nat -> Nat) 
+                               (f (unbox (Nat -> Nat) y))));
 
   add : Nat -> Nat -> Nat
   add = \(m:Nat) -> fixNat
@@ -247,6 +248,9 @@ $[[(? -> ?) -> ?]]$ and we do this by $\eta$-expanding
 $[[f]]$ and casting the input and output using $[[box]]$ and
 $[[unbox]]$ to arrive at the function
 $[[\y:?.H(box (Nat -> Nat) (f (unbox (Nat -> Nat) y)))]] : [[? -> ?]]$.  Finally, we can apply $\lstinline{fix}$, and then unbox its output to the type $[[Nat -> Nat]]$.
+Thus, the definition of $\lstinline{fixNat}$ moves typed data to the
+untyped fragment using $[[box]]$ and then moves it back using
+$[[unbox]]$.
 
 The terms $[[box]]$ and $[[unbox]]$ correspond to explicit casts.  In
 Section~\ref{sec:surface_grady} we develop a gradually typed surface
