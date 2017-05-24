@@ -57,7 +57,7 @@
   breaklines=false,
   %
   % Default style fors listings
-  basicstyle=\footnotesize,
+  basicstyle=\small,
   %
   % Position of captions is bottom
   captionpos=b,
@@ -458,8 +458,39 @@
 
 \section{Future Work}
 \label{sec:conclusion}
-%% \input{conclusion}
+The categorical model and corresponding type system presented here
+sets the stage for a number of interesting lines of research.  Linear
+typing has a number of applications in functional programming
+\cite{Wadler:1990}. For example, allowing values of linear type to
+change the world.  Thus, it is worthwhile combining gradual typing
+with linear typing.  Benton \cite{Benton:1995} showed that the
+statically typed $\lambda$-calculus can be mixed with the statically
+typed linear $\lambda$-calculus by taking a symmetric monoidal
+adjunction between a cartesian closed category and a symmetric
+monoidal closed category called a mixed linear/non-linear model or LNL
+model.  Gradual $\lambda$-models defined here make up half of a LNL
+model mixing gradual typing with linear typing.  We are actively
+working on this new combination.
+
+Gradual $\lambda$-models correspond to the core language of a gradual
+type system.  In the future we will investigate the categorical model
+for the surface language and a functorial relationship between this
+new model and gradual $\lambda$-models.  The most interesting aspect
+of this model will be how to handle implicit casting.  Then we will be
+able to state and prove a model theoretic version of the gradual
+guarantee.  Another interesting aspect will be in how to deal with
+type and term precision in the model.
 % section conclusion (end)
+
+\section{Acknowledgments}
+\label{sec:acknowledgments}
+The authors thank Jeremy Siek for his feedback on previous drafts of
+this paper.  The first author thanks Ronald Garcia for his wonderful
+invited talk at Trends in Functional Programming 2016 which introduced
+the first author to gradual typing and its open problems.  This paper
+was typeset with the help of the amazing Ott tool \cite{Sewell:2010}.
+% section acknowledgments (end)
+
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}

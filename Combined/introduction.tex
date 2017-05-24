@@ -215,7 +215,8 @@ The definition of the Y combinator in Core Grady is as follows:
   omega = \(x : ? -> ?) -> (x (box (? -> ?) x));
   
   fix : (? -> ?) -> ?
-  fix = \(f : ? -> ?) -> omega (\(x:?) -> f ((unbox (? -> ?) x) x));
+  fix = \(f : ? -> ?) ->
+            omega (\(x:?) -> f ((unbox (? -> ?) x) x));
 \end{lstlisting}
 Using $\lstinline{fix}$ we can define the usual arithmetic operations
 in Core Grady, but we use a typed version of $\lstinline{fix}$ -- we
