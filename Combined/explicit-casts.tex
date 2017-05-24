@@ -14,9 +14,9 @@ follows:
 The previous definition is a lot cleaner without the explicit casts,
 and in the style of programming in the untyped $\lambda$-calculus.
 
-Now suppose we added polymorphism -- in Haskell style -- to Grady,
-then we might want to define a typed version of $\lstinline{fix}$ like
-the following:
+Now suppose we added polymorphism -- in Haskell style -- to the Grady
+languages, then we might want to define a typed version of
+$\lstinline{fix}$ like the following:
 \begin{lstlisting}[language=Haskell]
   fixT : (X -> X) -> X
   fixT = \(f:X -> X) -> fix (\(y:?)-> (f y)));

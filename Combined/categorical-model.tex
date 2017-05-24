@@ -7,9 +7,11 @@ is actually typed.  That is, typed theories are more fundamental than
 untyped ones.  He accomplished this by adding a single object -- or
 type -- $[[?]]$, and two morphisms $[[squash : (? -> ?) -> ?]]$ and
 $[[split : ? -> (?  -> ?)]]$, such that, $[[squash]];[[split]] = \id :
-[[(? -> ?) -> (?  -> ?)]]$, to a cartesian closed category. At this
-point he was able to translate the untyped $\lambda$-calculus into
-this unityped one.
+[[(? -> ?) -> (?  -> ?)]]$, to a cartesian closed category\footnote{We
+  use diagrammatic notation for composition of morphisms.  If $f : [[A
+      --> B]]$ and $g : [[B --> C]]$, then their composition is
+  denoted by $f;g : [[A --> C]]$.}. At this point he was able to
+translate the untyped $\lambda$-calculus into this unityped one.
 
 Categorically, Scott modeled $[[split]]$ and $[[squash]]$ as the
 morphisms in a retract within a cartesian closed category -- the same
