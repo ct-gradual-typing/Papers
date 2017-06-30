@@ -1,0 +1,156 @@
+In this section we show that Siek and Taha's gradual
+$\lambda$-calculus \cite{Siek:2006,Siek:2015} can be modeled in a
+gradual $\lambda$-model. Thus showing that other gradual type systems
+can benefit from our semantics.
+
+We only consider Siek and Taha's casting calculus, called $\CGSTLC$,
+because their surface language is essentially Surface Grady.
+\begin{figure}
+  \begin{mdframed} \footnotesize
+    \textbf{Syntax:}
+    \[ \small
+    \begin{array}{cccccc}
+      \begin{array}{c@{\hspace{5pt}}r@{}@{\hspace{5pt}}r@{}@{\hspace{2pt}}l@{}llllllllllll}
+        \text{(Atomic Types)}  & [[T]] & ::= & [[Unit]] \mid [[Nat]]\\
+        \text{(Ground Types)}  & [[R]] & ::= & [[T]] \mid [[?]] \to [[?]]\\    
+        \text{(values)}        & [[v]] & ::= & [[\x:A.t]]\\
+        \text{(terms)}         & [[t]] & ::= & \cdots \mid [[t : {A} => {B}]]\\
+      \end{array}
+    \end{array}
+    \]
+
+    \textbf{Typing Rules:}
+    \begin{mathpar}
+      \cdots \and
+      \GSiekdruleCXXcast{}
+    \end{mathpar}  
+
+    \textbf{Reduction Relation:}
+    \begin{mathpar}
+      \cdots                       \and
+      \GSiekdrulerdAXXcastId{}     \and
+      \GSiekdrulerdAXXcastU{}      \and
+      \GSiekdrulerdAXXsucceed{}    \and
+      \GSiekdrulerdAXXfail{}       \and
+      \GSiekdrulerdAXXcastArrow{}  \and
+      \GSiekdrulerdAXXcastGround{} \and
+      \GSiekdrulerdAXXcastExpand{}       
+    \end{mathpar}
+  \end{mdframed}
+  \caption{The core casting calculus: $\CGSTLC$}
+  \label{fig:CGSTLC}
+\end{figure}
+The complete language specification is summarized in
+Figure~\ref{fig:CGSTLC}.  The casting calculus $\CGSTLC$ is Core Grady
+where $\mathsf{box}\,[[A]]$ and $\mathsf{unbox}\,[[A]]$ have been
+replaced with the explicit cast $[[t : {A} => {B}]]$.  In addition,
+the typing rules for $\mathsf{box}\,[[A]]$ and $\mathsf{unbox}\,[[A]]$
+have been replaced with the \text{cast} typing rule. The syntax of
+types are the same as for Core Grady; see
+Figure~\ref{fig:syntax-core-grady}. We do not consider cartesian
+products in $\CGSTLC$, but they can be added to $\CGSTLC$ in the same
+way that they are defined for Core Grady.  One interesting aspect of
+$\CGSTLC$ is that it depends on type consistency, used in the cast
+rule, but it is defined in the same way as in
+Figure~\ref{fig:typing-surface-grady}, however without cartesian
+products.
+
+The explicit cast, $[[t : {A} => {B}]]$, should be understand as
+casting the term $[[t]]$ whose type is $[[A]]$ to the type $[[B]]$.
+Thus, boxing a term, $[[t]]$, of type $[[A]]$ is defined by $[[t : {A}
+    => {?}]]$, and unboxing is defined by $[[t : {?} =>
+    {A}]]$. Semantically, type consistency corresponds to casting
+morphisms, and because their morphisms they compose, but type
+consistency is not transitive. However, using the explicit cast we can
+compose type consistency.  Suppose $[[A ~ B]]$, $[[B ~ C]]$, and $[[G
+    |-C t : A]]$, then using the rule, $\GSiekdruleCXXcastName{}$, of
+the casting calculus we may type $[[G |-C t : h({A} => {B}) => {C} :
+    C]]$.  This composition is the reason why we interpret type
+consistency as casting morphisms in the model.
+
+The reduction rules for $\CGSTLC$ includes all of the rules from Core
+Grady except for the retract rules and the rules for cartesian
+products in addition to the new casting rules given in
+Figure~\ref{fig:CGSTLC}.  It is easy to see that the new casting
+rules, succeed and fail, correspond to the Core Grady reduction rules,
+retract and raise, from Figure~\ref{fig:reduction-core-grady}.  The
+other new casting rules are congruence rules to prevent stuck terms
+and push casting towards the succeed and fail rules.
+
+We now prove the two main properties for modeling type systems in a
+categorical model just as we did in the previous section.  The
+interpretation of types and contexts remain the same as in
+Definition~\ref{def:interpretation-of-gradual-types}.
+
+\begin{theorem}[Interpretation of Typing for $\CGSTLC$]
+  \label{thm:CGSTLC-interpretation_of_typing}
+  Suppose $(\cat{T},$\\$\cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox, \error)$
+  is a gradual $\lambda$-model. If $[[G |-C t : A]]$, then
+  there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A ]]$ in $\cat{C}$.  
+\end{theorem}
+\begin{proof}
+  This is a proof by induction on $[[G |-C t : A]]$.  We only show the
+  case for the explicit cast, because all others are equivalent to the
+  interpretation of Core Grady.
+  \begin{description}
+  \item[]
+  \item
+    \begin{typeProofCase}
+      \GSiekdruleCXXcast{}
+    \end{typeProofCase}
+
+    \ \\
+    \noindent
+    By the induction hypothesis there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A]]$,
+    and by type consistency in the model \\
+    (Lemma~\ref{lemma:type_consistency_in_the_model})
+    there is a casting morphism $c_1 : [[A --> B]]$.  So take
+    $ [[ [| t : {A} => {B} |] ]] = [[ [| t |] ]];c_1 : [[ [| G |] --> B ]]$.
+  \end{description}
+\end{proof}
+
+\begin{theorem}[Interpretation of Evaluation for $\CGSTLC$]
+  \label{thm:CGSTLC-interpretation_of_evaluation}
+  Suppose $(\cat{T}, \cat{C}, ?,\T, \split, \squash, \bx, \unbox, \error)$
+  is a gradual $\lambda$-\\model.  If $[[G |-C t1 : A]]$, $[[G |-C t2 : A]]$, and $[[t1 ~> t2]]$, then
+  $[[ [| t1 |] ]] = [[ [| t2 |] ]] : [[ [| G |] --> A]]$.
+\end{theorem}
+\begin{proof}
+  This proof holds by induction on the form of $[[t1 ~> t2]]$, and
+  uses Theorem~\ref{thm:CGSTLC-interpretation_of_typing},
+  Lemma~\ref{lemma:type_consistency_in_the_model},
+  Corollary~\ref{corollary:type_consist_coro}, and inversion for
+  typing whose definition we omit in the interest of space.
+
+  We show only one of the most interesting cases here, but please see
+  Appendix~\ref{subsec:proof_of_interpretation_of_evaluation_for_CGSTLC} for the
+  complete proof.
+  \begin{description}
+  \item[]
+  \item 
+  \begin{typeProofCase}
+    \GSiekdrulerdAXXsucceed{}
+  \end{typeProofCase}
+
+  \ \\
+  \noindent
+  By inversion for typing the typing derivation for $[[v : h({R} =>
+      {?}) => {R}]]$ is as follows:
+  \begin{center}
+    \begin{math} \small
+      $$\mprset{flushleft}
+      \inferrule* [right=] {
+        $$\mprset{flushleft}
+        \inferrule* [right=] {
+          [[G |-C v : R && R ~ ?]]
+        }{[[G |-C v : {R} => {?} : ?]]} \quad [[? ~ R]]
+      }{[[G |-C v : h({R} => {?}) => {R} : R]]}
+    \end{math}
+  \end{center}
+  By the induction hypothesis we have the morphism $[[ [| v |] ]] : [[ [| G |] --> R]]$.  
+  As we can see we will first use $[[ Box R ]]$ and then $[[ Unbox R ]]$ based on
+  Corollary~\ref{corollary:type_consist_coro}.  Thus,
+  $[[ [| v : h({R} => {?}) => {R} |] ]] = [[ [| v |] ]];[[Box R]];[[Unbox R]] = [[ [| v |] ]]$,
+  because $[[ Box R ]]$ and $[[ Unbox R ]]$ form a retract (Lemma~\ref{lemma:casting_morphisms}).
+   \end{description}
+\end{proof}

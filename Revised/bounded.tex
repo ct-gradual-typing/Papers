@@ -1,0 +1,266 @@
+The design of Core Grady is very simple.  We simply started with a
+purely static programming language, in this case the simply typed
+$\lambda$-calculus, and then added the unknown type, $[[?]]$, and
+$<<box A>>$, $<<unbox A>>$, and $<<error A>>$ to the syntax of types
+and terms respectively.  Unlike other casting calculi for gradual type
+systems found in the literature \cite{Siek:2006,Siek:2015,Garcia:2016}
+Core Grady does not depend on type consistency.  These facts imply
+that Core Grady should be more amenable to extension.
+
+We illustrate this by extending Surface and Core Grady with bounded
+quantification and lists; we primarily follow
+Pierce's~\cite{Pierce:2002:TPL:509043} definition of Bounded System F
+when defining the extension of Core Grady.  We show that the bounds on
+quantifiers can be used to control which types are castable and which
+are not to offer more fine grain control of casting.  For example,
+here we will not allow a polymorphic type to be cast to the unknown
+type.  We do this as as example, but it also simplifies the
+metatheory.
+
+The extension of the syntax, typing rules, and reduction rules for
+Core and Surface Grady can be found in Figure~\ref{fig:bounded-grady}
+and Figure~\ref{fig:bounded-grady-cont}.  
+\begin{figure}
+  \begin{mdframed} \footnotesize
+    \textbf{Extended Syntax of Core Grady:}\\
+    \[
+      \setlength{\arraycolsep}{0.6pt}
+      \begin{array}{cl}      
+        \begin{array}{l}
+          \text{(types)}\\
+        \end{array}     &
+        \begin{array}{lcl}
+          <<A>>,<<B>>,<<C>> & ::= & \cdots \mid <<Top>> \mid <<SL>> \mid <<X>> \mid <<List A>> \mid <<Forall (X <: A).B>> \\
+        \end{array}\\\\
+                
+        \begin{array}{l}
+          \text{(terms)}\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          <<t>> & ::= & \cdots \mid <<Lam X <: A .t >> \mid << [A]t >> \mid [] \mid <<t1 :: t2>> \\
+                & \mid & <<case t : List A of [] -> t1, (x :: y) -> t2>>\\
+        \end{array}
+        \\\\
+        \begin{array}{l}
+          \text{(values)}\\
+        \end{array}     &
+        \begin{array}{lcl}
+          <<v>> & ::=  & \cdots \mid <<Lam X <: A.t>>\\                
+        \end{array}
+        \\\\
+        \begin{array}{lll}
+          \text{(evaluation contexts)}\\\\
+        \end{array}  &
+        \begin{array}{lcl}
+          <<EC>> & ::=  & \cdots \mid << [A]HL >> \mid << HL :: t2>> \mid <<t1 :: HL>>\\
+                 & \mid & <<case HL : List A of [] -> t1, (x::y) -> t2>>\\
+        \end{array}\\\\
+        
+        \begin{array}{lll}
+          \text{(contexts)}\\
+        \end{array}  &
+        \begin{array}{lcl}
+          <<G>> & ::= & <<.>> \mid <<x : A>> \mid <<X <: A>> \mid <<G1,G2>>\\
+        \end{array}\\
+      \end{array}
+      \]    
+      \\
+      \textbf{Extended Syntax of Surface Grady:}\\
+      \[
+    \setlength{\arraycolsep}{1pt}
+    \begin{array}{cl}      
+        \begin{array}{l}
+          \text{(terms)}\\\\
+        \end{array}     &
+        \begin{array}{lcl}
+          [[t]] & ::=  & \cdots \mid [[Lam X <: A.t]] \mid [[ [A]t ]] \mid [[ [] ]] \mid [[t1 :: t2]] \\
+                & \mid & [[case t of [] -> t1, (x::y) -> t2]]\\
+        \end{array}\\\\
+        
+      \end{array}
+      \]    
+    \textbf{Extended Metafunctions for Surface Grady:}\\
+    \begin{mathpar}
+      \cdots
+      \and
+      \begin{array}{lll}
+        [[list(?) = List ?]]\\
+        [[list(List A) = List A]]\\
+      \end{array}
+    \end{mathpar}
+    
+    \textbf{Extended Typing for Core Grady:}\\
+    \begin{mathpar}
+      \cdots
+      \and
+      \CGradydruleTXXBoxP{}
+      \and
+      \CGradydruleTXXUnboxP{}
+      \and
+      \CGradydruleTXXempty{}
+      \and
+      \CGradydruleTXXcons{}
+      \and
+      \CGradydruleTXXlcase{}
+      \and
+      \CGradydruleTXXLam{}
+      \and
+      \CGradydruleTXXtypeApp{}
+      \and
+      \CGradydruleTXXSub{}
+    \end{mathpar}  
+
+  \textbf{Extended Typing for Surface Grady:}\\
+  \begin{mathpar}
+    \cdots
+    \and
+    \SGradydruleTXXempty{}
+    \and
+    \SGradydruleTXXcons{}
+    \and
+    \inferrule* [flushleft,right=$\mathsf{List}_e$] {
+      {
+        \begin{array}{lll}
+          [[G |- t : C]]            & [[list(C) = List A]]\\
+          [[G |- t1 : B1]]          & [[G |- B1 ~ B]]\\
+          [[G, x : A, y : List A |- t2 : B2]] & [[G |- B2 ~ B]]
+        \end{array}
+      }
+      }{[[G |- case t of [] -> t1, (x::y) -> t2 : B]]}
+    \and
+    \SGradydruleTXXLam{}
+    \and
+    \SGradydruleTXXtypeApp{}
+    \and
+    \SGradydruleTXXSub{}
+  \end{mathpar}  
+  \end{mdframed}
+  \caption{Bounded Grady}
+  \label{fig:bounded-grady}
+\end{figure}
+\begin{figure}
+  \begin{mdframed}\footnotesize
+    \textbf{Subtyping for Core Grady:}\\
+    \begin{mathpar}
+      \CGradydruleSXXRefl{} \and
+      \CGradydruleSXXTop{} \and
+      \CGradydruleSXXVar{} \and
+      \CGradydruleSXXTopSL{} \and
+      \CGradydruleSXXNatSL{} \and
+      \CGradydruleSXXUnitSL{} \and
+      \CGradydruleSXXListSL{} \and
+      \CGradydruleSXXArrowSL{} \and
+      \CGradydruleSXXProdSL{} \and
+      \CGradydruleSXXList{} \and
+      \CGradydruleSXXProd{} \and
+      \CGradydruleSXXArrow{} \and
+      \CGradydruleSXXForall{}      
+    \end{mathpar}
+
+    \textbf{Consistent Subtyping for Surface Grady:}\\
+    \begin{mathpar}
+      \SGradydruleSXXRefl{} \and
+      \SGradydruleSXXTop{} \and      
+      \SGradydruleSXXVar{} \and
+      \SGradydruleSXXBox{} \and    
+      \SGradydruleSXXUnbox{} \and
+      \SGradydruleSXXUSL{} \and
+      \SGradydruleSXXTopSL{} \and                        
+      \SGradydruleSXXNatSL{} \and
+      \SGradydruleSXXUnitSL{} \and    
+      \SGradydruleSXXListSL{} \and
+      \SGradydruleSXXProdSL{} \and
+      \SGradydruleSXXArrowSL{} \and
+      \SGradydruleSXXList{} \and
+      \SGradydruleSXXProd{} \and
+      \SGradydruleSXXArrow{} \and
+      \SGradydruleSXXForall{}
+    \end{mathpar}             
+    
+    \textbf{Type Consistency:}
+    \begin{mathpar}
+      \cdots
+      \and
+      \SGradydruleCXXList{} \and
+      \SGradydruleCXXForall{}      
+    \end{mathpar}
+    
+    \textbf{Extended Reduction Rules for Core Grady:}\\
+    \begin{mathpar}
+      \cdots
+      \and
+      \CGradydrulerdXXlcaseEmpty{}
+      \and
+      \CGradydrulerdXXlcaseCons{}
+      \and
+      \CGradydrulerdXXtypeBeta{}
+    \end{mathpar}
+  \end{mdframed}
+  \caption{Bounded Grady Continued}
+  \label{fig:bounded-grady-cont}
+\end{figure}
+We only give the new additions, but both Core and Surface Grady still
+contain everything already introduced.  We add two new atomic types,
+$[[Top]]$ and $[[SL]]$, that are used primarily for subtyping
+purposes, where the former is the top type of which everything is a
+subtype, and the latter is the universe of simple types, that is,
+every non-polymorphic type will be a subtype of $[[SL]]$.  Then the
+type variables, denoted by $[[X]]$, the type of lists, denoted by
+$[[List A]]$, and the type of bounded polymorphic programs, denoted by
+$[[Forall (X <: A).B]]$, are added to the syntax of types.  In
+$[[Forall (X <: A).B]]$ we call $[[A]]$ the bounds of $[[X]]$.  The
+syntax of types is the same for both Core and Surface Grady.
+
+We extend the term syntax for Core and Surface Grady with new term
+constructors for type abstraction, $[[Lam X <: A.t]]$, type
+application, $[[ [A]t ]]$, the empty list, $[[ [] ]]$, cons, $[[ t1 ::
+    t2 ]]$, where $[[t1]]$ is the head of the list and $[[t2]]$ is the
+tail, and finally, the non-recursive eliminator for lists, $[[case t
+    of [] -> t1, (x :: y) -> t2]]$ in Surface Grady, and
+$<<case t : List A of [] -> t1, (x :: y) -> t2>>$ in Core Grady.
+Values and evaluation contexts are extended in the expected way.
+
+Typing for Core and Surface Grady depend on subtyping which are both
+defined in Figure~\ref{fig:bounded-grady-cont}.  Subtyping for Core
+Grady is a simple extension of the usual definition for bounded system
+F \cite{Pierce:2002:TPL:509043} with the new type $[[SL]]$.  Every
+non-polymorphic type is a subtype of $[[SL]]$.  One important thing to
+note is that in Core Grady the unknown type is not a top type, and in
+fact, the only type that is a subtype of the unknown type is the
+unknown type.
+
+Subtyping in Surface Grady differs from Core Grady in that it uses the
+notion of consistent subtyping, denoted $[[G |- A <~ B]]$, which was
+proposed by Siek and Taha~\cite{Siek:2007} in their work extending
+gradual type systems to object oriented programming.  It embodies both
+standard subtyping defined above and type consistency.  Thus,
+consistent subtyping is also non-transitive.  One major difference
+between this definition of consistent subtyping and others found in
+the literature, for example in \cite{Siek:2007} and
+\cite{Garcia:2016}, is the rule for type variables.  Naturally, we
+must have a rule for type variables, because we are dealing with
+polymorphism, but the proof of the gradual guarantee required that
+this rule be relaxed and allow the bounds provided by the programmer
+to be consistent with the subtype in question.  Unlike Core Grady in
+consistent subtyping the unknown type is a subtype of every type and
+vice versa.
+
+Just as before typing for Surface Grady depends on type consistency,
+but it has been extended with rules for the list type as well as the
+polymorphic type.  At this point contexts annotating type consistency
+are used to track type variables.  We make a simplifying assumption
+that all free type variables occurring with in the types of a typing
+context are also members of the context.  This assumption simply makes
+the presentation of both Core and Surface Grady cleaner, because it
+removes all of the additional constraints on the various inference
+rules that the typing context always be well formed.
+
+Typing for Core Grady is extended with the rules in
+Figure~\ref{fig:bounded-grady}.  Because of the simplicity of Core
+Grady's definition the rules are the standard ones, but we generalize
+the types of $<<box A>>$ and $<<unbox A>>$ to the types $<<Forall (X
+<: SL).(X -> ?)>>$ and $<<Forall (X <: SL).(X -> ?)>>$ respectively.
+These types require that the only types that can be cast to or from
+the unknown type is if they are non-polymorphic.  To allow more types
+to be castable to or from the unknown type one can modify the bounds,
+thus, bounded quantification can be used to control casting.

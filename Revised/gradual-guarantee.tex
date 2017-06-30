@@ -1,0 +1,162 @@
+We now turn to proving that the gradual guarantee -- see
+Theorem~\ref{thm:gradual_guarantee} -- holds for Grady.  This is the
+defining property of every gradual type system.  In fact, Siek et
+al.~\cite{Siek:2015} argue that the gradual guarantee is what
+separates type systems that simply combine dynamic and static typing
+from systems that not only combine dynamic and static typing, but also
+allow the programmer to program in dynamic style without the need to
+insert explicit casts.  Intuitively, the gradual guarantee states that
+a gradually typed program should preserve its type and behavior when
+explicit casts are either inserted or removed.
+
+Our proof follows the scheme adopted by Siek et al.~\cite{Siek:2015}
+in their proof of the gradual guarantee for the gradual simply typed
+$\lambda$-calculus.  That is, we prove the exact same results as they
+do.  We will call a type \textbf{static} if it does not mention the
+unknown type.  The first step in proving the gradual guarantee is
+making rigorous the characterization of when one type is more static
+than another type, and when one program is more dynamic than another
+program.  This is done by defining the notion of type and term
+precision.
+
+Type precision is denoted by $[[A <= B]]$ and is read ``the type
+$[[A]]$ is more precise than type $[[B]]$.'' It is defined in
+Figure~\ref{fig:type-pre} with its extension to typing contexts.  Type
+precision is a preorder on types where as one travels up a chain the
+types tend toward the unknown type as opposed to when one travels down
+a chain the type tends toward some static type.  This implies that if
+$[[A <= B]]$, then $[[A]]$ is more static than $[[B]]$, but $[[B]]$ is
+more dynamic than $[[A]]$.  The direction of type precision, and term
+precision which will be defined next, may seem backward, but one can
+consider the unknown type as a universe of types \cite{Garcia:2016},
+and so, it is natural to consider it as a top element in the preorder.
+
+Term precision is similar to type precision.  It is denoted by $[[t1
+    <= t2]]$, and is read ``the program $[[t1]]$ is more precise than
+the program $[[t2]]$.''  That is, $[[t1]]$ is more static while
+$[[t2]]$ is more dynamic.  Term precision is defined in
+Figure~\ref{fig:term-precision} for both Surface Grady and Core Grady
+programs.  The definition of term precision for Core Grady includes
+similar rules defining term precision for Surface Grady in addition to
+the ones given in Figure~\ref{fig:term-precision}, and so we do not
+repeat them.  The term precision rules for Core Grady are also
+annotated with typing contexts to keep track of the types of free
+variables. This is needed because the rules depend on typing.
+
+Perhaps the most interesting rules are the ones for box, unbox, and
+error.  Since the job of $<<unbox A t>>$ is to specialize the type of
+$<<t>>$ at a more specific type, then $<<G |- (unbox A t) <= t>>$.
+Dually, since the job of $<<box A t>>$ is to generalize the type of
+$<<t>>$ to $<<?>>$, then $<<G |- t <= (box A t)>>$.
+
+\begin{figure} \scriptsize
+  \begin{mdframed}
+  \begin{itemize}
+  \item[] \textbf{Type Precision:}    
+    \begin{mathpar}
+      \SGradydrulePXXU{} \and
+      \SGradydrulePXXrefl{} \and
+      \SGradydrulePXXarrow{} \and
+      \SGradydrulePXXprod{}
+    \end{mathpar}    
+
+  \item[] \textbf{Context Precision:}
+    \begin{mathpar}
+      \CGradydruleCtxPXXrefl{} \and
+      \CGradydruleCtxPXXext{}
+    \end{mathpar}
+    \end{itemize}
+  \end{mdframed}
+  \caption{Type and Context Precision}
+  \label{fig:type-pre}
+\end{figure}
+\begin{figure} \scriptsize
+  \begin{mdframed}    
+    \textbf{Term Precision for Surface Grady:}\\
+      \begin{mathpar}
+        \SGradydruleTPXXrefl{} \and
+        \SGradydruleTPXXsucc{} \and
+        \SGradydruleTPXXNate{} \and
+        \SGradydruleTPXXpair{} \and
+        \SGradydruleTPXXfst{} \and
+        \SGradydruleTPXXsnd{} \and
+        \SGradydruleTPXXFun{} \and
+        \SGradydruleTPXXapp{}
+      \end{mathpar}
+
+    \textbf{Term Precision for Core Grady:}\\
+      \begin{mathpar}
+        \CGradydruleTPXXunboxing{} \and
+        \CGradydruleTPXXboxing{} \and
+        \CGradydruleTPXXerror{}        
+      \end{mathpar}
+  \end{mdframed}
+  \caption{Term Precision}
+  \label{fig:term-precision}
+\end{figure}
+
+At this point we can now rigorously state and prove the gradual
+guarantee for the Grady languages, where we denote a diverging term by
+$<<t ^>>$.
+\begin{theorem}[Gradual Guarantee]
+  \label{thm:gradual_guarantee} 
+  \begin{enumR}
+  \item[] 
+  \item If $[[. |- t : A]]$ and $[[t <= t']]$, then $[[. |- t' : B]]$ and $[[A <= B]]$.
+  \item Suppose $<<. |- t : A>>$ and $<<. |- t <= t'>>$. Then
+    \begin{enumA}
+    \item if $<<t ~>* v>>$, then $<<t' ~>* v'>>$ and $<<. |- v <= v'>>$,
+    \item if $<<t ^>>$, then $<<t' ^>>$,
+    \item if $<<t' ~>* v'>>$, then $<<t ~>* v>>$ where $<<. |- v <= v'>>$, or $<<t ~>* error A>>$, and
+    \item if $<<t' ^>>$, then $<<t ^>>$ or $<<t ~>* error A>>$.
+    \end{enumA}
+  \end{enumR}
+\end{theorem}
+\begin{proof}
+  This result follows from the same proof as \cite{Siek:2015}, and so,
+  we only give a brief summary.  Part i. holds by
+  Lemma~\ref{lemma:gradual_guarantee_part_one}, and Part ii. follows
+  from simulation of more precise programs
+  (Lemma~\ref{lemma:simulation_of_more_precise_programs}).
+\end{proof}
+Part one states that one may insert casts into a closed gradual
+program, $[[t]]$, yielding a less precise program, $[[t']]$, and the
+program will remain typable, but at a less precise type.  This part
+follows from the following generalization:
+\begin{restatable}[Gradual Guarantee Part One]{lemma}{gradGuarOne}
+  \label{lemma:gradual_guarantee_part_one}
+  If $[[G |- t : A]]$, $[[t <= t']]$, and $[[G <= G']]$ then $[[G' |- t' : B]]$ and $[[A <= B]]$.
+\end{restatable}
+\begin{proof}
+  This is a proof by induction on $[[G |- t : A]]$; see
+  Appendix~\ref{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
+  for the complete proof.
+\end{proof}
+\noindent
+The remaining parts of the gradual guarantee follow from the next
+result.
+\begin{restatable}[Simulation of More Precise Programs]{lemma}{simMorePrecPro}
+  \label{lemma:simulation_of_more_precise_programs}
+  Suppose $<<G |- t1 : A>>$, $<<G |- t1 <= t1'>>$, $<<G |- t'1 : A'>>$, and $<<t1 ~> t2>>$.
+  Then $<<t1' ~>* t2'>>$ and $<<G |- t2 <= t2'>>$ for some $<<t2'>>$.
+\end{restatable}
+\begin{proof}
+  This proof holds by induction on $<<G |- t1 : A1>>$.  See
+  Appendix~\ref{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
+  for the complete proof.
+\end{proof}
+\noindent
+This result simply states that programs may become less precise by
+adding or removing casts, but they will behave in an expected manner.
+
+The proofs of the previous results require a number of auxiliary
+lemmas that are too numerous to include in this section, but they can
+all be found in Appendix~\ref{sec:auxiliary_metatheoretic_results},
+but we omit most of their proofs in the interest of space.  Each of
+the proofs of the previous results take great care in pointing out
+where these auxiliary results are used.
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

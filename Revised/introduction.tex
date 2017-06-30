@@ -1,0 +1,284 @@
+%% The problem:
+%%   Not many mathematical models of gradual type systems especially categorical models.
+%% Model gives us:
+%%   - Connects existing work to gradual typing and the combination of dynamic and static typing
+%%   - Can lead to simplifications of the language design: Core Grady does not depend on type consistency
+%%   - A categorical model will help in the design of more powerful
+%%     gradual type systems, for example, linear types, effects, polymorphism, dependent types, etc.
+
+Gradual typing \cite{Siek:2006,Siek:2015} is a way to combine static
+and dynamic typing within the same language.  For example, one can
+structure their programs so that the safety critical parts are as
+statically typed as possible to catch the most errors at compile time,
+while rapidly prototyping other parts of their program using dynamic
+typing.
+
+The design of a gradual type system consists of two languages: a core
+language and a surface language.  Both languages start as a static
+type system with a new type called the unknown type, denoted in this
+paper by $[[?]]$, whose inhabitants are all untyped programs.  The
+core language then has an explicit mechanism for casting types to and
+from the unknown type, and an operational semantics.  However, the
+surface language only consists of a type checking algorithm that is
+designed so that casts are left implicit, and then after type checking
+succeeds a surface language program is translated into the core
+language by a cast insertion algorithm.
+
+Programming in the surface language requires the ability to implicitly
+cast data between consistent types during eliminations. For example,
+$[[(\x:?.(succ (succ x))) 3]]$ should type check with type $[[Nat]]$
+even though $[[3]]$ has type $[[Nat]]$ and $[[x]]$ has type
+$[[?]]$. Now not every cast should work, for example, $[[(\x:Bool.t)
+    3]]$ should not type check, because it is inconsistent to allow
+different atomic types to be cast between each other.  Therefore, the
+surface language must be able to decide which casts are consistent and
+which are not.  This is done by extending the type checking algorithm
+with a binary relation called \emph{type consistency} which determines
+which types are castable between each other, e.g. every type will be
+consistent with the unknown type.
+
+Gradual type systems must satisfy the metatheoretic property
+called the \emph{gradual guarantee}.  The gradual guarantee states
+that any well-typed program can slide between being more statically
+typed or being more dynamically typed by inserting or removing casts
+without changing the meaning or the behavior of the program. The
+formal statement of the gradual guarantee is given in
+Section~\ref{sec:the_gradual_guarantee}.  This property was first
+proposed by Siek et al.~\cite{Siek:2015} to set apart systems that
+simply combine dynamic and static typing and gradual type systems.
+
+Just as Siek et al. report \cite{Siek:2006,Siek:2007,Siek:2015} there
+are a number of programming languages that combine static and dynamic
+typing with implicit casting to and from the unknown type, for
+example, Boo \cite{Oliveira:2005}, Bigloo
+\cite{Bres:2004,Serrano:2002}, Cecil \cite{Chambers:2004}, Visual
+Basic .Net, C\# \cite{Meijer:2004}, Professor J
+\cite{Gray:2005:FIT:1103845.1094830}, and many more.  In addition,
+there are languages that combine static and dynamic typing with
+explicit casting only. Abadi et al.~\cite{Abadi:1989} combine dynamic
+and static typing by adding a new type called $\mathsf{Dynamic}$ along
+with a new case construct for pattern matching on types, and
+Henglein~\cite{Henglein:1994} defines the dynamic $\lambda$-calculus
+by adding a new type $\mathsf{Dyn}$ to the simply typed
+$\lambda$-calculus and then adding primitive casting operations called
+tagging and check-and-untag. Please see the introduction to Siek et
+al.~\cite{Siek:2015} for a more complete list.
+
+As we can see the combination of dynamic and static typing, as well as
+gradual type systems, are important to both industry and academia.
+Thus, expanding gradual type systems with new features is an
+increasingly important line of research
+\cite{Siek:2006,Siek:2007,Garcia:2016,
+  Lehmann:2017:GRT:3009837.3009856,
+  Jafery:2017:SUR:3093333.3009865}\footnote{There are even more
+  examples in the list of accepted papers for ICFP 2017, for example,
+  extending gradual type systems with session types and
+  polymorphism.}.  Therefore, it is of the utmost importance that we
+be able to formally reason about gradual type systems so as to insure
+new designs and extensions are correct.  However, there are no
+categorical models, in fact not many mathematical models at all, to
+aid in the design of new gradual type systems or their extensions.
+
+In this paper we propose a new categorical model of the core casting
+calculus of gradual type systems based on the seminal work of
+Scott~\cite{Sewell:2010} and Lambek~\cite{Lambek:1988}, thus merging
+the categorical model of the statically typed $\lambda$-calculus with
+the categorical model of the untyped $\lambda$-calculus into a new
+model that combines the two.  Our categorical model leads to a new and
+simple type theory that combines dynamic and static typing with
+explicit casts called Core Grady.  Furthermore, it is has a less
+complex language design compared to existing core languages for
+gradual typing, for example, Siek and Taha's system \cite{Siek:2007},
+because it does not depend on type consistency where theirs does.  Our
+new model also gives a rigorous framework that can be used while
+developing new gradual type systems or extensions of existing gradual
+type systems.
+
+One strength and main motivation for giving a categorical model to a
+programming language is that it can expose the fundamental structure
+of the language.  This arises because a lot of the language features
+that often cloud the picture go away, for example, syntactic notions
+like variables disappear.  This can often simplify things and expose
+the underlying structure.  For example, when giving the simply typed
+$\lambda$-calculus a categorical model we see that it is a cartesian
+closed category, but we also know that intuitionistic logic has the
+same model due to Lambek~\cite{Lambek:1980}; on the syntactic side
+these two theories are equivalent as well due to
+Howard~\cite{Howard:1980}; this is known as the Curry-Howard-Lambek
+correspondence.
+
+The previous point highlights one of the most powerful features of
+category theory: its ability to relate seemingly unrelated theories.
+It is quite surprising that the typed $\lambda$-calculus and
+intuitionistic logic share the same model.  Thus, defining a
+categorical model for a particular programming language may reveal new
+and interesting relationships with existing work.  In fact, one of the
+contributions of this paper is the new connection between Scott and
+Lambek's work to the new area of gradual typing and combing static and
+dynamic typing.
+
+However, that motivation places defining a categorical model as an
+after thought.  The programming languages developed here were designed
+from the other way around.  We started with the question, how do we
+combine static and dynamic typing categorically? Then after developing
+the model we use it to push us toward the correct language design.
+Reynolds \cite{Brookes:2013} was a big advocate for the use of
+category theory in programming language research for this reason.  We
+agree with Brookes et al. (from p. 3 of \cite{Brookes:2013}) that the
+following quote, originally from
+\cite{Reynolds:1995:UFC:199448.199452}, makes this point nicely:
+\begin{center}
+  \parbox{170pt}{
+    \emph{Programming language semanticists should be the obstetricians
+    of programming languages, not their coroners.\\
+    {\rightline{--- John C. Reynolds}}}}
+\end{center}
+
+Categorical semantics provides a powerful tool to study language
+extensions.  For example, purely functional programming in Haskell
+would not be where it is without the seminal work of Moggi and Wadler
+\cite{Moggi:1989,Wadler:1995} on using monads -- a purely categorical
+notion -- to add side effects to pure functional programming
+languages.  Thus, we believe that developing these types of models for
+new language designs and features can be hugely beneficial.
+
+\subsection{Overview}
+\label{subsec:main_ideas}
+We now give a brief overview of our main results, but from a typed
+$\lambda$-calculus perspective, but we will transition to category
+theory in Section~\ref{subsec:the_categorical_model}.  Suppose we add
+the unknown type, $[[?]]$, and two functions $[[squash]] : [[(? -> ?)
+    -> ?]]$ and $[[split]] : [[? -> (? -> ?)]]$ to the simply typed
+$\lambda$-calculus with the natural numbers.  Furthermore, we require
+that for any program, $[[t]]$, of type $[[? -> ?]]$, we have $[[split
+    (squash t)]] \rightsquigarrow t$.  Categorically $[[split]]$ and
+$[[squash]]$ define what is called a retract.  Scott \cite{Scott:1980}
+showed that this is enough to encode the untyped $\lambda$-calculus
+into a statically typed setting:
+\begin{center}
+  \begin{math} \small
+    \begin{array}{lll}
+      \setlength{\arraycolsep}{2px}
+      \begin{array}{rll}
+      [[|x|]]     & = & [[x]]\\
+      [[|\x.t|]]  & = & [[\x:?.|t|]]\\      
+    \end{array}
+      &
+      \setlength{\arraycolsep}{2px}
+    \begin{array}{rll}
+      [[|x t2|]] & = & [[(split x) |t2|]]\\
+      [[|t1 t2|]] & = & [[|t1| (squash |t2|)]]
+    \end{array}
+    \end{array}
+  \end{math}
+\end{center}
+For example, if $\Omega = \lambda x.x\,x$, then $|\Omega| = [[\x:?.H((split x) x)]]$, and
+$|\Omega\,\Omega| = |\Omega|\,(\mathsf{squash}\,|\Omega|)$ is the typical diverging term.
+
+We have at this point a typed functional programming language with two
+fragments: the statically typed $\lambda$-calculus and the untyped
+$\lambda$-calculus.  However, they are just sitting side-by-side.  Now
+suppose for any atomic type $[[A]]$, excluding the unknown type, we
+add two new functions $[[box A]] : [[A -> ?]]$ and $[[unbox A]] : [[?
+    -> A]]$ such that for any term, $[[t]]$, of atomic type $[[A]]$,
+we have that $[[unbox A (box A t)]] \rightsquigarrow [[t]]$ -- a
+second retract.  This defines the bridge between the typed fragment
+and the untyped fragment.  We will show in the next section that both
+$[[box]]$ and $[[unbox]]$ can be generalized to arbitrary types, and
+thus, they will subsume $[[split]]$ and $[[squash]]$ as well, hence,
+reducing all explicit casts to just two functions simplifying the
+language even further -- in the rest of this section we only use
+$[[box]]$ and $[[unbox]]$.
+
+At this point we have basically built up Core Grady
+(Section~\ref{sec:core_grady}) the corresponding type theory to our
+categorical model (Section~\ref{subsec:the_categorical_model}).  We
+can move statically typed data in between the two fragments. An example
+may help solidify the previous point.
+
+Core Grady does not have a primitive notion of recursion, but it is
+well-known that we can define the Y combinator in the untyped
+$\lambda$-calculus, and hence, in Core Grady. First, we have a full
+implementation of every language in this paper
+available\footnote{\label{fn:impl} Please see
+  \url{https://ct-gradual-typing.github.io/Grady/} for access to the
+  implementation as well as full documentation on how to install and
+  use it.}. All examples in this paper can be typed and ran in the
+implementation, and thus, we make use of Core Grady's concrete syntax
+which is very similar to Haskell's and does not venture too far from
+the mathematical syntax we will introduce in
+Section~\ref{sec:core_grady}.
+
+The definition of the Y combinator in Core Grady is as follows:
+\begin{lstlisting}[language=Haskell]
+  omega : (? -> ?) -> ?
+  omega = \(x : ? -> ?) -> (x (box (? -> ?) x));
+  
+  fix : (? -> ?) -> ?
+  fix = \(f : ? -> ?) ->
+            omega (\(x:?) -> f ((unbox (? -> ?) x) x));
+\end{lstlisting}
+Using $\lstinline{fix}$ we can define the usual arithmetic operations
+in Core Grady, but we use a typed version of $\lstinline{fix}$ -- we
+have developed many more examples in Core Grady please see the
+implementation (Footnote~\ref{fn:impl}).
+\begin{lstlisting}[language=Haskell]
+  fixNat : ((Nat -> Nat) -> (Nat -> Nat)) -> (Nat -> Nat)
+  fixNat = \(f:(Nat -> Nat) -> (Nat -> Nat)) ->
+     unbox (Nat -> Nat) (fix (\(y:?)->box (Nat -> Nat) 
+                               (f (unbox (Nat -> Nat) y))));
+
+  add : Nat -> Nat -> Nat
+  add = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> m, (succ n') -> succ (r n'));
+        
+  mult : Nat -> Nat -> Nat
+  mult = \(m:Nat) -> fixNat
+       (\(r:Nat -> Nat) ->
+        \(n:Nat) -> case n of 0 -> 0, (succ n') -> add m (r n'));
+\end{lstlisting}
+The function $\lstinline{fixNat}$ is defined so that it does recursion
+on the type $[[Nat -> Nat]]$, thus, it must take in an argument,
+$f : [[(Nat -> Nat) -> (Nat -> Nat)]]$, and
+produce a function of type $[[Nat -> Nat]]$.  However, we
+already have $\lstinline{fix}$ defined in the untyped fragment, and
+so, we can define $\lstinline{fixNat}$ using $\lstinline{fix}$ by
+boxing up the typed data.  This means we must cast $[[f]] : [[(Nat -> Nat) -> (Nat -> Nat)]]$ into a function of type
+$[[(? -> ?) -> ?]]$ and we do this by $\eta$-expanding
+$[[f]]$ and casting the input and output using $[[box]]$ and
+$[[unbox]]$ to arrive at the function
+$[[\y:?.H(box (Nat -> Nat) (f (unbox (Nat -> Nat) y)))]] : [[? -> ?]]$.  Finally, we can apply $\lstinline{fix}$, and then unbox its output to the type $[[Nat -> Nat]]$.
+Thus, the definition of $\lstinline{fixNat}$ moves typed data to the
+untyped fragment using $[[box]]$ and then moves it back using
+$[[unbox]]$.
+
+The terms $[[box]]$ and $[[unbox]]$ correspond to explicit casts.  In
+Section~\ref{sec:surface_grady} we develop a gradually typed surface
+language called Surface Grady that allows for the casts to be left
+implicit.  Then we show that both Surface and Core Grady can be
+soundly interpreted into our categorical model in
+Section~\ref{sec:interpreting_surface_grady_in_the_model}.
+Furthermore, we prove the gradual guarantee for Surface and Core Grady
+in Section~\ref{sec:the_gradual_guarantee}.
+
+To insure that our categorical model can be used to study other
+gradual type systems we show that Siek and Taha's gradually typed
+$\lambda$-calculus \cite{Siek:2006,Siek:2015} can also be soundly
+modeled by our semantics in
+Section~\ref{sec:modeling_siek_and_taha's_gradual_lambda-calculus}.
+
+Finally, while a gradual type system allows for type casts to be left
+implicit we show, in
+Section~\ref{sec:explicit_casts_in_gradual_type_systems}, that
+explicit casts can be derived in the gradually typed surface language,
+and using the explicit casts we show that more programs can be typed.
+For example, we define a typed fixpoint operator that can only be
+defined due to the explicit casts in the gradually typed surface
+language.
+% subsection main_ideas (end)
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

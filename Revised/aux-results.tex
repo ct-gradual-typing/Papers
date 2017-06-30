@@ -1,0 +1,209 @@
+\section{Auxiliary Metatheoretic Results}
+\label{sec:auxiliary_metatheoretic_results}
+
+\begin{lemma}[Type Preservation]
+  \label{lemma:type_preservation}
+  If $<<G |- t1 : A>>$ and $<<t1 ~> t2>>$, then $<<G |- t2 : A>>$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $<<G |- t1 : A>>$ with further case
+  analysis on the structure the derivation $<<t1 ~> t2>>$.
+\end{proof}
+
+\begin{lemma}[Inversion for Type Precision]
+  \label{lemma:inversion_of_type_precision}
+  Suppose $[[A <= B]]$.  Then:
+  \begin{enumR} \small
+  \item if $[[A]] = [[A1 -> B1]]$, then
+    $[[B]] = [[?]]$, or $[[B]] = [[A2 -> B2]]$, $[[A1 <= A2]]$, and $[[B1 <= B2]]$.
+  \item if $[[A]] = [[A1 x B1]]$, then
+    $[[B]] = [[?]]$, or $[[B]] = [[A2 x B2]]$, $[[A1 <= A2]]$, and $[[B1 <= B2]]$.  
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on the form of $[[A <= B]]$.
+\end{proof}
+
+\begin{lemma}[Surface Grady Inversion for Term Precision]
+  \label{lemma:inversion_of_term_precision}
+  Suppose $[[t <= t']]$. Then:
+  \begin{enumR}\small
+  \item if $[[t]] = [[succ t1]]$, then $[[t']] = [[succ t2]]$ and $[[t1 <= t2]]$.
+  \item if $[[t]] = [[(case t1 of 0 -> t2, (succ x) -> t3)]]$, then\\
+    $[[t']] = [[(case t1' of 0 -> t2', (succ x) -> t3')]]$, $[[t1 <= t1']]$, $[[t2 <= t2']]$, and $[[t3 <= t3']]$.
+  \item if $[[t]] = [[(t1,t2)]]$, then $[[t']] = [[(t1',t2')]]$, $[[t1 <= t1']]$, and $[[t2 <= t2']]$.
+  \item if $[[t]] = [[fst t1]]$, then $[[t']] = [[fst t1']]$ and $[[t1 <= t1']]$.
+  \item if $[[t]] = [[snd t1]]$, then $[[t']] = [[snd t1']]$ and $[[t1 <= t1']]$.
+  \item if $[[t]] = [[\x:A1.t1]]$, then $[[t']] = [[\x:A1.t1']]$ and $[[t1 <= t1']]$.
+  \item if $[[t]] = [[(t1 t2)]]$, then $[[t']] = [[(t1' t2')]]$, $[[t1 <= t1']]$, and $[[t2 <= t2']]$.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on the form of $[[t <= t']]$.
+\end{proof}
+
+\begin{lemma}[Inversion for Type Consistency]
+  \label{lemma:inversion_of_type_consistency}
+  Suppose $[[A ~ B]]$. Then:
+  \begin{enumR}\small
+  \item if $[[A]] = [[A1 -> B1]]$, then $[[B]] = [[?]]$, or
+    $[[B]] = [[A2 -> B2]]$, $[[A2 ~ A1]]$, and $[[B1 ~ B2]]$.
+  \item if $[[A]] = [[A1 -> B1]]$, then $[[B]] = [[?]]$, or
+    $[[B]] = [[A2 -> B2]]$, $[[A2 ~ A1]]$, and $[[B1 ~ B2]]$.
+  \item if $[[A]] = [[A1 x B1]]$, then $[[B]] = [[?]]$, or
+    $[[B]] = [[A2 x B2]]$, $[[A1 ~ A2]]$, and $[[B1 ~ B2]]$.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on the the form of $[[A ~ B]]$.
+\end{proof}
+
+\begin{lemma}[Symmetry for Type Consistency]
+  \label{lemma:symmetry_for_type_consistency}
+  If $[[A ~ B]]$, then $[[B ~ A]]$.
+\end{lemma}
+\begin{proof}
+  This holds by induction on the form of $[[A ~ B]]$.
+\end{proof}
+
+\begin{lemma}[Type Precision and Consistency]
+  \label{lemma:type_precision_and_consistency}
+  If $[[A <= B]]$, then $[[A ~ B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[A <= B]]$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:type_precision_triangle_consistenty}  
+  If $[[A <= B]]$ and $[[A <= C]]$, then $[[B ~ C]]$.
+\end{lemma}
+\begin{proof}
+  It must be the case that either $[[B <= C]]$ or $[[C <= B]]$, but in both cases
+  we know $[[B ~ C]]$ by Lemma~\ref{lemma:type_precision_and_consistency}.
+\end{proof}
+
+\begin{lemma}[Transitivity for Type Precision]
+  \label{lemma:transitivity_for_type_precision}
+  If $[[A <= B]]$ and $[[B <= C]]$, then $[[A <= C]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[A <= B]]$ with
+  a case analysis over $[[B <= C]]$.
+\end{proof}
+
+\begin{lemma}
+  \label{lemma:fun_type_pre}
+  Suppose $[[A <= B]]$.  Then
+  \begin{enumR}\small
+  \item If $[[nat(A) = Nat]]$, then $[[nat(B) = Nat]]$.    
+  \item If $[[list(A) = List C]]$, then $[[list(B) = List C']]$ and $[[C <= C']]$.
+  \item If $[[fun(A) = A1 -> A2]]$, then $[[fun(B) = A1' -> A2']]$, $[[A1 <= A1']]$, and $[[A2 <= A2']]$.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[A <= B]]$.
+\end{proof}
+
+\begin{restatable}[]{lemma}{conTypeConTypePre}
+  \label{lemma:congruence_of_type_consistency_along_type_precision}
+  \begin{enumR}\small
+  \item[] 
+  \item If $[[A1 <= A1']]$ and $[[A1 ~ A2]]$ then
+    $[[A1' ~ A2]]$.
+    
+  \item If $[[A2 <= A2']]$ and $[[A1 ~ A2]]$ then
+    $[[A1 ~ A2']]$.  
+  \end{enumR}  
+\end{restatable}
+\begin{proof}
+  Both parts hold by induction on the assumed type consistency
+  judgment.  See
+  Appendix~\ref{subsec:proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision}
+  for the complete proof.
+\end{proof}
+
+\begin{corollary}
+  \label{corollary:congruence_of_type_consistency_along_type_precision}
+  If $[[A1 <= A1']]$, $[[A2 <= A2']]$, and $[[A1 ~ A2]]$ then
+  $[[A1' ~ A2']]$.  
+\end{corollary}
+
+\begin{lemma}[Typing for Type Precision]
+  \label{lemma:typing_for_type_precision}
+  If $[[G |- t1 : A]]$, $[[t1 <= t2]]$, and $[[G <= G']]$, then $[[G' |- t2 : B]]$ and $[[A <= B]]$.
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $[[G |- t1 : A]]$ with a case analysis over $[[t1 <= t2]]$.
+\end{proof}
+
+\begin{lemma}[Substitution for Term Precision]
+  \label{lemma:substitution_for_term_precision}
+  If $<<G, x : A |- t1 <= t2>>$ and $<<G |- t'1 <= t'2>>$, then $<<G |- [t'1/x]t1 <= [t'2/x]t2>>$.  
+\end{lemma}
+\begin{proof}
+  This proof holds by induction on $<<G, x : A |- t1 <= t2>>$.
+\end{proof}
+
+\begin{lemma}[Typeability Inversion]
+  \label{lemma:typeability_inversion}
+  \begin{enumR}\small
+  \item[] 
+  \item If $<<G |- succ t : A>>$, then $<<G |- t : A'>>$ for some $<<A'>>$.
+  \item If $<<G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : A1>>$, $<<G |- t1 : A2>>$,
+    and $<<G,x : Nat |- t2 : A3>>$ for types $[[A1]]$, $[[A2]]$, $[[A3]]$.
+  \item If $<<G |- (t1, t2) : A>>$, then $<<G |- t1 : A1>>$ and  $<<G |- t2 : A2>>$ for types $[[A1]]$ and $[[A2]]$.
+  \item If $<<G |- fst t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- snd t : A>>$, then $<<G |- t : A1>>$ for some type $[[A1]]$.    
+  \item If $<<G |- \ x : B . t : A>>$, then $<<G, x : B |- t : A1>>$ for some type $[[A1]]$.
+  \item If $<<G |- t1 t2 : A>>$, then $<<G |- t1 : A1>>$ and  $<<G |- t2 : A2>>$ for types $[[A1]]$ and $[[A2]]$.  
+  \end{enumR}
+\end{lemma}
+
+\begin{lemma}[Inversion for Term Precision for Core Grady]
+  \label{lemma:inversion_for_term_precision_for_core_grady}
+  Suppose $<<G |- t1 <= t2>>$.  Then either $<<t2>> = <<box A t1>>$ and $<<G |- t1 : A>>$, or
+  one of the following holds:
+  \begin{enumR} \small
+  \item If $<<t1>> = <<x>>$, then $<<t2>> = <<x>>$ and $<<x : A elem G>>$.
+
+  \item If $<<t1>> = <<box>>$, then $<<t2>> = <<box>>$.
+
+  \item If $<<t1>> = <<unbox>>$, then $<<t2>> = <<unbox>>$.
+
+  \item If $<<t1>> = <<0>>$, then $<<t2>> = <<0>>$.
+
+  \item If $<<t1>> = <<triv>>$, then $<<t2>> = <<triv>>$.
+
+  \item If $<<t1>> = <<succ t1'>>$, then $<<t2>> = <<succ t2'>>$ and $<<G |- t1' <= t'2>>$.
+
+  \item If $<<t1>> = <<case t1' : Nat of 0 -> t'2, (succ x) -> t'3>>$,
+    then $<<t2>> = <<case t'4 : Nat of 0 -> t'5, (succ x) -> t'6>>$,
+      $<<G |- t'1 <= t'4>>$, $<<G |- t'2 <= t'5>>$, and $<<G, x : Nat |- t'3 <= t'6>>$.
+
+  \item If $<<t1>> = <<(t'1,t'2)>>$, then $<<t2>> = <<(t'3,t'4)>>$, $<<G |- t'1 <= t'3>>$, and $<<G |- t'2 <= t'4>>$.
+
+  \item If $<<t1>> = <<fst t1'>>$, then $<<t2>> = <<fst t2'>>$ and $<<G |- t'1 <= t'2>>$.
+
+  \item If $<<t1>> = <<snd t'1>>$, then $<<t2>> = <<snd t'2>>$ and $<<G |- t'1 <= t'2>>$.
+
+  \item If $<<t1>> = <<\x:A1.t1>>$, then $<<t2>> = <<\x:A2.t2>>$ and $<<G, x : A2 |- t1 <= t2>>$ and $<<A1 <= A2>>$.
+
+  \item If $<<t1>> = <<t1' t'2>>$, then one of the following is true:
+    \begin{enumA}
+    \item $<<t2>> = <<t3' t4'>>$, $<<G |- t3 <= t3'>>$, and $<<G |- t4 <= t4'>>$
+    \item $<<t1'>> = <<unbox A>>$ and $<<t2>> = <<t'2>>$
+    \end{enumA}
+    
+  \item If $<<t1>> = <<unbox A t1'>>$,
+    then $<<t2>> = <<t1'>>$ and $<<G |- t1' : ?>>$.
+
+  \item If $<<t1>> = <<error A1>>$,
+    then $<<G |- t2 : A2>>$ and $<<A1 <= A2>>$.
+  \end{enumR}
+\end{lemma}
+\begin{proof}
+  The proof of this result holds by induction
+  on $<<G |- t1 <= t2>>$.
+\end{proof}
+% section auxiliary_metatheoretic_results (end)

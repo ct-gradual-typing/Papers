@@ -1,0 +1,972 @@
+\section{Proofs}
+\label{sec:proofs}
+
+\subsection{Proof of Lifted Retract (Lemma~\ref{lemma:lifted_retract})}
+\label{subsec:proof_of_lifted_retract}
+We only show that $<<lbox A>>;<<lunbox A>> = \id_A$, because the case
+when a dynamic type error is raised is similar using the fact that
+$<<A>>$ and $<<B>>$ must have the same skeleton or one could not
+compose $<<lbox A>>$ and $<<lunbox B>>$. This implies that $<<A>>$ and
+$<<B>>$ only differ at an atomic type.
+
+\ \\
+\noindent
+This is a proof by induction on the form of $<<A>>$.
+
+\begin{itemize}
+\item[] Case. Suppose $<<A>>$ is atomic.  Then:
+  \[
+    <<lbox A>>;<<lunbox A>> = <<box A>>;<<unbox A>> = \id_{<<A>>}
+    \]
+    
+  \item[] Case. Suppose $<<A>>$ is $<<?>>$.  Then:
+    \[
+    \begin{array}{lll}
+      <<lbox A>>;<<lunbox A>> & = & <<lbox ?>>;<<lunbox ?>>\\
+      & = & \id_{<<?>>};\id_{<<?>>}\\
+      & = & \id_{<<?>>}\\
+      & = & \id_{<<A>>}
+    \end{array}
+    \]
+
+  \item[] Case. Suppose $<<A>> = <<A1 -> A2>>$.  Then:
+    \[\small
+    \begin{array}{lll}
+      <<lbox A>>;<<lunbox A>>
+      & = & <<lbox (A1 -> A2)>>;<<lunbox (A1 -> A2)>>\\
+      & = & (<<lunbox A1>> \to <<lbox A2>>);(<<lbox A1>> \to <<lbox A2>>)\\
+      & = & (<<lbox A1>>;<<lunbox A1>>) \to (<<lbox A2>>;<<lunbox A2>>)\\
+    \end{array}
+    \]
+    By two applications of the induction hypothesis we know the
+    following:
+    \[
+    \begin{array}{lll}
+      <<lbox A1>>;<<lunbox A1>> = \id_{<<A1>>} & \text{ and } & <<lbox A2>>;<<lunbox A2>> = \id_{<<A2>>}
+    \end{array}
+    \]
+    Thus, we know the following:
+    \[
+    \begin{array}{lll}
+      (<<lbox A1>>;<<lunbox A1>>) \to (<<lbox A2>>;<<lunbox A2>>)
+      & = & \id_{<<A1>>} \to \id_{<<A2>>}\\
+      & = & \id_{<<A1 -> A2>>}\\
+      & = & \id_{<<A>>}
+    \end{array}
+    \]
+
+  \item[] Case. Suppose $<<A>> = <<A1 x A2>>$.  Then:
+    \[\small
+    \begin{array}{lll}
+      <<lbox A>>;<<lunbox A>>
+      & = & <<lbox (A1 x A2)>>;<<lunbox (A1 x A2)>>\\
+      & = & (<<lbox A1>> \times <<lbox A2>>);(<<lunbox A1>> \times <<lbox A2>>)\\
+      & = & (<<lbox A1>>;<<lunbox A1>>) \times (<<lbox A2>>;<<lunbox A2>>)\\
+    \end{array}
+    \]
+    By two applications of the induction hypothesis we know the
+    following:
+    \[
+    \begin{array}{lll}
+      <<lbox A1>>;<<lunbox A1>> = \id_{<<A1>>} & \text{ and } & <<lbox A2>>;<<lunbox A2>> = \id_{<<A2>>}
+    \end{array}
+    \]
+    Thus, we know the following:
+    \[
+    \begin{array}{lll}
+      (<<lbox A1>>;<<lunbox A1>>) \times (<<lbox A2>>;<<lunbox A2>>)
+      & = & \id_{<<A1>>} \times \id_{<<A2>>}\\
+      & = & \id_{<<A1 x A2>>}\\
+      & = & \id_{<<A>>}
+    \end{array}
+    \]
+\end{itemize}
+% subsection proof_of_lifted_retract (end)
+
+\subsection{Proof of Lemma~\ref{lemma:S_is_faithful}}
+\label{subsec:proof_of_S_is_faithful}
+We must show that the function
+\[ \S_{A,B} : \Hom{C}{A}{B} \mto \Hom{S}{\S A}{\S B} \]
+is injective.
+
+So suppose $f \in \Hom{C}{A}{B}$ and $g \in \Hom{C}{A}{B}$ such that
+$\S f = \S g : \S A \mto \S B$.  Then we can easily see that:
+\[
+\begin{array}{lll}
+  \S f & = & <<lunbox A>>;f;<<lbox B>> \\
+  & = & <<lunbox A>>;g;<<lbox B>>\\
+  & = & \S g\\
+\end{array}
+\]
+But, we have the following equalities:
+\[\small
+\setlength{\arraycolsep}{1px}
+\begin{array}{rll}
+  <<lunbox A>>;f;<<lbox B>> & = & <<lunbox A>>;g;<<lbox B>>\\
+  <<lbox A>>;<<lunbox A>>;f;<<lbox B>>;<<lunbox B>> & = & <<lbox A>>;<<lunbox A>>;g;<<lbox B>>;<<lunbox B>>\\
+  \id_A;f;<<lbox B>>;<<lunbox B>> & = & \id_A;g;<<lbox B>>;<<lunbox B>>\\
+  \id_A;f;\id_B & = & \id_A;g;\id_B\\
+  f & = & g\\
+\end{array}
+\]
+The previous equalities hold due to
+Lemma~\ref{lemma:lifted_retract}.
+% subsection proof_of_S_is_faithful (end)
+
+\subsection{Proof of Type Consistency in the Model (Lemma~\ref{lemma:type_consistency_in_the_model})}
+\label{subsec:proof_of_type_consistency_in_the_model}
+This is a proof by induction on the form of $[[A ~ B]]$.
+\begin{description}
+\item Case: $\quad \SGradydruleCXXRefl{}$\\
+  \ \\
+  \noindent  
+  Choose $c_1 = c_2 = \id_A : <<A --> A>>$.
+  \ \\
+\item Case: $\quad \SGradydruleCXXBox{}$\\
+  \ \\
+  \noindent
+  Choose $c_1 = <<Box A>> : <<A --> ?>>$ and $c_2 = <<Unbox A>> : <<? -> A>>$.
+  \ \\
+\item Case: $\quad \SGradydruleCXXUnbox{}$\\
+  \ \\
+  \noindent
+  Choose $c_1 = <<Unbox A>> : <<? --> A>>$ and $c_2 = <<Box A>> : <<A -> ?>>$.
+  \ \\
+\item Case: $\quad \SGradydruleCXXArrow{}$\\
+  \ \\
+  \noindent  
+  By the induction hypothesis there exists four casting morphisms
+  $c'_1 : <<A1 --> A2>>$, $c'_2 : <<A2 --> A1>>$, $c'_3 : <<B1 --> B2>>$,
+  and $c'_4 : <<B2 --> B1>>$.  Choose
+  $c_1 = c'_2 \to c'_3 : <<(A1 -> B1) --> (A2 -> B2)>>$
+  and
+  $c_2 = c'_1 \to c'_4 : <<(A2 -> B2) --> (A1 -> B1)>>$.
+  \ \\
+\item Case: $\quad \SGradydruleCXXProd{}$\\
+  \ \\
+  \noindent  
+  By the induction hypothesis there exists four casting morphisms
+  $c'_1 : <<A1 --> A2>>$, $c'_2 : <<A2 --> A1>>$, $c'_3 : <<B1 --> B2>>$,
+  and $c'_4 : <<B2 --> B1>>$.
+  Choose
+  $c_1 = c'_1 \times c'_3 : <<H(A1 x B1) --> H(A2 x B2)>>$
+  and
+  $c_2 = c'_2 \times c'_4 : <<H(A2 x B2) --> H(A1 x B1)>>$.
+\end{description}
+% subsection proof_of_type_consistency_in_the_model (end)
+
+\subsection{Proof of Interpretation of Types Theorem~\ref{thm:interpretation_of_typing}}
+\label{subsec:proof_of_interpretation_of_types}
+First, we show how to interpret the rules of Surface Grady and then Core Grady.
+This is a proof by induction on $[[G |- t : A]]$.
+\begin{description}
+\item Case: $\quad \SGradydruleTXXvarP{}$\\
+    \\
+    \noindent
+    Suppose without loss of generality that $[[ [| G |] ]] = [[A1]]
+    \times \cdots \times [[Ai]] \times \cdots \times [[Aj]]$ where
+    $[[Ai]] = [[A]]$.  We know that $j > 0$ or the assumed typing
+    derivation would not hold.  Then take
+    $[[ [| x |] ]] = \pi_i : [[ [| G |] --> A]]$.
+
+    \ \\
+  \item Case: $\quad \SGradydruleTXXunitP{}$\\
+    \\
+    \noindent     
+    Take $[[ [| triv |] ]] = [[triv]]_{[[ [| G |] ]]} : [[ [| G |] --> Unit ]]$ where $[[triv]]_{[[ [| G |] ]]}$
+    is the unique terminal arrow that exists because $\cat{C}$ is cartesian closed.
+
+    \ \\
+  \item Case: $\quad \SGradydruleTXXzeroP{}$\\
+    \\
+    \noindent
+    Take $[[ [| 0 |] ]] = [[triv]]_{[[ [| G |] ]]};\z : [[ [| G |] --> Nat]]$
+    where $\z : [[Unit --> Nat]]$ exists because $\cat{C}$
+    has an NRNO.
+
+    \ \\
+  \item Case: $\quad \SGradydruleTXXsucc{}$\\
+    \\
+    \noindent
+    First, by the induction hypothesis there is a morphism $[[ [| t |] ]] : [[ [| G |] --> A]]$.
+    Now we have two cases to consider, one when $<<A>> = <<?>>$ and one when $<<A>> = <<Nat>>$.
+    Consider the former.  Then interpret
+    $<< [| succ t |] >> = << [| t |] >>;[[ unbox Nat ]];[[succ]] : [[ [| G |] --> Nat]]$ where
+    $[[succ]] : [[Nat --> Nat]]$ exists because $\cat{C}$ has an NRNO.  Similarly,
+    when $<<A>> = <<Nat>>$, 
+    $<< [| succ t |] >> = << [| t |] >>;[[succ]] : [[ [| G |] --> Nat]]$.
+
+    \ \\
+  \item Case: $\quad {    
+    \inferrule* [flushleft,right=$\mathsf{Nat}_e$] {
+      {
+        \begin{array}{lll}
+          [[G |- t : C]]            & [[nat(C) = Nat]]\\
+          [[G |- t1 : A1]]          & [[A1 ~ A]]\\
+          [[G, x : Nat |- t2 : A2]] & [[A2 ~ A]]
+        \end{array}
+      }
+    }{[[G |- case t of 0 -> t1, (succ x) -> t2 : A]]}
+    }$\\
+    \\
+    \noindent
+    By three applications of the induction hypothesis we have the following morphisms:
+    \begin{center}
+      \begin{math}
+        \begin{array}{lll}
+          [[ [| t |] ]] : [[ [|G|] --> C]]\\
+          [[ [| t1 |] ]] : [[ [|G|] --> A1]]\\
+          [[ [| t2 |] ]] : [[ H([|G|] x Nat) --> A2]]
+        \end{array}
+      \end{math}
+    \end{center}
+    In addition, we know $[[A1 ~ A]]$ and $[[A2 ~ A]]$ by
+    assumption, and hence, by type consistency in the model
+    (Lemma~\ref{lemma:type_consistency_in_the_model}) we know there are
+    casting morphisms $[[c1]] : [[A1 --> A]]$ and $[[c2 : A2 --> A]]$.
+    Now every gradual $\lambda$-model has an NRNO
+    (Definition~\ref{def:SNNO},
+    Definition~\ref{def:gradual-lambda-model}), and so, there is a
+    unique morphism:
+    \begin{center}
+      \begin{math}
+        \Case_{[[ [| G |] ]],A}\langle [[ [| t1 |];c1 ]],[[ [| t2 |];c2 ]] \rangle : [[ H([|G|] x Nat) --> A]]
+      \end{math}
+    \end{center}
+    
+    At this point we have two cases to consider: one when $[[C]] = [[?]]$ and one when $[[C]] = [[Nat]]$.  Consider the former.
+    Then we have the following:
+    \begin{center}
+      \begin{math}\small
+        \begin{array}{lll}
+          [[ [| case t of 0 -> t1, (succ x) -> t2 |] ]] \\
+          = \langle \id_{[[ [| G |] ]]}, [[ [| t |];unbox Nat ]] \rangle;\Case_{[[ [| G |] ]],A}\langle [[ [| t1 |];c1 ]],[[ [| t2 |];c2 ]] \rangle\\
+          : [[ [| G |] --> A ]]
+        \end{array}
+      \end{math}
+    \end{center}
+    In the second case we have the following:
+    \begin{center}
+      \begin{math}\small
+        \begin{array}{lll}
+          [[ [| case t of 0 -> t1, (succ x) -> t2 |] ]] \\
+          = \langle \id_{[[ [| G |] ]]}, [[ [| t |] ]] \rangle;\Case_{[[ [| G |] ]],A}\langle [[ [| t1 |];c1 ]],[[ [| t2 |];c2 ]] \rangle \\
+          : [[ [| G |] --> A ]]
+        \end{array}
+      \end{math}
+    \end{center}
+
+    \ \\
+  \item Case: $\quad \SGradydruleTXXpair{}$\\
+    \\
+    \noindent
+    By two applications of the induction hypothesis there are two morphisms
+    $[[ [| t1 |] ]] : [[ [| G |] --> A]]$ and $[[ [| t2 |] ]] : [[ [| G |] --> B]]$.
+    Then using the fact that $\cat{C}$ is cartesian we take
+    $[[ [| (t1 , t2) |] ]] = \langle [[ [| t1 |] ]] , [[ [| t2 |] ]] \rangle : [[ [| G |] --> H(A x B)]]$.
+
+    \ \\
+  \item Case: $\quad \SGradydruleTXXfst{}$\\
+    \\
+    \noindent
+    First, by the induction hypothesis there is a morphism $[[ [| t |] ]] : [[ [| G |] --> B]]$.
+    Now we have two cases to consider, one when $<<B>> = <<?>>$ and one when $<<B>> = <<A1 x A2>>$
+    for some types $<<A1>>$ and $<<A2>>$.  Consider the former.  We then know that it must
+    be the case that $<<A1 x A2>> = <<? x ?>>$.  Thus, we obtain the following interpretation
+    $[[ [| fst t |] ]] = [[ [| t |] ]];[[unbox (? x ?)]];\pi_1 : [[ [| G |] --> ?]]$.  Similarly,
+    when $<<B>> = <<A1 x A2>>$, then
+    $[[ [| fst t |] ]] = [[ [| t |] ]];\pi_1 : [[ [| G |] --> A1]]$.
+
+    \ \\
+  \item Case: $\quad \SGradydruleTXXsnd{}$\\
+    \\
+    \noindent
+    First, by the induction hypothesis there is a morphism $[[ [| t |] ]] : [[ [| G |] --> B]]$.
+    Now we have two cases to consider, one when $<<B>> = <<?>>$ and one when $<<B>> = <<A1 x A2>>$
+    for some types $<<A1>>$ and $<<A2>>$.  Consider the former.  We then know that it must
+    be the case that $<<A1 x A2>> = <<? x ?>>$.  Thus, we obtain the following interpretation
+    $[[ [| snd t |] ]] = [[ [| t |] ]];[[unbox (? x ?)]];\pi_2 : [[ [| G |] --> ?]]$.  Similarly,
+    when $<<B>> = <<A1 x A2>>$, then
+    $[[ [| snd t |] ]] = [[ [| t |] ]];\pi_2 : [[ [| G |] --> A2]]$.
+
+    \ \\
+  \item Case: $\quad \SGradydruleTXXlam{}$\\
+    \\
+    \noindent    
+    By the induction hypothesis there is a morphism $[[ [| t |] ]] :
+    [[ H([| G |] x A) --> B]]$.  Then take $[[ [| \x : A.t |] ]] =
+    \curry {[[ [| t |] ]]} : [[ [| G |] --> (A -> B)]]$, where
+    \begin{center}
+      \begin{math}
+        \mathsf{curry} : \Hom{C}{X \times Y}{Z} \mto \Hom{C}{X}{Y \to Z}
+      \end{math}
+    \end{center}
+    exists because $\cat{C}$ is closed.    
+   
+    \ \\
+  \item Case: $\quad {
+    \inferrule* [flushleft,right=$\to_e$] {
+      [[G |- t1 : C]] \\ \,\,\,[[A2 ~ A1]]\\\\    
+      [[G |-t2 : A2]] \\ [[fun(C) = A1 -> B1]]
+    }{[[G |- t1 t2 : B1]]}
+  }$\\
+    \\
+    \noindent
+    By the induction hypothesis there are two morphisms
+    $[[ [| t1 |] ]] : [[ [| G |] --> C ]]$ and
+    $[[ [| t2 |] ]] : [[ [| G |] --> A2 ]]$.  In addition, by assumption we know that
+    $[[A2 ~ A1]]$, and hence, by type consistency in the model (Lemma~\ref{lemma:type_consistency_in_the_model})
+    there are casting morphisms $c_1 : [[A2 --> A1]]$ and $c_2 : [[A1 --> A2]]$.  We have two cases to consider,
+    one when $[[C]] = [[?]]$ and one when $[[C]] = [[A1 -> B1]]$.  Consider
+    the former. Then we have the interpretation:
+    \begin{center}
+      \begin{math}
+        [[ [| t1 t2 |] ]] = \langle [[ [| t1 |] ]];[[unbox (? -> ?)]], [[ [| t2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]} : [[ [| G |] --> B1 ]]
+      \end{math}
+    \end{center}
+    Similarly, for the case when $[[C]] = [[A1 -> B1]]$ we have the interpretation:
+    \begin{center}
+      \begin{math}
+        [[ [| t1 t2 |] ]] = \langle [[ [| t1 |] ]], [[ [| t2 |] ]];c_1 \rangle;\app_{[[A1]],[[B1]]} : [[ [| G |] --> B1 ]]
+      \end{math}
+    \end{center}
+    Note that $\app_{[[A1]],[[B1]]} : [[ H((A1 -> B1) x A1) --> B1]]$ exists because the
+    model is cartesian closed.
+  \end{description}
+
+  Next we turn to Core Grady, but we do not show every rule, because
+  it is similar to what we have already shown above except without
+  casting morphism, and so we only show the case for the $[[box]]$ and
+  $[[unbox]]$ rules, and the error rule.
+
+  The first two cases use the well-known bijection:  
+  \begin{center}
+    \begin{math}
+      \begin{array}{lll}
+        \Hom{C}{A}{B} & \cong & \Hom{C}{[[Unit x A]]}{B}\\
+                      & \cong & \Hom{C}{[[Unit]]}{[[A -> B]]}
+      \end{array}
+    \end{math}
+  \end{center}
+  When $f \in \Hom{C}{A}{B}$, then we denote by $\curry{f}$, the
+  morphism $\curry{f} \in \Hom{C}{[[Unit]]}{[[A -> B]]}$.
+\begin{description}
+\item Case: $\quad \CGradydruleTXXBox{}$\\
+  \\
+  \noindent
+  We have the following interpretation:
+  \begin{center}
+    \begin{math}
+      << [| box A |] >> = [[triv]]_{[[ [| G |] ]]};\curry{<<Box A>>} : [[ [| G |] --> (A -> ?) ]]
+    \end{math}
+  \end{center}
+  \ \\
+\item Case: $\quad \CGradydruleTXXUnbox{}$\\
+  \\
+  \noindent
+  We have the following interpretation:
+  \begin{center}
+    \begin{math}
+      \begin{array}{lll}
+        << [| unbox A |] >> \\
+        = [[triv]]_{[[ [| G |] ]]};\curry{<<Unbox A>>}\\
+        : [[ [| G |] --> (? -> A)]]
+      \end{array}
+    \end{math}
+  \end{center}
+
+\item Case: $\quad \CGradydruleTXXerror{}$\\
+  \\
+  \noindent
+  We have the following interpretation:
+  \begin{center}
+    \begin{math}
+      << [| error A |] >> = <<error>>_{[[ [| G |] ]],[[A]]} : [[ [| G |] --> A]]
+    \end{math}
+  \end{center}
+\end{description}
+% subsection proof_of_interpretation_of_types (end)
+
+\subsection{Proof of Interpretation of Evaluation (Theorem~\ref{thm:interpretation_of_evaluation})}
+\label{subsec:proof_of_interpretation_of_evaluation}
+This proof requires the following corollary to
+Lemma~\ref{lemma:type_consistency_in_the_model}, and the following
+lemma called inversion for typing.
+\begin{corollary}
+  \label{corollary:type_consist_coro}
+  Suppose $(\cat{T}, \cat{C}, ?, \T,$ $\split, \squash, \bx, \unbox)$ is
+  a gradual $\lambda$-model.  Then we know the following:
+  \begin{enumR}
+  \item If $[[A ~ A]]$, then $c_1 = c_2 = \id_{[[A]]} : [[A --> A]]$.
+
+  \item If $[[A ~ ?]]$, then there are casting morphisms:
+    \[
+    \begin{array}{lll}
+      c_1 & = & [[Box A]] : [[A --> ?]]  \\    
+      c_2 & = & [[Unbox A]] : [[? --> A]]
+    \end{array}
+    \]
+
+    \item If $[[? ~ A]]$, then there are casting morphisms:
+    \[
+    \begin{array}{lll}
+      c_1 & = & [[Unbox A]] : [[? --> A]]\\
+      c_2 & = & [[Box A]] : [[A --> ?]]
+      \end{array}
+    \]
+    
+  \item If $[[A1 -> B1 ~ A2 -> B2]]$, then there are casting morphisms:
+    \[
+    \begin{array}{lllll}
+      c & = & c_1 \to c_2 : [[(A1 -> B1) --> (A2 -> B2)]]\\
+      c' & = & c_3 \to c_4 : [[(A2 -> B2) --> (A1 -> B1)]]
+    \end{array}
+    \]
+    where $c_1 : [[A2 --> A1]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
+    [[A1 --> A2]]$ and $c_4 : [[B2 --> B1]]$.
+    
+  \item If $[[A1 x B1 ~ A2 x B2]]$, then there are casting
+    morphisms:
+    \[
+    \begin{array}{lll}
+       c & = & c_1 \times c_2 : [[(A1 x B1) --> (A2 x B2)]]\\
+      c' & = & c_3 \times c_4 : [[(A2 x B2) --> (A1 x B1)]]
+    \end{array}
+    \]
+    where $c_1 : [[A1 --> A2]]$ and $c_2 : [[B1 --> B2]]$, and $c_3 :
+    [[A2 --> A1]]$ and $c_4 : [[B2 --> B1]]$.
+  \end{enumR}
+\end{corollary}
+\begin{proof}
+  This proof holds by the construction of the casting morphisms from
+  the proof of the previous result, and the fact that the type
+  consistency rules are unique for each type.
+\end{proof}
+
+\begin{lemma}[Inversion for Typing]
+  \label{lemma:inversion_for_typing}
+  \begin{enumerate}[label=\roman*.]
+  \item[]
+  \item If $<<G |- succ t : A>>$, then $<<A>> = <<Nat>>$ and $<<G |- t : Nat>>$.
+  \item If $<<G |- case t : Nat of x -> t1, (succ x) -> t2 : A>>$, then $<<G |- t : Nat>>$, $<<G |- t1 : A>>$, and $<<G, x : Nat |- t2 : A>>$.
+  \item If $<<G |- (t1, t2) : A>>$, then there are types $<<B>>$ and $<<C>>$, such that, $<<A>> = <<B x C>>$, $<<G |- t1 : B>>$, and $<<G |- t2 : C>>$.
+  \item If $<<G |- fst t : A>>$, then there is a type $<<B>>$, such that, $<<G |- t : A x B>>$.
+  \item If $<<G |- snd t : A>>$, then there is a type $<<B>>$, such that, $<<G |- t : B x A>>$.
+  \item If $<<G |- \x:A.t : A>>$, then there are types $<<B>>$ and $<<C>>$, such that, $<<A>> = <<B -> C>>$ and $<<G, x : B |- t : C>>$.
+  \item If $<<G |- t1 t2 : A>>$, then there is a type $<<B>>$, such that, $<<G |- t1 : B -> A>>$ and $<<G |- t2 : B>>$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  Each case of this proof holds trivially by induction on the assumed
+  typing derivation, because there is only one typing rule per term
+  constructor.
+\end{proof}
+
+This proof holds by induction on the form of $<<t1 ~> t2>>$ with an
+appeal to inversion for typing on $[[G |- t1 : A]]$ and $[[G |- t2 :
+    A]]$.  We only show the cases for the retract rules, and the error
+rule, because the others are well-known to hold within any cartesian
+closed category; see \cite{Lambek:1980} or \cite{Crole:1994}.  We will
+routinely use the interpretation given in the proof of
+Theorem~\ref{thm:interpretation_of_typing} and summarized in
+Figure~\ref{fig:interp-terms} throughout this proof without mention.
+
+The cases to follow will make use of the following result, essentially
+the semantic equivalent to an instance of the $\beta$-rule, that holds
+in any cartesian closed category:
+\begin{center}
+  \begin{math} \footnotesize
+    \begin{array}{lll}        
+      \langle [[triv]]_{[[C]]};\curry{g}, f\rangle;\app_{[[A]],[[B]]}\\
+      = \langle [[triv]]_{[[C]]}, f\rangle;(\curry{g} \times \id_A);\app_{[[A]],[[B]]}\\
+      = \langle [[triv]]_{[[C]]}, f\rangle;[[snd]];g\\
+      = f;g\\
+    \end{array}
+  \end{math}
+\end{center}
+where $g : [[A --> B]]$ and $f : [[C --> A]]$.  Note that
+$\app_{[[A]],[[B]]} : [[H((A -> B) x A) --> B]]$ exists, because
+$\cat{C}$ is a cartesian closed category.
+\begin{description}
+\item Case: $\quad \CGradydrulerdXXretracT{}$\\
+
+  \ \\
+  \noindent
+  We know by assumption that $<<G |- unbox A (box A t) : A>>$ and $<<G |- t : A>>$.
+  By interpretation for typing (Theorem~\ref{thm:interpretation_of_typing}) and using the above
+  equation we obtain the following morphisms:
+  \begin{center}
+    \begin{math}\footnotesize
+      \begin{array}{lll}
+        << [| box A t |] >>\\
+        = \langle [[triv]]_{[[ [| G |] ]]};\curry{<<Box A>>}, [[ [| t |] ]]\rangle;\app_{[[A]],[[?]]}\\
+        = [[ [| t |] ]];<<Box A>>\\
+        : [[ [| G |] --> ? ]]\\
+        \\
+        << [| unbox A (box A t) |] >> \\
+        = \langle [[triv]]_{[[ [| G |] ]]};\curry{<<Unbox A>>}, << [| box A t |] >>\rangle;\app_{[[?]],[[A]]} \\
+        = << [| box A t |] >>;<<Unbox A>> \\
+        = [[ [| t |] ]];<<Box A>>;<<Unbox A>> \\
+        : [[ [| G |] --> A ]]\\
+      \end{array}
+    \end{math}
+  \end{center}
+  where $[[ [| t |] ]] : [[ [| G |] --> A]]$.  At this point it is
+  easy to see that $[[ [| t |] ]];<<Box A>>;<<Unbox A>> = [[ [| t |]
+  ]];\id_A = [[ [| t |] ]]$. Thus, we obtain our result.
+  
+
+\item Case: $\quad \CGradydrulerdXXretracTE{}$\\
+
+  \ \\
+  \noindent
+  This case follows similarly to the previous case.  Using the semantic $\beta$-equation given above,
+  then we will obtain $[[ [| t |] ]];<<Box B>>;<<Unbox A>> = <<error>>_{[[ [| G |] ]], [[ A ]]}$ using
+  the error axioms from the definition of the gradual $\lambda$-model (Definition~\ref{def:gradual-lambda-model}).
+  \ \\
+
+\item Case: $\quad \CGradydrulerdXXerror{}$\\
+
+  \ \\
+  \noindent
+  This case follows from a case analysis over the structure of $<<EC>>$, and then using the error axioms
+  from the definition of the gradual $\lambda$-model (Definition~\ref{def:gradual-lambda-model}).
+  \ \\  
+
+\end{description}
+%% % subsection proof_of_interpretation_of_evaluation (end)
+
+\subsection{Proof of Interpretation of Evaluation for $\CGSTLC$ (Theorem~\ref{thm:CGSTLC-interpretation_of_evaluation})}
+\label{subsec:proof_of_interpretation_of_evaluation_for_CGSTLC}
+\input{siek15-interp-eval-proof-ott}
+% section proof_of_interpretation_of_evaluation_for_CGSTLC (end)
+
+
+\subsection{Proof of Congruence of Type Consistency Along Type Precision (Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision})}
+\label{subsec:proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision}
+
+\begin{proof}
+  
+The proofs of both parts are similar, and so we only show a few
+cases of the first part, but the omitted cases follow similarly.
+
+\noindent
+\textbf{Proof of part one.} This is a proof by induction on the form
+of $[[A1 <= A1']]$.
+\begin{description}
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydrulePXXUName{}$] {
+        \,
+      }{[[A1 <= ?]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A1']] = [[?]]$.  Suppose $[[A1 ~ A2]]$.  Then
+  it suffices to show that $[[? ~ A2]]$, but this easily follows.
+  
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydrulePXXarrowName{}$] {
+        [[A <= C && B <= D]]
+      }{[[(A -> B) <= (C -> D)]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A1]] = [[A -> B]]$ and $[[A1']] = [[C -> D]]$.  Suppose
+  $[[A1 ~ A2]]$.  Then by inversion for type consistency it must
+  be the case that either $[[A2]] = [[?]]$, or
+  $[[A2]] = [[A' -> B']]$, $[[A ~ A']]$, and $[[B ~ B']]$.
+  
+  Consider the former.  Then it suffices to show that $[[A1' ~ ?]]$,
+  but this easily follows.
+
+  Consider the case when $[[A2]] = [[A' -> B']]$, $[[A ~ A']]$, and $[[B ~ B']]$.
+  It suffices to show that $[[(C -> D) ~ (A' -> B')]]$ which follows from
+  $[[A' ~ C]]$ and $[[D ~ B']]$.  Thus, it suffices to show that latter.
+  By assumption we know the following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[A <= C]]$ and $[[A ~ A']]$\\
+      $[[B <= D]]$ and $[[B ~ B']]$
+    \end{tabular}
+  \end{center}
+  Now by two applications of the induction hypothesis we obtain $[[C ~ A']]$
+  and $[[D ~ B']]$. By symmetry the former implies $[[A' ~ C]]$ and
+  we obtain our result.
+\end{description}  
+\end{proof}
+% subsection proof_of_congruence_of_type_consistency_along_type_precision_lemma:congruence_of_type_consistency_along_type_precision (end)
+
+\subsection{Proof of Gradual Guarantee Part One (Lemma~\ref{lemma:gradual_guarantee_part_one})}
+\label{subsec:proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one}
+
+  This is a proof by induction on $[[G |- t : A]]$.  We only show the
+most interesting cases, because the others follow similarly.
+
+\begin{description}
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXvarPName{}$] {
+      [[x : A elem G]]
+    }{[[G |- x : A]]}
+  \end{typeProofCase}
+
+\noindent
+In this case $[[t]] = [[x]]$.  Suppose $[[t <= t']]$.  Then
+it must be the case that $[[t']] = [[x]]$.  If $[[x : A elem G]]$,
+then there is a type $[[A']]$ such that $[[x : A' elem G']]$ and
+$[[A <= A']]$.  Thus, choose $[[B]] = [[A']]$ and the result follows.
+
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+      \inferrule* [right=$\SGradydruleTXXsuccName{}$] {
+        [[G |- t1 : A' && nat(A') = Nat]]
+      }{[[G |- succ t1 : Nat]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A]] = [[Nat]]$ and $[[t]] = [[succ t1]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+  Then by definition it must be the case that $[[t']] = [[succ t2]]$ where $[[t1 <= t2]]$.
+  By the induction hypothesis $[[G' |- t2 : B']]$ where $[[A' <= B']]$.  Since $[[nat(A') = Nat]]$
+  and $[[A' <= B']]$, then it must be the case that $[[nat(B') = Nat]]$ by Lemma~\ref{lemma:fun_type_pre}.
+  At this point we obtain our result by choosing $[[B]] = [[Nat]]$, and reapplying the rule above.
+
+\item[]
+\item
+  \begin{typeProofCase}
+    \inferrule* [flushleft,right=$\mathsf{Nat}_e$] {
+      {
+        \begin{array}{lll}
+          [[G |- t1 : C]]            & [[nat(C) = Nat]]\\
+          [[G |- t2 : A1]]          & [[A1 ~ A]]\\
+          [[G, x : Nat |- t3 : A2]] & [[A2 ~ A]]
+        \end{array}
+      }
+      }{[[G |- case t1 of 0 -> t2, (succ x) -> t3 : A]]}
+  \end{typeProofCase}
+      
+  \noindent
+  In this case $[[t]] = [[case t1 of 0 -> t2, (succ x) -> t3]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.  This
+  implies that \\ $[[t']] = [[case t1' of 0 -> t2', (succ x) -> t3']]$ such that
+  $[[t1 <= t1']]$, $[[t2 <= t2']]$, and $[[t3 <= t3']]$.  Since $[[G <= G']]$ then $[[(G,x:Nat) <= (G',x:Nat)]]$.
+  By the induction hypothesis we know the following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G' |- t1' : C']]$ for $[[C <= C']]$\\
+      $[[G' |- t2 : A1']]$ for $[[A1 <= A1']]$\\
+      $[[G', x : Nat |- t3 : A2']]$ for $[[A2 <= A2']]$
+    \end{tabular}
+  \end{center}
+  By assumption we know that $[[A1 ~ A]]$, $[[A2 ~ A]]$, and $[[G <= G']]$.
+  By the induction hypothesis we know that $[[A1 <= A1']]$ and $[[A2 <= A2']]$, so
+  by using Lemma~\ref{lemma:congruence_of_type_consistency_along_type_precision} we may obtain that
+  $[[A1' ~ A]]$ and $[[A2' ~ A]]$.  At this point choose $[[B]] = [[A]]$
+  and we obtain our result by reapplying the rule.
+  
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXpairName{}$] {
+      [[G |- t1 : A1 && G |- t2 : A2]]
+    }{[[G |- (t1,t2) : A1 x A2]]}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $[[A]] = [[A1 x A2]]$ and $[[t]] = [[(t1,t2)]]$. Suppose
+  $[[t <= t']]$ and $[[G <= G']]$.  This implies that $[[t']] = [[(t1',t2')]]$ where
+  $[[t1 <= t1']]$ and $[[t2 <= t2']]$.
+  
+  By the induction hypothesis we know:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G' |- t1' : A1']]$ and $[[A1 <= A1']]$\\
+      $[[G' |- t2' : A2']]$ and $[[A2 <= A2']]$\\
+    \end{tabular}
+  \end{center}
+  Then choose $[[B]] = [[A1' x A2']]$ and the result follows by reapplying
+  the rule above and the fact that $[[(A1 x A2) <= (A1' x A2')]]$.  
+
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXlamName{}$] {
+      [[G, x : A1 |- t1 : B1]]
+    }{[[G |- \x:A1.t1 : A1 -> B1]]}
+  \end{typeProofCase}
+  \noindent
+  In this case $[[A1 -> B2]]$ and $[[t]] = [[\x:A1.t1]]$.  Suppose $[[t <= t']]$ and $[[G <= G']]$.
+  Then it must be the case that $[[t']] = [[\x:A2.t2]]$, $[[t1 <= t2]]$, and $[[A1 <= A2]]$.
+  Since $[[G <= G']]$ and $[[A1 <= A2]]$, then $[[(G, x : A1) <= (G', x : A2)]]$ by definition.
+  Thus, by the induction hypothesis we know the following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G', x : A2 |- t1' : B2]]$ and $[[B1 <= B2]]$
+    \end{tabular}
+  \end{center} 
+  Choose $[[B]] = [[A2 -> B2]]$ and the result follows by reapplying the rule above
+  and the fact that $[[(A1 -> B1) <= (A2 -> B2)]]$.
+
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\SGradydruleTXXappName{}$] {
+      [[G |- t1 : C && fun(C) = A1 -> B1]]
+      \\\\
+          [[G |-t2 : A2 && A2 ~ A1]]
+    }{[[G |- t1 t2 : B1]]}
+  \end{typeProofCase}
+  
+  \noindent
+  In this case $[[A]] = [[B1]]$ and $[[t]] = [[t1 t2]]$.  Suppose $[[t <= t']]$
+  and $[[G <= G']]$.  The former implies that $[[t']] = [[t1' t2']]$ such that
+  $[[t1 <= t1']]$ and $[[t2 <= t2']]$.  By the induction hypothesis we know the
+  following:
+  \begin{center}
+    \begin{tabular}{lll}
+      $[[G' |- t1' : C']]$ for $[[C <= C']]$\\
+      $[[G' |- t2' : A2']]$ for $[[A2 <= A2']]$\\
+    \end{tabular}
+  \end{center}
+  We know by assumption that $[[A2 ~ A1]]$.  
+  Since $[[C <= C']]$ and $[[fun(C) = A1 -> B1]]$, then $[[fun(C') = A1' -> B1']]$
+  where $[[A1 <= A1']]$ and $[[B1 <= B1']]$ by Lemma~\ref{lemma:fun_type_pre}.
+  Furthermore, we know $[[A2 ~ A1]]$ and $[[A2 <= A2']]$ and $[[A1 <= A1']]$, then
+  we know $[[A2' ~ A1']]$ by Corollary~\ref{corollary:congruence_of_type_consistency_along_type_precision}.
+  So choose $[[B]] = [[B1']]$. Then reapply the rule above and the result follows, because
+  $[[B1 <= B1']]$.
+\end{description}
+% subsection proof_of_gradual_guarantee_part_one_lemma:gradual_guarantee_part_one (end)
+
+\subsection{Proof of Simulation of More Precise Programs (Lemma~\ref{lemma:simulation_of_more_precise_programs})}
+\label{subsec:proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs}
+
+  This is a proof by induction on $<<G |- t1 : A1>>$.  We only give the
+most interesting cases.  All others follow similarly.  Throughout the
+proof we implicitly make use of typability inversion
+(Lemma~\ref{lemma:typeability_inversion}) when applying the induction
+hypothesis.
+
+\begin{description}
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXsuccName{}$] {
+      <<G |- t : Nat>>
+    }{<<G |- succ t : Nat>>}
+  \end{typeProofCase}
+  
+  \noindent
+  In this case $<<t1>> = <<succ t>>$ and $<<A>> = <<Nat>>$.  Suppose $<<G |- t1' : A'>>$.
+  By inversion for term precision we must consider the following cases:
+  \begin{enumR}
+  \item $<<t1'>> = <<succ t'>>$ and $<<G |- t <= t'>>$
+  \item $<<t1'>> = <<box Nat t1>>$ and $<<G |- t1 : Nat>>$    
+  \end{enumR}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<succ t'>>$, $<<G |- t <= t'>>$, and $<<t1 ~> t2>>$.
+  Then $<<t2>> = <<succ t''>>$ and $<<t ~> t''>>$.  Then by the induction hypothesis
+  we know that there is some $<<t'''>>$ such that $<<t' ~>* t'''>>$ and $<<G |- t'' <= t'''>>$.  Choose
+  $<<t2'>> = <<succ t'''>>$ and the result follows.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.} Suppose $<<t1'>> = <<box Nat t1>>$, $<<G |- t1 : Nat>>$, and $<<t1 ~> t2>>$.
+  Then choose $<<t'2>> = <<box Nat t2>>$, and the result follows, because we know by type preservation
+  that $<<G |- t2 : Nat>>$, and hence, $<<G |- t2 <= t2'>>$.
+
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXncaseName{}$] {
+      <<G |- t : Nat>>
+      \\\\
+      <<G |- t3 : A && G, x : Nat |- t4 : A>>
+    }{<<G |- case t : Nat of 0 -> t3, (succ x) -> t4 : A>>}  
+  \end{typeProofCase}
+  
+  \noindent
+  In this case $<<t1>> = <<case t : Nat of 0 -> t3, (succ x) -> t4>>$.  Suppose
+  $<<G |- t1' : A'>>$. 
+  Then inversion of term precision implies that one of the following must hold:
+  \begin{enumR}
+    \item $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$, $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$,
+    and $<<G, x : Nat |- t4 <= t4'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \end{enumR}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<case t' : Nat of 0 -> t3', (succ x) -> t4'>>$,
+  $<<G |- t <= t'>>$, $<<G |- t3 <= t3'>>$, and $<<G, x : Nat |- t4 <= t4'>>$.
+
+  \ \\
+  \noindent
+  We case split over $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case.  Suppose $<<t>> = <<0>>$ and $<<t2>> = <<t3>>$.  Since $<<G |- t1 <= t1'>>$ we know that
+    it must be the case that $<<t'>> = <<0>>$ and $<<t1' ~> t3'>>$ by inversion for term precision
+    or $<<t1'>>$ would not be typable which is a contradiction.  Thus, choose $<<t2'>> = <<t3'>>$ and the result follows.
+    
+  \item[] Case.  Suppose $<<t>> = <<succ t''>>$ and $<<t2>> = << [t''/x]t4>>$.  Since $<<G |- t1 <= t1'>>$
+    we know that $<<t'>> = <<succ t'''>>$, or $<<t1'>>$ would not be typable,
+    and $<<G |- t'' <= t'''>>$ by inversion for term precision. In addition,
+    $<<t'1 ~> [t'''/x]t'4>>$. Choose $<<t2>> = << [t'''/x]t'4>>$.  Then it suffices to show that
+    $<<G |- [t''/x]t4 <= [t'''/x]t'4>>$ by substitution for term precision (Lemma~\ref{lemma:substitution_for_term_precision}).    
+    
+  \item[] Case.  Suppose a congruence rule was used.  Then $<<t2>> = <<case t'' : Nat of 0 -> t3'', (succ x) -> t4''>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.    
+  \end{itemize}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.}  Suppose $<<t1'>> = <<box A t1>>$, $<<G |- t1 : A>>$, and $<<t1 ~> t2>>$.
+  Then choose $<<t'2>> = <<box A t2>>$, and the result follows, because we know by type preservation
+  that $<<G |- t2 : A>>$, and hence, $<<G |- t2 <= t2'>>$.
+
+\item[] 
+\item
+  \begin{typeProofCase}
+     $$\mprset{flushleft}
+      \inferrule* [right=$\CGradydruleTXXfstName{}$] {
+        <<G |- t : A x B>>
+      }{<<G |- fst t : A>>}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $<<t1>> = <<fst t>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then inversion for term precision implies that one of the following must hold:
+  \begin{enumR}
+  \item $<<t'1>> = <<fst t'>>$ and $<<G |- t <= t'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \end{enumR}
+
+  We only consider the proof of part i, because the other follows similarly to
+  the previous case. Case split over $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case. Suppose $<<t>> = <<(t'3,t''3)>>$ and $<<t2>> = <<t'3>>$.  By inversion for term precision it must be the case
+    that $<<t'>> = <<(t'4,t''4)>>$ because $<<G |- t1 <= t'1>>$ or else $<<t1'>>$ would not be typable.  In addition,
+    this implies that $<<G |- t'3 <= t'4>>$ and $<<G |- t''3 <= t''4>>$.
+    Thus, $<<t'1 ~> t'4>>$. Thus, choose $<<t2'>> = <<t'4>>$ and the result follows.
+
+  \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<fst t''>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+  \end{itemize}
+
+\item[]
+\item
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXlamName{}$] {
+      <<G, x : A1 |- t : A2>>
+    }{<<G |- \x:A1.t : A1 -> A2>>}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $<<t1>> = <<\x:A1.t>>$ and $<<A>> = <<A1 -> A2>>$.
+  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then inversion of term precision implies that one of the following must hold:
+  \begin{enumR}
+  \item $<<t'1>> = <<\x:A'1.t'>>$
+  \item $<<t1'>> = <<box A t1>>$ and $<<G |- t1 : A>>$
+  \end{enumR}
+  
+  \noindent
+  We only consider the proof of part i. The reduction relation does not reduce under
+  $\lambda$-expressions.  Hence, $<<t2>> = <<t1>>$, and thus, choose $<<t'2>> = <<t'1>>$, and
+  the case trivially follows.  
+  
+\item[]
+\item 
+  \begin{typeProofCase}
+    $$\mprset{flushleft}
+    \inferrule* [right=$\CGradydruleTXXappName{}$] {
+      <<G |- t3 : A1 -> A2 && G |- t4 : A1>>
+    }{<<G |- t3 t4 : A2>>}
+  \end{typeProofCase}
+
+  \noindent
+  In this case $<<t1>> = <<t3 t4>>$.  Suppose $<<G |- t1 <= t1'>>$ and $<<G |- t1' : A'>>$.
+  Then by inversion for term prevision we know one of the following is true:
+  \begin{enumR}
+  \item $<<t1'>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$
+  \item $<<t'1>> = <<box A2 t1>>$ and $<<G |- t1 : A>>$
+  \item $<<t3>> = <<unbox A2>>$, $<<t'1>> = <<t4>>$, and $<<G |- t4 : ?>>$
+  \end{enumR}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part i.}  Suppose $<<t1'>> = <<t'3 t'4>>$, $<<G |- t3 <= t'3>>$, and $<<G |- t4 <= t'4>>$.
+
+  We case split on the from of $<<t1 ~> t2>>$.
+  \begin{itemize}
+  \item[] Case.  Suppose $<<t3>> = <<\x:A1.t5>>$ and $<<t2>> = << [t4/x]t5>>$.
+    Then by inversion for term precision we know that
+    $<<t'3>> = <<\x:A1'.t'5>>$ and $<<G, x : A2' |- t5 <= t'5>>$,
+    because $<<G |- t3 <= t'3>>$ and the requirement that $<<t1'>>$ is typable. Choose $<<t'2>> = << [t'4/x]t'5>>$
+    and it is easy to see that $<<t'1 ~> [t'4/x]t'4>>$.
+    We know that $<<G, x : A2' |- t5 <= t'5>>$ and $<<G |- t4 <= t'4>>$, and hence,
+    by Lemma~\ref{lemma:substitution_for_term_precision} we know that
+    $<<G |- [t4/x]t5 <= [t'4/x]t'5>>$, and we obtain our result.
+    
+  \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box A t5>>$, and $<<t2>> = <<t5>>$.
+    Then by inversion for term prevision $<<t'3>> = <<unbox A>>$, $<<t'4>> = <<box A t'5>>$, and $<<G |- t5 <= t'5>>$.
+    Note that $<<t'4>> = <<box A t'5>>$ and $<<G |- t5 <= t'5>>$ hold even though there are two potential rules
+    that could have been used to construct $<<G |- t4 <= t4'>>$. 
+    Choose $<<t'2>> = <<t'5>>$ and it is easy to see that $<<t'1 ~> t'5>>$.  Thus, we obtain our result.    
+
+  \item[] Case.  Suppose $<<t3>> = <<unbox A>>$, $<<t4>> = <<box B t5>>$, $<<A != B>>$,
+    and $<<t2>> = <<error B>>$.  Then $<<t'3>> = <<unbox A>>$ and $<<t'4>> = <<box B t'5>>$.
+    Choose $<<t'2>> = <<error B>>$ and it is easy to see that $<<t'1 ~> t'5>>$.  Finally,
+    we can see that $<<G |- t2 <= t'2>>$ by reflexivity.
+    
+  \item[] Case. Suppose a congruence rule was used.  Then $<<t2>> = <<t'5 t'6>>$.
+    This case will follow straightforwardly by induction and a case split over which congruence rule was used.
+  \end{itemize}
+
+  \ \\
+  \noindent
+  \textbf{Proof of part ii.} We know that $<<t1>> = <<t3 t4>>$.  Suppose $<<t'1>> = <<box A2 t1>>$ and $<<G |- t1 : A>>$.
+  If $<<t1 ~> t2>>$, then $<<t'1>> = <<(box A2 t1) ~> (box A2 t2)>>$.  Thus, choose $<<t2'>> = <<box A2 t2>>$.
+
+  \ \\
+  \noindent
+  \textbf{Proof of part iii.} We know that $<<t1>> = <<t3 t4>>$. Suppose
+  $<<t3>> = <<unbox A2>>$, $<<t'1>> = <<t4>>$, and $<<G |- t4 : ?>>$.  Then $<<t1>> = <<unbox A2 t4>>$.  We
+  case split over $<<t1 ~> t2>>$.  We have three cases to consider.
+
+  \ \\
+  \noindent
+  Suppose $<<t4>> = <<box A2 t5>>$ and $<<t2>> = <<t5>>$.  Then choose $<<t2'>> = <<t4>> = <<t'1>>$, and we
+  obtain our result.
+
+  \ \\
+  \noindent
+  Suppose $<<t4>> = <<box A3 t5>>$, $<<A2>> \neq <<A3>>$, and $<<t2>> = <<error A2>>$. Then choose $<<t2'>> = <<t4>> = <<t'1>>$,
+  and we obtain our result.
+
+  \ \\
+  \noindent
+  Suppose a congruence rule was used.  Then $<<t2>> = <<t3 t'4>>$. This case will follow straightforwardly by induction.
+\end{description}
+% subsection proof_of_simulation_of_more_precise_programs_lemma:simulation_of_more_precise_programs (end)
+
+% section proofs (end)
+
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "main.tex"  ***
+%%% End: ***

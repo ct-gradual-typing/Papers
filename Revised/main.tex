@@ -1,0 +1,506 @@
+\documentclass[sigplan]{acmart}\settopmatter{printfolios=true}
+
+\setcopyright{none}
+
+\usepackage{amssymb,amsmath, amsthm}
+\usepackage{thm-restate}
+\usepackage{fullpage}
+\usepackage{hyperref}
+\usepackage{mathpartir}
+\usepackage[barr]{xy}
+\usepackage{mdframed}
+\usepackage{supertabular}
+\usepackage{todonotes}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{color}
+
+%% From: https://hal.inria.fr/file/index/docid/881085/filename/lsthaskell.sty
+\lstdefinelanguage{Haskell}{ 
+  %
+  % Anything betweeen $ becomes LaTeX math mode
+  mathescape=true,
+  %
+  % Comments may or not include Latex commands
+  texcl=false, 
+  %
+  morekeywords=[1]{class, instance},
+  %
+  morekeywords=[2]{where},
+  %
+  morekeywords=[3]{Maybe},
+  %
+  morekeywords=[4]{main},
+  %
+  morekeywords=[6]{do, last, first, try, idtac, repeat},
+  %
+  % Comments delimiters, we do turn this off for the manual
+  morecomment=[s]{(*}{*)},
+  %
+  % Spaces are not displayed as a special character
+  showstringspaces=false,
+  %
+  % String delimiters
+  morestring=[b]",
+  morestring=[d],
+  %
+  % Size of tabulations
+  tabsize=3,
+  %
+  % Enables ASCII chars 128 to 255
+  extendedchars=false,
+  %
+  % Case sensitivity
+  sensitive=true,
+  %
+  % Automatic breaking of long lines
+  breaklines=false,
+  %
+  % Default style fors listings
+  basicstyle=\footnotesize,
+  %
+  % Position of captions is bottom
+  captionpos=b,
+  %
+  % flexible columns
+  columns=[l]flexible,
+  %
+  % Style for (listings') identifiers
+  identifierstyle={\ttfamily\color{black}},
+  % Style for declaration keywords
+  keywordstyle=[1]{\ttfamily\color{dkviolet}},
+  % Style for gallina keywords
+  keywordstyle=[2]{\ttfamily\color{dkgreen}},
+  % Style for sorts keywords
+  keywordstyle=[3]{\ttfamily\color{ltblue}},
+  % Style for tactics keywords
+  keywordstyle=[4]{\ttfamily\color{dkblue}},
+  % Style for terminators keywords
+  keywordstyle=[5]{\ttfamily\color{dkred}},
+  %Style for iterators
+  %keywordstyle=[6]{\ttfamily\color{dkpink}},
+  % Style for strings
+  stringstyle=\ttfamily,
+  % Style for comments
+  commentstyle={\ttfamily\color{dkgreen}},
+  %
+  %moredelim=**[is][\ttfamily\color{red}]{/&}{&/},
+  literate=
+  {->}{{$\rightarrow\;$}}1
+  {=>}{{$\Rightarrow\;$}}1
+  {<:}{{$<\hspace{-2px}\colon$}}1
+  {++}{{\code{++}}}1
+  {\{}{{$\langle$}}1
+  {\}}{{$\rangle\;$}}1
+  {~}{{\ }}1
+  {\\dollar}{{$\$$\;}}1
+  %
+}[keywords,comments,strings]
+
+\lstnewenvironment{haskell}{\lstset{language=Haskell}}{}
+
+% pour inliner dans le texte
+\def\hasqel{\lstinline[language=Haskell, basicstyle=\small]}
+% pour inliner dans les tableaux / displaymath...
+\def\haskels{\lstinline[language=Haskell, basicstyle=\scriptsize]}
+
+\newenvironment{enumR}{\begin{enumerate}[label=\roman*.,align=left]}{\end{enumerate}}
+\newenvironment{enumA}{\begin{enumerate}[label=\alph*.]}{\end{enumerate}}
+
+\newcommand{\cL}{{\cal L}}
+
+\let\mto\to                     % Used for arrows
+\let\to\relax                   % Used for implication
+\newcommand{\to}{\rightarrow}
+\newcommand{\id}{\mathsf{id}}
+\newcommand{\redto}{\rightsquigarrow}
+\newcommand{\cat}[1]{\mathcal{#1}}
+\newcommand{\catop}[1]{\mathcal{#1}^{\mathsf{op}}}
+\newcommand{\Case}[0]{\mathsf{case}}
+
+\let\split\relax
+\let\S\relax
+
+\newcommand{\split}[0]{\mathsf{split}}
+\newcommand{\squash}[0]{\mathsf{squash}}
+\newcommand{\bx}[0]{\mathsf{box}}
+\newcommand{\error}[0]{\mathsf{error}}
+\newcommand{\err}[0]{\mathsf{err}}
+\newcommand{\unbox}[0]{\mathsf{unbox}}
+\newcommand{\T}[0]{\mathsf{T}}
+\newcommand{\S}[0]{\mathsf{S}}
+\newcommand{\U}[0]{\mathsf{U}}
+\newcommand{\C}[0]{\mathsf{C}}
+\newcommand{\z}[0]{\mathsf{z}}
+\newcommand{\app}[0]{\mathsf{app}}
+\newcommand{\curry}[1]{\mathsf{curry}(#1)}
+\newcommand{\interp}[1]{[\negthinspace[#1]\negthinspace]}
+\newcommand{\Hom}[3]{\mathsf{Hom}_{\cat{#1}}(#2,#3)}
+
+%% \newtheorem{theorem}{Theorem}
+%% \newtheorem{lemma}[theorem]{Lemma}
+%% \newtheorem{corollary}[theorem]{Corollary}
+%% \newtheorem{definition}[theorem]{Definition}
+%% \newtheorem{proposition}[theorem]{Proposition}
+%% \newtheorem{example}[theorem]{Example}
+
+%% OTT Includes:
+\input{surface-grady-inc}
+\renewcommand{\SGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\SGradydrulename{#4}}}
+\renewcommand{\SGradydrulename}[1]{#1}
+
+\renewcommand{\SGradydruleCXXReflName}{\text{refl}}
+\renewcommand{\SGradydruleCXXBoxName}{\mathsf{box}}
+\renewcommand{\SGradydruleCXXUnboxName}{\mathsf{unbox}}
+\renewcommand{\SGradydruleCXXListName}{\mathsf{List}}
+\renewcommand{\SGradydruleCXXArrowName}{\to}
+\renewcommand{\SGradydruleCXXProdName}{\times}
+\renewcommand{\SGradydruleCXXForallName}{\forall}
+
+\renewcommand{\SGradydruleTXXboxName}{\mathsf{box}}
+\renewcommand{\SGradydruleTXXunboxName}{\mathsf{unbox}}
+\renewcommand{\SGradydruleTXXsplitName}{\mathsf{split}}
+\renewcommand{\SGradydruleTXXsquashName}{\mathsf{squash}}
+\renewcommand{\SGradydruleTXXvarPName}{\text{var}}
+\renewcommand{\SGradydruleTXXunitPName}{\mathsf{Unit}}
+\renewcommand{\SGradydruleTXXzeroPName}{\mathsf{zero}}
+\renewcommand{\SGradydruleTXXsuccName}{\mathsf{succ}}
+\renewcommand{\SGradydruleTXXpairName}{\times_i}
+\renewcommand{\SGradydruleTXXfstName}{\times_{e_1}}
+\renewcommand{\SGradydruleTXXsndName}{\times_{e_2}}
+\renewcommand{\SGradydruleTXXlamName}{\to_i}
+\renewcommand{\SGradydruleTXXappName}{\to_e}
+
+\renewcommand{\SGradydruleciXXvarName}{}
+\renewcommand{\SGradydruleciXXzeroName}{}
+\renewcommand{\SGradydruleciXXtrivName}{}
+\renewcommand{\SGradydruleciXXsuccUName}{}
+\renewcommand{\SGradydruleciXXsuccName}{}
+\renewcommand{\SGradydruleciXXncaseUName}{}
+\renewcommand{\SGradydruleciXXncaseName}{}
+\renewcommand{\SGradydruleciXXpairName}{}
+\renewcommand{\SGradydruleciXXfstUName}{}
+\renewcommand{\SGradydruleciXXfstName}{}
+\renewcommand{\SGradydruleciXXsndUName}{}
+\renewcommand{\SGradydruleciXXsndName}{}
+\renewcommand{\SGradydruleciXXlamName}{}
+\renewcommand{\SGradydruleciXXappUName}{}
+\renewcommand{\SGradydruleciXXappName}{}
+
+\renewcommand{\SGradydrulePXXUName}{?}
+\renewcommand{\SGradydrulePXXreflName}{\text{refl}}
+\renewcommand{\SGradydrulePXXarrowName}{\to}
+\renewcommand{\SGradydrulePXXprodName}{\times}
+\renewcommand{\SGradydrulePXXlistName}{\mathsf{List}}
+\renewcommand{\SGradydrulePXXforallName}{\forall}
+
+\renewcommand{\SGradydruleTPXXreflName}{\text{refl}}
+\renewcommand{\SGradydruleTPXXsuccName}{\mathsf{succ}}
+\renewcommand{\SGradydruleTPXXNateName}{\mathsf{Nat}}
+\renewcommand{\SGradydruleTPXXpairName}{\times_i}
+\renewcommand{\SGradydruleTPXXfstName}{\times_{e_1}}
+\renewcommand{\SGradydruleTPXXsndName}{\times_{e_2}}
+\renewcommand{\SGradydruleTPXXconsName}{\mathsf{List}_i}
+\renewcommand{\SGradydruleTPXXListeName}{\mathsf{List}_e}
+\renewcommand{\SGradydruleTPXXFunName}{\to_i}
+\renewcommand{\SGradydruleTPXXappName}{\to_2}
+\renewcommand{\SGradydruleTPXXtfunName}{\forall_i}
+\renewcommand{\SGradydruleTPXXtappName}{\forall_e}
+
+\input{core-grady-inc}
+\renewcommand{\CGradydruleTXXBoxPName}{\mathsf{box}}
+\renewcommand{\CGradydruleTXXUnboxPName}{\mathsf{unbox}}
+\renewcommand{\CGradydruleSXXReflName}{\text{refl}}
+\renewcommand{\CGradydruleSXXTopName}{\text{top}}
+\renewcommand{\CGradydruleSXXVarName}{\text{var}}
+\renewcommand{\CGradydruleSXXTopSLName}{\top_{\mathcal{S}}}
+\renewcommand{\CGradydruleSXXNatSLName}{\mathsf{Nat}_{\mathcal{S}}}
+\renewcommand{\CGradydruleSXXUnitSLName}{\mathsf{Unit}_{\mathcal{S}}}
+\renewcommand{\CGradydruleSXXListSLName}{\mathsf{List}_{\mathcal{S}}}
+\renewcommand{\CGradydruleSXXArrowSLName}{\to_{\mathcal{S}}}
+\renewcommand{\CGradydruleSXXProdSLName}{\times_{\mathcal{S}}}
+\renewcommand{\CGradydruleSXXListName}{\mathsf{List}}
+\renewcommand{\CGradydruleSXXProdName}{\times}
+\renewcommand{\CGradydruleSXXArrowName}{\to}
+\renewcommand{\CGradydruleSXXForallName}{\forall}
+
+\renewcommand{\CGradydrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\CGradydrulename{#4}}}
+\renewcommand{\CGradydrulename}[1]{#1}
+\renewcommand{\CGradydruleTXXvarPName}{\text{var}}
+\renewcommand{\CGradydruleTXXvarName}{\text{var}}
+\renewcommand{\CGradydruleTXXBoxName}{\mathsf{box}}
+\renewcommand{\CGradydruleTXXUnboxName}{\mathsf{unbox}}
+\renewcommand{\CGradydruleTXXsquashName}{\mathsf{squash}}
+\renewcommand{\CGradydruleTXXsplitName}{\mathsf{split}}
+\renewcommand{\CGradydruleTXXunitPName}{\mathsf{Unit}}
+\renewcommand{\CGradydruleTXXzeroPName}{\text{zero}}
+\renewcommand{\CGradydruleTXXsuccName}{\mathsf{succ}}
+\renewcommand{\CGradydruleTXXncaseName}{\mathsf{Nat}_e}
+\renewcommand{\CGradydruleTXXemptyName}{\text{empty}}
+\renewcommand{\CGradydruleTXXconsName}{\mathsf{List}_i}
+\renewcommand{\CGradydruleTXXlcaseName}{\mathsf{List}_e}
+\renewcommand{\CGradydruleTXXpairName}{\times_i}
+\renewcommand{\CGradydruleTXXfstName}{\times_{e_1}}
+\renewcommand{\CGradydruleTXXsndName}{\times_{e_2}}
+\renewcommand{\CGradydruleTXXlamName}{\to_i}
+\renewcommand{\CGradydruleTXXappName}{\to_e}
+\renewcommand{\CGradydruleTXXLamName}{\forall_i}
+\renewcommand{\CGradydruleTXXtypeAppName}{\forall_e}
+\renewcommand{\CGradydruleTXXSubName}{\text{sub}}
+\renewcommand{\CGradydruleTXXerrorName}{\text{error}}
+
+\renewcommand{\CGradydrulerdXXretracTName}{\text{retract}}
+\renewcommand{\CGradydrulerdXXretracTEName}{\text{raise}}
+\renewcommand{\CGradydrulerdXXretractUName}{\text{retract}_2}
+\renewcommand{\CGradydrulerdXXncaseZeroName}{\mathsf{Nat}_{e_1}}
+\renewcommand{\CGradydrulerdXXncaseSuccName}{\mathsf{Nat}_{e_2}}
+\renewcommand{\CGradydrulerdXXlcaseEmptyName}{\mathsf{List}_{e_1}}
+\renewcommand{\CGradydrulerdXXlcaseConsName}{\mathsf{List}_{e_2}}
+\renewcommand{\CGradydrulerdXXbetaName}{\beta}
+\renewcommand{\CGradydrulerdXXprojOneName}{\times_{e_1}}
+\renewcommand{\CGradydrulerdXXprojTwoName}{\times_{e_2}}
+\renewcommand{\CGradydrulerdXXtypeBetaName}{\text{type}_{\beta}}
+\renewcommand{\CGradydrulerdXXtypeAppName}{}
+\renewcommand{\CGradydrulerdXXCongName}{\text{cong}}
+\renewcommand{\CGradydrulerdXXerrorName}{\text{error}}
+
+\renewcommand{\CGradydruleTPXXunboxingName}{\mathsf{box}}
+\renewcommand{\CGradydruleTPXXboxingName}{\mathsf{unbox}}
+\renewcommand{\CGradydruleTPXXsplitingName}{\mathsf{split}}
+\renewcommand{\CGradydruleTPXXsquashingName}{\mathsf{squash}}
+\renewcommand{\CGradydruleTPXXerrorName}{\mathsf{error}}
+
+\renewcommand{\CGradydruleCtxPXXreflName}{\text{refl}}
+\renewcommand{\CGradydruleCtxPXXextName}{\text{ext}}
+
+\input{siek15-gradual-inc}
+\renewcommand{\GSiekdrule}[4][]{{\displaystyle\frac{\begin{array}{l}#2\end{array}}{#3}\,\GSiekdrulename{#4}}}
+\renewcommand{\GSiekdrulename}[1]{#1}
+\renewcommand{\GSiekdruleSXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleSXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleSXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleSXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleSXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleSXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleSXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleSXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleSXXappName}[0]{\to_e}
+
+\renewcommand{\GSiekdruleCXXvarName}[0]{\text{var}}
+\renewcommand{\GSiekdruleCXXerrorName}[0]{\text{error}}
+\renewcommand{\GSiekdruleCXXunitName}[0]{\text{unit}}
+\renewcommand{\GSiekdruleCXXzeroName}[0]{\text{zero}}
+\renewcommand{\GSiekdruleCXXsuccName}[0]{\text{succ}}
+\renewcommand{\GSiekdruleCXXpairName}[0]{\times}
+\renewcommand{\GSiekdruleCXXlamName}[0]{\to}
+\renewcommand{\GSiekdruleCXXsndName}[0]{\times_{e_2}}
+\renewcommand{\GSiekdruleCXXfstName}[0]{\times_{e_1}}
+\renewcommand{\GSiekdruleCXXappName}[0]{\to_e}
+\renewcommand{\GSiekdruleCXXcastName}[0]{\text{cast}}
+\renewcommand{\GSiekdrulerdAXXcastIdName}{\text{id-atom}}
+\renewcommand{\GSiekdrulerdAXXcastUName}{\text{id-U}}
+\renewcommand{\GSiekdrulerdAXXsucceedName}{\text{succeed}}
+\renewcommand{\GSiekdrulerdAXXfailName}{\text{fail}}
+\renewcommand{\GSiekdrulerdAXXcastArrowName}{\to_\Rightarrow}
+\renewcommand{\GSiekdrulerdAXXcastGroundName}{\text{expand}_1}
+\renewcommand{\GSiekdrulerdAXXcastExpandName}{\text{expand}_2}
+\renewcommand{\GSiekdrulereflName}[0]{\text{refl}}
+\renewcommand{\GSiekdruleboxName}[0]{\text{box}}
+\renewcommand{\GSiekdruleunboxName}[0]{\text{unbox}}
+\renewcommand{\GSiekdrulearrowName}[0]{\to}
+\renewcommand{\GSiekdruleprodName}[0]{\times}
+
+\newenvironment{typeProofCase}
+               {\setlength{\tabcolsep}{1px}\begin{tabular}{cc}\begin{tabular}{l}Case:\\\\\end{tabular}&\begin{math}}
+               {\end{math}\end{tabular}}
+
+\newenvironment{ack}{\textbf{Acknowledgments.}}{}
+
+\newcommand{\CGSTLC}{\lambda^{\Rightarrow}_\to} 
+
+\begin{document}
+
+\title{The Combination of Dynamic and Static Typing from a Categorical Perspective}
+\author{Harley Eades III}
+\affiliation{
+  \department{Computer Science}              %% \department is recommended
+  \institution{Augusta University}            %% \institution is required
+  \city{Augusta}
+  \state{GA}
+  \country{USA}
+}
+\email{harley.eades@gmail.com}          %% \email is recommended
+
+\author{Michael Townsend}
+\affiliation{
+  \department{Computer Science}              %% \department is recommended
+  \institution{Augusta University}            %% \institution is required
+  \city{Augusta}
+  \state{GA}
+  \country{USA}
+}
+\email{mitownsend@augusta.edu}          %% \email is recommended
+
+\thanks{Both authors where supported by the National Science
+  Foundation CRII CISE Research Initiation grant, ``CRII:SHF: A New
+  Foundation for Attack Trees Based on Monoidal Categories``, under
+  Grant No. 1565557.}
+
+%% 2012 ACM Computing Classification System (CSS) concepts
+%% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10003752.10010124.10010131.10010133</concept_id>
+<concept_desc>Theory of computation~Denotational semantics</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010131.10010137</concept_id>
+<concept_desc>Theory of computation~Categorical semantics</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10003790.10011740</concept_id>
+<concept_desc>Theory of computation~Type theory</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010125.10010127</concept_id>
+<concept_desc>Theory of computation~Functional constructs</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10010124.10010125.10010130</concept_id>
+<concept_desc>Theory of computation~Type structures</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Theory of computation~Denotational semantics}
+\ccsdesc[500]{Theory of computation~Categorical semantics}
+\ccsdesc[300]{Theory of computation~Type theory}
+\ccsdesc[300]{Theory of computation~Functional constructs}
+\ccsdesc[300]{Theory of computation~Type structures}
+%% End of generated code
+
+\keywords{  
+    static typing, dynamic typing, gradual typing, categorical
+    semantics, retract,typed lambda-calculus, untyped lambda-calculus,
+    functional programming}
+
+\begin{abstract} 
+  In this paper we introduce a new categorical model based on retracts
+  that combines static and dynamic typing.  In addition, this model
+  formally connects gradual typing to the seminal work of Scott and
+  Lambek who showed that the untyped $\lambda$-calculus can be
+  considered as typed using retracts, and that the type
+  $\lambda$-calculus can be modeled in a cartesian closed category
+  respectively.  Following this we extract from our model a new simple
+  type system which combines static and dynamic typing called Core
+  Grady.  Then we develop a gradually typed surface language for Core
+  Grady, and show that it can be translated into the core such that
+  the gradual guarantee holds. In addition, to show that the wider
+  area of gradual type systems can benefit from our model we show that
+  Siek and Taha's gradual simply typed $\lambda$-calculus can be
+  modeled by the proposed semantics.  Finally, while a gradual type
+  system allows for type casts to be left implicit we show that
+  explicit casts can be derived in the gradually typed surface
+  language, and using the explicit casts we show that more programs
+  can be typed.  For example, we define a typed fixpoint operator that
+  can only be defined due to the explicit casts in the gradually typed
+  surface language.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+\input{introduction-ott}
+% section introduction (end)
+
+\section{The Categorical Model}
+\label{subsec:the_categorical_model}
+\input{categorical-model-ott}
+% section the_interpretation (end)
+
+\section{Core Grady}
+\label{sec:core_grady}
+\input{core-grady-ott}
+% section core_grady (end)
+
+\section{Surface Grady}
+\label{sec:surface_grady}
+\input{surface-grady-ott}
+% section surface_grady (end)
+
+\section{Modeling Siek and Taha's Gradual $\lambda$-Calculus}
+\label{sec:modeling_siek_and_taha's_gradual_lambda-calculus}
+\input{siek15-ott}
+% section modeling_siek_and_taha's_gradual_lambda-calculus (end)
+
+\section{The Gradual Guarantee}
+\label{sec:the_gradual_guarantee}
+\input{gradual-guarantee-ott}
+% section the_gradual_guarantee (end)
+
+\section{Explicit Casts in Gradual Type Systems}
+\label{sec:explicit_casts_in_gradual_type_systems}
+\input{explicit-casts-ott}
+% section explicit_casts_in_gradual_type_systems (end)
+
+\section{Related Work}
+\label{sec:related_work}
+\input{related-work-ott}
+% section related_work (end)
+
+
+\section{Future Work}
+\label{sec:conclusion}
+The categorical model and corresponding type system presented here
+sets the stage for a number of interesting lines of research.
+
+Linear typing has a number of applications in functional programming
+\cite{Wadler:1990}. For example, allowing values of linear type to
+change the world.  Thus, it is worthwhile combining gradual typing
+with linear typing.  Benton \cite{Benton:1995} showed that the
+statically typed $\lambda$-calculus can be mixed with the statically
+typed linear $\lambda$-calculus by taking a symmetric monoidal
+adjunction between a cartesian closed category and a symmetric
+monoidal closed category called a mixed linear/non-linear model or LNL
+model.  Gradual $\lambda$-models defined here make up half of a LNL
+model mixing gradual typing with linear typing.  We are actively
+working on this new combination.
+
+Gradual $\lambda$-models correspond to the core language of a gradual
+type system.  In the future we will investigate the categorical model
+for the surface language and a functorial relationship between this
+new model and gradual $\lambda$-models.  The most interesting aspect
+of this model will be how to handle implicit casting.  Then we will be
+able to state and prove a model theoretic version of the gradual
+guarantee.  Another interesting aspect will be in how to deal with
+type and term precision in the model.
+% section conclusion (end)
+
+\section{Acknowledgments}
+\label{sec:acknowledgments}
+The authors thank Jeremy Siek for his feedback on previous drafts of
+this paper.  The first author thanks Ronald Garcia for his wonderful
+invited talk at Trends in Functional Programming 2016 which introduced
+the first author to gradual typing and its open problems.  This paper
+was typeset with the help of the amazing Ott tool \cite{Sewell:2010}.
+% section acknowledgments (end)
+
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\appendix
+
+\input{aux-results-ott}
+
+\input{proofs-ott}
+
+% section proofs (end)
+\end{document}

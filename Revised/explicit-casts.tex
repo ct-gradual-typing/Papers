@@ -1,0 +1,80 @@
+In this section we introduce something that is seemingly small, but
+very useful when programming in gradual type systems.  In addition,
+the authors are not aware of this being pointed out in the literature.
+
+First, the untyped Y combinator can be defined in Surface Grady as
+follows:
+\begin{lstlisting}[language=Haskell]
+  omega : (? -> ?) -> ?
+  omega = \(x : ? -> ?) -> (x x);
+  
+  fix : (? -> ?) -> ?
+  fix = \(f : ? -> ?) -> omega (\(x:?) -> f (x x));
+\end{lstlisting}
+The previous definition is a lot cleaner without the explicit casts,
+and in the style of programming in the untyped $\lambda$-calculus.
+
+Now suppose we added polymorphism -- in Haskell style -- to the Grady
+languages, then we might want to define a typed version of
+$\lstinline{fix}$ like the following:
+\begin{lstlisting}[language=Haskell]
+  fixT : (X -> X) -> X
+  fixT = \(f:X -> X) -> fix (\(y:?)-> (f y)));
+\end{lstlisting}
+However, $\lstinline{fixT}$ does not type check.  Notice that we must
+produce something of type $\lstinline{X}$, but
+$\lstinline{fix (\(y:?)-> (f y))}$ has type $\lstinline{?}$ and it will not be
+implicitly cast.
+
+We can better understand the issue by examining the function
+application typing rule:
+\begin{center}
+  \begin{math} 
+    \inferrule* [flushleft,right=$\to_e$] {
+      [[G |- t1 : C]] \\ \,\,\,[[A2 ~ A1]]\\\\    
+      [[G |-t2 : A2]] \\ [[fun(C) = A1 -> B1]]
+    }{[[G |- t1 t2 : B1]]}
+  \end{math}
+\end{center}
+As we can see the only implicit casting that occurs is in the case of
+the function, $[[t1]]$, and the argument, $[[t2]]$, but not the actual
+result of the application.  Thus, in order to fix $\lstinline{fixT}$
+we must insert an explicit cast, but we have removed the explicit
+casts from Surface Grady.
+
+All is not lost, because as it turns out, explicit casts can be
+defined in Surface Grady:
+\begin{center}
+  \begin{math}
+    \begin{array}{lll}
+      [[box A t]]   & = & [[(\x:A.x) t]]\\
+      [[unbox A t]] & = & [[(\x:?.x) t]]\\
+    \end{array}
+  \end{math}
+\end{center}
+Their typing rules are also derivable (proof omitted).
+\begin{lemma}[Box and Unbox in Surface Grady]
+  \label{lemma:box_and_unbox_in_surface_grady}
+  The following typing rules are derivable:
+  \begin{mathpar}
+    \SGradydruleTXXbox{} \and
+    \SGradydruleTXXunbox{}
+  \end{mathpar}
+\end{lemma}
+Lastly, if we run the cast insertion algorithm
+(Figure~\ref{fig:cast-insert}) on $[[box A t]]$, then it will produce
+the Core Grady program $[[(\x:A.x) (box A t)]]$ and if we run the
+algorithm on $[[unbox A t]]$, then it will produce $[[(\x:?.x) (unbox
+    A t)]]$. This shows that the Surface Grady explicit casts
+correspond to the Core Grady explicit casts.  We can now use Surface
+Grady's explicit casts to properly define $\lstinline{fixT}$:
+\begin{lstlisting}[language=Haskell]
+  fixT : (X -> X) -> X
+  fixT = \(f:X -> X) -> unbox X (fix (\(y:?)-> (f y))));
+\end{lstlisting}
+
+The problem we outline here is not specific to Surface Grady, but to
+all gradual type systems.  If we program only using implicit casts,
+then we are not taking advantage of the full power of our type system,
+but if we combine them with explicit casts, then more programs become
+typable. 

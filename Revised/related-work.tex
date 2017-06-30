@@ -1,0 +1,20 @@
+Abadi et al.~\cite{Abadi:1989} combine dynamic and static typing
+by adding a new type called $\mathsf{Dynamic}$ along with a new case
+construct for pattern matching on types.  We do not add such a case
+construct, and as a result, show that we can obtain a surprising
+amount of expressivity without it.  They also provide denotational
+models.
+
+Henglein~\cite{Henglein:1994} defines the dynamic
+$\lambda$-calculus by adding a new type $\mathsf{Dyn}$ to the simply
+typed $\lambda$-calculus and then adding primitive casting
+operations called tagging and check-and-untag.  These new operations
+tag type constructors with their types.  Then untagging checks to
+make sure the target tag matches the source tag, and if not, returns
+a dynamic type error.  These operations can be used to build casting
+coercions which are very similar to our casting morphisms. We can
+also define $[[split]]$, $[[squash]]$, $[[box]]$, and $[[unbox]]$ in
+terms of Henglein's casting coercions.  We consider this paper as a
+clarification of Henglein's system.  His core casting calculus can
+be interpreted into our setting where we require retracts instead of
+full isomorphisms.
