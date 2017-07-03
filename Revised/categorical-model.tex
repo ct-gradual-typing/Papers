@@ -46,6 +46,86 @@ model of the untyped $\lambda$-calculus.
   An untyped $\lambda$-model is a sound and complete model of the untyped $\lambda$-calculus.
 \end{theorem}
 
+At this point we would like to introduce error-handling in a familiar
+way by means of a monad. To do this, we alter our definition of an
+untyped $\lambda$ model to require $\cat{C}$ have all binary (thus all
+finite) coproducts, as first proposed by XXX. The maybe monad
+$(T, \eta, \mu)$ is then defined as follows:
+\begin{center}
+  \begin{math}
+    \begin{array}{ll}
+      T & = - + 1 \\
+      \eta_A : A \mto A + 1 & = i_1 \\
+      \mu_A : (A + 1) + 1 \mto A + 1 & = [ \id_{A+1}, i_2] \\
+    \end{array}
+  \end{math}
+\end{center}
+$\split$ now becomes a morphism from $?$ to $S + 1$, and we require
+$S$ be a retract of $?$ in the Kleisli category of the monad. That is,
+letting $\hat{f}$ denote the Kleisli morphism from $A$ to $B$
+corresponding to $f : A \mto B + 1$,
+we have, in $\cat{C}_T$,
+\begin{center}
+  \begin{math}
+    \widehat{\squash_S ; \eta_?} ; \widehat{\split_S} = \id_S
+  \end{math}
+\end{center}
+corresponding to the following in $\cat{C}$:
+\begin{center}
+  \begin{math}
+    \squash_S ; \eta_? ; T(\split_S) ; \mu_S = \eta_S
+  \end{math}
+\end{center}
+
+This is equivalent to requiring that $\squash_S ; \split_S = \eta_S$,
+as one may ascertain from the fact that the following diagram commutes:
+
+\begin{center}
+  \begin{math}
+    \bfig
+    \scalefactor{1.2}
+    \node A(0,500)[A]
+    \node TA1(500,0)[TA]
+    \node ?(500,500)[?]
+    \node T?(1000,500)[T?]
+    \node T2A(1500,500)[T^2A]
+    \node TA2(1500,0)[TA]
+    \arrow[A`?;\bx_A]
+    \arrow|b|[A`TA1;\eta_A]
+    \arrow|m|[?`TA1;\unbox_A]
+    \arrow[?`T?;\eta_?]
+    \arrow[T?`T2A;T\unbox_A]
+    \arrow[T2A`TA2;\mu_A]
+    \arrow/=/[TA1`TA2;]
+    \arrow[TA1`T2A;\eta_{TA}]
+    \place(350,350)[3]
+    \place(700,300)[1]
+    \place(1250,200)[2]
+    \efig
+  \end{math}
+\end{center}
+
+Triangle (1) commutes by naturality of $\eta$, triangle (2) commutes
+by the monad laws, and triangle (3) is the retract condition.
+
+Besides this, we want to describe the error case. To this end, we
+require for $S_1 \neq S_2$ that $\squash_{S_1} ; \split_{S_2} = \triv_{S_1} ; \textsf{i}_2$.
+In the following, $\error_{S_1, S_2}$ will denote $\triv_{S_1} ; \textsf{i}_2$.
+
+Putting it all together, we have the following definition:
+\begin{definition}
+  \label{def:model-untyped-error}
+  An \textbf{untyped $\lambda$-model with error handling}, $(\cat{C}, ?, \split, \squash)$, is a cartesian closed category with coproducts $\cat{C}$, a distinguished object $?$ and morphisms $\squash : S \mto ?$ and $\split : [[?]] \mto S$ for S equal to $[[? x ?]]$, $[[? --> ?]]$ or $? + ?$, related by the following equations:
+  \begin{center}
+    \begin{math}
+      \begin{array}{rll}
+        \squash_S ; \split_S & = \eta_S & \\
+        \squash_{S_1} ; \split_{S_2} & = \error_{S_1, S_2} & \textrm{where } S_1 \neq S_2. \\
+      \end{array}
+    \end{math}
+  \end{center}
+\end{definition}
+
 So far we know how to model static types (typed $\lambda$-calculus)
 and unknown types (the untyped $\lambda$-calculus).  To make the Grady
 languages a bit more interesting we add natural numbers, but we will
@@ -89,26 +169,43 @@ and Scott~\cite{Lambek:1988}.
 At this point we can model both static and unknown types with natural
 numbers in a cartesian closed category, but we do not have any way of
 moving typed data into the untyped part and vice versa to obtain
-dynamic typing.  To accomplish this we add two new morphisms $[[box C
-    : C --> ?]]$ and $[[unbox C : ?  --> C]]$ such that each
-atomic type, $[[C]]$, is a retract of $[[?]]$.  This enforces that the
-only time we can cast $[[?]]$ to another type is if it were boxed up
+dynamic typing.  We would like to do this in a way that incorporates
+error handling.
+
+%[[box C : C --> ?]]
+%[[unbox C : ? --> C + 1]]
+
+Naturally, we add $\bx_{C} : C \mto ?$ and $\unbox_{C} : ? \mto C + 1$
+such that each atomic type, $[[C]]$, is a retract of $[[?]]$ in
+the Kleisli category $\cat{C}_T$ of the maybe monad, as we did for
+$\split$ and $\squash$ before. that is,
+expanding the Kleisli composition, we require
+\begin{center}
+\begin{math}
+\bx{C} ; \eta_? ; T(\unbox{C}) ; \mu_C = \eta_C.
+\end{math}
+\end{center}
+In fact, this is equivalent to requiring $\bx{C} ; \unbox{C} = \eta_C$
+as one can read off from the following diagram.
+
+The only time we can cast $[[?]]$ to another type is if it were boxed up
 in the first place.  Combining all of these insights we obtain the
 complete categorical model.
+
 \begin{definition}
   \label{def:gradual-lambda-model}
-  A \textbf{gradual $\lambda$-model}, $(\cat{T}, \cat{C}, ?,
+  A \textbf{static-dynamic $\lambda$-model}, $(\cat{T}, \cat{C}, ?,
   \T,\split,$\\ $ \squash, \bx, \unbox, \error)$, where $\cat{T}$ is a
   discrete category with at least two objects $[[Nat]]$ and
   $[[Unit]]$, $\cat{C}$ is a cartesian closed category with an NRNO,
-  $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model, $\T :
-  \cat{T} \mto \cat{C}$ is an embedding -- a full and faithful functor
+  $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model with
+  error handling, $\T : \cat{T} \mto \cat{C}$ is an embedding -- a full
+  and faithful functor
   that is injective on objects -- and for every object $A$ of
   $\cat{T}$ there are morphisms $\bx_A : TA \mto ?$ and $\unbox_A : [[?]]
-  \mto TA$ making $TA$ a retract of $?$.  Furthermore, to model
-  dynamic type errors, there is a morphism, $\err_A : [[Unit --> A]]$
-  of $\cat{C}$, such that, the following equations hold w.r.t.
-  $\error_{A,B} = [[A]] \mto^{[[triv]]_{A}} [[Unit]] \mto^{\err_{B}} [[B]]$:
+  \mto TA + 1$ making $TA$ a retract of $?$ in the Kleisli category, that
+  is, for which $\bx_A : TA \mto ?$ and 
+  
   %% diagrams commute for any  morphisms $f : [[A --> B]]$ and $g : [[B --> C]]$:
   \begin{center} 
     \begin{math} \footnotesize
