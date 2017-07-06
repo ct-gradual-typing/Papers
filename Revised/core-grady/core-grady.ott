@@ -22,7 +22,7 @@ grammar
     | error A             ::    :: blame
     {{tex \mathsf{error}_{[[A]]} }}
     | error               ::    :: error
-    {{tex \mathsf{error} }}    
+    {{tex \mathsf{error} }}
     | Lam X <: A . t      ::    :: TypeLam
     {{tex \Lambda ([[X]] <\hspace{-2px}\colon [[A]]) .[[t]] }}
     | [ A ] t             ::   :: TypeApp
@@ -32,11 +32,15 @@ grammar
     | t1 t2               ::   :: app          
     | ( t1 , t2 )         ::   :: pair         
     | fst t               ::   :: proj1        
-    | snd t               ::   :: proj2        
+    | snd t               ::   :: proj2
+    | inj1 t              ::   :: inj1
+    | inj2 t              ::   :: inj2
     | succ t              ::   :: successor    
     | 0                   ::   :: zero         
     | case t : A of t3 -> t1 , t4 -> t2 :: :: natElim
     {{tex \mathsf{case}\,[[t]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
+    | case t : A of t3 : B -> t1, t4 : C -> t2 :: :: sumElim
+    {{tex \mathsf{case}\,[[t]] \colon [[A]]\,\mathsf{of}\,[[t3]] \colon [[B]] \to [[t1]], [[t4]] \colon [[C]] \to [[t2]] }}
     | []                  ::   :: emptylist
     | t : : t'            ::   :: cons
     {{tex [[t]] :: [[t']] }}
@@ -130,8 +134,10 @@ grammar
     {{tex \mathsf{Nat} }}    
     | ?                   ::   :: unitype 
     | A1 -> A2            ::   :: arrow   
-    | A1 x A2             ::   :: pair    
-    {{tex [[A1]] \times [[A2]] }}     
+    | A1 x A2             ::   :: pair
+    {{tex [[A1]] \times [[A2]] }}
+    | A1 + A2             ::   :: sum
+    {{tex [[A1]] + [[A2]]}}
     | ( A )               :: S :: paren
     | H( A )              :: M :: hparen
     {{tex [[A]] }}
@@ -179,7 +185,11 @@ grammar
     | fst        :: :: fst
     {{tex \mathsf{fst} }}
     | snd        :: :: snd
-    {{tex \mathsf{snd} }}                
+    {{tex \mathsf{snd} }}
+    | inj1       :: :: inj1
+    {{tex \mathsf{inj}_1}}
+    | inj2       :: :: inj2
+    {{tex \mathsf{inj}_2}}
 
   formula :: 'formula_' ::=
     | judgement           ::   :: judgement
@@ -244,6 +254,10 @@ defn
     ---------------------------- :: ProdSL
     G |- A x B <: SL
 
+    G |- A <: SL && G |- B <: SL
+    ---------------------------- :: SumSL
+    G |- A + B <: SL
+
     G |- A <: B
     --------------------- :: List
     G |- List A <: List B
@@ -251,6 +265,10 @@ defn
     G |- A1 <: A2 && G |- B1 <: B2
     ------------------------------ :: Prod
     G |- A1 x B1 <: A2 x B2
+
+    G |- A1 <: A2 && G |- B1 <: B2
+    ------------------------------ :: Sum
+    G |- A1 + B2 <: A2 + B2
 
     G |- A2 <: A1 && G |- B1 <: B2
     ------------------------------ :: Arrow
@@ -291,6 +309,10 @@ by
    A <= C && B <= D
    ------------------ :: prod
    (A x B) <= (C x D)
+
+   A <= C && B <= D
+   ------------------ :: sum
+   (A + B) <= (C + D)
 
    A <= B
    ------------------------- :: list
@@ -351,6 +373,14 @@ by
     G |- t1 <= t2
     ------------------------- :: snd
     G |- (snd t1) <= (snd t2)
+
+    G |- t1 <= t2
+    --------------------------- :: inj1
+    G |- (inj1 t2) <= (inj1 t2)
+
+    G |- t1 <= t2
+    --------------------------- :: inj2
+    G |- (inj2 t2) <= (inj2 t2)
 
     G |- t1 <= t3 && G |- t2 <= t4
     ------------------------------ :: cons
@@ -441,6 +471,11 @@ defn
     ------------------------------------------------ :: ncase
     G |- case t : Nat of 0 -> t1, (succ x) -> t2 : A
 
+    G |- t : A + B
+    G, x : A |- t1 : C && G, y : B |- t2 : C
+    --------------------------------------------------- :: sumcase
+    G |- case t : A + B of x : A -> t1, y : B -> t2 : C
+
     ---------------------------------- :: empty
     G |- [] : Forall (X <: Top).List X
 
@@ -464,6 +499,14 @@ defn
     G |- t : A1 x A2
     ---------------- :: snd
     G |- snd t : A2
+
+    G |- t : A
+    ------------------- :: inj1
+    G |- inj1 t : A + B
+
+    G |- t : B
+    ------------------- :: inj2
+    G |- inj2 t : A + B
 
     G, x : A |- t : B
     -------------------- :: lam
@@ -514,6 +557,12 @@ by
 
     --------------------------------------------------------- :: ncaseSucc
     case (succ t) : Nat of 0 -> t1, (succ x) -> t2 ~> [t/x]t2
+
+    --------------------------------------------------------- :: sumcase1
+    case inj1 t : A + B of x : A -> t1, y : B -> t2 ~> [t/x]t1
+
+    --------------------------------------------------------- :: sumcase2
+    case inj2 t : A + B of x : A -> t1, y : B -> t2 ~> [t/y]t2
 
     -------------------------------------------------- :: lcaseEmpty
     case [] : List A of [] -> t1, (x :: y) -> t2 ~> t1
