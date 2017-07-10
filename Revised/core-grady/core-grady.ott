@@ -36,7 +36,7 @@ grammar
     | inj1 t              ::   :: inj1
     | inj2 t              ::   :: inj2
     | succ t              ::   :: successor    
-    | 0                   ::   :: zero         
+    | 0                   ::   :: zero
     | case t : A of t3 -> t1 , t4 -> t2 :: :: natElim
     {{tex \mathsf{case}\,[[t]] \colon [[A]]\,\mathsf{of}\,[[t3]] \to [[t1]], [[t4]] \to [[t2]] }}
     | case t : A of t3 : B -> t1, t4 : C -> t2 :: :: sumElim
@@ -132,7 +132,8 @@ grammar
     {{tex \mathsf{Unit} }}
     | Nat                 ::   :: nat     
     {{tex \mathsf{Nat} }}    
-    | ?                   ::   :: unitype 
+    | ?                   ::   :: unitype
+    | 1                   ::   :: term2
     | A1 -> A2            ::   :: arrow   
     | A1 x A2             ::   :: pair
     {{tex [[A1]] \times [[A2]] }}
@@ -178,6 +179,8 @@ grammar
     {{tex \in }}
     | ~>                  ::   :: red
     {{tex \rightsquigarrow }}
+    | +                   ::   :: plus
+    {{tex + }}
     | box        :: :: box
     {{tex \mathsf{box} }}
     | unbox        :: :: unbox

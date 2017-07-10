@@ -55,9 +55,12 @@
 \ottprodline{|}{\ottsym{(}  \ottnt{t_{{\mathrm{1}}}}  \ottsym{,}  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{fst} \, \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{snd} \, \ottnt{t}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathsf{inj}_1  \ottnt{t}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathsf{inj}_2  \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{succ} \, \ottnt{t}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{0}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{case}\, \ottnt{t}  \colon  \ottnt{A} \,\mathsf{of}\, \ottnt{t_{{\mathrm{3}}}}  \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottnt{t_{{\mathrm{4}}}}  \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{case}\, \ottnt{t}  \colon  \ottnt{A} \,\mathsf{of}\, \ottnt{t_{{\mathrm{3}}}}  \colon  \ottnt{B}  \to  \ottsym{t1} ,  \ottnt{t_{{\mathrm{4}}}}  \colon  \ottnt{C}  \to  \ottnt{t_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{[]}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \ottnt{t}  ::  \ottnt{t'} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{t}  \ottsym{)}} {\textsf{S}}{}{}{}\ottprodnewline
@@ -82,7 +85,8 @@
 \newcommand{\ottEC}{
 \ottrulehead{\mathcal{E}}{::=}{}\ottprodnewline
 \ottfirstprodline{|}{ \Box }{}{}{}{}\ottprodnewline
-\ottprodline{|}{\ottnt{v} \, \mathcal{E}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\mathcal{E} \, \ottnt{t_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \mathsf{unbox}_{ \ottnt{A} }\, \mathcal{E} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{succ} \, \mathcal{E}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{fst} \, \mathcal{E}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\mathsf{snd} \, \mathcal{E}}{}{}{}{}\ottprodnewline
@@ -103,8 +107,10 @@
 \ottprodline{|}{ \mathsf{Unit} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \mathsf{Nat} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{\mbox{?}}}{}{}{}{}\ottprodnewline
+\ottprodline{|}{\ottsym{1}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottnt{A_{{\mathrm{1}}}}  \rightarrow  \ottnt{A_{{\mathrm{2}}}}}{}{}{}{}\ottprodnewline
 \ottprodline{|}{ \ottnt{A_{{\mathrm{1}}}}  \times  \ottnt{A_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
+\ottprodline{|}{ \ottnt{A_{{\mathrm{1}}}}  +  \ottnt{A_{{\mathrm{2}}}} }{}{}{}{}\ottprodnewline
 \ottprodline{|}{\ottsym{(}  \ottnt{A}  \ottsym{)}} {\textsf{S}}{}{}{}}
 
 \newcommand{\ottG}{
@@ -202,6 +208,15 @@
 }}
 
 
+\newcommand{\ottdruleSXXSumSLName}[0]{\ottdrulename{S\_SumSL}}
+\newcommand{\ottdruleSXXSumSL}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon   \mathbb{S}    \quad   \Gamma  \vdash  \ottnt{B}  <\hspace{-2px}\colon   \mathbb{S}   }%
+}{
+ \Gamma  \vdash   \ottnt{A}  +  \ottnt{B}   <\hspace{-2px}\colon   \mathbb{S}  }{%
+{\ottdruleSXXSumSLName}{}%
+}}
+
+
 \newcommand{\ottdruleSXXListName}[0]{\ottdrulename{S\_List}}
 \newcommand{\ottdruleSXXList}[1]{\ottdrule[#1]{%
 \ottpremise{ \Gamma  \vdash  \ottnt{A}  <\hspace{-2px}\colon  \ottnt{B} }%
@@ -217,6 +232,15 @@
 }{
  \Gamma  \vdash   \ottnt{A_{{\mathrm{1}}}}  \times  \ottnt{B_{{\mathrm{1}}}}   <\hspace{-2px}\colon   \ottnt{A_{{\mathrm{2}}}}  \times  \ottnt{B_{{\mathrm{2}}}}  }{%
 {\ottdruleSXXProdName}{}%
+}}
+
+
+\newcommand{\ottdruleSXXSumName}[0]{\ottdrulename{S\_Sum}}
+\newcommand{\ottdruleSXXSum}[1]{\ottdrule[#1]{%
+\ottpremise{  \Gamma  \vdash  \ottnt{A_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \ottnt{A_{{\mathrm{2}}}}   \quad   \Gamma  \vdash  \ottnt{B_{{\mathrm{1}}}}  <\hspace{-2px}\colon  \ottnt{B_{{\mathrm{2}}}}  }%
+}{
+ \Gamma  \vdash   \ottnt{A_{{\mathrm{1}}}}  +  \ottnt{B_{{\mathrm{2}}}}   <\hspace{-2px}\colon   \ottnt{A_{{\mathrm{2}}}}  +  \ottnt{B_{{\mathrm{2}}}}  }{%
+{\ottdruleSXXSumName}{}%
 }}
 
 
@@ -247,8 +271,10 @@
 \ottusedrule{\ottdruleSXXListSL{}}
 \ottusedrule{\ottdruleSXXArrowSL{}}
 \ottusedrule{\ottdruleSXXProdSL{}}
+\ottusedrule{\ottdruleSXXSumSL{}}
 \ottusedrule{\ottdruleSXXList{}}
 \ottusedrule{\ottdruleSXXProd{}}
+\ottusedrule{\ottdruleSXXSum{}}
 \ottusedrule{\ottdruleSXXArrow{}}
 \ottusedrule{\ottdruleSXXForall{}}
 \end{ottdefnblock}}
@@ -311,6 +337,15 @@
 }}
 
 
+\newcommand{\ottdrulePXXsumName}[0]{\ottdrulename{P\_sum}}
+\newcommand{\ottdrulePXXsum}[1]{\ottdrule[#1]{%
+\ottpremise{  \ottnt{A}  \sqsubseteq  \ottnt{C}   \quad   \ottnt{B}  \sqsubseteq  \ottnt{D}  }%
+}{
+ \ottsym{(}   \ottnt{A}  +  \ottnt{B}   \ottsym{)}  \sqsubseteq  \ottsym{(}   \ottnt{C}  +  \ottnt{D}   \ottsym{)} }{%
+{\ottdrulePXXsumName}{}%
+}}
+
+
 \newcommand{\ottdrulePXXlistName}[0]{\ottdrulename{P\_list}}
 \newcommand{\ottdrulePXXlist}[1]{\ottdrule[#1]{%
 \ottpremise{ \ottnt{A}  \sqsubseteq  \ottnt{B} }%
@@ -333,6 +368,7 @@
 \ottusedrule{\ottdrulePXXrefl{}}
 \ottusedrule{\ottdrulePXXarrow{}}
 \ottusedrule{\ottdrulePXXprod{}}
+\ottusedrule{\ottdrulePXXsum{}}
 \ottusedrule{\ottdrulePXXlist{}}
 \ottusedrule{\ottdrulePXXforall{}}
 \end{ottdefnblock}}
@@ -450,6 +486,24 @@
 }}
 
 
+\newcommand{\ottdruleTPXXinjOneName}[0]{\ottdrulename{TP\_inj1}}
+\newcommand{\ottdruleTPXXinjOne}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \sqsubseteq  \ottnt{t_{{\mathrm{2}}}} }%
+}{
+ \Gamma  \vdash  \ottsym{(}  \mathsf{inj}_1  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)}  \sqsubseteq  \ottsym{(}  \mathsf{inj}_1  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)} }{%
+{\ottdruleTPXXinjOneName}{}%
+}}
+
+
+\newcommand{\ottdruleTPXXinjTwoName}[0]{\ottdrulename{TP\_inj2}}
+\newcommand{\ottdruleTPXXinjTwo}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \sqsubseteq  \ottnt{t_{{\mathrm{2}}}} }%
+}{
+ \Gamma  \vdash  \ottsym{(}  \mathsf{inj}_2  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)}  \sqsubseteq  \ottsym{(}  \mathsf{inj}_2  \ottnt{t_{{\mathrm{2}}}}  \ottsym{)} }{%
+{\ottdruleTPXXinjTwoName}{}%
+}}
+
+
 \newcommand{\ottdruleTPXXconsName}[0]{\ottdrulename{TP\_cons}}
 \newcommand{\ottdruleTPXXcons}[1]{\ottdrule[#1]{%
 \ottpremise{  \Gamma  \vdash  \ottnt{t_{{\mathrm{1}}}}  \sqsubseteq  \ottnt{t_{{\mathrm{3}}}}   \quad   \Gamma  \vdash  \ottnt{t_{{\mathrm{2}}}}  \sqsubseteq  \ottnt{t_{{\mathrm{4}}}}  }%
@@ -562,6 +616,8 @@
 \ottusedrule{\ottdruleTPXXpair{}}
 \ottusedrule{\ottdruleTPXXfst{}}
 \ottusedrule{\ottdruleTPXXsnd{}}
+\ottusedrule{\ottdruleTPXXinjOne{}}
+\ottusedrule{\ottdruleTPXXinjTwo{}}
 \ottusedrule{\ottdruleTPXXcons{}}
 \ottusedrule{\ottdruleTPXXListe{}}
 \ottusedrule{\ottdruleTPXXFun{}}
@@ -677,10 +733,20 @@
 }}
 
 
+\newcommand{\ottdruleTXXsumcaseName}[0]{\ottdrulename{T\_sumcase}}
+\newcommand{\ottdruleTXXsumcase}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :   \ottnt{A}  +  \ottnt{B}  }%
+\ottpremise{  \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A}  \vdash_{\mathsf{CG} }  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{C}   \quad   \Gamma  \ottsym{,}  \ottmv{y}  \ottsym{:}  \ottnt{B}  \vdash_{\mathsf{CG} }  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{C}  }%
+}{
+ \Gamma  \vdash_{\mathsf{CG} }   \mathsf{case}\, \ottnt{t}  \colon   \ottnt{A}  +  \ottnt{B}  \,\mathsf{of}\, \ottmv{x}  \colon  \ottnt{A}  \to  \ottsym{t1} ,  \ottmv{y}  \colon  \ottnt{B}  \to  \ottnt{t_{{\mathrm{2}}}}   :  \ottnt{C} }{%
+{\ottdruleTXXsumcaseName}{}%
+}}
+
+
 \newcommand{\ottdruleTXXemptyName}[0]{\ottdrulename{T\_empty}}
 \newcommand{\ottdruleTXXempty}[1]{\ottdrule[#1]{%
 }{
- \Gamma  \vdash_{\mathsf{CG} }  \ottsym{[]}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon  \ottsym{\mbox{?}} ).   \mathsf{List}\, \ottmv{X}   }{%
+ \Gamma  \vdash_{\mathsf{CG} }  \ottsym{[]}  :   \forall ( \ottmv{X}  <\hspace{-2px}\colon   \top  ).   \mathsf{List}\, \ottmv{X}   }{%
 {\ottdruleTXXemptyName}{}%
 }}
 
@@ -696,8 +762,8 @@
 
 \newcommand{\ottdruleTXXlcaseName}[0]{\ottdrulename{T\_lcase}}
 \newcommand{\ottdruleTXXlcase}[1]{\ottdrule[#1]{%
-\ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :   \mathsf{List}\, \ottnt{A}  }%
-\ottpremise{  \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{B}   \quad   \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A}  \ottsym{,}  \ottmv{y}  \ottsym{:}   \mathsf{List}\, \ottnt{A}   \vdash_{\mathsf{CG} }  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B}  }%
+\ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t_{{\mathrm{1}}}}  :  \ottnt{B} }%
+\ottpremise{  \Gamma  \ottsym{,}  \ottmv{x}  \ottsym{:}  \ottnt{A}  \ottsym{,}  \ottmv{y}  \ottsym{:}   \mathsf{List}\, \ottnt{A}   \vdash_{\mathsf{CG} }  \ottnt{t_{{\mathrm{2}}}}  :  \ottnt{B}   \quad   \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :   \mathsf{List}\, \ottnt{A}   }%
 }{
  \Gamma  \vdash_{\mathsf{CG} }   \mathsf{case}\, \ottnt{t}  \colon   \mathsf{List}\, \ottnt{A}  \,\mathsf{of}\, \ottsym{[]}  \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}   \ottmv{x}  ::  \ottmv{y}   \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   :  \ottnt{B} }{%
 {\ottdruleTXXlcaseName}{}%
@@ -728,6 +794,24 @@
 }{
  \Gamma  \vdash_{\mathsf{CG} }  \mathsf{snd} \, \ottnt{t}  :  \ottnt{A_{{\mathrm{2}}}} }{%
 {\ottdruleTXXsndName}{}%
+}}
+
+
+\newcommand{\ottdruleTXXinjOneName}[0]{\ottdrulename{T\_inj1}}
+\newcommand{\ottdruleTXXinjOne}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :  \ottnt{A} }%
+}{
+ \Gamma  \vdash_{\mathsf{CG} }  \mathsf{inj}_1  \ottnt{t}  :   \ottnt{A}  +  \ottnt{B}  }{%
+{\ottdruleTXXinjOneName}{}%
+}}
+
+
+\newcommand{\ottdruleTXXinjTwoName}[0]{\ottdrulename{T\_inj2}}
+\newcommand{\ottdruleTXXinjTwo}[1]{\ottdrule[#1]{%
+\ottpremise{ \Gamma  \vdash_{\mathsf{CG} }  \ottnt{t}  :  \ottnt{B} }%
+}{
+ \Gamma  \vdash_{\mathsf{CG} }  \mathsf{inj}_2  \ottnt{t}  :   \ottnt{A}  +  \ottnt{B}  }{%
+{\ottdruleTXXinjTwoName}{}%
 }}
 
 
@@ -796,12 +880,15 @@
 \ottusedrule{\ottdruleTXXzeroP{}}
 \ottusedrule{\ottdruleTXXsucc{}}
 \ottusedrule{\ottdruleTXXncase{}}
+\ottusedrule{\ottdruleTXXsumcase{}}
 \ottusedrule{\ottdruleTXXempty{}}
 \ottusedrule{\ottdruleTXXcons{}}
 \ottusedrule{\ottdruleTXXlcase{}}
 \ottusedrule{\ottdruleTXXpair{}}
 \ottusedrule{\ottdruleTXXfst{}}
 \ottusedrule{\ottdruleTXXsnd{}}
+\ottusedrule{\ottdruleTXXinjOne{}}
+\ottusedrule{\ottdruleTXXinjTwo{}}
 \ottusedrule{\ottdruleTXXlam{}}
 \ottusedrule{\ottdruleTXXapp{}}
 \ottusedrule{\ottdruleTXXLam{}}
@@ -863,6 +950,22 @@
 }{
  \mathsf{case}\, \ottsym{(}  \mathsf{succ} \, \ottnt{t}  \ottsym{)}  \colon   \mathsf{Nat}  \,\mathsf{of}\, \ottsym{0}  \to  \ottnt{t_{{\mathrm{1}}}} ,  \ottsym{(}  \mathsf{succ} \, \ottmv{x}  \ottsym{)}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottsym{[}  \ottnt{t}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}}{%
 {\ottdrulerdXXncaseSuccName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXsumcaseOneName}[0]{\ottdrulename{rd\_sumcase1}}
+\newcommand{\ottdrulerdXXsumcaseOne}[1]{\ottdrule[#1]{%
+}{
+ \mathsf{case}\, \mathsf{inj}_1  \ottnt{t}  \colon   \ottnt{A}  +  \ottnt{B}  \,\mathsf{of}\, \ottmv{x}  \colon  \ottnt{A}  \to  \ottsym{t1} ,  \ottmv{y}  \colon  \ottnt{B}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottsym{[}  \ottnt{t}  \ottsym{/}  \ottmv{x}  \ottsym{]}  \ottnt{t_{{\mathrm{1}}}}}{%
+{\ottdrulerdXXsumcaseOneName}{}%
+}}
+
+
+\newcommand{\ottdrulerdXXsumcaseTwoName}[0]{\ottdrulename{rd\_sumcase2}}
+\newcommand{\ottdrulerdXXsumcaseTwo}[1]{\ottdrule[#1]{%
+}{
+ \mathsf{case}\, \mathsf{inj}_2  \ottnt{t}  \colon   \ottnt{A}  +  \ottnt{B}  \,\mathsf{of}\, \ottmv{x}  \colon  \ottnt{A}  \to  \ottsym{t1} ,  \ottmv{y}  \colon  \ottnt{B}  \to  \ottnt{t_{{\mathrm{2}}}}   \rightsquigarrow  \ottsym{[}  \ottnt{t}  \ottsym{/}  \ottmv{y}  \ottsym{]}  \ottnt{t_{{\mathrm{2}}}}}{%
+{\ottdrulerdXXsumcaseTwoName}{}%
 }}
 
 
@@ -938,6 +1041,8 @@
 \ottusedrule{\ottdrulerdXXerror{}}
 \ottusedrule{\ottdrulerdXXncaseZero{}}
 \ottusedrule{\ottdrulerdXXncaseSucc{}}
+\ottusedrule{\ottdrulerdXXsumcaseOne{}}
+\ottusedrule{\ottdrulerdXXsumcaseTwo{}}
 \ottusedrule{\ottdrulerdXXlcaseEmpty{}}
 \ottusedrule{\ottdrulerdXXlcaseCons{}}
 \ottusedrule{\ottdrulerdXXbeta{}}
@@ -965,7 +1070,7 @@
 \ottall
 
 \begin{verbatim}
-Definition rules:        83 good    0 bad
-Definition rule clauses: 136 good    0 bad
+Definition rules:        93 good    0 bad
+Definition rule clauses: 155 good    0 bad
 \end{verbatim}
 \end{document}

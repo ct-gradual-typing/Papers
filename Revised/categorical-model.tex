@@ -46,11 +46,45 @@ model of the untyped $\lambda$-calculus.
   An untyped $\lambda$-model is a sound and complete model of the untyped $\lambda$-calculus.
 \end{theorem}
 
-At this point we would like to introduce error-handling in a familiar
-way by means of a monad. To do this, we alter our definition of an
+The untyped $\lambda$ model has the advantage of simplicity, but does not
+capture the notion of error handling. To do this, we will introduce the
+notion of a monad and its corresponding Kleisli category.
+
+\begin{definition}
+  A  \textbf{monad} on a category $\cat{C}$ is a triple $(T,\eta,\mu)$ of a functor $T : \cat{C} \mto \cat{C}$ and two natural transformations $\eta_A : A \mto TA$, $\mu_A : T^2A \mto TA$, such that the following diagrams commute:
+  \begin{center}
+    \begin{math}
+      \bfig
+      \square|amma|<500,500>[T^3A`T^2A`T^2A`TA;T_{\mu_A}`\mu_{TA}`\mu_A`\mu_A]
+      \efig
+      \bfig
+      \square|amma|<500,500>[TA`T^2A`T^2A`TA;\eta_{TA}`T_{\eta_A}`\mu_A`\mu_A]
+      \morphism(0,500)/=/<500,-500>[TA`TA;]
+      \efig
+    \end{math}
+    \end{center}
+\end{definition}
+
+\begin{definition}
+  Let $(T,\eta,\mu)$ be a monad on a category $\cat{C}$. The \textbf{Kleisli category}
+  of the monad T, denoted $\cat{C}_T$, is the category constructed as follows:
+  \begin{enumerate}
+    \item The obejcts of $\cat{C}_T$ are those of $\cat{C}$.
+    \item The morphisms of $\cat{C}_T$ from A to B are those in $\cat{C}$ from A to TB.
+    \item The composition in $\cat{C}_T$ is defined as follows: Let us refer to a
+      morphism $f: A \mto TB$ in $\cat{C}$ by $\hat{f} : A \mto B$ when treating it as
+      a morphism in $\cat{C}_T$. Then, if $\hat{f} : A \mto B$ and $\hat{g} : B \mto C$
+      are morphisms in $\cat{C}_T$, their composition in $\cat{C}_T$, $\hat{f} ;_T \hat{G}$
+      is defined to be the morphism in $\cat{C}$ from $A$ to $TC$ given by
+      \[
+      f; \bar{g}
+      \]
+  \end{enumerate}
+\end{defintion}
+
+To do this, we alter our definition of an
 untyped $\lambda$ model to require $\cat{C}$ have all binary (thus all
-finite) coproducts, as first proposed by XXX. The maybe monad
-$(T, \eta, \mu)$ is then defined as follows:
+finite) coproducts, rendering it a \textbf{bicartesian category}. The maybe monad $(T, \eta, \mu)$ is then defined as follows:
 \begin{center}
   \begin{math}
     \begin{array}{ll}
@@ -60,7 +94,10 @@ $(T, \eta, \mu)$ is then defined as follows:
     \end{array}
   \end{math}
 \end{center}
-$\split$ now becomes a morphism from $?$ to $S + 1$, and we require
+It is routine to confirm that these are natural transformations in A,
+and that they obey the monad laws; a proof is given in the appendix.
+
+We now require $\split$ be a morphism from $?$ to $S + 1$, and we require
 $S$ be a retract of $?$ in the Kleisli category of the monad. That is,
 letting $\hat{f}$ denote the Kleisli morphism from $A$ to $B$
 corresponding to $f : A \mto B + 1$,
@@ -115,12 +152,12 @@ In the following, $\error_{S_1, S_2}$ will denote $\triv_{S_1} ; \textsf{i}_2$.
 Putting it all together, we have the following definition:
 \begin{definition}
   \label{def:model-untyped-error}
-  An \textbf{untyped $\lambda$-model with error handling}, $(\cat{C}, ?, \split, \squash)$, is a cartesian closed category with coproducts $\cat{C}$, a distinguished object $?$ and morphisms $\squash : S \mto ?$ and $\split : [[?]] \mto S$ for S equal to $[[? x ?]]$, $[[? --> ?]]$ or $? + ?$, related by the following equations:
+  An \textbf{untyped $\lambda$-model with error handling}, $(\cat{C}, ?, \split, \squash)$, is a cartesian closed category with coproducts $\cat{C}$, a distinguished object $?$ and morphisms $\squash : S \mto ?$ and $\split : [[?]] \mto S + 1$ for S equal to $[[? x ?]]$, $[[? --> ?]]$ or $? + ?$, related by the following equations:
   \begin{center}
     \begin{math}
       \begin{array}{rll}
         \squash_S ; \split_S & = \eta_S & \\
-        \squash_{S_1} ; \split_{S_2} & = \error_{S_1, S_2} & \textrm{where } S_1 \neq S_2. \\
+        \squash_{S_1} ; \split_{S_2} & = \error_{S_1, S_2} & \text{ where } S_1 \neq S_2. \\
       \end{array}
     \end{math}
   \end{center}
@@ -197,22 +234,24 @@ complete categorical model.
   A \textbf{static-dynamic $\lambda$-model}, $(\cat{T}, \cat{C}, ?,
   \T,\split,$\\ $ \squash, \bx, \unbox, \error)$, where $\cat{T}$ is a
   discrete category with at least two objects $[[Nat]]$ and
-  $[[Unit]]$, $\cat{C}$ is a cartesian closed category with an NRNO,
+  $[[Unit]]$, $\cat{C}$ is a bicartesian closed category with an NRNO,
   $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model with
   error handling, $\T : \cat{T} \mto \cat{C}$ is an embedding -- a full
   and faithful functor
   that is injective on objects -- and for every object $A$ of
   $\cat{T}$ there are morphisms $\bx_A : TA \mto ?$ and $\unbox_A : [[?]]
   \mto TA + 1$ making $TA$ a retract of $?$ in the Kleisli category, that
-  is, for which $\bx_A : TA \mto ?$ and 
+  is, for which $\bx_A : TA \mto ? + 1$ and $\unbox_A : ? \mto TA + 1$
+  satisfy $\bx_A ; \unbox_A = \eta_A$. In addition, we require for
+  $A \neq B$ that $\bx_A ; \unbox_B = \error_{A,B}$.
   
   %% diagrams commute for any  morphisms $f : [[A --> B]]$ and $g : [[B --> C]]$:
+
+  The following identities hold in such a model:
   \begin{center} 
     \begin{math} \footnotesize
       \setlength{\arraycolsep}{2pt}
       \begin{array}{rll}
-        \bx_{T A};\unbox_{T B} & = & \error_{T A,T B}, \text{ where } [[A]] \neq [[B]]\\
-        \squash_{S_1};\split_{S_2} & = & \error_{S_1,S_2}, \text{ where } [[S1]] \neq [[S2]]\\
         f;\error_{B,C} & = & \error_{A,C}, \text{ where } f : A \mto B\\
         \error_{A,B};f & = & \error_{A,C}, \text{ where } f : B \mto C\\
         \langle \error_{A,B}, f\rangle & = & \error_{A,[[B x C]]}, \text{ where } f : A \mto C\\
@@ -220,7 +259,8 @@ complete categorical model.
         \curry{\error_{[[A x B]],C}} & = & \error_{A,[[B -> C]]}\\
       \end{array}
     \end{math}
-  \end{center}  
+  \end{center}
+  Their proofs may be found in the appendix.
 \end{definition}
 \noindent
 We call the category $\cat{T}$ the category of atomic types.  We call
@@ -230,17 +270,16 @@ consider $[[?]]$ an atomic type.
 
 Triggering dynamic type errors is a fundamental property of the
 criteria for gradually typed languages, and thus, the model must
-capture this.  The new morphism $\err_A : [[Unit --> A]]$ is combined
-with the terminal morphism, $[[triv]]_A : [[A --> Unit]]$, which is a
+capture this.  The second coprojection $\err_A : [[1 --> (A + 1)]]$ is combined
+with the terminal morphism, $[[triv]]_A : [[A --> 1]]$, which is a
 unique morphism guaranteed to exist because $\cat{C}$ is cartesian
-closed, to define the morphism $\error_{A,B} : [[A --> B]]$ that
+closed, to define the morphism $\error_{A,B} : [[A --> B]] + 1$ that
 signifies that one tried to unbox or split at the wrong type resulting
-in a dynamic type error; this is captured by the first and second
-equations in the definition.  If we view morphisms as programs, then
+in a dynamic type error. If we view morphisms as programs, then
 the other equations are congruence rules that trigger a dynamic type
 error for the whole program when one of its subparts trigger a dynamic
 type error.  The following extends the error equations to the functors
-$- \times -$ and $- \to -$:
+$- \times -$, $- \to -$ and $- + -$:
 \begin{lemma}[Extended Errors]
   \label{lemma:extended_errors}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$\\$\squash, \bx, \unbox,\error)$
@@ -256,9 +295,9 @@ $- \times -$ and $- \to -$:
   \]
 \end{lemma}
 \begin{proof}
-  The following define the morphism part of the two functors $f \times
-  g : [[(A x B) --> (C x D)]]$ and $f \to g : [[(A -> B) --> (C ->
-      D)]]$:
+  The following define the morphism part of the functors
+  $f \times g : [[(A x B) --> (C x D)]]$, $f \to g : [[(A -> B) --> (C -> D)]]$,
+  and $f + g : [[(A + B) --> (C + D)]]$.
   \[ \footnotesize
   \setlength{\arraycolsep}{2pt}
   \begin{array}{rll}
@@ -266,7 +305,10 @@ $- \times -$ and $- \to -$:
     & & \,\,\,\,\text{ where } f : A \mto C\text{ and }g : B \mto D\\
     \\
     f \to g & = & \curry{(\id_{[[A -> B]]} \times f);\app_{A,B};g}, \\
-    & & \,\,\,\,\text{ where } f : C \mto A\text{ and }g : B \mto D\\    
+    & & \,\,\,\,\text{ where } f : C \mto A\text{ and }g : B \mto D\\
+    \\
+    f + g & = & \lbrace  f; [[inj1]], g; [[inj2]] \rbrace, \\
+    & &  \,\,\,\,\text{ where } f : A \mto C\text{ and }g : B \mto D\\
   \end{array}
   \]
   First, note that $[[fst]] : [[(A x B) --> A]]$, $[[snd]] : [[(A x B) -->
