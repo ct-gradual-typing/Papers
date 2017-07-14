@@ -117,13 +117,14 @@ corresponding Kleisli category.
   The Kleisli ``category'' as defined above forms a category.
 \end{theorem}
 \begin{proof}
-  See appendix.
+  See XXX.
+  % insert citation.
 \end{proof}
 
 For convenience, where $f: A \mto B$ is a morphism
 we shall henceforth $\overset{*}{f}$ to mean $f;\eta_B$, and
 $\hat{\overset{*}{f}}$ to denote the corresponding morphism
-in $\cat{C}_T$.
+in $\cat{C}_T$, known as the Kleisli lifting.
 
 To add error handling to our model, we alter our definition of an
 untyped $\lambda$ model to require $\cat{C}$ have all
@@ -141,7 +142,9 @@ maybe monad $(T, \eta, \mu)$ is then defined as follows:
 It is routine to confirm that these are natural transformations,
 and that they obey the monad laws; a proof is given in the appendix.
 
-Furthermore, we also require that the maybe monad be a strong monad.
+Furthermore, we will also use the fact that the maybe monad is a
+strong monad in order to work out the interactions between errors
+and products, currying, and internal hom.
 
 \begin{definition}
   A \textbf{strong monad} is a monad $(T,\eta,\mu)$ equipped with a
@@ -193,26 +196,6 @@ lift to the Kleisli category $\cat{C}_T$, in the following sense:
   \end{center}
 \end{proof}
 
-At this point, we can introduce error handling.
-
-Besides this, we want to describe the error case. To this end, we
-require for $S_1 \neq S_2$ that $\squash_{S_1} ; \split_{S_2} = \triv_{S_1} ; \textsf{i}_2$.
-In the following, $\error_{S_1, S_2}$ will denote $\triv_{S_1} ; \textsf{i}_2$.
-
-Putting it all together, we have the following definition:
-\begin{definition}
-  \label{def:model-untyped-error}
-  An \textbf{untyped $\lambda$-model with error handling}, $(\cat{C}, ?, \split, \squash)$, is a cartesian closed category with coproducts $\cat{C}$, a distinguished object $?$ and morphisms $\squash : S \mto ?$ and $\split : [[?]] \mto S + 1$ for S equal to $[[? x ?]]$, $[[? --> ?]]$ or $? + ?$, related by the following equations:
-  \begin{center}
-    \begin{math}
-      \begin{array}{rll}
-        \squash_S ; \split_S & = \eta_S & \\
-        \squash_{S_1} ; \split_{S_2} & = \error_{S_1, S_2} & \text{ where } S_1 \neq S_2. \\
-      \end{array}
-    \end{math}
-  \end{center}
-\end{definition}
-
 So far we know how to model static types (typed $\lambda$-calculus)
 and unknown types (the untyped $\lambda$-calculus).  To make the Grady
 languages a bit more interesting we add natural numbers, but we will
@@ -262,18 +245,14 @@ error handling.
 %[[box C : C --> ?]]
 %[[unbox C : ? --> C + 1]]
 
-Naturally, we add $\bx_{C} : C \mto ?$ and $\unbox_{C} : ? \mto C + 1$
-such that each atomic type, $[[C]]$, is a retract of $[[?]]$ in
-the Kleisli category $\cat{C}_T$ of the maybe monad, as we did for
-$\split$ and $\squash$ before. that is,
-expanding the Kleisli composition, we require
+Since the interpretation of Grady will be into the Kleisli category,
+we model dynamic type errors by requiring the following:
 \begin{center}
-\begin{math}
-\bx{C} ; \eta_? ; T(\unbox{C}) ; \mu_C = \eta_C.
-\end{math}
+  \begin{math}
+    \bx_A ;_T \unbox_B = \error_{A,B} \\
+    \squash_{S_1} ;_T \unbox_B = \error_{S_1, S_2}
+  \end{math}
 \end{center}
-In fact, this is equivalent to requiring $\bx{C} ; \unbox{C} = \eta_C$
-as one can read off from the following diagram.
 
 The only time we can cast $[[?]]$ to another type is if it were boxed up
 in the first place.  Combining all of these insights we obtain the
@@ -282,21 +261,26 @@ complete categorical model.
 \begin{definition}
   \label{def:gradual-lambda-model}
   A \textbf{static-dynamic $\lambda$-model}, $(\cat{T}, \cat{C}, ?,
-  \T,\split,$\\ $ \squash, \bx, \unbox, \error)$, where $\cat{T}$ is a
+  \T,\split,$\\ $ \squash, \bx, \unbox)$, where $\cat{T}$ is a
   discrete category with at least two objects $[[Nat]]$ and
   $[[Unit]]$, $\cat{C}$ is a bicartesian closed category with an NRNO,
-  $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model with
-  error handling, $\T : \cat{T} \mto \cat{C}$ is an embedding -- a full
+  $(\cat{C},?,\split,$ $\squash)$ is an untyped $\lambda$-model,
+  $\T : \cat{T} \mto \cat{C}$ is an embedding -- a full
   and faithful functor
   that is injective on objects -- and for every object $A$ of
-  $\cat{T}$ there are morphisms $\bx_A : TA \mto ?$ and $\unbox_A : [[?]]
-  \mto TA + 1$ making $TA$ a retract of $?$ in the Kleisli category, that
-  is, for which $\bx_A : TA \mto ? + 1$ and $\unbox_A : ? \mto TA + 1$
-  satisfy $\bx_A ; \unbox_A = \eta_A$. In addition, we require for
-  $A \neq B$ that $\bx_A ; \unbox_B = \error_{A,B}$.
+  $\cat{T}$ there are morphisms $\bx_A : TA \mto ?$ and $\unbox_A : ? \mto TA$
+  making $TA$ a retract of $?$. Furthermore, to model dynamic type
+  errors, we require that the following identities hold in the
+  Kleisli category of the maybe monad:
+  \begin{center}
+    \begin{math}
+    \bx_A ;_T \unbox_B = \error_{A,B} \\
+    \squash_{S_1} ;_T \unbox_B = \error_{S_1, S_2}
+    \end{math}
+  \end{center}
   
   %% diagrams commute for any  morphisms $f : [[A --> B]]$ and $g : [[B --> C]]$:
-
+  
   The following identities hold in such a model:
   \begin{center} 
     \begin{math} \footnotesize
