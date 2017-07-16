@@ -147,7 +147,8 @@ strong monad in order to work out the interactions between errors
 and products, currying, and internal hom.
 
 \begin{definition}
-  A \textbf{strong monad} is a monad $(T,\eta,\mu)$ equipped with a
+  A \textbf{strong monad} over a category $\cat{C}$ with
+  finite products is a monad $(T,\eta,\mu)$ equipped with a
   natural transformation $t_{A,B} : A \times TB \mto T(A \times B)$
   that obeys the following coherence diagrams:
   \begin{center}
@@ -155,7 +156,12 @@ and products, currying, and internal hom.
       \bfig
       \qtriangle[1 \times TA`TA`T(1 \times A);\pi_2`t_{1,A}`T(\langle \triv_A , \id_A \rangle)]
       \efig
+    \end{math}
+  \end{center}
+  \begin{center}
+    \begin{math}
       \bfig
+      \scalefactor{1.7}
       \node topleft(0,500)[(A \times B) \times TC]
       \node topright(1000,500)[T((A \times B) \times C)]
       \node botleft(0,0)[A \times (B \times TC)]
@@ -168,7 +174,26 @@ and products, currying, and internal hom.
       \arrow[botmid`botright;t_{A, B \times C}]
       \efig
     \end{math}
-    %%Insert third diagram here!
+  \end{center}
+  \begin{center}
+    \begin{math}
+      \bfig
+      \scalefactor{1.4}
+      \node AxB(0,1000)[A \times B]
+      \node AxTB(0,500)[A \times TB]
+      \node AxT2B(0,0)[A \times T^2B]
+      \node TAxB(500,500)[T(A \times B)]
+      \node TAxTB(500,0)[T(A \times TB)]
+      \node T2AxB(1000,0)[T^2(A \times B)]
+      \arrow[AxB`AxTB;\id_A \times \eta_B]
+      \arrow[AxT2B`AxTB;\id_A \times \mu_B]
+      \arrow[AxB`TAxB;\eta_{A \times B}]
+      \arrow[AxTB`TAxB;\mathsf{st}_{A,B}]
+      \arrow[AxT2B`TAxTB;\mathsf{st}_{A, TB}]
+      \arrow[TAxTB`T2AxB;T\mathsf{st}_{A,B}]
+      \arrow[T2AxB`TAxB;\mu_{A \times B}]
+      \efig
+    \end{math}
   \end{center}
 \end{definition}
 
@@ -249,7 +274,7 @@ Since the interpretation of Grady will be into the Kleisli category,
 we model dynamic type errors by requiring the following:
 \begin{center}
   \begin{math}
-    \bx_A ;_T \unbox_B = \error_{A,B} \\
+    \bx_A ;_T \unbox_B = \error_{A,B}
     \squash_{S_1} ;_T \unbox_B = \error_{S_1, S_2}
   \end{math}
 \end{center}
@@ -274,7 +299,7 @@ complete categorical model.
   Kleisli category of the maybe monad:
   \begin{center}
     \begin{math}
-    \bx_A ;_T \unbox_B = \error_{A,B} \\
+    \bx_A ;_T \unbox_B = \error_{A,B}
     \squash_{S_1} ;_T \unbox_B = \error_{S_1, S_2}
     \end{math}
   \end{center}
@@ -313,7 +338,7 @@ in a dynamic type error. If we view morphisms as programs, then
 the other equations are congruence rules that trigger a dynamic type
 error for the whole program when one of its subparts trigger a dynamic
 type error.  The following extends the error equations to the functors
-$- \times -$, $- \to -$ and $- + -$:
+$- \times -$ and $- \to -$:
 \begin{lemma}[Extended Errors]
   \label{lemma:extended_errors}
   Suppose $(\cat{T}, \cat{C}, ?, \T, \split,$\\$\squash, \bx, \unbox,\error)$
@@ -321,9 +346,9 @@ $- \times -$, $- \to -$ and $- + -$:
   \[\footnotesize
   \setlength{\arraycolsep}{2pt}
   \begin{array}{rll}
-    f \times \error_{B,C} & = & \error_{[[A x B]],[[C x D]]}, \text{ where } f : A \mto C\\
-    \error_{A,C} \times f & = & \error_{[[A x B]],[[C x D]]}, \text{ where } f : B \mto D\\
-    f \to \error_{B,C}    & = & \error_{[[A -> B]],[[C -> D]]}, \text{ where } f : C \mto A\\
+    f; \eta_C \times \error_{B,C} & = & \error_{[[A x B]],[[C x D]]}, \text{ where } f : A \mto C\\
+    \error_{A,C} \times f; \eta_D & = & \error_{[[A x B]],[[C x D]]}, \text{ where } f : B \mto D\\
+    f \to \error_{B,C}  & = & \error_{[[A -> B]],[[C -> D]]}, \text{ where } f : C \mto A\\
     \error_{C,A} \to f & = & \error_{[[A -> B]],[[C -> D]]}, \text{ where } f : B \mto D\\
   \end{array}
   \]

@@ -1,0 +1,65 @@
+\documentclass{article}[12pt]
+
+\usepackage{amssymb,amsmath, amsthm}
+\usepackage[barr]{xy}
+
+\begin{document}
+
+\newcommand{\id}[0]{\mathsf{id}}
+\newcommand{\st}[0]{\mathsf{st}}
+
+\title{Expanding Diagrams for the Maybe Monad}
+
+\author{Richard Blair}
+
+\maketitle
+
+\section{Strong monad diagrams}
+
+  \begin{center}
+    \begin{math}
+      \bfig
+      \scalefactor{2.0}
+      \qtriangle[1 \times (A+1)`TA`(1 \times A) + 1;r_A`t_{1,A}`r_{A} + \id_1]
+      \efig
+    \end{math}
+  \end{center}
+  \begin{center}
+    \begin{math}
+      \bfig
+      \scalefactor{2.5}
+      \node topleft(0,500)[(A \times B) \times (C+1)]
+      \node topright(1000,500)[((A \times B) \times C) + 1]
+      \node botleft(0,0)[A \times (B \times (C + 1))]
+      \node botmid(500,0)[A \times ((B \times C) + 1)]
+      \node botright(1000,0)[(A \times (B \times C)) + 1]
+      \arrow[topleft`topright;\st_{A \times B, C}]
+      \arrow[topright`botright;\alpha_{A,B,C} + \id_1]
+      \arrow[topleft`botleft;\alpha{A,B,C+1}]
+      \arrow[botleft`botmid; \id_A \times \st_{B, C}]
+      \arrow[botmid`botright;\st_{A, B \times C}]
+      \efig
+    \end{math}
+  \end{center}
+  \begin{center}
+    \begin{math}
+      \bfig
+      \scalefactor{2.5}%
+      \node AxB(0,700)[A \times B]%
+      \node AxTB(0,350)[A \times (B + 1)]%
+      \node AxT2B(0,0)[A \times ((B + 1) + 1)]%
+      \node TAxB(500,350)[(A \times B) + 1]%
+      \node TAxTB(500,0)[(A \times (B + 1)) + 1]%
+      \node T2AxB(1000,0)[((A \times B) + 1) + 1]%
+      \arrow[AxB`AxTB;\id_A \times \eta_B]%
+      \arrow[AxT2B`AxTB;\id_A \times \mu_B]%
+      \arrow[AxB`TAxB;\eta_{A \times B}]%
+      \arrow[AxTB`TAxB;\st_{A,B}]%
+      \arrow[AxT2B`TAxTB;\st_{A, B + 1}]%
+      \arrow[TAxTB`T2AxB;\st_{A,B} + \id_1]%
+      \arrow[T2AxB`TAxB;\mu_{A \times B}]%
+      \efig
+    \end{math}
+  \end{center}
+
+\end{document}
