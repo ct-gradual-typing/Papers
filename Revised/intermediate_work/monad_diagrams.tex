@@ -5,16 +5,44 @@
 
 \begin{document}
 
+\let\mto\to                     % Used for arrows
+\let\to\relax
+\newcommand{\to}{\rightarrow}
+\newcommand{\cat}[1]{\mathcal{#1}}
+
 \newcommand{\id}[0]{\mathsf{id}}
 \newcommand{\st}[0]{\mathsf{st}}
+\newcommand{\triv}[0]{\mathsf{triv}}
 
-\title{Expanding Diagrams for the Maybe Monad}
+\title{Proving error properties in the Kleisli category}
 
 \author{Richard Blair}
 
 \maketitle
 
-\section{Strong monad diagrams}
+\section{Definitions}
+Let $\cat{C}$ be a cartesian closed category with all finite coproducts.
+Then $\cat{C}$ is a monoidal category with associator
+\begin{center}
+  \begin{math}
+    \alpha_{A,B,C} : A \times (B \times C) \mto (A \times B) \times C = \langle \langle \pi_1 , \pi_2 ; \pi_1 \rangle , \pi_2 ; \pi_2 \rangle
+  \end{math}
+\end{center}
+and unitors
+\begin{center}
+  \begin{math}
+  \begin{array}{rll}
+    r_A : 1 \times A \mto A & = & \pi_2 \\
+    l_A : A \times 1 \mto A & = & \pi_1
+  \end{array}
+  \end{math}
+\end{center}
+
+\begin{theorem}
+  The maybe monad is a strong monad with strength $\st_{A,B} : A \times (B + 1) \mto (A \times B) + 1 = \dist_{A,B,1};\id_{A \times B} \times (\triv_A \times id_1);\id_{A \times B} \times triv_{1 \times 1}$.
+\end{theorem}
+
+\section{Strong monad diagrams, specialized to maybe monad}
 
   \begin{center}
     \begin{math}
@@ -62,4 +90,13 @@
     \end{math}
   \end{center}
 
+  \section{Expanded versions}
+    \begin{center}
+    \begin{math}
+      \bfig
+      \scalefactor{2.0}
+      \qtriangle[1 \times (A+1)`A + 1`(1 \times A) + 1;\pi_2`\st_{1,A}`\langle \triv_A , \id_A \rangle + \id_1]
+      \efig
+    \end{math}
+  \end{center}
 \end{document}
