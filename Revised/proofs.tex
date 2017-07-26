@@ -1,6 +1,60 @@
 \section{Proofs}
 \label{sec:proofs}
 
+\subsection{Proofs for Properties of $\error$ (Lemma~\ref{lemma:basic_errors})}
+\label{subsec:proof_of_basic_errors}
+We shall show only the first of the product identities; the proof for the other
+follows from commutativity.
+
+First we require a lemma.
+
+\begin{lemma}
+  Let $g : C \mto B$ be a morphism. Then the following diagram commutes for any choice of $A$:
+  \begin{center}
+    \begin{math}
+      \bfig
+      \square|amma|/=`->`->`->/<700,600>[1 \times C`(A + 1) \times B`1 \times C`(A \times B) + 1;`i_2 \, \times \, g`\st_{A,B}`\triv;i_2]%
+      \efig
+    \end{math}
+  \end{center}
+\end{lemma}
+\begin{proof}
+  Reasoning equationally, we have:
+  \begin{center}
+    \begin{math} \footnotesize
+    \begin{array}{rllr}
+      (i_2 \times g) ; \st_{A,B} & = & (i_2 \times g) ; \curryinv{([\curry{i_1}, \curry{\triv;i_2}])} & \text{(by def.)} \\
+      & = & (\id \times g) ; (i_2 \times \id) ; \curryinv{([\curry{i_1}, \curry{\triv;i_2}])} & \text{(properties of } \id \text{, products)} \\
+      & = & (\id \times g) ; \curryinv{i_2 ; [\curry{i_1}, \curry{\triv;i_2}]} & \text{a property of } \mathsf{curry}^{-1} \\
+      & = & (\id \times g) ; \curryinv{\curry{\triv; i_2}} & \text{by coproduct diag.} \\
+      & = & (\id \times g) ; \triv ; i_2 & \text{bijectivity of} \mathsf{curry} \\
+      & = & \triv ; i_2 & \text{uniq. of } \triv \\
+    \end{array}
+    \end{math}
+  \end{center}
+\end{proof}
+
+Similarly, we also have for any $f : C \mto A$ and any
+choice of $B$, $(f \times \i_2) ; \st^{\prime}_{A,B} : (C \times 1) \mto (A \times B) + 1 = \triv ; i_2$
+
+Now, we may prove the identity $\langle \error_{A,B}, g \rangle ; ten_{B,C} = \error_{B,C}$.
+\begin{proof}
+  \begin{center}
+    \begin{math} \footnotesize
+    \begin{array}{rllr}
+      \langle \error_{A,B}, g; \eta_B \rangle ; \ten_{B,C} & = & \langle \error_{A,B}, g; \eta_B \rangle ; \st_{A,B+1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{(by def.)} \\
+      & = & \langle \triv_A, \id_A \rangle ; (i_2 \times g); \st_{A,B+1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{(properties of product map)} \\
+      & = & \langle \triv_A, \id_A \rangle ; \triv_{1 \times B} ; i_{2,(B \times (C + 1) + 1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{(lemma)} \\
+      & = & \triv_A ; i_{2,(B \times (C + 1) + 1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{ uniqueness of } \triv \\
+      & = & \triv_A ; \id_1 ; i_{2,((B \times C) + 1) + 1} ; \mu_{B \times C} & \text{def. of coproduct} \\
+      & = & \triv_A ; i_{2,((B \times C) + 1) + 1} ; \mu_{B \times C} & \text{prop. of } \id \\
+      & = & \triv_A ; i_{2,((B \times C) + 1) + 1} ; [\id_{(B \times C) + 1}, i_{2, (B \times C) + 1}] & \text{def. of } \mu \\
+      & = & \triv_A ; i_{2, (B \times C) + 1} & \text{prop. of coproduct} \\
+    \end{array}
+    \end{math}
+  \end{center}
+\end{proof}
+
 \subsection{Proof of Lifted Retract (Lemma~\ref{lemma:lifted_retract})}
 \label{subsec:proof_of_lifted_retract}
 We only show that $<<lbox A>>;<<lunbox A>> = \id_A$, because the case

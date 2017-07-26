@@ -303,24 +303,28 @@ complete categorical model.
     \squash_{S_1} ;_T \unbox_B = \error_{S_1, S_2}
     \end{math}
   \end{center}
-  
+\end{definition}
   %% diagrams commute for any  morphisms $f : [[A --> B]]$ and $g : [[B --> C]]$:
-  
+\begin{lemma}[Basic Error Identities]
+  \label{lemma:basic_errors}
   The following identities hold in such a model:
-  \begin{center} 
+  \begin{center}
     \begin{math} \footnotesize
       \setlength{\arraycolsep}{2pt}
       \begin{array}{rll}
         f;\error_{B,C} & = & \error_{A,C}, \text{ where } f : A \mto B\\
         \error_{A,B};f & = & \error_{A,C}, \text{ where } f : B \mto C\\
-        \langle \error_{A,B}, f\rangle & = & \error_{A,[[B x C]]}, \text{ where } f : A \mto C\\
+        \langle \error_{A,B}, f\rangle ; \ten_{B,C} & = & \error_{A,[[B x C]]}, \text{ where } f : A \mto C\\
         \langle f , \error_{A,C}\rangle & = & \error_{A,[[B x C]]}, \text{ where } f : A \mto B\\
-        \curry{\error_{[[A x B]],C}} & = & \error_{A,[[B -> C]]}\\
+        % \curry{\error_{[[A x B]],C}} & = & \error_{A,[[B -> C]]}\\
       \end{array}
     \end{math}
   \end{center}
-  Their proofs may be found in the appendix.
-\end{definition}
+\end{lemma}
+\begin{proof}
+  See appendix.
+\end{proof}
+
 \noindent
 We call the category $\cat{T}$ the category of atomic types.  We call
 an object, $[[A]]$, \textbf{atomic} iff there is some object $[[A']]$

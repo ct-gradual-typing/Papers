@@ -12,7 +12,19 @@
 
 \newcommand{\id}[0]{\mathsf{id}}
 \newcommand{\st}[0]{\mathsf{st}}
+\newcommand{\ten}[0]{\mathsf{ten}}
 \newcommand{\triv}[0]{\mathsf{triv}}
+\newcommand{\dist}[0]{\mathsf{dist}}
+\newcommand{\curry}[1]{\mathsf{curry}(#1)}
+\newcommand{\curryinv}[1]{\mathsf{curry}^{-1}(#1)}
+\newcommand{\error}[0]{\mathsf{error}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+%% \newtheorem{corollary}[theorem]{Corollary}
+%% \newtheorem{definition}[theorem]{Definition}
+%% \newtheorem{proposition}[theorem]{Proposition}
+%% \newtheorem{example}[theorem]{Example}
 
 \title{Proving error properties in the Kleisli category}
 
@@ -48,7 +60,7 @@ and unitors
     \begin{math}
       \bfig
       \scalefactor{2.0}
-      \qtriangle[1 \times (A+1)`TA`(1 \times A) + 1;r_A`t_{1,A}`r_{A} + \id_1]
+      \btriangle[1 \times (A+1)`A + 1`(1 \times A) + 1;r_A`\st_{1,A}`r_{A} + \id_1]
       \efig
     \end{math}
   \end{center}
@@ -90,13 +102,79 @@ and unitors
     \end{math}
   \end{center}
 
-  \section{Expanded versions}
+  \section{Error properties}
+  \begin{enumerate}
+  \item Precomposition
+    Let $f : A \mto B$. Then $\hat{f} ;_T \error_{B,C} = \error_{A,C}$.
+    Diagrammatically
     \begin{center}
+      \begin{math}
+        \bfig
+        \node A(0,1000)[A]%
+        \node 1(0,0)[1]%
+        \node Cp1(1000,0)[C+1]%
+        \node B(500,1000)[B]%
+        \node Bp1(1000,1000)[B+1]%
+        \node Cp1p1(1000,500)[(C+1)+1]%
+        \arrow[A`1;\triv_A]%
+        \arrow[1`Cp1;i_2]%
+        \arrow[A`B;f]%
+        \arrow[B`Bp1;\eta_B]%
+        \arrow[Bp1`Cp1p1;T\error{B,C}]%
+        \arrow[Cp1p1`Cp1;\mu_C]%
+        \efig
+      \end{math}
+    \end{center}
+  \end{enumerate}
+We shall show only the first of the product identities; the proof for the other
+follows from commutativity.
+
+First we require a lemma.
+
+\begin{lemma}
+  Let $g : C \mto B$ be a morphism. Then the following diagram commutes for any choice of $A$:
+  \begin{center}
     \begin{math}
       \bfig
-      \scalefactor{2.0}
-      \qtriangle[1 \times (A+1)`A + 1`(1 \times A) + 1;\pi_2`\st_{1,A}`\langle \triv_A , \id_A \rangle + \id_1]
+      \square|amma|/=`->`->`->/<700,600>[1 \times C`(A + 1) \times B`1 \times C`(A \times B) + 1;`i_2 \, \times \, g`\st_{A,B}`\triv;i_2]%
       \efig
     \end{math}
   \end{center}
+\end{lemma}
+\begin{proof}
+  Reasoning equationally, we have:
+  \begin{center}
+    \begin{math} \footnotesize
+    \begin{array}{rllr}
+      (i_2 \times g) ; \st_{A,B} & = & (i_2 \times g) ; \curryinv{([\curry{i_1}, \curry{\triv;i_2}])} & \text{(by def.)} \\
+      & = & (\id \times g) ; (i_2 \times \id) ; \curryinv{([\curry{i_1}, \curry{\triv;i_2}])} & \text{(properties of } \id \text{, products)} \\
+      & = & (\id \times g) ; \curryinv{i_2 ; [\curry{i_1}, \curry{\triv;i_2}]} & \text{a property of } \mathsf{curry}^{-1} \\
+      & = & (\id \times g) ; \curryinv{\curry{\triv; i_2}} & \text{by coproduct diag.} \\
+      & = & (\id \times g) ; \triv ; i_2 & \text{bijectivity of} \mathsf{curry} \\
+      & = & \triv ; i_2 & \text{uniq. of } \triv \\
+    \end{array}
+    \end{math}
+  \end{center}
+\end{proof}
+
+Similarly, we also have for any $f : C \mto A$ and any
+choice of $B$, $(f \times \i_2) ; \st^{\prime}_{A,B} : (C \times 1) \mto (A \times B) + 1 = \triv ; i_2$
+
+Now, we may prove the identity $\langle \error_{A,B}, g \rangle ; ten_{B,C} = \error_{B,C}$.
+\begin{proof}
+  \begin{center}
+    \begin{math} \footnotesize
+    \begin{array}{rllr}
+      \langle \error_{A,B}, g; \eta_B \rangle ; \ten_{B,C} & = & \langle \error_{A,B}, g; \eta_B \rangle ; \st_{A,B+1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{(by def.)} \\
+      & = & \langle \triv_A, \id_A \rangle ; (i_2 \times g); \st_{A,B+1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{(properties of product map)} \\
+      & = & \langle \triv_A, \id_A \rangle ; \triv_{1 \times B} ; i_{2,(B \times (C + 1) + 1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{(lemma)} \\
+      & = & \triv_A ; i_{2,(B \times (C + 1) + 1} ; (\st^{\prime}_{A,B} + \id_1); \mu_{A \times B} & \text{ uniqueness of } \triv \\
+      & = & \triv_A ; \id_1 ; i_{2,((B \times C) + 1) + 1} ; \mu_{B \times C} & \text{def. of coproduct} \\
+      & = & \triv_A ; i_{2,((B \times C) + 1) + 1} ; \mu_{B \times C} & \text{prop. of } \id \\
+      & = & \triv_A ; i_{2,((B \times C) + 1) + 1} ; [\id_{(B \times C) + 1}, i_{2, (B \times C) + 1}] & \text{def. of } \mu \\
+      & = & \triv_A ; i_{2, (B \times C) + 1} & \text{prop. of coproduct} \\
+    \end{array}
+    \end{math}
+  \end{center}
+\end{proof}
 \end{document}
